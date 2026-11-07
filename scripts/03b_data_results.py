@@ -75,6 +75,8 @@ def write_data_quality(con, cfg: dict, out: Path) -> None:
         where hour_ts between (select min(hour_ts) from int_hours)
                           and (select max(hour_ts) from int_hours)""").fetchone()
     c1, c2, n_terc = con.execute("select c1, c2, n_trips from int_distance_terciles").fetchone()
+    n_unknown_dist, n_panel = con.execute("""
+        select sum(pickups_dist_unknown), sum(pickups) from fct_daily_zone_panel""").fetchone()
     worst = m.loc[m["share_removed"].idxmax()]
     q = cfg["quality"]
     result = {
@@ -150,6 +152,9 @@ def write_data_quality(con, cfg: dict, out: Path) -> None:
                     "n_local_hours_merging_two_readings": int(wx_merged)},
         "distance_terciles": {"c1_miles": float(c1), "c2_miles": float(c2),
                               "n_trips": int(n_terc),
+                              "estimated_on": "in-grid valid trips with trip_distance > 0",
+                              "pickups_distance_unknown": int(n_unknown_dist),
+                              "share_pickups_distance_unknown": _share(n_unknown_dist, n_panel),
                               "period": cfg["panel"]["distance_tercile_period"]},
     }
     (out / "data_quality.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

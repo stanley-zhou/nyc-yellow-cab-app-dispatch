@@ -21,9 +21,10 @@ select
     {%- for lo, hi in var('hour_bands') %}
     count(*) filter (where t.hr >= {{ lo }} and t.hr < {{ hi }})            as pickups_h{{ '%02d' % lo }}_{{ '%02d' % hi }},
     {%- endfor %}
-    count(*) filter (where t.trip_distance <= c.c1)                         as pickups_dist_t1,
+    count(*) filter (where t.trip_distance > 0 and t.trip_distance <= c.c1) as pickups_dist_t1,
     count(*) filter (where t.trip_distance > c.c1 and t.trip_distance <= c.c2) as pickups_dist_t2,
     count(*) filter (where t.trip_distance > c.c2)                          as pickups_dist_t3,
+    count(*) filter (where not coalesce(t.trip_distance > 0, false))        as pickups_dist_unknown,
     count(*) filter (where t.do_is_cbd)                                     as pickups_do_cbd,
     -- dropoff outside the CBD, including dropoff ids 264/265 (unknown / outside NYC)
     count(*) filter (where not coalesce(t.do_is_cbd, false))                as pickups_do_non_cbd,

@@ -70,7 +70,7 @@ def test_every_spring_forward_day_in_span_has_23_hours(warehouse_db):
     years = range(int(lo[:4]), int(hi[:4]) + 1)
     assert len(short) == len(years), "exactly one non-24-hour local day per year"
     assert (short["n"] == 23).all()
-    assert all(pd.Timestamp(d).month == 3 and pd.Timestamp(d).dayofweek == 6 for d in short["d"])
+    assert all(pd.Timestamp(d).month == 3 and pd.Timestamp(d).day_of_week == 6 for d in short["d"])
 
 
 def test_fall_back_hour_counts_both_wall_clock_passes(warehouse_db):

@@ -5,6 +5,9 @@
 select
     pickup_ts, dropoff_ts, pu_zone_id, do_zone_id, trip_distance, fare_amount, total_amount,
     passenger_count, payment_type, cbd_congestion_fee, source_month, is_format_exempt,
+    -- meter-derived fields are only known when the meter produced them (record-format exemptions):
+    coalesce(trip_distance > 0, false)  as distance_known,
+    coalesce(fare_amount > 0, false)    as revenue_known,
     date_trunc('hour', pickup_ts)  as pu_hour,
     date_trunc('hour', dropoff_ts) as do_hour
 from {{ ref('int_trips_flagged') }}

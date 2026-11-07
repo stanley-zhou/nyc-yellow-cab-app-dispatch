@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-07T23:22:12+00:00",
+  "generated_utc": "2026-11-07T23:44:43+00:00",
   "source": "fct_data_quality_monthly (dbt), per month in results/data_quality_monthly.csv",
   "span": {
     "first_hour": "2019-01-01 00:00:00",
@@ -97,9 +97,12 @@
     "n_local_hours_merging_two_readings": 7
   },
   "distance_terciles": {
-    "c1_miles": 1.27,
-    "c2_miles": 2.6,
-    "n_trips": 39741159,
+    "c1_miles": 1.29,
+    "c2_miles": 2.62,
+    "n_trips": 39484282,
+    "estimated_on": "in-grid valid trips with trip_distance > 0",
+    "pickups_distance_unknown": 2306077,
+    "share_pickups_distance_unknown": 0.006958,
     "period": [
       "2024-01-06",
       "2025-01-04"

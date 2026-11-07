@@ -12,7 +12,7 @@ from matplotlib.axes import Axes
 
 from taxi_shock.viz.style import PALETTE, SEQUENTIAL_CMAP
 
-NO_DATA_COLOR = "#F2F3F5"
+NO_DATA_COLOR = "#B9BDC4"   # mid grey + hatch: never confused with the lightest blue
 
 
 def load_zones(shapefile: Path) -> gpd.GeoDataFrame:
@@ -28,7 +28,8 @@ def log_choropleth(ax: Axes, zones: gpd.GeoDataFrame, values: pd.Series,
     pos = gdf[gdf["v"] > 0]
     vmin, vmax = float(pos["v"].min()), float(pos["v"].max())
     norm = mpl.colors.LogNorm(vmin=vmin, vmax=vmax)
-    gdf[~(gdf["v"] > 0)].plot(ax=ax, color=NO_DATA_COLOR, edgecolor="white", linewidth=0.25)
+    gdf[~(gdf["v"] > 0)].plot(ax=ax, facecolor=NO_DATA_COLOR, edgecolor="white", hatch="////",
+                              linewidth=0.25)
     pos.plot(ax=ax, column="v", cmap=SEQUENTIAL_CMAP, norm=norm, edgecolor="white",
              linewidth=0.25)
     sm = mpl.cm.ScalarMappable(norm=norm, cmap=SEQUENTIAL_CMAP)

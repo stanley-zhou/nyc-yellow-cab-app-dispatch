@@ -26,6 +26,14 @@
     "agreement_min": 0.95
   },
   "n_zones": 263,
+  "cbd_zones_min_fee_share": {
+    "zone_id": 232,
+    "zone_name": "Two Bridges/Seward Park",
+    "fee_share": 0.9629
+  },
+  "cbd_zones_fee_labels": {
+    "cbd": 38
+  },
   "n_manhattan": 69,
   "n_cbd_final": 38,
   "n_cbd_geometric": 41,

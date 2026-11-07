@@ -4,7 +4,7 @@
 -- drop them. Weekday/weekend splits count pickups on Mon-Fri vs Sat-Sun dates.
 {%- set split_cols = [] %}
 {%- for lo, hi in var('hour_bands') %}{% do split_cols.append('pickups_h%02d_%02d' % (lo, hi)) %}{% endfor %}
-{%- do split_cols.extend(['pickups_dist_t1', 'pickups_dist_t2', 'pickups_dist_t3',
+{%- do split_cols.extend(['pickups_dist_t1', 'pickups_dist_t2', 'pickups_dist_t3', 'pickups_dist_unknown',
                           'pickups_do_cbd', 'pickups_do_non_cbd', 'pickups_format_exempt']) %}
 {{ config(materialized='table') }}
 select

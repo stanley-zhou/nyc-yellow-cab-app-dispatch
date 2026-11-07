@@ -76,11 +76,12 @@ def f1_demand_map(zones, summary: pd.DataFrame, title: str, out_base: Path) -> l
         sp.set_visible(True)
         sp.set_color(PALETTE["muted_text"])
         sp.set_linewidth(0.6)
-    ins.text(0.03, 0.03, "Inset: lower Manhattan", transform=ins.transAxes, fontsize=8,
+    ins.text(0.03, 0.03, "Inset: CBD and neighbours, enlarged",
+             transform=ins.transAxes, fontsize=8,
              color=PALETTE["text"], va="bottom",
              bbox={"facecolor": "white", "edgecolor": "none", "pad": 2})
     ax.set_title(title)
-    ax.text(0.0, -0.02, "Red outline: the CBD zones (config/zones_cbd.csv). Light grey: no "
+    ax.text(0.0, -0.02, "Red outline: the CBD zones (config/zones_cbd.csv). Hatched grey: no "
             "pickups in 2024. Zones: TLC taxi zones.", transform=ax.transAxes, fontsize=8,
             color=PALETTE["muted_text"], va="top")
     return save(fig, out_base)

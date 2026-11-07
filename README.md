@@ -28,7 +28,7 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `data` | full raw download (yellow months in config, zone lookups, weather) |
 | `dbt` | build and test the full DuckDB warehouse in two stages around the CBD mapping (`scripts/03a_cbd_map.py`), then write the Phase-1 result files (`scripts/03b_data_results.py`) |
 | `figures` | every figure whose phase is implemented (Phase 1: F1, F1b), built from `results/` only |
-| `probes` | one-off evidence scripts behind DECISIONS.md entries (duplicates, Open-Meteo offset) |
+| `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, Open-Meteo offset |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
 | `forecast`, `causal`, `adapt`, `report`, `all` | added in their phases; they fail with a message until then |
 

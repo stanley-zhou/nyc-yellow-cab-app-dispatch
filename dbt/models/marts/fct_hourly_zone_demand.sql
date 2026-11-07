@@ -7,8 +7,10 @@ select
     g.hour_ts,
     coalesce(pu.pickups, 0)::integer                   as pickups,
     coalesce(d.dropoffs, 0)::integer                   as dropoffs,
-    coalesce(pu.revenue, 0)::double                    as revenue,
-    pu.mean_distance                                   as mean_distance,
+    coalesce(pu.revenue, 0)::double                    as revenue,          -- known-revenue trips
+    coalesce(pu.n_revenue_trips, 0)::integer           as n_revenue_trips,
+    pu.mean_distance                                   as mean_distance,    -- known-distance trips
+    coalesce(pu.n_distance_trips, 0)::integer          as n_distance_trips,
     coalesce(pu.n_cbd_fee_trips, 0)::integer           as n_cbd_fee_trips,
     -- pickups kept only by a record-format exemption (int_trips_flagged); PLAN's literal rules
     -- would drop them: pickups - n_format_exempt = PLAN-literal count, for robustness checks

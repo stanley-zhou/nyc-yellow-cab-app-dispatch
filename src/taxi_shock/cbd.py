@@ -148,8 +148,19 @@ def resolve(zones: pd.DataFrame, geo: pd.DataFrame, fee: pd.DataFrame,
     # agreement of the FINAL mapping (after manual overrides) with each decisive signal
     final_agree = ((dec["fee_label"] == "cbd") == dec["is_cbd"]).all()
     surprises = df[(df["borough"] != "Manhattan") & (df["fee_label"] == "cbd")]
+    cbd_rows = df[df["is_cbd"]]
+    lowest = cbd_rows.loc[cbd_rows["fee_share"].idxmin()] if cbd_rows["fee_share"].notna().any() \
+        else None
     summary = {
         "n_zones": int(len(df)),
+        # every final CBD zone, including those along the FDR Drive and the West Side Highway
+        # (which the Congestion Relief Zone excludes as through-routes), and its fee share
+        "cbd_zones_min_fee_share": (None if lowest is None else
+                                    {"zone_id": int(lowest["zone_id"]),
+                                     "zone_name": lowest["zone_name"],
+                                     "fee_share": round(float(lowest["fee_share"]), 4)}),
+        "cbd_zones_fee_labels": {k: int(v) for k, v in
+                                 cbd_rows["fee_label"].value_counts().items()},
         "n_manhattan": int(len(man)),
         "n_cbd_final": int(df["is_cbd"].sum()),
         "n_cbd_geometric": int(man["geometric_is_cbd"].astype(bool).sum()),

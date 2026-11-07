@@ -2,7 +2,7 @@
 -- the zone_day variant of fct_weekly_zone_panel. Daily weather controls are city-wide.
 {%- set split_cols = [] %}
 {%- for lo, hi in var('hour_bands') %}{% do split_cols.append('pickups_h%02d_%02d' % (lo, hi)) %}{% endfor %}
-{%- do split_cols.extend(['pickups_dist_t1', 'pickups_dist_t2', 'pickups_dist_t3',
+{%- do split_cols.extend(['pickups_dist_t1', 'pickups_dist_t2', 'pickups_dist_t3', 'pickups_dist_unknown',
                           'pickups_do_cbd', 'pickups_do_non_cbd', 'pickups_format_exempt']) %}
 with dates as (
     select cast(hour_ts as date) as date, count(*) as n_hours
