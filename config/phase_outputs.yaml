@@ -1,0 +1,40 @@
+# Files that `make verify PHASE=N` requires to exist and be non-empty (PLAN "Outputs" per phase).
+0:
+  - results/smoke/smoke_run.json
+  - results/smoke/smoke_run_clean_clone.json
+  - results/smoke/backtest_smoke.csv
+  - results/smoke/forecasts_smoke.parquet
+  - reports/figures/smoke/F0_smoke_placeholder.png
+  - DECISIONS.md
+1:
+  - results/data_quality.json
+  - results/zone_summary.csv
+  - config/zones_cbd.csv
+  - reports/figures/F1_demand_map.png
+  - reports/figures/F1b_citywide_weekly.png
+2:
+  - results/backtest_2024.csv
+  - results/chronos_forecasts.parquet
+  - reports/figures/F2_model_comparison.png
+  - reports/figures/F2b_fan_chart.png
+3:
+  - results/shock_errors.csv
+  - results/drift_detection.json
+  - reports/figures/F3_error_over_time.png
+4:
+  - results/did_static.json
+  - results/event_study.csv
+  - results/heterogeneity.csv
+  - results/placebo.json
+  - reports/figures/F4_event_study.png
+  - reports/figures/F4b_effect_map.png
+  - reports/figures/F4c_heterogeneity.png
+  - reports/figures/F4d_counterfactual_vs_did.png
+5:
+  - results/adaptation.csv
+  - reports/figures/F5_adaptation.png
+7:
+  - README.md
+  - reports/analysis.md
+  - reports/figures/F4b_effect_map.html
+  - .github/workflows/ci.yml

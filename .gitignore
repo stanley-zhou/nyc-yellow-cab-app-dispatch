@@ -1,0 +1,17 @@
+data/raw/*
+!data/raw/manifest.csv
+data/warehouse.duckdb
+data/*.duckdb
+*.duckdb.wal
+.env
+__pycache__/
+.ruff_cache/
+.pytest_cache/
+notebooks/*.ipynb_checkpoints
+notebooks/.ipynb_checkpoints
+.venv/
+*.egg-info/
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+logs/

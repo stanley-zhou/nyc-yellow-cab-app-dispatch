@@ -1,0 +1,16 @@
+{
+  "hvfhv": {
+    "months_requested": 33,
+    "months_available": 33,
+    "months_missing": [],
+    "total_gb": 16.33,
+    "largest_file_gb": 0.538
+  },
+  "yellow": {
+    "months_requested": 93,
+    "months_available": 93,
+    "months_missing": [],
+    "total_gb": 5.45,
+    "largest_file_gb": 0.116
+  }
+}

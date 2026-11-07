@@ -1,0 +1,15 @@
+# The warehouse path and DuckDB settings come from environment variables that
+# scripts/03_dbt.py sets from config/project.yaml. The defaults below apply only
+# when dbt is run by hand from inside dbt/.
+taxi_shock:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('TAXI_SHOCK_WAREHOUSE', '../data/warehouse.duckdb') }}"
+      threads: 1
+      settings:
+        memory_limit: "{{ env_var('TAXI_SHOCK_DUCKDB_MEMORY', '5GB') }}"
+        threads: "{{ env_var('TAXI_SHOCK_DUCKDB_THREADS', '10') }}"
+        TimeZone: "{{ env_var('TAXI_SHOCK_TZ', 'America/New_York') }}"
+        preserve_insertion_order: false

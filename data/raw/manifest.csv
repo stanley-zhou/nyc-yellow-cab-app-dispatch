@@ -1,0 +1,6 @@
+file,bytes,download_date
+data/raw/lookup/taxi_zone_lookup.csv,12331,2026-11-07
+data/raw/lookup/taxi_zones.zip,1022574,2026-11-07
+data/raw/tlc/yellow/yellow_tripdata_2024-10.parquet,64346071,2026-11-07
+data/raw/weather/open_meteo_2024-09-30_2024-11-01.csv,35797,2026-11-07
+data/raw/weather/open_meteo_2024-10-01_2024-10-31.csv,33595,2026-11-07

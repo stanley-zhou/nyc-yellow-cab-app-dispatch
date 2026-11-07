@@ -1,0 +1,24 @@
+# Project figure style (PLAN §7). Loaded by taxi_shock.viz.style.use_style().
+figure.facecolor: white
+axes.facecolor: white
+savefig.facecolor: white
+figure.figsize: 7, 4.2
+figure.dpi: 100
+savefig.dpi: 200
+savefig.bbox: tight
+font.size: 10
+axes.titlesize: 11
+axes.titleweight: bold
+axes.titlelocation: left
+axes.labelsize: 10
+xtick.labelsize: 9
+ytick.labelsize: 9
+legend.fontsize: 9
+legend.frameon: False
+axes.spines.top: False
+axes.spines.right: False
+axes.grid: True
+grid.color: "#E3E5E8"
+grid.linewidth: 0.6
+axes.axisbelow: True
+lines.linewidth: 1.4

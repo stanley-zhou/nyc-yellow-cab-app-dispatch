@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "taxi-shock"
+version = "0.1.0"
+description = "Forecasting under a policy shock: NYC yellow-taxi demand before and after Manhattan congestion pricing"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+authors = [{ name = "Yuxiang (Stanley) Zhou" }]
+# Exact pins, resolved with `uv pip compile` for Python 3.12 on 2026-11-07 (see DECISIONS.md).
+dependencies = [
+    "duckdb==2.0.0",
+    "dbt-core==1.12.6",
+    "dbt-duckdb==1.11.1",
+    "pandas==3.1.1",
+    "numpy==2.5.4",
+    "pyarrow==26.0.1",
+    "lightgbm==4.7.0",
+    "statsforecast==2.0.1",
+    "pyfixest==0.60.0",
+    "geopandas==1.2.0",
+    "shapely==2.2.0",
+    "matplotlib==3.11.2",
+    "plotly==7.1.0",
+    "holidays==0.108",
+    "requests==2.34.2",
+    "pyyaml==6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.2.0",
+    "ruff==0.17.4",
+]
+# Chronos runs only on Colab (scripts/05_chronos_colab.py); never installed locally.
+chronos = [
+    "torch==2.15.0",
+    "chronos-forecasting==2.3.2",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+taxi_shock = ["viz/*.mplstyle"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["notebooks", "dbt/dbt_packages", "dbt/target"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "SIM", "PD", "NPY"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["N999"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "warehouse: needs a built DuckDB warehouse (skipped when absent)",
+]

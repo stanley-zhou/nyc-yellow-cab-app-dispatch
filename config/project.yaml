@@ -1,0 +1,81 @@
+# Single source of truth for dates, thresholds and paths (CLAUDE.md: no hard-coded values in code).
+# Values under the PLAN §4 keys are copied verbatim from PLAN.md; additional keys are documented in DECISIONS.md.
+seed: 20260107
+timezone: America/New_York
+
+data:
+  yellow_months: ["2019-01", "2026-09"]      # downloaded; EDA uses all
+  model_start: "2022-01-01"                  # post-COVID recovery; see DECISIONS
+  policy_date: "2025-01-05"
+  pre_period:  ["2024-01-06", "2025-01-04"]  # 52 weeks
+  post_period: ["2025-01-05", "2026-09-30"]
+  event_study_window: ["2023-01-01", "2026-09-30"]
+
+zones:
+  valid_ids: [1, 263]                         # 264/265 = unknown -> drop
+  min_mean_hourly_pickups_2024: 1.0           # forecast-modeled zones threshold; see Phase 2
+
+forecast:
+  horizon_hours: 24
+  origin: "00:00"                             # forecast issued at midnight for the next 24h
+  min_lag_hours: 24
+  quantiles: [0.1, 0.5, 0.9]
+  backtest:
+    pre_shock_test: ["2024-01-01", "2024-12-31"]
+    refit: monthly
+    windows: ["expanding", "sliding_24m"]
+
+causal:
+  outcome: "log1p_pickups"
+  unit: "zone_week"                           # primary; zone_day for heterogeneity
+  control: "manhattan_non_cbd"                # primary; outer_boroughs robustness
+  cluster_se: "zone"
+
+# ---- Additional keys (not in PLAN §4); each one has a DECISIONS.md line ----
+forecast_eval:
+  horizon_buckets: [[1, 6], [7, 12], [13, 18], [19, 24]]
+  interval: [0.1, 0.9]                        # the 80% interval = outer quantiles
+  mape_min_y: 10                              # MAPE (never primary) only on hours with y >= 10
+quality:                                      # PLAN Phase 1 filter rules, parameterised
+  straggler_days: 1                           # keep pickups in [month_start - 1d, month_end + 1d]
+  min_duration_minutes: 1
+  max_duration_hours: 3
+  max_trip_distance_miles: 100
+
+sources:
+  tlc_base_url: "https://d37ci6vzurychx.cloudfront.net"
+  yellow_path: "trip-data/yellow_tripdata_{month}.parquet"
+  hvfhv_path: "trip-data/fhvhv_tripdata_{month}.parquet"   # Phase 6 only (optional)
+  hvfhv_months: ["2024-01", "2026-09"]                     # PLAN Phase 6 restriction
+  zone_lookup_path: "misc/taxi_zone_lookup.csv"
+  zone_shapefile_path: "misc/taxi_zones.zip"
+  weather_url: "https://archive-api.open-meteo.com/v1/archive"
+  weather_point: [40.7128, -74.006]           # one city-wide point (same as the old project)
+  weather_units: {temperature_unit: fahrenheit, wind_speed_unit: mph, precipitation_unit: inch}
+  weather_hourly: [temperature_2m, apparent_temperature, precipitation, rain, snowfall,
+                   weathercode, cloudcover, windspeed_10m, relativehumidity_2m]
+  weather_pad_days: 1                         # GMT request padded so local hours are covered
+  http_retries: 5
+  http_timeout_seconds: 120
+
+paths:                                        # relative to the repo root
+  raw_yellow: data/raw/tlc/yellow
+  raw_hvfhv: data/raw/tlc/hvfhv
+  raw_weather: data/raw/weather
+  raw_lookup: data/raw/lookup
+  manifest: data/raw/manifest.csv
+  warehouse: data/warehouse.duckdb
+  smoke_warehouse: data/smoke.duckdb
+  results: results
+  figures: reports/figures
+
+duckdb:
+  memory_limit: "5GB"
+  threads: 10
+
+smoke:
+  month: "2024-10"
+  backtest_origins: ["2024-10-15", "2024-10-31"]  # needs >= 7 days of history for lag_168
+  results_dir: results/smoke
+  figures_dir: reports/figures/smoke
+  max_runtime_minutes: 10

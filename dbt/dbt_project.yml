@@ -1,0 +1,34 @@
+name: taxi_shock
+version: "0.1.0"
+config-version: 2
+profile: taxi_shock
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+# Defaults so that `dbt run` / `dbt test` work when invoked directly from dbt/.
+# The pipeline (scripts/03_dbt.py) always overrides these with values read from
+# config/project.yaml; tests/test_config_sync.py fails if the two drift apart.
+vars:
+  yellow_glob: "../data/raw/tlc/yellow/yellow_tripdata_*.parquet"
+  weather_glob: "../data/raw/weather/open_meteo_*.csv"
+  zone_lookup_csv: "../data/raw/lookup/taxi_zone_lookup.csv"
+  timezone: "America/New_York"
+  zone_id_min: 1
+  zone_id_max: 263
+  straggler_days: 1
+  min_duration_minutes: 1
+  max_duration_hours: 3
+  max_trip_distance_miles: 100
+
+models:
+  taxi_shock:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table

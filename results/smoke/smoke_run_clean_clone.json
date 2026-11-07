@@ -1,0 +1,17 @@
+{
+  "month": "2024-10",
+  "finished_utc": "2026-11-07T20:41:16+00:00",
+  "stage_seconds": {
+    "download": 1.9,
+    "weather": 1.2,
+    "dbt_build": 11.4,
+    "backtest": 1.4,
+    "figure": 2.5
+  },
+  "total_seconds": 18.5,
+  "limit_seconds": 600.0,
+  "passed": true,
+  "python": "3.12.14",
+  "machine": "x86_64",
+  "context": "clean export of the staged git tree (git checkout-index) into an empty directory, then make setup && make smoke; uv package cache was warm, so setup time is not representative of a first-ever install"
+}

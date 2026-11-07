@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: stg_zones
+    columns:
+      - name: zone_id
+        data_tests: [unique, not_null]
+      - name: borough
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island", "EWR"]
+
+  - name: stg_weather
+    columns:
+      - name: hour_ts
+        data_tests: [unique, not_null]
+
+  - name: int_hour_grid
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, hour_ts]
+
+  - name: fct_hourly_zone_demand
+    description: Complete zone x hour grid of yellow-taxi pickups with explicit zeros.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, hour_ts]
+    columns:
+      - name: zone_id
+        data_tests: [not_null]
+      - name: hour_ts
+        data_tests: [not_null]
+      - name: pickups
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
