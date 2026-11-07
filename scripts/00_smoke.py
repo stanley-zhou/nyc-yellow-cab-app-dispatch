@@ -1,6 +1,7 @@
 """End-to-end smoke pipeline on one sample month, timed stage by stage.
 
-download month -> lookups -> weather -> dbt build (run + test) -> seasonal-naive backtest ->
+download month -> lookups -> weather -> dbt build (run + test; uses the committed
+config/zones_cbd.csv) -> data-quality results -> seasonal-naive backtest ->
 placeholder figure. Writes results/smoke/smoke_run.json and fails if the total runtime exceeds
 smoke.max_runtime_minutes.
 """
@@ -29,6 +30,7 @@ def main() -> None:
         ("weather", [py, "scripts/02_weather.py", "--start", month.start_time.date().isoformat(),
                      "--end", month.end_time.date().isoformat()]),
         ("dbt_build", [py, "scripts/03_dbt.py", "build", "--smoke"]),
+        ("data_results", [py, "scripts/03b_data_results.py", "--smoke"]),
         ("backtest", [py, "scripts/04_backtest.py", "--smoke"]),
         ("figure", [py, "scripts/09_figures.py", "--smoke"]),
     ]

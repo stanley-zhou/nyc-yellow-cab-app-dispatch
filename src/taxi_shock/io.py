@@ -8,7 +8,7 @@ from typing import Any
 import duckdb
 import pandas as pd
 
-from taxi_shock.config import load_config
+from taxi_shock.config import load_config, path
 
 
 def connect(db_path: Path | str, read_only: bool = True, cfg: dict[str, Any] | None = None):
@@ -18,6 +18,10 @@ def connect(db_path: Path | str, read_only: bool = True, cfg: dict[str, Any] | N
     con.execute(f"SET memory_limit='{cfg['duckdb']['memory_limit']}'")
     con.execute(f"SET threads={int(cfg['duckdb']['threads'])}")
     con.execute(f"SET TimeZone='{cfg['timezone']}'")
+    tmp = path("duckdb_tmp", cfg)
+    tmp.mkdir(parents=True, exist_ok=True)
+    con.execute(f"SET temp_directory='{tmp.as_posix()}'")
+    con.execute(f"SET max_temp_directory_size='{cfg['duckdb']['max_temp_directory_size']}'")
     return con
 
 

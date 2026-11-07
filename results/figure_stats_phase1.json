@@ -1,0 +1,14 @@
+{
+  "source_files": [
+    "results/zone_summary.csv",
+    "results/citywide_yearly.csv"
+  ],
+  "share_2024_pickups_by_zone_group": {
+    "cbd": 0.5878,
+    "manhattan_non_cbd": 0.3041,
+    "airports": 0.078,
+    "other": 0.03
+  },
+  "n_cbd_zones": 38,
+  "mean_daily_pickups_2024_vs_2019": 0.4816
+}

@@ -9,8 +9,18 @@
   - DECISIONS.md
 1:
   - results/data_quality.json
+  - results/data_quality_monthly.csv
+  - results/duplicates_probe.json
+  - results/negative_fare_probe.json
+  - results/record_format_probe.csv
   - results/zone_summary.csv
+  - results/cbd_validation.json
+  - results/citywide_weekly.csv
+  - results/citywide_yearly.csv
+  - results/figure_stats_phase1.json
+  - results/machine_resources.json
   - config/zones_cbd.csv
+  - dbt/seeds/holidays_ny.csv
   - reports/figures/F1_demand_map.png
   - reports/figures/F1b_citywide_weekly.png
 2:

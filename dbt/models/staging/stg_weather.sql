@@ -1,14 +1,13 @@
--- Open-Meteo returns unix seconds; convert to local wall-clock time. The repeated fall-back
--- hour is merged by flooring (mean of the two readings; max weather code). Overlapping files
--- (e.g. a smoke chunk plus a full-year chunk) contain identical rows and are de-duplicated.
-with raw as (
-    select distinct * from {{ source('raw', 'weather') }}
-),
-local as (
+-- Hourly weather on local wall-clock hours. Open-Meteo returns GMT unix seconds (DECISIONS.md:
+-- the API's America/New_York mode applies a fixed EST offset); int_weather_selected keeps one
+-- source file per unix hour. The repeated fall-back local hour receives two different physical
+-- hours and is merged by flooring: mean of the two readings, max weather code (the same rule as
+-- the demand grid). No averaging across files happens here.
+with local as (
     select
         date_trunc('hour', timezone('{{ var("timezone") }}', to_timestamp(unix_time))) as hour_ts,
         *
-    from raw
+    from {{ ref('int_weather_selected') }}
 )
 select
     hour_ts,
@@ -20,6 +19,7 @@ select
     max(weathercode)          as weather_code,
     avg(cloudcover)           as cloud_cover_pct,
     avg(windspeed_10m)        as wind_mph,
-    avg(relativehumidity_2m)  as rel_humidity_pct
+    avg(relativehumidity_2m)  as rel_humidity_pct,
+    count(*)                  as n_source_hours
 from local
 group by hour_ts

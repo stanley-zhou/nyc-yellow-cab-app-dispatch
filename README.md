@@ -1,6 +1,6 @@
 # Forecasting Under a Policy Shock: NYC Yellow-Taxi Demand and Congestion Pricing
 
-**Status: Phase 0 (skeleton and smoke pipeline).** No findings yet. This README is rewritten in
+**Status: Phase 1 (data foundation).** No forecasting or causal findings yet. This README is rewritten in
 Phase 7 with the summary, figures and limitations; until then it only explains how to run the code.
 
 Scope (honest wording, PLAN §0.6): NYC TLC **yellow taxi** pickups at the TLC-zone level,
@@ -13,7 +13,8 @@ specification is [`PLAN.md`](PLAN.md); every judgement call is logged in
 ```bash
 make setup        # uv: Python 3.12 venv in .venv, installs the package with [dev] extras
 make smoke        # one sample month end to end: download -> dbt build+test -> backtest -> figure
-make verify PHASE=0
+make data && make dbt && make figures   # full data
+make verify PHASE=1
 ```
 
 The system Python 3.14 is not supported (missing wheels); `make setup` uses `uv` to install 3.12.
@@ -25,9 +26,11 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 |---|---|
 | `smoke` | sample month (`smoke.month` in `config/project.yaml`) through the whole pipeline; writes `results/smoke/` and `reports/figures/smoke/`; fails if over `smoke.max_runtime_minutes` |
 | `data` | full raw download (yellow months in config, zone lookups, weather) |
-| `dbt` | build and test the full DuckDB warehouse |
+| `dbt` | build and test the full DuckDB warehouse in two stages around the CBD mapping (`scripts/03a_cbd_map.py`), then write the Phase-1 result files (`scripts/03b_data_results.py`) |
+| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b), built from `results/` only |
+| `probes` | one-off evidence scripts behind DECISIONS.md entries (duplicates, Open-Meteo offset) |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
-| `forecast`, `causal`, `adapt`, `figures`, `report`, `all` | added in their phases; they fail with a message until then |
+| `forecast`, `causal`, `adapt`, `report`, `all` | added in their phases; they fail with a message until then |
 
 ## Layout
 
@@ -39,4 +42,5 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 
 TLC trip records and the zone lookup/shapefile are public (NYC TLC); weather is from the
 Open-Meteo archive API (one city-wide point). Raw files go to `data/raw/` (git-ignored);
-`data/raw/manifest.csv` records each file's size and download date.
+`data/raw/manifest.csv` records each file's size and download date. The 60th Street geometry for
+the CBD rule comes from OpenStreetMap (ODbL) via the Overpass API.

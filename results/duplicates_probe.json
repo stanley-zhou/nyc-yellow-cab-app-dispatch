@@ -1,0 +1,798 @@
+{
+  "generated_utc": "2026-11-07T23:08:41+00:00",
+  "files": 93,
+  "raw_columns": [
+    "VendorID",
+    "tpep_pickup_datetime",
+    "tpep_dropoff_datetime",
+    "passenger_count",
+    "trip_distance",
+    "RatecodeID",
+    "store_and_fwd_flag",
+    "PULocationID",
+    "DOLocationID",
+    "payment_type",
+    "fare_amount",
+    "extra",
+    "mta_tax",
+    "tip_amount",
+    "tolls_amount",
+    "improvement_surcharge",
+    "total_amount",
+    "congestion_surcharge",
+    "airport_fee",
+    "cbd_congestion_fee",
+    "request_source"
+  ],
+  "projected_columns": [
+    "tpep_pickup_datetime",
+    "tpep_dropoff_datetime",
+    "PULocationID",
+    "DOLocationID",
+    "trip_distance",
+    "fare_amount",
+    "total_amount",
+    "passenger_count",
+    "payment_type",
+    "cbd_congestion_fee"
+  ],
+  "totals": {
+    "rows": 341589889,
+    "full_within_file": 13015,
+    "projected_within_file": 13016,
+    "full_cross_file_rows": 0,
+    "full_cross_file_groups": 0,
+    "out_of_month_rows_checked_cross_file": 11309
+  },
+  "hash_agrees_everywhere": true,
+  "months_where_projected_differs_from_full": [
+    "2019-06"
+  ],
+  "per_file": [
+    {
+      "month": "2019-01",
+      "rows": 7696617,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-02",
+      "rows": 7049370,
+      "full_within_file": 45,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 45,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-03",
+      "rows": 7866620,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-04",
+      "rows": 7475949,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-05",
+      "rows": 7598445,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-06",
+      "rows": 6971560,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 2,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-07",
+      "rows": 6310419,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-08",
+      "rows": 6073357,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-09",
+      "rows": 6567788,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-10",
+      "rows": 7213891,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-11",
+      "rows": 6878111,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2019-12",
+      "rows": 6896317,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-01",
+      "rows": 6405008,
+      "full_within_file": 12949,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 12949,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-02",
+      "rows": 6299367,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-03",
+      "rows": 3007687,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-04",
+      "rows": 238073,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-05",
+      "rows": 348415,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-06",
+      "rows": 549797,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-07",
+      "rows": 800412,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-08",
+      "rows": 1007286,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-09",
+      "rows": 1341017,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-10",
+      "rows": 1681132,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-11",
+      "rows": 1509000,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2020-12",
+      "rows": 1461898,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-01",
+      "rows": 1369769,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-02",
+      "rows": 1371709,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-03",
+      "rows": 1925152,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-04",
+      "rows": 2171187,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-05",
+      "rows": 2507109,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-06",
+      "rows": 2834264,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-07",
+      "rows": 2821746,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-08",
+      "rows": 2788757,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-09",
+      "rows": 2963793,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-10",
+      "rows": 3463504,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-11",
+      "rows": 3472949,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2021-12",
+      "rows": 3214369,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-01",
+      "rows": 2463931,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-02",
+      "rows": 2979431,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-03",
+      "rows": 3627882,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-04",
+      "rows": 3599920,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-05",
+      "rows": 3588295,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-06",
+      "rows": 3558124,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-07",
+      "rows": 3174394,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-08",
+      "rows": 3152677,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-09",
+      "rows": 3183767,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-10",
+      "rows": 3675411,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-11",
+      "rows": 3252717,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2022-12",
+      "rows": 3399549,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-01",
+      "rows": 3066766,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-02",
+      "rows": 2913955,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-03",
+      "rows": 3403766,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-04",
+      "rows": 3288250,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-05",
+      "rows": 3513649,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-06",
+      "rows": 3307234,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-07",
+      "rows": 2907108,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-08",
+      "rows": 2824209,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-09",
+      "rows": 2846722,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-10",
+      "rows": 3522285,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-11",
+      "rows": 3339715,
+      "full_within_file": 2,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 2,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2023-12",
+      "rows": 3376567,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-01",
+      "rows": 2964624,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-02",
+      "rows": 3007526,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-03",
+      "rows": 3582628,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-04",
+      "rows": 3514289,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-05",
+      "rows": 3723833,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-06",
+      "rows": 3539193,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-07",
+      "rows": 3076903,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-08",
+      "rows": 2979183,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-09",
+      "rows": 3633030,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-10",
+      "rows": 3833771,
+      "full_within_file": 2,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 2,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-11",
+      "rows": 3646369,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2024-12",
+      "rows": 3668371,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-01",
+      "rows": 3475226,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-02",
+      "rows": 3577543,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-03",
+      "rows": 4145257,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-04",
+      "rows": 3970553,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-05",
+      "rows": 4591845,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-06",
+      "rows": 4322960,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-07",
+      "rows": 3898963,
+      "full_within_file": 1,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 1,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-08",
+      "rows": 3574091,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-09",
+      "rows": 4251015,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-10",
+      "rows": 4428699,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-11",
+      "rows": 4181444,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2025-12",
+      "rows": 4305006,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-01",
+      "rows": 3724889,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-02",
+      "rows": 3399866,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-03",
+      "rows": 3952451,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-04",
+      "rows": 3831240,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-05",
+      "rows": 4090836,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-06",
+      "rows": 3837248,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-07",
+      "rows": 3530109,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-08",
+      "rows": 3336716,
+      "full_within_file": 7,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 7,
+      "projected_within_file_hash_agrees": true
+    },
+    {
+      "month": "2026-09",
+      "rows": 3876044,
+      "full_within_file": 0,
+      "full_within_file_hash_agrees": true,
+      "projected_within_file": 0,
+      "projected_within_file_hash_agrees": true
+    }
+  ],
+  "runtime_seconds": 267.2
+}

@@ -54,10 +54,12 @@ def policy_line(ax: Axes, label: bool = True) -> None:
         return
     ax.axvline(x, color=PALETTE["text"], linestyle="--", linewidth=1.0, zorder=3)
     if label:
+        # label on the side of the line with more room, so it never runs past the axes
+        right = (x - lo) / (hi - lo) < 0.6
         ax.annotate(f"Congestion pricing starts {date.date().isoformat()}", xy=(x, 1.0),
-                    xycoords=("data", "axes fraction"), xytext=(4, -4),
-                    textcoords="offset points", ha="left", va="top", fontsize=8.5,
-                    color=PALETTE["text"])
+                    xycoords=("data", "axes fraction"), xytext=(4 if right else -4, -4),
+                    textcoords="offset points", ha="left" if right else "right", va="top",
+                    fontsize=8.5, color=PALETTE["text"])
 
 
 def direct_label(ax: Axes, x: object, y: float, text: str, color: str) -> None:

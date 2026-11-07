@@ -12,7 +12,12 @@ import argparse
 import logging
 
 from taxi_shock.config import load_config
-from taxi_shock.download import download_lookups, download_yellow, month_range
+from taxi_shock.download import (
+    download_lookups,
+    download_osm_60th_street,
+    download_yellow,
+    month_range,
+)
 
 
 def parse_months(spec: str) -> list[str]:
@@ -39,6 +44,7 @@ def main() -> None:
     months = month_range(*cfg["data"]["yellow_months"]) if args.all else parse_months(args.months)
     if not args.skip_lookups:
         download_lookups(cfg)
+        download_osm_60th_street(cfg)
     files = download_yellow(months, cfg)
     logging.info("yellow files on disk: %d", len(files))
 

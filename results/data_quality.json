@@ -1,0 +1,108 @@
+{
+  "generated_utc": "2026-11-07T23:22:12+00:00",
+  "source": "fct_data_quality_monthly (dbt), per month in results/data_quality_monthly.csv",
+  "span": {
+    "first_hour": "2019-01-01 00:00:00",
+    "last_hour": "2026-09-30 23:00:00",
+    "n_hours": 67912,
+    "n_zones": 263,
+    "n_grid_rows": 17860856,
+    "n_months": 93
+  },
+  "rules": {
+    "order": [
+      "duplicates",
+      "pickup_window",
+      "duration",
+      "distance",
+      "fare",
+      "pu_zone"
+    ],
+    "pickup_window": "source_month - 1 day <= pickup_ts < source_month + 1 month + 1 day (half-open)",
+    "duration": "1 min <= dropoff - pickup <= 3 h; not tested when dropoff = pickup timestamp and trip_distance > 0 (missing dropoff time)",
+    "distance": "0 < trip_distance <= 100 miles; lower bound not tested for Flex Fare trips (payment_type 0)",
+    "fare": "fare_amount > 0, or payment_type = 0 (Flex Fare trip, TLC data dictionary 2025-03-18)",
+    "pu_zone": "PULocationID in [1, 263]",
+    "duplicates": "rows of the same file identical in every raw column; one copy kept",
+    "null_handling": "a NULL in a tested column fails that rule"
+  },
+  "totals": {
+    "raw_rows": 341589889,
+    "duplicate_rows": 13015,
+    "dropped_first_failing_rule": {
+      "pickup_window": 4747,
+      "duration": 4395645,
+      "distance": 1316052,
+      "fare": 2226934,
+      "pu_zone": 2197025
+    },
+    "failing_each_rule_independently": {
+      "pickup_window": 4747,
+      "duration": 4396797,
+      "distance": 3758338,
+      "fare": 2739674,
+      "pu_zone": 2684685
+    },
+    "valid_rows": 331436471,
+    "rows_removed": 10153418,
+    "share_removed": 0.029724,
+    "share_removed_by_rule": {
+      "pickup_window": 1.4e-05,
+      "duration": 0.012868,
+      "distance": 0.003853,
+      "fare": 0.006519,
+      "pu_zone": 0.006432
+    },
+    "share_duplicates": 3.8e-05,
+    "valid_stragglers_kept": 6119,
+    "valid_only_by_format_exemption": 5249484,
+    "exemptions_used": {
+      "fare_flex": 2194726,
+      "distance_flex_zero": 2306077,
+      "duration_missing_dropoff_time": 943390
+    },
+    "failing_each_plan_literal_rule": {
+      "duration": 5344380,
+      "distance": 6130372,
+      "fare": 4941133
+    },
+    "share_valid_only_by_format_exemption": 0.015368,
+    "note_format_exemptions": "PLAN's literal rules would additionally drop valid_only_by_format_exemption rows (per month in data_quality_monthly.csv; per zone-hour in fct_hourly_zone_demand.n_format_exempt; per zone-day/week in the panels' pickups_format_exempt)"
+  },
+  "per_month_share_removed": {
+    "min": 0.016967,
+    "median": 0.032823,
+    "max": 0.04909,
+    "month_of_max": "2020-07",
+    "month_of_min": "2026-09"
+  },
+  "grid_join": {
+    "pickups_in_grid": 331436185,
+    "pickup_dropped_edge_straggler": 286,
+    "pickup_dropped_spring_forward_gap": 0,
+    "dropoff_dropped_edge_straggler": 1641,
+    "dropoff_dropped_spring_forward_gap": 3,
+    "note": "edge stragglers fall outside the downloaded calendar span; spring-forward trips are stamped in the non-existent local 02:00 hour"
+  },
+  "hourly_panel": {
+    "n_rows": 17860856,
+    "n_zero_pickup_rows": 9895526,
+    "share_zero_pickup_rows": 0.554034
+  },
+  "weather": {
+    "n_unix_hours_selected": 67968,
+    "n_unix_hours_in_several_files": 1128,
+    "n_overlapping_hours_with_differing_values": 0,
+    "n_local_hours_in_span": 67912,
+    "n_local_hours_merging_two_readings": 7
+  },
+  "distance_terciles": {
+    "c1_miles": 1.27,
+    "c2_miles": 2.6,
+    "n_trips": 39741159,
+    "period": [
+      "2024-01-06",
+      "2025-01-04"
+    ]
+  }
+}

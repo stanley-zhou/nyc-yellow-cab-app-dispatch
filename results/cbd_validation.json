@@ -1,0 +1,518 @@
+{
+  "sixtieth_street_line": {
+    "source": "OpenStreetMap via Overpass API (ODbL)",
+    "retrieved": "2026-11-07",
+    "query": "[out:json][timeout:60];area[\"name\"=\"Manhattan\"][\"boundary\"=\"administrative\"]->.m;(way[\"highway\"][\"name\"~\"^(West 60th Street|East 60th Street)$\"](area.m););out geom;",
+    "n_ways": 24,
+    "west_endpoint": {
+      "lon": -73.9910498,
+      "lat": 40.7726974,
+      "osm_way_id": 474304539
+    },
+    "east_endpoint": {
+      "lon": -73.9586021,
+      "lat": 40.7590801,
+      "osm_way_id": 46211831
+    }
+  },
+  "fee_window": [
+    "2025-02-01",
+    "2025-06-30"
+  ],
+  "thresholds": {
+    "fee_share_cbd_min": 0.8,
+    "fee_share_not_cbd_max": 0.2,
+    "fee_min_trips": 100,
+    "agreement_min": 0.95
+  },
+  "n_zones": 263,
+  "n_manhattan": 69,
+  "n_cbd_final": 38,
+  "n_cbd_geometric": 41,
+  "manhattan_fee_labels": {
+    "cbd": 38,
+    "ambiguous": 27,
+    "insufficient": 3,
+    "not_cbd": 1
+  },
+  "n_manhattan_decisive": 39,
+  "n_manhattan_decisive_agree": 39,
+  "agreement_share_of_decisive": 1.0,
+  "agreement_share_of_all_manhattan": 0.5652,
+  "disagreements": [],
+  "final_mapping_agrees_with_every_decisive_fee_label": true,
+  "intra_zone_signal": {
+    "manhattan_labels": {
+      "cbd": 37,
+      "not_cbd": 19,
+      "insufficient": 9,
+      "ambiguous": 4
+    },
+    "n_decisive": 56,
+    "n_decisive_agree": 56,
+    "agreement_share_of_decisive": 1.0,
+    "disagreements": []
+  },
+  "manual_overrides_applied": [
+    103,
+    104,
+    105
+  ],
+  "non_manhattan_with_cbd_fee_label": [],
+  "cbd_zones": [
+    {
+      "zone_id": 4,
+      "zone_name": "Alphabet City"
+    },
+    {
+      "zone_id": 12,
+      "zone_name": "Battery Park"
+    },
+    {
+      "zone_id": 13,
+      "zone_name": "Battery Park City"
+    },
+    {
+      "zone_id": 45,
+      "zone_name": "Chinatown"
+    },
+    {
+      "zone_id": 48,
+      "zone_name": "Clinton East"
+    },
+    {
+      "zone_id": 50,
+      "zone_name": "Clinton West"
+    },
+    {
+      "zone_id": 68,
+      "zone_name": "East Chelsea"
+    },
+    {
+      "zone_id": 79,
+      "zone_name": "East Village"
+    },
+    {
+      "zone_id": 87,
+      "zone_name": "Financial District North"
+    },
+    {
+      "zone_id": 88,
+      "zone_name": "Financial District South"
+    },
+    {
+      "zone_id": 90,
+      "zone_name": "Flatiron"
+    },
+    {
+      "zone_id": 100,
+      "zone_name": "Garment District"
+    },
+    {
+      "zone_id": 107,
+      "zone_name": "Gramercy"
+    },
+    {
+      "zone_id": 113,
+      "zone_name": "Greenwich Village North"
+    },
+    {
+      "zone_id": 114,
+      "zone_name": "Greenwich Village South"
+    },
+    {
+      "zone_id": 125,
+      "zone_name": "Hudson Sq"
+    },
+    {
+      "zone_id": 137,
+      "zone_name": "Kips Bay"
+    },
+    {
+      "zone_id": 144,
+      "zone_name": "Little Italy/NoLiTa"
+    },
+    {
+      "zone_id": 148,
+      "zone_name": "Lower East Side"
+    },
+    {
+      "zone_id": 158,
+      "zone_name": "Meatpacking/West Village West"
+    },
+    {
+      "zone_id": 161,
+      "zone_name": "Midtown Center"
+    },
+    {
+      "zone_id": 162,
+      "zone_name": "Midtown East"
+    },
+    {
+      "zone_id": 163,
+      "zone_name": "Midtown North"
+    },
+    {
+      "zone_id": 164,
+      "zone_name": "Midtown South"
+    },
+    {
+      "zone_id": 170,
+      "zone_name": "Murray Hill"
+    },
+    {
+      "zone_id": 186,
+      "zone_name": "Penn Station/Madison Sq West"
+    },
+    {
+      "zone_id": 209,
+      "zone_name": "Seaport"
+    },
+    {
+      "zone_id": 211,
+      "zone_name": "SoHo"
+    },
+    {
+      "zone_id": 224,
+      "zone_name": "Stuy Town/Peter Cooper Village"
+    },
+    {
+      "zone_id": 229,
+      "zone_name": "Sutton Place/Turtle Bay North"
+    },
+    {
+      "zone_id": 230,
+      "zone_name": "Times Sq/Theatre District"
+    },
+    {
+      "zone_id": 231,
+      "zone_name": "TriBeCa/Civic Center"
+    },
+    {
+      "zone_id": 232,
+      "zone_name": "Two Bridges/Seward Park"
+    },
+    {
+      "zone_id": 233,
+      "zone_name": "UN/Turtle Bay South"
+    },
+    {
+      "zone_id": 234,
+      "zone_name": "Union Sq"
+    },
+    {
+      "zone_id": 246,
+      "zone_name": "West Chelsea/Hudson Yards"
+    },
+    {
+      "zone_id": 249,
+      "zone_name": "West Village"
+    },
+    {
+      "zone_id": 261,
+      "zone_name": "World Trade Center"
+    }
+  ],
+  "ambiguous_or_insufficient_manhattan": [
+    {
+      "zone_id": 24,
+      "zone_name": "Bloomingdale",
+      "fee_label": "ambiguous",
+      "fee_share": 0.2639150816315534,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.011049723756906077,
+      "n_trips": 55677,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 41,
+      "zone_name": "Central Harlem",
+      "fee_label": "ambiguous",
+      "fee_share": 0.23672528887533462,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.003678857390175287,
+      "n_trips": 88533,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 42,
+      "zone_name": "Central Harlem North",
+      "fee_label": "ambiguous",
+      "fee_share": 0.2631864098710196,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.0012303149606299212,
+      "n_trips": 57218,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 43,
+      "zone_name": "Central Park",
+      "fee_label": "ambiguous",
+      "fee_share": 0.6173921599794122,
+      "intra_fee_label": "ambiguous",
+      "intra_fee_share": 0.3627480608441624,
+      "n_trips": 264234,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 74,
+      "zone_name": "East Harlem North",
+      "fee_label": "ambiguous",
+      "fee_share": 0.24066217236263307,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.003864734299516908,
+      "n_trips": 76838,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 75,
+      "zone_name": "East Harlem South",
+      "fee_label": "ambiguous",
+      "fee_share": 0.2649221408325768,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.004004004004004004,
+      "n_trips": 144299,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 103,
+      "zone_name": "Governor's Island/Ellis Island/Liberty Island",
+      "fee_label": "insufficient",
+      "fee_share": NaN,
+      "intra_fee_label": "insufficient",
+      "intra_fee_share": NaN,
+      "n_trips": 0,
+      "geometric_is_cbd": true
+    },
+    {
+      "zone_id": 104,
+      "zone_name": "Governor's Island/Ellis Island/Liberty Island",
+      "fee_label": "insufficient",
+      "fee_share": NaN,
+      "intra_fee_label": "insufficient",
+      "intra_fee_share": NaN,
+      "n_trips": 0,
+      "geometric_is_cbd": true
+    },
+    {
+      "zone_id": 105,
+      "zone_name": "Governor's Island/Ellis Island/Liberty Island",
+      "fee_label": "insufficient",
+      "fee_share": 1.0,
+      "intra_fee_label": "insufficient",
+      "intra_fee_share": NaN,
+      "n_trips": 1,
+      "geometric_is_cbd": true
+    },
+    {
+      "zone_id": 116,
+      "zone_name": "Hamilton Heights",
+      "fee_label": "ambiguous",
+      "fee_share": 0.2919600546170116,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.002577319587628866,
+      "n_trips": 37351,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 120,
+      "zone_name": "Highbridge Park",
+      "fee_label": "ambiguous",
+      "fee_share": 0.3002832861189802,
+      "intra_fee_label": "insufficient",
+      "intra_fee_share": 0.0,
+      "n_trips": 353,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 127,
+      "zone_name": "Inwood",
+      "fee_label": "ambiguous",
+      "fee_share": 0.24304141208418195,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.0,
+      "n_trips": 7365,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 128,
+      "zone_name": "Inwood Hill Park",
+      "fee_label": "ambiguous",
+      "fee_share": 0.31047619047619046,
+      "intra_fee_label": "insufficient",
+      "intra_fee_share": 0.0,
+      "n_trips": 525,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 140,
+      "zone_name": "Lenox Hill East",
+      "fee_label": "ambiguous",
+      "fee_share": 0.46871082212447673,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.14741579162689214,
+      "n_trips": 376488,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 141,
+      "zone_name": "Lenox Hill West",
+      "fee_label": "ambiguous",
+      "fee_share": 0.5064080860504265,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.1867440946600882,
+      "n_trips": 422357,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 142,
+      "zone_name": "Lincoln Square East",
+      "fee_label": "ambiguous",
+      "fee_share": 0.6103474598715266,
+      "intra_fee_label": "ambiguous",
+      "intra_fee_share": 0.4612303539553311,
+      "n_trips": 577707,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 143,
+      "zone_name": "Lincoln Square West",
+      "fee_label": "ambiguous",
+      "fee_share": 0.543963619971893,
+      "intra_fee_label": "ambiguous",
+      "intra_fee_share": 0.22039402468066682,
+      "n_trips": 226278,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 151,
+      "zone_name": "Manhattan Valley",
+      "fee_label": "ambiguous",
+      "fee_share": 0.23580111059517977,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.0068359375,
+      "n_trips": 157213,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 152,
+      "zone_name": "Manhattanville",
+      "fee_label": "ambiguous",
+      "fee_share": 0.29205953401387047,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.004357298474945534,
+      "n_trips": 25666,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 166,
+      "zone_name": "Morningside Heights",
+      "fee_label": "ambiguous",
+      "fee_share": 0.2651558496480012,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.002828854314002829,
+      "n_trips": 120597,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 194,
+      "zone_name": "Randalls Island",
+      "fee_label": "ambiguous",
+      "fee_share": 0.22077922077922077,
+      "intra_fee_label": "insufficient",
+      "intra_fee_share": 0.05555555555555555,
+      "n_trips": 1078,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 202,
+      "zone_name": "Roosevelt Island",
+      "fee_label": "ambiguous",
+      "fee_share": 0.28276955602536996,
+      "intra_fee_label": "insufficient",
+      "intra_fee_share": 0.0,
+      "n_trips": 1892,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 236,
+      "zone_name": "Upper East Side North",
+      "fee_label": "ambiguous",
+      "fee_share": 0.3478145601276621,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.00516633854565062,
+      "n_trips": 788331,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 237,
+      "zone_name": "Upper East Side South",
+      "fee_label": "ambiguous",
+      "fee_share": 0.5408401664908759,
+      "intra_fee_label": "ambiguous",
+      "intra_fee_share": 0.2661800193050193,
+      "n_trips": 881730,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 238,
+      "zone_name": "Upper West Side North",
+      "fee_label": "ambiguous",
+      "fee_share": 0.267620780939775,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.0043818809223859344,
+      "n_trips": 362640,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 239,
+      "zone_name": "Upper West Side South",
+      "fee_label": "ambiguous",
+      "fee_share": 0.3680770156626435,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.0070499309542844685,
+      "n_trips": 510961,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 243,
+      "zone_name": "Washington Heights North",
+      "fee_label": "ambiguous",
+      "fee_share": 0.3122384937238494,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.0020833333333333333,
+      "n_trips": 17208,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 244,
+      "zone_name": "Washington Heights South",
+      "fee_label": "ambiguous",
+      "fee_share": 0.3010324082097497,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.0027637033625057578,
+      "n_trips": 40391,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 262,
+      "zone_name": "Yorkville East",
+      "fee_label": "ambiguous",
+      "fee_share": 0.3832398396388098,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.014996288047512992,
+      "n_trips": 264902,
+      "geometric_is_cbd": false
+    },
+    {
+      "zone_id": 263,
+      "zone_name": "Yorkville West",
+      "fee_label": "ambiguous",
+      "fee_share": 0.35037339070296575,
+      "intra_fee_label": "not_cbd",
+      "intra_fee_share": 0.006593550071810941,
+      "n_trips": 355124,
+      "geometric_is_cbd": false
+    }
+  ]
+}

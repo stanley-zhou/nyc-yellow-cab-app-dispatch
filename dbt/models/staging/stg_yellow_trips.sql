@@ -1,5 +1,7 @@
--- Column projection only. `cbd_congestion_fee` exists only in 2025+ files; earlier files
--- yield NULL through union_by_name, and if no file on disk has it the column is a typed NULL.
+-- Column projection only (plus two derived keys). `cbd_congestion_fee` exists only in 2025+
+-- files; earlier files yield NULL through union_by_name, and if no file on disk has it the column
+-- is a typed NULL. `raw_row_hash` hashes every raw column (not just the projected ones) so that
+-- int_trips_flagged removes exact duplicates of the full raw row (DECISIONS.md, Phase 1).
 {%- set src = source('raw', 'yellow_trips') %}
 select
     tpep_pickup_datetime                           as pickup_ts,
@@ -13,5 +15,7 @@ select
     try_cast(payment_type as integer)              as payment_type,
     {{ column_or_null(src, 'cbd_congestion_fee', 'double') }} as cbd_congestion_fee,
     cast(strptime(regexp_extract(filename, 'yellow_tripdata_(\d{4}-\d{2})\.parquet', 1), '%Y-%m')
-         as date)                                  as source_month
+         as date)                                  as source_month,
+    hash(*columns(* exclude (filename)))           as raw_row_hash,
+    filename                                       as source_file
 from {{ src }}

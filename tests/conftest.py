@@ -27,3 +27,21 @@ def smoke_db():
     if not db.exists():
         pytest.skip("smoke warehouse not built (run `make smoke`)")
     return db
+
+
+REQUIRE_WAREHOUSE_ENV = "TAXI_SHOCK_REQUIRE_WAREHOUSE"
+
+
+@pytest.fixture
+def warehouse_db():
+    """The full warehouse. Skips when absent, except inside `make verify PHASE>=1`, which sets
+    TAXI_SHOCK_REQUIRE_WAREHOUSE=1 so a missing warehouse FAILS (PLAN amendment, Phase 1 item 3)."""
+    import os
+
+    db = path("warehouse", load_config())
+    if not db.exists():
+        msg = "full warehouse not built (run `make dbt`)"
+        if os.environ.get(REQUIRE_WAREHOUSE_ENV) == "1":
+            pytest.fail(msg)
+        pytest.skip(msg)
+    return db

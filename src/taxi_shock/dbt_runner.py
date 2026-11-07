@@ -31,6 +31,7 @@ def dbt_vars(cfg: dict[str, Any], yellow_glob: str | None = None) -> dict[str, A
         "yellow_glob": yellow_glob or rel(path("raw_yellow", cfg)) + "/yellow_tripdata_*.parquet",
         "weather_glob": rel(path("raw_weather", cfg)) + "/open_meteo_*.csv",
         "zone_lookup_csv": rel(path("raw_lookup", cfg)) + "/taxi_zone_lookup.csv",
+        "zones_cbd_csv": rel(path("zones_cbd", cfg)),
         "timezone": cfg["timezone"],
         "zone_id_min": int(cfg["zones"]["valid_ids"][0]),
         "zone_id_max": int(cfg["zones"]["valid_ids"][1]),
@@ -38,6 +39,14 @@ def dbt_vars(cfg: dict[str, Any], yellow_glob: str | None = None) -> dict[str, A
         "min_duration_minutes": int(q["min_duration_minutes"]),
         "max_duration_hours": int(q["max_duration_hours"]),
         "max_trip_distance_miles": int(q["max_trip_distance_miles"]),
+        "flex_fare_payment_type": int(q["flex_fare_payment_type"]),
+        "max_monthly_removal_ratio": float(q["max_monthly_removal_ratio"]),
+        "weather_pad_days": int(cfg["sources"]["weather_pad_days"]),
+        "policy_date": str(cfg["data"]["policy_date"]),
+        "cbd_fee_window": [str(d) for d in cfg["cbd"]["fee_window"]],
+        "week_start": str(cfg["panel"]["week_start"]),
+        "hour_bands": [[int(lo), int(hi)] for lo, hi in cfg["panel"]["hour_bands"]],
+        "distance_tercile_period": [str(d) for d in cfg["panel"]["distance_tercile_period"]],
     }
 
 
@@ -48,6 +57,7 @@ def dbt_env(cfg: dict[str, Any], warehouse: Path) -> dict[str, str]:
         TAXI_SHOCK_DUCKDB_MEMORY=str(cfg["duckdb"]["memory_limit"]),
         TAXI_SHOCK_DUCKDB_THREADS=str(cfg["duckdb"]["threads"]),
         TAXI_SHOCK_TZ=str(cfg["timezone"]),
+        TAXI_SHOCK_DUCKDB_MAX_TMP=str(cfg["duckdb"]["max_temp_directory_size"]),
         DBT_PROFILES_DIR=str(repo_root() / "dbt"),
         DO_NOT_TRACK="1",
     )

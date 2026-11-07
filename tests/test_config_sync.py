@@ -7,7 +7,7 @@ import yaml
 from taxi_shock.config import load_config, repo_root
 from taxi_shock.dbt_runner import dbt_vars
 
-PATH_VARS = {"yellow_glob", "weather_glob", "zone_lookup_csv"}
+PATH_VARS = {"yellow_glob", "weather_glob", "zone_lookup_csv", "zones_cbd_csv"}
 
 
 def test_dbt_defaults_match_config():

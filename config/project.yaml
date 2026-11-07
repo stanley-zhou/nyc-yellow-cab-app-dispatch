@@ -41,9 +41,32 @@ quality:                                      # PLAN Phase 1 filter rules, param
   min_duration_minutes: 1
   max_duration_hours: 3
   max_trip_distance_miles: 100
+  flex_fare_payment_type: 0                   # TLC dictionary 2025-03-18: 0 = Flex Fare trip; DECISIONS
+  max_monthly_removal_ratio: 2.0              # dbt test: a month removing > 2x the median share fails
+
+cbd:                                          # PLAN Phase 1 is_cbd derivation (two-step)
+  street_names: ["West 60th Street", "East 60th Street"]   # OSM names of 60th St in Manhattan
+  fee_window: ["2025-02-01", "2025-06-30"]    # pickups used for the fee-based validation
+  fee_share_cbd_min: 0.8                      # share of trips with cbd_congestion_fee > 0
+  fee_share_not_cbd_max: 0.2
+  fee_min_trips: 100                          # fewer valid pickups in the window -> "insufficient"
+  agreement_min: 0.95                         # tests/test_cbd_map.py
+  manual_overrides:                           # PLAN: "resolve manually"; each one in DECISIONS.md
+    103: {is_cbd: false, reason: "harbour island (Governor's/Ellis/Liberty), no road access, not in the Congestion Relief Zone"}
+    104: {is_cbd: false, reason: "harbour island (Governor's/Ellis/Liberty), no road access, not in the Congestion Relief Zone"}
+    105: {is_cbd: false, reason: "harbour island (Governor's/Ellis/Liberty), no road access, not in the Congestion Relief Zone"}
+
+panel:
+  week_start: sunday                          # sunday (policy-aligned) | monday (ISO); DECISIONS
+  hour_bands: [[0, 6], [6, 10], [10, 16], [16, 20], [20, 24]]   # PLAN Phase 1, [lo, hi)
+  distance_tercile_period: ["2024-01-06", "2025-01-04"]       # = data.pre_period; DECISIONS
+
+annotations:
+  covid_ny_pause: "2020-03-22"                # NY State on PAUSE (Executive Order 202.8) effective
 
 sources:
   tlc_base_url: "https://d37ci6vzurychx.cloudfront.net"
+  osm_overpass_url: "https://overpass-api.de/api/interpreter"   # 60th St geometry (ODbL)
   yellow_path: "trip-data/yellow_tripdata_{month}.parquet"
   hvfhv_path: "trip-data/fhvhv_tripdata_{month}.parquet"   # Phase 6 only (optional)
   hvfhv_months: ["2024-01", "2026-09"]                     # PLAN Phase 6 restriction
@@ -63,6 +86,10 @@ paths:                                        # relative to the repo root
   raw_hvfhv: data/raw/tlc/hvfhv
   raw_weather: data/raw/weather
   raw_lookup: data/raw/lookup
+  zones_cbd: config/zones_cbd.csv
+  holidays_seed: dbt/seeds/holidays_ny.csv
+  processed: data/processed
+  duckdb_tmp: data/duckdb_tmp
   manifest: data/raw/manifest.csv
   warehouse: data/warehouse.duckdb
   smoke_warehouse: data/smoke.duckdb
@@ -72,6 +99,7 @@ paths:                                        # relative to the repo root
 duckdb:
   memory_limit: "5GB"
   threads: 10
+  max_temp_directory_size: "15GB"             # spill cap: a runaway query fails, not the disk
 
 smoke:
   month: "2024-10"

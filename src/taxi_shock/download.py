@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import datetime as dt
+import json
 import logging
 import time
 import zipfile
@@ -168,6 +169,57 @@ def download_lookups(cfg: dict[str, Any] | None = None) -> list[Path]:
                 continue  # skip directories and __MACOSX artefacts
             (out_dir / name).write_bytes(zf.read(member))
     return [p for p, _ in rows]
+
+
+OSM_60TH_FILE = "osm_60th_street.json"
+
+
+def overpass_query(street_names: list[str]) -> str:
+    """Overpass QL for every highway way inside Manhattan named exactly one of `street_names`."""
+    alt = "|".join(street_names)
+    return ('[out:json][timeout:60];area["name"="Manhattan"]["boundary"="administrative"]->.m;'
+            f'(way["highway"]["name"~"^({alt})$"](area.m););out geom;')
+
+
+def download_osm_60th_street(cfg: dict[str, Any] | None = None) -> Path:
+    """OpenStreetMap geometry of 60th Street (Manhattan) via Overpass, saved once as raw JSON.
+
+    Used to draw the line through the two endpoints of 60th St for the geometric `is_cbd` step
+    (PLAN Phase 1). Skipped when the file exists, so the line stays fixed across rebuilds.
+    """
+    cfg = cfg or load_config()
+    dest = path("raw_lookup", cfg) / OSM_60TH_FILE
+    if dest.exists() and dest.stat().st_size > 0:
+        log.info("skip %s", dest.name)
+    else:
+        query = overpass_query(cfg["cbd"]["street_names"])
+        payload = _post_json(_session(), cfg["sources"]["osm_overpass_url"], {"data": query}, cfg)
+        if not payload.get("elements"):
+            raise DownloadError("Overpass returned no 60th Street ways")
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(json.dumps({"query": query, "retrieved": dt.date.today().isoformat(),
+                                    **payload}, indent=1), encoding="utf-8")
+        log.info("osm %s: %d ways", dest.name, len(payload["elements"]))
+    update_manifest([(dest, dest.stat().st_size)], cfg)
+    return dest
+
+
+def _post_json(session: requests.Session, url: str, data: dict[str, str],
+               cfg: dict[str, Any]) -> dict[str, Any]:
+    retries = int(cfg["sources"]["http_retries"])
+    timeout = float(cfg["sources"]["http_timeout_seconds"])
+    last: Exception | None = None
+    for attempt in range(1, retries + 1):
+        try:
+            r = session.post(url, data=data, timeout=timeout)
+            if r.status_code == 200:
+                return r.json()
+            last = DownloadError(f"POST {url} -> HTTP {r.status_code}: {r.text[:200]}")
+        except requests.RequestException as err:
+            last = err
+        if attempt < retries:
+            time.sleep(min(2**attempt, 60))
+    raise DownloadError(f"giving up on {url}: {last}")
 
 
 def _year_chunks(start: dt.date, end: dt.date) -> list[tuple[dt.date, dt.date]]:

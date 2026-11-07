@@ -1,0 +1,949 @@
+{
+  "generated_utc": "2026-11-07T23:04:10+00:00",
+  "flex_fare_payment_type": 0,
+  "twin_definition": "same file, same pickup and dropoff timestamps, same PU/DO zones, fare_amount > 0",
+  "totals": {
+    "rows": 341589889,
+    "flex_neg": 2183889,
+    "flex_neg_with_twin": 7576,
+    "other_neg": 2604073,
+    "other_neg_with_twin": 2319421,
+    "flex_all": 30020931,
+    "fare_zero": 153184
+  },
+  "share_flex_neg_with_twin": 0.003469,
+  "share_other_neg_with_twin": 0.89069,
+  "per_month": [
+    {
+      "month": "2019-01",
+      "rows": 7696617,
+      "flex_neg": 2,
+      "flex_neg_with_twin": 0,
+      "other_neg": 7127,
+      "other_neg_with_twin": 6812,
+      "flex_all": 28672,
+      "fare_zero": 2641
+    },
+    {
+      "month": "2019-02",
+      "rows": 7049370,
+      "flex_neg": 0,
+      "flex_neg_with_twin": 0,
+      "other_neg": 9474,
+      "other_neg_with_twin": 9074,
+      "flex_all": 29663,
+      "fare_zero": 2870
+    },
+    {
+      "month": "2019-03",
+      "rows": 7866620,
+      "flex_neg": 44,
+      "flex_neg_with_twin": 6,
+      "other_neg": 11776,
+      "other_neg_with_twin": 11170,
+      "flex_all": 33474,
+      "fare_zero": 2971
+    },
+    {
+      "month": "2019-04",
+      "rows": 7475949,
+      "flex_neg": 83,
+      "flex_neg_with_twin": 4,
+      "other_neg": 11903,
+      "other_neg_with_twin": 11301,
+      "flex_all": 42456,
+      "fare_zero": 2861
+    },
+    {
+      "month": "2019-05",
+      "rows": 7598445,
+      "flex_neg": 56,
+      "flex_neg_with_twin": 0,
+      "other_neg": 13676,
+      "other_neg_with_twin": 12986,
+      "flex_all": 32770,
+      "fare_zero": 2855
+    },
+    {
+      "month": "2019-06",
+      "rows": 6971560,
+      "flex_neg": 25,
+      "flex_neg_with_twin": 0,
+      "other_neg": 14025,
+      "other_neg_with_twin": 13255,
+      "flex_all": 30747,
+      "fare_zero": 3100
+    },
+    {
+      "month": "2019-07",
+      "rows": 6310419,
+      "flex_neg": 24,
+      "flex_neg_with_twin": 0,
+      "other_neg": 13274,
+      "other_neg_with_twin": 12467,
+      "flex_all": 33959,
+      "fare_zero": 2719
+    },
+    {
+      "month": "2019-08",
+      "rows": 6073357,
+      "flex_neg": 19,
+      "flex_neg_with_twin": 0,
+      "other_neg": 14800,
+      "other_neg_with_twin": 13735,
+      "flex_all": 33321,
+      "fare_zero": 2863
+    },
+    {
+      "month": "2019-09",
+      "rows": 6567788,
+      "flex_neg": 26,
+      "flex_neg_with_twin": 0,
+      "other_neg": 15751,
+      "other_neg_with_twin": 14570,
+      "flex_all": 34089,
+      "fare_zero": 2996
+    },
+    {
+      "month": "2019-10",
+      "rows": 7213891,
+      "flex_neg": 32,
+      "flex_neg_with_twin": 0,
+      "other_neg": 18111,
+      "other_neg_with_twin": 16737,
+      "flex_all": 46723,
+      "fare_zero": 3112
+    },
+    {
+      "month": "2019-11",
+      "rows": 6878111,
+      "flex_neg": 245,
+      "flex_neg_with_twin": 0,
+      "other_neg": 18748,
+      "other_neg_with_twin": 17130,
+      "flex_all": 47491,
+      "fare_zero": 3091
+    },
+    {
+      "month": "2019-12",
+      "rows": 6896317,
+      "flex_neg": 21,
+      "flex_neg_with_twin": 0,
+      "other_neg": 20813,
+      "other_neg_with_twin": 19039,
+      "flex_all": 51018,
+      "fare_zero": 2987
+    },
+    {
+      "month": "2020-01",
+      "rows": 6405008,
+      "flex_neg": 64,
+      "flex_neg_with_twin": 5,
+      "other_neg": 19441,
+      "other_neg_with_twin": 17671,
+      "flex_all": 65441,
+      "fare_zero": 2741
+    },
+    {
+      "month": "2020-02",
+      "rows": 6299367,
+      "flex_neg": 24,
+      "flex_neg_with_twin": 0,
+      "other_neg": 19983,
+      "other_neg_with_twin": 18060,
+      "flex_all": 48834,
+      "fare_zero": 2506
+    },
+    {
+      "month": "2020-03",
+      "rows": 3007687,
+      "flex_neg": 9,
+      "flex_neg_with_twin": 0,
+      "other_neg": 11025,
+      "other_neg_with_twin": 9919,
+      "flex_all": 37808,
+      "fare_zero": 1296
+    },
+    {
+      "month": "2020-04",
+      "rows": 238073,
+      "flex_neg": 4,
+      "flex_neg_with_twin": 0,
+      "other_neg": 1291,
+      "other_neg_with_twin": 1137,
+      "flex_all": 19580,
+      "fare_zero": 167
+    },
+    {
+      "month": "2020-05",
+      "rows": 348415,
+      "flex_neg": 12,
+      "flex_neg_with_twin": 0,
+      "other_neg": 1517,
+      "other_neg_with_twin": 1343,
+      "flex_all": 58901,
+      "fare_zero": 274
+    },
+    {
+      "month": "2020-06",
+      "rows": 549797,
+      "flex_neg": 37,
+      "flex_neg_with_twin": 0,
+      "other_neg": 2507,
+      "other_neg_with_twin": 2219,
+      "flex_all": 50718,
+      "fare_zero": 410
+    },
+    {
+      "month": "2020-07",
+      "rows": 800412,
+      "flex_neg": 21,
+      "flex_neg_with_twin": 0,
+      "other_neg": 3689,
+      "other_neg_with_twin": 3290,
+      "flex_all": 62847,
+      "fare_zero": 356
+    },
+    {
+      "month": "2020-08",
+      "rows": 1007286,
+      "flex_neg": 41,
+      "flex_neg_with_twin": 0,
+      "other_neg": 4872,
+      "other_neg_with_twin": 4369,
+      "flex_all": 71239,
+      "fare_zero": 541
+    },
+    {
+      "month": "2020-09",
+      "rows": 1341017,
+      "flex_neg": 32,
+      "flex_neg_with_twin": 0,
+      "other_neg": 5940,
+      "other_neg_with_twin": 5310,
+      "flex_all": 90181,
+      "fare_zero": 631
+    },
+    {
+      "month": "2020-10",
+      "rows": 1681132,
+      "flex_neg": 57,
+      "flex_neg_with_twin": 0,
+      "other_neg": 7304,
+      "other_neg_with_twin": 6566,
+      "flex_all": 105913,
+      "fare_zero": 719
+    },
+    {
+      "month": "2020-11",
+      "rows": 1509000,
+      "flex_neg": 29,
+      "flex_neg_with_twin": 0,
+      "other_neg": 7202,
+      "other_neg_with_twin": 6415,
+      "flex_all": 99049,
+      "fare_zero": 710
+    },
+    {
+      "month": "2020-12",
+      "rows": 1461898,
+      "flex_neg": 38,
+      "flex_neg_with_twin": 0,
+      "other_neg": 7694,
+      "other_neg_with_twin": 6817,
+      "flex_all": 99456,
+      "fare_zero": 643
+    },
+    {
+      "month": "2021-01",
+      "rows": 1369769,
+      "flex_neg": 114,
+      "flex_neg_with_twin": 0,
+      "other_neg": 6655,
+      "other_neg_with_twin": 5897,
+      "flex_all": 98352,
+      "fare_zero": 642
+    },
+    {
+      "month": "2021-02",
+      "rows": 1371709,
+      "flex_neg": 82,
+      "flex_neg_with_twin": 0,
+      "other_neg": 6709,
+      "other_neg_with_twin": 5953,
+      "flex_all": 98246,
+      "fare_zero": 675
+    },
+    {
+      "month": "2021-03",
+      "rows": 1925152,
+      "flex_neg": 122,
+      "flex_neg_with_twin": 0,
+      "other_neg": 9035,
+      "other_neg_with_twin": 8065,
+      "flex_all": 127920,
+      "fare_zero": 815
+    },
+    {
+      "month": "2021-04",
+      "rows": 2171187,
+      "flex_neg": 107,
+      "flex_neg_with_twin": 0,
+      "other_neg": 9737,
+      "other_neg_with_twin": 8757,
+      "flex_all": 128020,
+      "fare_zero": 797
+    },
+    {
+      "month": "2021-05",
+      "rows": 2507109,
+      "flex_neg": 98,
+      "flex_neg_with_twin": 0,
+      "other_neg": 10920,
+      "other_neg_with_twin": 9902,
+      "flex_all": 127296,
+      "fare_zero": 918
+    },
+    {
+      "month": "2021-06",
+      "rows": 2834264,
+      "flex_neg": 114,
+      "flex_neg_with_twin": 0,
+      "other_neg": 12449,
+      "other_neg_with_twin": 11193,
+      "flex_all": 123538,
+      "fare_zero": 1117
+    },
+    {
+      "month": "2021-07",
+      "rows": 2821746,
+      "flex_neg": 83,
+      "flex_neg_with_twin": 0,
+      "other_neg": 13175,
+      "other_neg_with_twin": 11784,
+      "flex_all": 130656,
+      "fare_zero": 1266
+    },
+    {
+      "month": "2021-08",
+      "rows": 2788757,
+      "flex_neg": 33,
+      "flex_neg_with_twin": 0,
+      "other_neg": 12692,
+      "other_neg_with_twin": 11386,
+      "flex_all": 135590,
+      "fare_zero": 1409
+    },
+    {
+      "month": "2021-09",
+      "rows": 2963793,
+      "flex_neg": 66,
+      "flex_neg_with_twin": 0,
+      "other_neg": 12149,
+      "other_neg_with_twin": 10924,
+      "flex_all": 142854,
+      "fare_zero": 1321
+    },
+    {
+      "month": "2021-10",
+      "rows": 3463504,
+      "flex_neg": 54,
+      "flex_neg_with_twin": 0,
+      "other_neg": 13987,
+      "other_neg_with_twin": 12503,
+      "flex_all": 136483,
+      "fare_zero": 1300
+    },
+    {
+      "month": "2021-11",
+      "rows": 3472949,
+      "flex_neg": 55,
+      "flex_neg_with_twin": 0,
+      "other_neg": 14880,
+      "other_neg_with_twin": 13188,
+      "flex_all": 127369,
+      "fare_zero": 1584
+    },
+    {
+      "month": "2021-12",
+      "rows": 3214369,
+      "flex_neg": 39,
+      "flex_neg_with_twin": 0,
+      "other_neg": 15971,
+      "other_neg_with_twin": 14143,
+      "flex_all": 102371,
+      "fare_zero": 1540
+    },
+    {
+      "month": "2022-01",
+      "rows": 2463931,
+      "flex_neg": 40,
+      "flex_neg_with_twin": 0,
+      "other_neg": 12693,
+      "other_neg_with_twin": 11160,
+      "flex_all": 71503,
+      "fare_zero": 1159
+    },
+    {
+      "month": "2022-02",
+      "rows": 2979431,
+      "flex_neg": 70,
+      "flex_neg_with_twin": 0,
+      "other_neg": 15316,
+      "other_neg_with_twin": 13537,
+      "flex_all": 101738,
+      "fare_zero": 1319
+    },
+    {
+      "month": "2022-03",
+      "rows": 3627882,
+      "flex_neg": 77,
+      "flex_neg_with_twin": 0,
+      "other_neg": 19737,
+      "other_neg_with_twin": 17281,
+      "flex_all": 117814,
+      "fare_zero": 1503
+    },
+    {
+      "month": "2022-04",
+      "rows": 3599920,
+      "flex_neg": 41,
+      "flex_neg_with_twin": 0,
+      "other_neg": 19254,
+      "other_neg_with_twin": 16972,
+      "flex_all": 118874,
+      "fare_zero": 1208
+    },
+    {
+      "month": "2022-05",
+      "rows": 3588295,
+      "flex_neg": 35,
+      "flex_neg_with_twin": 0,
+      "other_neg": 20471,
+      "other_neg_with_twin": 18086,
+      "flex_all": 129524,
+      "fare_zero": 1498
+    },
+    {
+      "month": "2022-06",
+      "rows": 3558124,
+      "flex_neg": 36,
+      "flex_neg_with_twin": 0,
+      "other_neg": 22380,
+      "other_neg_with_twin": 19872,
+      "flex_all": 132448,
+      "fare_zero": 1763
+    },
+    {
+      "month": "2022-07",
+      "rows": 3174394,
+      "flex_neg": 70,
+      "flex_neg_with_twin": 0,
+      "other_neg": 21225,
+      "other_neg_with_twin": 18635,
+      "flex_all": 105194,
+      "fare_zero": 1510
+    },
+    {
+      "month": "2022-08",
+      "rows": 3152677,
+      "flex_neg": 69,
+      "flex_neg_with_twin": 0,
+      "other_neg": 22180,
+      "other_neg_with_twin": 19323,
+      "flex_all": 93174,
+      "fare_zero": 1710
+    },
+    {
+      "month": "2022-09",
+      "rows": 3183767,
+      "flex_neg": 68,
+      "flex_neg_with_twin": 0,
+      "other_neg": 21172,
+      "other_neg_with_twin": 18624,
+      "flex_all": 116592,
+      "fare_zero": 1607
+    },
+    {
+      "month": "2022-10",
+      "rows": 3675411,
+      "flex_neg": 16,
+      "flex_neg_with_twin": 0,
+      "other_neg": 25883,
+      "other_neg_with_twin": 22653,
+      "flex_all": 133021,
+      "fare_zero": 1816
+    },
+    {
+      "month": "2022-11",
+      "rows": 3252717,
+      "flex_neg": 107,
+      "flex_neg_with_twin": 16,
+      "other_neg": 24668,
+      "other_neg_with_twin": 21533,
+      "flex_all": 121958,
+      "fare_zero": 920
+    },
+    {
+      "month": "2022-12",
+      "rows": 3399549,
+      "flex_neg": 107,
+      "flex_neg_with_twin": 0,
+      "other_neg": 27185,
+      "other_neg_with_twin": 23777,
+      "flex_all": 126463,
+      "fare_zero": 1261
+    },
+    {
+      "month": "2023-01",
+      "rows": 3066766,
+      "flex_neg": 54,
+      "flex_neg_with_twin": 0,
+      "other_neg": 24995,
+      "other_neg_with_twin": 21823,
+      "flex_all": 71743,
+      "fare_zero": 1110
+    },
+    {
+      "month": "2023-02",
+      "rows": 2913955,
+      "flex_neg": 67,
+      "flex_neg_with_twin": 0,
+      "other_neg": 24697,
+      "other_neg_with_twin": 21673,
+      "flex_all": 76817,
+      "fare_zero": 1048
+    },
+    {
+      "month": "2023-03",
+      "rows": 3403766,
+      "flex_neg": 124,
+      "flex_neg_with_twin": 0,
+      "other_neg": 29553,
+      "other_neg_with_twin": 26139,
+      "flex_all": 87619,
+      "fare_zero": 1225
+    },
+    {
+      "month": "2023-04",
+      "rows": 3288250,
+      "flex_neg": 385,
+      "flex_neg_with_twin": 0,
+      "other_neg": 29603,
+      "other_neg_with_twin": 26358,
+      "flex_all": 90690,
+      "fare_zero": 1116
+    },
+    {
+      "month": "2023-05",
+      "rows": 3513649,
+      "flex_neg": 514,
+      "flex_neg_with_twin": 0,
+      "other_neg": 31586,
+      "other_neg_with_twin": 28286,
+      "flex_all": 101796,
+      "fare_zero": 1204
+    },
+    {
+      "month": "2023-06",
+      "rows": 3307234,
+      "flex_neg": 576,
+      "flex_neg_with_twin": 0,
+      "other_neg": 30861,
+      "other_neg_with_twin": 27573,
+      "flex_all": 99887,
+      "fare_zero": 1065
+    },
+    {
+      "month": "2023-07",
+      "rows": 2907108,
+      "flex_neg": 500,
+      "flex_neg_with_twin": 0,
+      "other_neg": 30661,
+      "other_neg_with_twin": 27242,
+      "flex_all": 85086,
+      "fare_zero": 980
+    },
+    {
+      "month": "2023-08",
+      "rows": 2824209,
+      "flex_neg": 521,
+      "flex_neg_with_twin": 0,
+      "other_neg": 30787,
+      "other_neg_with_twin": 27189,
+      "flex_all": 87886,
+      "fare_zero": 933
+    },
+    {
+      "month": "2023-09",
+      "rows": 2846722,
+      "flex_neg": 452,
+      "flex_neg_with_twin": 0,
+      "other_neg": 29114,
+      "other_neg_with_twin": 25929,
+      "flex_all": 140225,
+      "fare_zero": 939
+    },
+    {
+      "month": "2023-10",
+      "rows": 3522285,
+      "flex_neg": 312,
+      "flex_neg_with_twin": 0,
+      "other_neg": 36788,
+      "other_neg_with_twin": 32554,
+      "flex_all": 154929,
+      "fare_zero": 1087
+    },
+    {
+      "month": "2023-11",
+      "rows": 3339715,
+      "flex_neg": 305,
+      "flex_neg_with_twin": 0,
+      "other_neg": 36553,
+      "other_neg_with_twin": 32231,
+      "flex_all": 132675,
+      "fare_zero": 1108
+    },
+    {
+      "month": "2023-12",
+      "rows": 3376567,
+      "flex_neg": 2969,
+      "flex_neg_with_twin": 0,
+      "other_neg": 39673,
+      "other_neg_with_twin": 35041,
+      "flex_all": 180003,
+      "fare_zero": 1038
+    },
+    {
+      "month": "2024-01",
+      "rows": 2964624,
+      "flex_neg": 2066,
+      "flex_neg_with_twin": 0,
+      "other_neg": 35382,
+      "other_neg_with_twin": 30980,
+      "flex_all": 140162,
+      "fare_zero": 893
+    },
+    {
+      "month": "2024-02",
+      "rows": 3007526,
+      "flex_neg": 4656,
+      "flex_neg_with_twin": 0,
+      "other_neg": 35999,
+      "other_neg_with_twin": 31546,
+      "flex_all": 185610,
+      "fare_zero": 844
+    },
+    {
+      "month": "2024-03",
+      "rows": 3582628,
+      "flex_neg": 14302,
+      "flex_neg_with_twin": 0,
+      "other_neg": 44162,
+      "other_neg_with_twin": 38766,
+      "flex_all": 426190,
+      "fare_zero": 1292
+    },
+    {
+      "month": "2024-04",
+      "rows": 3514289,
+      "flex_neg": 13985,
+      "flex_neg_with_twin": 0,
+      "other_neg": 43583,
+      "other_neg_with_twin": 38224,
+      "flex_all": 408576,
+      "fare_zero": 1308
+    },
+    {
+      "month": "2024-05",
+      "rows": 3723833,
+      "flex_neg": 11157,
+      "flex_neg_with_twin": 0,
+      "other_neg": 48790,
+      "other_neg_with_twin": 43019,
+      "flex_all": 404666,
+      "fare_zero": 2618
+    },
+    {
+      "month": "2024-06",
+      "rows": 3539193,
+      "flex_neg": 13345,
+      "flex_neg_with_twin": 0,
+      "other_neg": 48320,
+      "other_neg_with_twin": 42620,
+      "flex_all": 410781,
+      "fare_zero": 1378
+    },
+    {
+      "month": "2024-07",
+      "rows": 3076903,
+      "flex_neg": 8646,
+      "flex_neg_with_twin": 1,
+      "other_neg": 50004,
+      "other_neg_with_twin": 43835,
+      "flex_all": 278989,
+      "fare_zero": 1080
+    },
+    {
+      "month": "2024-08",
+      "rows": 2979183,
+      "flex_neg": 5667,
+      "flex_neg_with_twin": 0,
+      "other_neg": 52585,
+      "other_neg_with_twin": 46184,
+      "flex_all": 258667,
+      "fare_zero": 1135
+    },
+    {
+      "month": "2024-09",
+      "rows": 3633030,
+      "flex_neg": 17661,
+      "flex_neg_with_twin": 4172,
+      "other_neg": 55423,
+      "other_neg_with_twin": 48928,
+      "flex_all": 483731,
+      "fare_zero": 1693
+    },
+    {
+      "month": "2024-10",
+      "rows": 3833771,
+      "flex_neg": 14511,
+      "flex_neg_with_twin": 3362,
+      "other_neg": 60866,
+      "other_neg_with_twin": 53735,
+      "flex_all": 393895,
+      "fare_zero": 1500
+    },
+    {
+      "month": "2024-11",
+      "rows": 3646369,
+      "flex_neg": 11390,
+      "flex_neg_with_twin": 1,
+      "other_neg": 60080,
+      "other_neg_with_twin": 52948,
+      "flex_all": 373674,
+      "fare_zero": 1466
+    },
+    {
+      "month": "2024-12",
+      "rows": 3668371,
+      "flex_neg": 9706,
+      "flex_neg_with_twin": 0,
+      "other_neg": 68738,
+      "other_neg_with_twin": 61027,
+      "flex_all": 326291,
+      "fare_zero": 2053
+    },
+    {
+      "month": "2025-01",
+      "rows": 3475226,
+      "flex_neg": 84822,
+      "flex_neg_with_twin": 0,
+      "other_neg": 59296,
+      "other_neg_with_twin": 52231,
+      "flex_all": 540149,
+      "fare_zero": 1398
+    },
+    {
+      "month": "2025-02",
+      "rows": 3577543,
+      "flex_neg": 127878,
+      "flex_neg_with_twin": 2,
+      "other_neg": 54777,
+      "other_neg_with_twin": 48613,
+      "flex_all": 806937,
+      "fare_zero": 1441
+    },
+    {
+      "month": "2025-03",
+      "rows": 4145257,
+      "flex_neg": 140460,
+      "flex_neg_with_twin": 1,
+      "other_neg": 68264,
+      "other_neg_with_twin": 60768,
+      "flex_all": 916663,
+      "fare_zero": 1654
+    },
+    {
+      "month": "2025-04",
+      "rows": 3970553,
+      "flex_neg": 114421,
+      "flex_neg_with_twin": 0,
+      "other_neg": 72299,
+      "other_neg_with_twin": 64532,
+      "flex_all": 745730,
+      "fare_zero": 1451
+    },
+    {
+      "month": "2025-05",
+      "rows": 4591845,
+      "flex_neg": 247658,
+      "flex_neg_with_twin": 0,
+      "other_neg": 77608,
+      "other_neg_with_twin": 69339,
+      "flex_all": 1196176,
+      "fare_zero": 2109
+    },
+    {
+      "month": "2025-06",
+      "rows": 4322960,
+      "flex_neg": 202113,
+      "flex_neg_with_twin": 2,
+      "other_neg": 73452,
+      "other_neg_with_twin": 65859,
+      "flex_all": 1212946,
+      "fare_zero": 1962
+    },
+    {
+      "month": "2025-07",
+      "rows": 3898963,
+      "flex_neg": 170943,
+      "flex_neg_with_twin": 1,
+      "other_neg": 76145,
+      "other_neg_with_twin": 68383,
+      "flex_all": 1038755,
+      "fare_zero": 1370
+    },
+    {
+      "month": "2025-08",
+      "rows": 3574091,
+      "flex_neg": 183880,
+      "flex_neg_with_twin": 0,
+      "other_neg": 77311,
+      "other_neg_with_twin": 69343,
+      "flex_all": 886234,
+      "fare_zero": 1444
+    },
+    {
+      "month": "2025-09",
+      "rows": 4251015,
+      "flex_neg": 174624,
+      "flex_neg_with_twin": 0,
+      "other_neg": 78094,
+      "other_neg_with_twin": 70335,
+      "flex_all": 1067195,
+      "fare_zero": 1706
+    },
+    {
+      "month": "2025-10",
+      "rows": 4428699,
+      "flex_neg": 253276,
+      "flex_neg_with_twin": 2,
+      "other_neg": 68031,
+      "other_neg_with_twin": 61076,
+      "flex_all": 990887,
+      "fare_zero": 2076
+    },
+    {
+      "month": "2025-11",
+      "rows": 4181444,
+      "flex_neg": 346979,
+      "flex_neg_with_twin": 1,
+      "other_neg": 48114,
+      "other_neg_with_twin": 43118,
+      "flex_all": 1014740,
+      "fare_zero": 2462
+    },
+    {
+      "month": "2025-12",
+      "rows": 4305006,
+      "flex_neg": 35,
+      "flex_neg_with_twin": 0,
+      "other_neg": 48140,
+      "other_neg_with_twin": 43230,
+      "flex_all": 1195482,
+      "fare_zero": 2541
+    },
+    {
+      "month": "2026-01",
+      "rows": 3724889,
+      "flex_neg": 32,
+      "flex_neg_with_twin": 0,
+      "other_neg": 39431,
+      "other_neg_with_twin": 35171,
+      "flex_all": 1088058,
+      "fare_zero": 2082
+    },
+    {
+      "month": "2026-02",
+      "rows": 3399866,
+      "flex_neg": 24,
+      "flex_neg_with_twin": 0,
+      "other_neg": 26697,
+      "other_neg_with_twin": 23793,
+      "flex_all": 1023317,
+      "fare_zero": 2379
+    },
+    {
+      "month": "2026-03",
+      "rows": 3952451,
+      "flex_neg": 19,
+      "flex_neg_with_twin": 0,
+      "other_neg": 20705,
+      "other_neg_with_twin": 18360,
+      "flex_all": 945748,
+      "fare_zero": 2995
+    },
+    {
+      "month": "2026-04",
+      "rows": 3831240,
+      "flex_neg": 12,
+      "flex_neg_with_twin": 0,
+      "other_neg": 14316,
+      "other_neg_with_twin": 12704,
+      "flex_all": 799786,
+      "fare_zero": 2902
+    },
+    {
+      "month": "2026-05",
+      "rows": 4090836,
+      "flex_neg": 13,
+      "flex_neg_with_twin": 0,
+      "other_neg": 14218,
+      "other_neg_with_twin": 12646,
+      "flex_all": 955371,
+      "fare_zero": 2951
+    },
+    {
+      "month": "2026-06",
+      "rows": 3837248,
+      "flex_neg": 30,
+      "flex_neg_with_twin": 0,
+      "other_neg": 13618,
+      "other_neg_with_twin": 12083,
+      "flex_all": 1013500,
+      "fare_zero": 3167
+    },
+    {
+      "month": "2026-07",
+      "rows": 3530109,
+      "flex_neg": 56,
+      "flex_neg_with_twin": 0,
+      "other_neg": 14144,
+      "other_neg_with_twin": 12575,
+      "flex_all": 969727,
+      "fare_zero": 2711
+    },
+    {
+      "month": "2026-08",
+      "rows": 3336716,
+      "flex_neg": 35,
+      "flex_neg_with_twin": 0,
+      "other_neg": 14014,
+      "other_neg_with_twin": 12371,
+      "flex_all": 921181,
+      "fare_zero": 3200
+    },
+    {
+      "month": "2026-09",
+      "rows": 3876044,
+      "flex_neg": 60,
+      "flex_neg_with_twin": 0,
+      "other_neg": 14130,
+      "other_neg_with_twin": 12501,
+      "flex_all": 1190413,
+      "fare_zero": 2352
+    }
+  ],
+  "runtime_seconds": 244.7
+}

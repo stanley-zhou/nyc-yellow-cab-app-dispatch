@@ -1,15 +1,11 @@
--- Trip-level validity filters (thresholds from config/project.yaml via dbt vars).
--- Per-filter counts are written to results/data_quality.json in Phase 1.
-with trips as (
-    select distinct * from {{ ref('stg_yellow_trips') }}       -- exact duplicates removed
-)
-select *
-from trips
-where pickup_ts >= source_month - interval ({{ var('straggler_days') }}) day
-  and pickup_ts <  source_month + interval 1 month + interval ({{ var('straggler_days') }}) day
-  and dropoff_ts - pickup_ts >= interval ({{ var('min_duration_minutes') }}) minute
-  and dropoff_ts - pickup_ts <= interval ({{ var('max_duration_hours') }}) hour
-  and trip_distance > 0
-  and trip_distance <= {{ var('max_trip_distance_miles') }}
-  and fare_amount > 0
-  and pu_zone_id between {{ var('zone_id_min') }} and {{ var('zone_id_max') }}
+-- Valid, de-duplicated trips (every rule in int_trips_flagged passed). Each surviving distinct row
+-- counts once, whatever its number of exact copies. Per-rule counts: fct_data_quality_monthly.
+-- `pu_hour` / `do_hour` = floored local pickup/dropoff hour; a trip enters the hourly grid only if
+-- that hour exists in int_hours (misses are counted in int_grid_misses).
+select
+    pickup_ts, dropoff_ts, pu_zone_id, do_zone_id, trip_distance, fare_amount, total_amount,
+    passenger_count, payment_type, cbd_congestion_fee, source_month, is_format_exempt,
+    date_trunc('hour', pickup_ts)  as pu_hour,
+    date_trunc('hour', dropoff_ts) as do_hour
+from {{ ref('int_trips_flagged') }}
+where drop_reason is null

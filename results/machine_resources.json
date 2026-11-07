@@ -1,22 +1,28 @@
 {
-  "checked_utc": "2026-11-07T20:48:40+00:00",
+  "checked_utc": "2026-11-07T21:57:38+00:00",
   "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
   "cpu_count": 12,
-  "mem_total_gb": 8.23,
+  "mem_total_gb_decimal": 12.54,
+  "mem_total_gib": 11.68,
   "disks": {
     "repo_filesystem": {
       "mount_probe": "repo_filesystem",
-      "total_gb": 1081.1,
-      "free_gb": 993.0
+      "total_gb_decimal": 1081.1,
+      "free_gb_decimal": 981.3,
+      "total_gib": 1006.9,
+      "free_gib": 913.9
     },
     "windows_c_drive": {
       "mount_probe": "windows_c_drive",
-      "total_gb": 508.5,
-      "free_gb": 88.4
+      "total_gb_decimal": 508.5,
+      "free_gb_decimal": 66.9,
+      "total_gib": 473.6,
+      "free_gib": 62.3
     }
   },
   "effective_ceiling": {
     "source": "windows_c_drive",
-    "free_gb": 88.4
+    "free_gb_decimal": 66.9,
+    "free_gib": 62.3
   }
 }

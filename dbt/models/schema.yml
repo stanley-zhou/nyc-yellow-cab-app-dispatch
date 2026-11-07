@@ -11,7 +11,18 @@ models:
               arguments:
                 values: ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island", "EWR"]
 
+  - name: int_weather_selected
+    description: Exactly one weather source file per unix hour (PLAN amendment, Phase 1 item 2).
+    columns:
+      - name: unix_time
+        data_tests: [unique, not_null]
+
   - name: stg_weather
+    columns:
+      - name: hour_ts
+        data_tests: [unique, not_null]
+
+  - name: int_hours
     columns:
       - name: hour_ts
         data_tests: [unique, not_null]
@@ -21,6 +32,43 @@ models:
       - dbt_utils.unique_combination_of_columns:
           arguments:
             combination_of_columns: [zone_id, hour_ts]
+
+  - name: int_trips_flagged
+    columns:
+      - name: n_copies
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 1"
+      - name: drop_reason
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["pickup_window", "duration", "distance", "fare", "pu_zone"]
+
+  - name: dim_zones
+    columns:
+      - name: zone_id
+        data_tests: [unique, not_null]
+      - name: borough
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island", "EWR"]
+      - name: is_cbd
+        description: NULL would mean the zone is missing from config/zones_cbd.csv.
+        data_tests:
+          - not_null:
+              name: dim_zones_is_cbd_not_null_manhattan
+              config:
+                where: "borough = 'Manhattan'"
+          - not_null
+      - name: zone_group
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["cbd", "manhattan_non_cbd", "airports", "other"]
 
   - name: fct_hourly_zone_demand
     description: Complete zone x hour grid of yellow-taxi pickups with explicit zeros.
@@ -39,3 +87,45 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: ">= 0"
+      - name: dropoffs
+        data_tests: [not_null]
+
+  - name: features_demand
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, hour_ts]
+    columns:
+      - name: is_holiday
+        data_tests: [not_null]
+
+  - name: fct_daily_zone_panel
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, date]
+    columns:
+      - name: pickups
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+  - name: fct_weekly_zone_panel
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, week_start]
+    columns:
+      - name: pickups
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+      - name: n_days
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "between 1 and 7"

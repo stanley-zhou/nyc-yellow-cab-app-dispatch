@@ -6,6 +6,7 @@ profile: taxi_shock
 model-paths: ["models"]
 test-paths: ["tests"]
 macro-paths: ["macros"]
+seed-paths: ["seeds"]
 target-path: "target"
 clean-targets: ["target", "dbt_packages"]
 
@@ -16,6 +17,7 @@ vars:
   yellow_glob: "../data/raw/tlc/yellow/yellow_tripdata_*.parquet"
   weather_glob: "../data/raw/weather/open_meteo_*.csv"
   zone_lookup_csv: "../data/raw/lookup/taxi_zone_lookup.csv"
+  zones_cbd_csv: "../config/zones_cbd.csv"
   timezone: "America/New_York"
   zone_id_min: 1
   zone_id_max: 263
@@ -23,6 +25,19 @@ vars:
   min_duration_minutes: 1
   max_duration_hours: 3
   max_trip_distance_miles: 100
+  flex_fare_payment_type: 0
+  max_monthly_removal_ratio: 2.0
+  weather_pad_days: 1
+  policy_date: "2025-01-05"
+  cbd_fee_window: ["2025-02-01", "2025-06-30"]
+  week_start: "sunday"
+  hour_bands: [[0, 6], [6, 10], [10, 16], [16, 20], [20, 24]]
+  distance_tercile_period: ["2024-01-06", "2025-01-04"]
+
+seeds:
+  taxi_shock:
+    holidays_ny:
+      +column_types: {date: date, name: varchar}
 
 models:
   taxi_shock:

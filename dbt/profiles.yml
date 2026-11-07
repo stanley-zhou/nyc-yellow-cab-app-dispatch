@@ -13,3 +13,4 @@ taxi_shock:
         threads: "{{ env_var('TAXI_SHOCK_DUCKDB_THREADS', '10') }}"
         TimeZone: "{{ env_var('TAXI_SHOCK_TZ', 'America/New_York') }}"
         preserve_insertion_order: false
+        max_temp_directory_size: "{{ env_var('TAXI_SHOCK_DUCKDB_MAX_TMP', '15GB') }}"
