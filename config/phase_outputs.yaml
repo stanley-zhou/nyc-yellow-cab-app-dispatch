@@ -5,6 +5,7 @@
   - results/smoke/backtest_smoke.csv
   - results/smoke/forecasts_smoke.parquet
   - reports/figures/smoke/F0_smoke_placeholder.png
+  - results/open_meteo_offset_probe.json
   - DECISIONS.md
 1:
   - results/data_quality.json

@@ -1,0 +1,103 @@
+{
+  "checked_utc": "2026-11-07T21:19:04+00:00",
+  "variable_compared": "temperature_2m",
+  "probes": [
+    {
+      "day": "2024-01-15",
+      "is_dst": false,
+      "true_utc_offset_seconds": -18000,
+      "api_reported_utc_offset_seconds": -18000,
+      "api_first_label": "2024-01-15T00:00",
+      "max_abs_temp_diff_by_shift_hours": {
+        "-2": 3.6999999999999993,
+        "-1": 1.8999999999999986,
+        "0": 0.0,
+        "1": 1.8999999999999986,
+        "2": 3.6999999999999993
+      },
+      "shifts_matching_exactly": [
+        0
+      ],
+      "true_hour_minus_label_hours": 0
+    },
+    {
+      "day": "2024-03-11",
+      "is_dst": true,
+      "true_utc_offset_seconds": -14400,
+      "api_reported_utc_offset_seconds": -18000,
+      "api_first_label": "2024-03-11T00:00",
+      "max_abs_temp_diff_by_shift_hours": {
+        "-2": 7.199999999999996,
+        "-1": 6.399999999999999,
+        "0": 5.199999999999996,
+        "1": 0.0,
+        "2": 5.199999999999996
+      },
+      "shifts_matching_exactly": [
+        1
+      ],
+      "true_hour_minus_label_hours": 1
+    },
+    {
+      "day": "2024-07-01",
+      "is_dst": true,
+      "true_utc_offset_seconds": -14400,
+      "api_reported_utc_offset_seconds": -18000,
+      "api_first_label": "2024-07-01T00:00",
+      "max_abs_temp_diff_by_shift_hours": {
+        "-2": 8.299999999999997,
+        "-1": 6.799999999999997,
+        "0": 3.5999999999999943,
+        "1": 0.0,
+        "2": 3.5999999999999943
+      },
+      "shifts_matching_exactly": [
+        1
+      ],
+      "true_hour_minus_label_hours": 1
+    },
+    {
+      "day": "2024-10-01",
+      "is_dst": true,
+      "true_utc_offset_seconds": -14400,
+      "api_reported_utc_offset_seconds": -18000,
+      "api_first_label": "2024-10-01T00:00",
+      "max_abs_temp_diff_by_shift_hours": {
+        "-2": 8.399999999999991,
+        "-1": 6.099999999999994,
+        "0": 3.799999999999997,
+        "1": 0.0,
+        "2": 3.799999999999997
+      },
+      "shifts_matching_exactly": [
+        1
+      ],
+      "true_hour_minus_label_hours": 1
+    },
+    {
+      "day": "2024-11-02",
+      "is_dst": true,
+      "true_utc_offset_seconds": -14400,
+      "api_reported_utc_offset_seconds": -18000,
+      "api_first_label": "2024-11-02T00:00",
+      "max_abs_temp_diff_by_shift_hours": {
+        "-2": 7.399999999999999,
+        "-1": 5.5,
+        "0": 4.0,
+        "1": 0.0,
+        "2": 4.0
+      },
+      "shifts_matching_exactly": [
+        1
+      ],
+      "true_hour_minus_label_hours": 1
+    }
+  ],
+  "conclusion": {
+    "api_offset_constant": true,
+    "dst_days_with_one_hour_label_shift": 4,
+    "dst_days_probed": 4,
+    "est_days_with_no_shift": 1,
+    "est_days_probed": 1
+  }
+}

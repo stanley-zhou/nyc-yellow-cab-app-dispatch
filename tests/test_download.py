@@ -111,3 +111,27 @@ def test_manifest_drops_files_no_longer_on_disk(tmp_path: Path, monkeypatch):
     m = dl.update_manifest([(a, 1)], cfg={})
     rows = m.read_text().strip().splitlines()[1:]
     assert [r.split(",")[0] for r in rows] == ["a.bin"]
+
+
+def test_weather_request_uses_gmt_unixtime_and_padding(tmp_path: Path, monkeypatch):
+    """Guards the Open-Meteo DST decision: the API applies a fixed EST offset for
+    timezone=America/New_York, so we must request GMT unix seconds with a padded window."""
+    captured: list[dict] = []
+
+    def fake_get_json(session, url, params, cfg):
+        captured.append(params)
+        return {"hourly": {"time": [0], **{v: [1.0] for v in cfg["sources"]["weather_hourly"]}}}
+
+    cfg = {
+        "timezone": "America/New_York",
+        "sources": {"weather_point": [40.7, -74.0], "weather_hourly": ["temperature_2m"],
+                    "weather_units": {}, "weather_url": "http://x", "weather_pad_days": 1,
+                    "http_retries": 1, "http_timeout_seconds": 1},
+    }
+    monkeypatch.setattr(dl, "_get_json", fake_get_json)
+    monkeypatch.setattr(dl, "path", lambda key, c=None: tmp_path)
+    monkeypatch.setattr(dl, "update_manifest", lambda rows, c=None: None)
+    dl.download_weather("2024-07-01", "2024-07-31", cfg)
+    (p,) = captured
+    assert p["timezone"] == "GMT" and p["timeformat"] == "unixtime"
+    assert (p["start_date"], p["end_date"]) == ("2024-06-30", "2024-08-01")
