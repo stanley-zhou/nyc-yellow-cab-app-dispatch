@@ -98,3 +98,16 @@ def test_manifest_upsert(tmp_path: Path, monkeypatch):
     lines = m.read_text().strip().splitlines()
     assert lines[0] == "file,bytes,download_date"
     assert len(lines) == 2 and lines[1].startswith("a.bin,3,")
+
+
+def test_manifest_drops_files_no_longer_on_disk(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr(dl, "repo_root", lambda: tmp_path)
+    monkeypatch.setattr(dl, "path", lambda key, cfg=None: tmp_path / "manifest.csv")
+    a, b = tmp_path / "a.bin", tmp_path / "b.bin"
+    a.write_bytes(b"x")
+    b.write_bytes(b"yy")
+    dl.update_manifest([(a, 1), (b, 2)], cfg={})
+    b.unlink()
+    m = dl.update_manifest([(a, 1)], cfg={})
+    rows = m.read_text().strip().splitlines()[1:]
+    assert [r.split(",")[0] for r in rows] == ["a.bin"]

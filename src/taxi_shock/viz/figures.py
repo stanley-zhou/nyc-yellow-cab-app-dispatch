@@ -24,8 +24,8 @@ def smoke_placeholder(fc: pd.DataFrame, out_base: Path) -> list[Path]:
     fig, ax = plt.subplots(figsize=SIZES["single"])
     ax.fill_between(city["target_ts"], city["q10"], city["q90"], color=PALETTE["baseline"],
                     alpha=0.35, linewidth=0, label="80% interval (sum of zone quantiles)")
-    ax.plot(city["target_ts"], city["point"], color=PALETTE["baseline"], linewidth=1.1)
-    ax.plot(city["target_ts"], city["y"], color=PALETTE["model"], linewidth=1.1)
+    ax.plot(city["target_ts"], city["point"], color=PALETTE["muted_text"], linewidth=1.0)
+    ax.plot(city["target_ts"], city["y"], color=PALETTE["actual"], linewidth=1.1)
     ax.set_ylabel("Yellow-taxi pickups per hour (all zones)")
     ax.set_xlabel("Local time (America/New_York)")
     ax.set_xlim(city["target_ts"].min(), city["target_ts"].max())
@@ -34,12 +34,12 @@ def smoke_placeholder(fc: pd.DataFrame, out_base: Path) -> list[Path]:
     ax.set_ylim(bottom=0)
     last = city.iloc[-1]
     x_lab = last["target_ts"] + pd.Timedelta(hours=3)
-    direct_labels(ax, x_lab, [(last["y"], "actual", PALETTE["model"]),
-                              (last["point"], "seasonal naive", "#6B7078")])
+    direct_labels(ax, x_lab, [(last["y"], "actual", PALETTE["actual"]),
+                              (last["point"], "seasonal naive", PALETTE["muted_text"])])
     lo, hi = city["target_ts"].min().date(), city["target_ts"].max().date()
     ax.set_title(f"Smoke test: day-ahead seasonal-naive forecast, {lo} to {hi}")
     ax.text(0.0, -0.2, "Placeholder figure from the one-month smoke pipeline; band = sum of "
             "per-zone q10/q90, not a calibrated citywide interval.",
-            transform=ax.transAxes, fontsize=8, color="#6B7078")
+            transform=ax.transAxes, fontsize=8, color=PALETTE["muted_text"])
     policy_line(ax)
     return save(fig, out_base)

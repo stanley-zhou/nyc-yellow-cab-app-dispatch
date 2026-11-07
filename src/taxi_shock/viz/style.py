@@ -21,6 +21,8 @@ PALETTE: dict[str, str] = {
     "non_cbd": "#8A8F98",
     "model": "#1F5F8B",
     "baseline": "#B0B4BA",
+    "actual": "#1A1A1A",       # observed series (near-black, distinct from every model colour)
+    "muted_text": "#6B7078",   # notes, secondary labels, baseline lines drawn over a baseline band
     "text": "#2B2B2B",
 }
 DIVERGING_CMAP = "RdBu_r"   # blue-white-red, centred at 0 with a TwoSlopeNorm

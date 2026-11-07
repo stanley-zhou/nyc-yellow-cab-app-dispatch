@@ -106,7 +106,10 @@ def download_file(url: str, dest: Path, cfg: dict[str, Any] | None = None) -> in
 
 
 def update_manifest(rows: Iterable[tuple[Path, int]], cfg: dict[str, Any] | None = None) -> Path:
-    """Upsert (file, bytes, download_date) rows into the manifest CSV; file paths repo-relative."""
+    """Upsert (file, bytes, download_date) rows into the manifest CSV; file paths repo-relative.
+
+    Rows whose file no longer exists on disk are dropped, so the manifest always describes the
+    raw files actually present."""
     cfg = cfg or load_config()
     manifest = path("manifest", cfg)
     manifest.parent.mkdir(parents=True, exist_ok=True)
@@ -122,6 +125,7 @@ def update_manifest(rows: Iterable[tuple[Path, int]], cfg: dict[str, Any] | None
         if prev and int(prev["bytes"]) == size:
             continue  # unchanged file keeps its original download date
         existing[rel] = {"file": rel, "bytes": str(size), "download_date": today}
+    existing = {k: v for k, v in existing.items() if (root / k).exists()}
     with manifest.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=["file", "bytes", "download_date"], lineterminator="\n")
         w.writeheader()

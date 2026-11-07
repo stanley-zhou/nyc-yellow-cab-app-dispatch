@@ -46,6 +46,12 @@ def main() -> None:
         "cpu_count": os.cpu_count(),
         "mem_total_gb": round((mem_total_bytes() or 0) / GB, 2),
         "disks": disks,
+        # The WSL ext4 virtual disk reports a large nominal size but grows inside a VHDX file on
+        # C:, so free space on C: is the real ceiling for data/ (CLAUDE.md, Checkpoint 0).
+        "effective_ceiling": {
+            "source": "windows_c_drive" if "windows_c_drive" in disks else "repo_filesystem",
+            "free_gb": (disks.get("windows_c_drive") or disks["repo_filesystem"])["free_gb"],
+        },
     }
     (out / "machine_resources.json").write_text(json.dumps(resources, indent=2) + "\n")
 

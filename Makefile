@@ -4,10 +4,10 @@ SHELL := /bin/bash
 PY    := .venv/bin/python
 PHASE ?= 0
 
-.PHONY: help setup smoke data dbt forecast causal adapt figures report all verify lint test clean-smoke
+.PHONY: help setup smoke smoke-clean data dbt forecast causal adapt figures report all verify lint test clean-smoke
 
 help:
-	@echo "setup | smoke | data | dbt | forecast | causal | adapt | figures | report | all | verify PHASE=N | lint | test"
+	@echo "setup | smoke | smoke-clean | data | dbt | forecast | causal | adapt | figures | report | all | verify PHASE=N | lint | test"
 
 setup:            ## Python 3.12 venv via uv (system Python 3.14 is not supported)
 	uv python install 3.12
@@ -16,6 +16,9 @@ setup:            ## Python 3.12 venv via uv (system Python 3.14 is not supporte
 
 smoke:            ## one-month end-to-end pipeline, timed (< 10 min)
 	$(PY) scripts/00_smoke.py
+
+smoke-clean:      ## smoke on a clean export of HEAD; writes results/smoke/smoke_run_clean_clone.json
+	$(PY) scripts/clean_clone_smoke.py
 
 data:             ## full raw download: every yellow month in config + lookups + weather
 	$(PY) scripts/01_download.py --all
