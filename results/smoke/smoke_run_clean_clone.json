@@ -1,17 +1,20 @@
 {
   "month": "2024-10",
-  "finished_utc": "2026-11-07T20:41:16+00:00",
+  "finished_utc": "2026-11-07T20:49:29+00:00",
   "stage_seconds": {
-    "download": 1.9,
+    "download": 1.8,
     "weather": 1.2,
-    "dbt_build": 11.4,
-    "backtest": 1.4,
-    "figure": 2.5
+    "dbt_build": 11.7,
+    "backtest": 1.2,
+    "figure": 2.3
   },
-  "total_seconds": 18.5,
+  "total_seconds": 18.3,
   "limit_seconds": 600.0,
   "passed": true,
   "python": "3.12.14",
   "machine": "x86_64",
-  "context": "clean export of the staged git tree (git checkout-index) into an empty directory, then make setup && make smoke; uv package cache was warm, so setup time is not representative of a first-ever install"
+  "git_commit": "b8276255b9bb7cf800faa499845d4323c79e429d",
+  "working_tree_dirty_at_run": false,
+  "setup_seconds": 1.8,
+  "context": "git archive HEAD into an empty temp dir, then make setup && make smoke; setup_seconds depends on the local uv package cache"
 }
