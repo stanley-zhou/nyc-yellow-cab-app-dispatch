@@ -4,7 +4,7 @@ SHELL := /bin/bash
 PY    := .venv/bin/python
 PHASE ?= 0
 
-.PHONY: help setup smoke smoke-clean data dbt probes forecast causal adapt figures report all verify lint test clean-smoke
+.PHONY: help setup smoke smoke-clean data dbt probes chronos-bundle chronos-import forecast causal adapt figures report all verify lint test clean-smoke
 
 help:
 	@echo "setup | smoke | smoke-clean | data | dbt | probes | forecast | causal | adapt | figures | report | all | verify PHASE=N | lint | test"
@@ -37,6 +37,12 @@ probes:           ## one-off evidence scripts behind DECISIONS.md entries
 	$(PY) scripts/probe_negative_fares.py
 	$(PY) scripts/probe_record_formats.py
 	$(PY) scripts/probe_open_meteo_offset.py
+
+chronos-bundle:   ## Phase 2: export the Chronos-2 input bundle for Colab (data/processed/)
+	$(PY) scripts/05a_chronos_export.py
+
+chronos-import:   ## Phase 2: validate the Chronos-2 outputs copied back from Colab into results/
+	$(PY) scripts/05b_chronos_import.py
 
 figures:          ## every figure whose phase is implemented, from results/ only
 	$(PY) scripts/09_figures.py --all

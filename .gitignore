@@ -18,3 +18,4 @@ logs/
 dbt/.user.yml
 data/duckdb_tmp/
 data/*.duckdb.tmp/
+data/processed/chronos_bundle.zip

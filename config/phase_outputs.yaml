@@ -33,6 +33,10 @@
 2:
   - results/backtest_2024.csv
   - results/chronos_forecasts.parquet
+  - results/chronos_forecasts_post.parquet
+  - results/chronos_run.json
+  - results/chronos_import_check.json
+  - data/processed/chronos/manifest.json
   - reports/figures/F2_model_comparison.png
   - reports/figures/F2b_fan_chart.png
 3:
