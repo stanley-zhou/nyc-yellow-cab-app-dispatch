@@ -28,7 +28,14 @@ forecast:
 causal:
   outcome: "log1p_pickups"
   unit: "zone_week"                           # primary; zone_day for heterogeneity
-  control: "manhattan_non_cbd"                # primary; outer_boroughs robustness
+  # AMENDED 2026-11-07 (Stanley, human-approved; PLAN Amendments): PLAN value "manhattan_non_cbd"
+  # is now a robustness run; the primary control drops the six zones straddling 60th St.
+  control: "manhattan_non_cbd_donut"          # primary
+  control_robustness: ["manhattan_non_cbd", "outer_boroughs"]
+  control_groups:                             # resolved by taxi_shock.causal.panel.control_zone_ids
+    manhattan_non_cbd_donut: {zone_groups: [manhattan_non_cbd], exclude_zones: [43, 140, 141, 142, 143, 237]}
+    manhattan_non_cbd: {zone_groups: [manhattan_non_cbd], exclude_zones: []}
+    outer_boroughs: {boroughs: [Brooklyn, Queens], exclude_airports: true, exclude_zones: []}
   cluster_se: "zone"
 
 # ---- Additional keys (not in PLAN §4); each one has a DECISIONS.md line ----

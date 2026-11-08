@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-08T02:54:27+00:00",
+  "generated_utc": "2026-11-08T03:52:06+00:00",
   "source": "results/vendor_series.csv (dbt fct_weekly_zone_vendor), complete weeks only",
   "window": [
     "2023-01-01",
@@ -810,7 +810,17 @@
       "manhattan_non_cbd": 0.015245,
       "other": 0.00131
     },
-    "worst_case_did_log_bias_if_purely_additive": -0.00395,
-    "control_group": "manhattan_non_cbd"
+    "post_policy_new_vendor_share_cbd": 0.011347,
+    "post_policy_new_vendor_share_by_control_group": {
+      "manhattan_non_cbd_donut": 0.014095,
+      "manhattan_non_cbd": 0.015245,
+      "outer_boroughs": 0.001432
+    },
+    "worst_case_did_log_bias_if_purely_additive_by_control": {
+      "manhattan_non_cbd_donut": -0.002783,
+      "manhattan_non_cbd": -0.00395,
+      "outer_boroughs": 0.009979
+    },
+    "primary_control": "manhattan_non_cbd_donut"
   }
 }

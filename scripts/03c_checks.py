@@ -29,6 +29,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from taxi_shock.causal.panel import control_zone_ids
 from taxi_shock.cbd import PLANAR_CRS, area_share_south, sixtieth_street_line
 from taxi_shock.config import load_config, path
 from taxi_shock.download import OSM_60TH_FILE
@@ -42,8 +43,9 @@ def main() -> None:
     out = path("results", cfg)
     with connect(path("warehouse", cfg), cfg=cfg) as con:
         series = write_vendor_series(con, cfg, out)
+        zone_post = _post_policy_zone_vendor(con, cfg)
         write_cbd_trip_check(con, cfg, out)
-    write_vendor_summary(series, cfg, out)
+    write_vendor_summary(series, cfg, out, zone_post)
     write_record_format_shares(series, cfg, out)
     write_modeled_zones(cfg, out)
 
@@ -92,7 +94,8 @@ def write_vendor_series(con, cfg: dict, out: Path) -> pd.DataFrame:
     return df
 
 
-def write_vendor_summary(series: pd.DataFrame, cfg: dict, out: Path) -> None:
+def write_vendor_summary(series: pd.DataFrame, cfg: dict, out: Path,
+                         zone_post: pd.DataFrame) -> None:
     vc = cfg["vendors"]
     new_id = int(vc["new_vendor_id"])
     full = series[series["complete_week"]].copy()
@@ -186,14 +189,15 @@ def write_vendor_summary(series: pd.DataFrame, cfg: dict, out: Path) -> None:
                            "it. Inside the CBD the YoY change also contains the policy effect."),
             "rows": decomp,
         },
-        "detectability": _detectability(full, new_id, entry, cfg),
+        "detectability": _detectability(full, new_id, entry, cfg, zone_post),
     }
     (out / "vendor_summary.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     logging.info("vendor_summary: entry week %s, present throughout %s",
                  result["new_vendor"]["entry_week"], result["vendors_present_throughout"])
 
 
-def _detectability(full: pd.DataFrame, new_id: int, entry, cfg: dict) -> dict:
+def _detectability(full: pd.DataFrame, new_id: int, entry, cfg: dict,
+                   zone_post: pd.DataFrame) -> dict:
     """Can aggregate counts tell replacement from addition, and what is at stake for the DiD?
 
     noise: Helix's weekly volume and weekly increments vs the typical absolute week-to-week change
@@ -217,9 +221,15 @@ def _detectability(full: pd.DataFrame, new_id: int, entry, cfg: dict) -> dict:
                     >= pd.Timestamp(cfg["data"]["policy_date"])]
     sums = post.groupby(level="zone_group").sum()
     share = (sums.get(key, 0) / sums.sum(axis=1)).to_dict()
-    ctrl = cfg["causal"]["control"]
-    bias = (-np.log1p(-share["cbd"]) + np.log1p(-share[ctrl])) if {"cbd", ctrl} <= set(share) \
-        else None
+    # bias per control definition (causal.control_groups), from zone-level post-policy counts
+    zp = zone_post
+    s_cbd = zp.loc[zp["zone_group"] == "cbd", "new"].sum() / \
+        zp.loc[zp["zone_group"] == "cbd", "pickups"].sum()
+    bias, ctrl_share = {}, {}
+    for name in cfg["causal"]["control_groups"]:
+        c = zp[zp["zone_id"].isin(control_zone_ids(zp, cfg, name))]
+        ctrl_share[name] = float(c["new"].sum() / c["pickups"].sum())
+        bias[name] = round(float(-np.log1p(-s_cbd) + np.log1p(-ctrl_share[name])), 6)
     return {
         "ramp_weeks": [_d(ramp.index.min()), _d(ramp.index.max())],
         "max_weekly_new_vendor_pickups_in_ramp": int(ramp[key].max()),
@@ -227,10 +237,28 @@ def _detectability(full: pd.DataFrame, new_id: int, entry, cfg: dict) -> dict:
         "median_abs_weekly_change_total_in_ramp": float(d_total.median()),
         "post_policy_new_vendor_share_by_zone_group": {k: round(float(v), 6)
                                                        for k, v in share.items()},
-        "worst_case_did_log_bias_if_purely_additive": None if bias is None
-        else round(float(bias), 6),
-        "control_group": ctrl,
+        "post_policy_new_vendor_share_cbd": round(float(s_cbd), 6),
+        "post_policy_new_vendor_share_by_control_group": {k: round(v, 6)
+                                                          for k, v in ctrl_share.items()},
+        "worst_case_did_log_bias_if_purely_additive_by_control": bias,
+        "primary_control": cfg["causal"]["control"],
     }
+
+
+def _post_policy_zone_vendor(con, cfg: dict) -> pd.DataFrame:
+    """Per pickup zone: valid pickups and new-vendor pickups over complete post-policy weeks."""
+    return con.execute("""
+        with wk as (select week_start from fct_weekly_zone_panel group by 1
+                    having max(n_days) = 7)
+        select z.zone_id, z.borough, z.zone_group, z.is_airport,
+               sum(v.pickups) as pickups,
+               coalesce(sum(v.pickups) filter (where v.vendor_id = ?), 0) as new
+        from fct_weekly_zone_vendor v
+        join wk using (week_start)
+        join dim_zones z using (zone_id)
+        where v.week_start >= ?::date
+        group by 1, 2, 3, 4""", [int(cfg["vendors"]["new_vendor_id"]),
+                                 cfg["data"]["policy_date"]]).df()
 
 
 def write_record_format_shares(series: pd.DataFrame, cfg: dict, out: Path) -> None:
