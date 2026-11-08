@@ -39,7 +39,8 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `figures` | every figure whose phase is implemented (Phase 1: F1, F1b), built from `results/` only |
 | `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, Open-Meteo offset |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
-| `forecast`, `causal`, `adapt`, `report`, `all` | added in their phases; they fail with a message until then |
+| `forecast` | Phase 2: LightGBM grid on 2023 (`04a_lgbm_tune.py`), rolling-origin backtests of every trained model for 2023 and 2024 (`04_backtest.py --full`), conformal calibration and metrics (`04b_evaluate.py`); Chronos-2 runs on Colab (`chronos-bundle` / `chronos-import`) |
+| `causal`, `adapt`, `report`, `all` | added in their phases; they fail with a message until then |
 
 ## Layout
 

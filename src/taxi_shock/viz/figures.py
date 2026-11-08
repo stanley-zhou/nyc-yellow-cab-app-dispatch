@@ -12,7 +12,15 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from taxi_shock.viz.style import PALETTE, SIZES, direct_labels, policy_line, save, use_style
+from taxi_shock.viz.style import (
+    PALETTE,
+    SIZES,
+    direct_labels,
+    policy_line,
+    save,
+    tint,
+    use_style,
+)
 
 
 def smoke_placeholder(fc: pd.DataFrame, out_base: Path) -> list[Path]:
@@ -179,3 +187,78 @@ def _log_end_labels(ax, x, items: list[tuple[float, str, str]], min_gap_dec: flo
         placed.append(ly)
         ax.annotate(text, xy=(x, 10 ** ly), va="center", ha="left", fontsize=9,
                     color=PALETTE["text"], annotation_clip=False)
+
+
+# F2 colours: baselines in greys (PALETTE baseline, muted), the trained ML model in the project's
+# model accent, Chronos-2 in the next categorical hue (orange) with a lighter tint for the variant
+# that also sees observed weather over the target day.
+MODEL_STYLE: dict[str, tuple[str, str]] = {
+    "seasonal_naive": ("Seasonal naive (lag 168 h)", PALETTE["baseline"]),
+    "stat_ets_profile": ("AutoETS daily x hourly profile", PALETTE["muted_text"]),
+    "lgbm_quantile": ("Global LightGBM quantile", PALETTE["model"]),
+    "chronos2_weather_past": ("Chronos-2 zero-shot (weather as past covariate)", "#eb6834"),
+    "chronos2_weather_future": ("Chronos-2 zero-shot (weather also over target day)", "#f4a582"),
+}
+GROUP_LABELS: dict[str, str] = {"all": "All modeled zones", "cbd": "CBD",
+                                "manhattan_non_cbd": "Manhattan non-CBD",
+                                "airports": "Airports", "other": "Other zones"}
+
+
+def f2_model_comparison(wape: pd.DataFrame, title: str, note: str, out_base: Path) -> list[Path]:
+    """F2: WAPE (2024 test year, day-ahead) by model and zone group; one panel per group.
+
+    `wape` columns: model, zone_group, value (raw forecasts, primary window; Chronos zero-shot).
+    """
+    use_style()
+    groups = [g for g in GROUP_LABELS if g in set(wape["zone_group"])]
+    models = [m for m in MODEL_STYLE if m in set(wape["model"])]
+    fig, axes = plt.subplots(1, len(groups), figsize=SIZES["small_multiples"], sharey=True)
+    vmax = float(wape["value"].max()) * 1.25
+    for ax, g in zip(axes, groups, strict=True):
+        d = wape[wape["zone_group"] == g].set_index("model")["value"]
+        ys = range(len(models))[::-1]
+        for y, m in zip(ys, models, strict=True):
+            if m not in d:
+                continue
+            ax.barh(y, d[m], color=MODEL_STYLE[m][1], height=0.7, edgecolor="white",
+                    linewidth=2)
+            ax.annotate(f"{d[m]:.3f}", xy=(d[m], y), xytext=(3, 0), textcoords="offset points",
+                        va="center", fontsize=8, color=PALETTE["text"])
+        ax.set_title(GROUP_LABELS[g], fontsize=10)
+        ax.set_xlim(0, vmax)
+        ax.grid(axis="y", visible=False)
+        ax.set_xlabel("WAPE")
+    axes[0].set_yticks(list(range(len(models)))[::-1])
+    axes[0].set_yticklabels([MODEL_STYLE[m][0] for m in models], fontsize=8.5)
+    fig.suptitle(title, fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.text(0.01, 0.01, note, fontsize=8, color=PALETTE["muted_text"])
+    fig.tight_layout(rect=(0, 0.04, 1, 0.95))
+    return save(fig, out_base)
+
+
+def f2b_fan_chart(fan: pd.DataFrame, zone_name: str, title: str, out_base: Path) -> list[Path]:
+    """F2b: one CBD zone, one week: actual vs LGBM q10/q50/q90 (raw band shaded, conformal
+    band as dashed edges). `fan` = results/fan_chart_f2b.csv rows of one model/window."""
+    use_style()
+    raw = fan[fan["calibration"] == "raw"].sort_values("target_ts")
+    cal = fan[fan["calibration"] == "conformal"].sort_values("target_ts")
+    fig, ax = plt.subplots(figsize=SIZES["single"])
+    ax.fill_between(raw["target_ts"], raw["q10"], raw["q90"], color=tint(PALETTE["model"], 0.7),
+                    linewidth=0, label="80% interval (raw q10-q90)")
+    if len(cal):
+        for c in ("q10", "q90"):
+            ax.plot(cal["target_ts"], cal[c], color=PALETTE["model"], linewidth=0.8,
+                    linestyle="--", label="80% interval after conformal" if c == "q10" else None)
+    ax.plot(raw["target_ts"], raw["q50"], color=PALETTE["model"], linewidth=1.6,
+            label="LightGBM median (q50)")
+    ax.plot(raw["target_ts"], raw["y"], color=PALETTE["actual"], linewidth=1.1,
+            label="Actual pickups")
+    ax.set_ylabel(f"Pickups per hour, {zone_name}")
+    ax.set_xlabel("Local time (forecast issued 00:00 the same day)")
+    ax.set_ylim(bottom=0)
+    ax.set_xlim(raw["target_ts"].min(), raw["target_ts"].max())
+    ax.xaxis.set_major_locator(mdates.DayLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%a %d %b"))
+    ax.legend(loc="upper left", fontsize=8, frameon=False, ncol=2)
+    ax.set_title(title)
+    return save(fig, out_base)

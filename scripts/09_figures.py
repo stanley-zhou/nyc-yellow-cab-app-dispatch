@@ -6,7 +6,8 @@ every title number has a source file.
 
 Usage:
     python scripts/09_figures.py --smoke     # Phase-0 placeholder figure
-    python scripts/09_figures.py --all       # every implemented figure (Phase 1: F1, F1b, F1c)
+    python scripts/09_figures.py --all       # every implemented figure
+                                              # (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b)
 """
 
 from __future__ import annotations
@@ -22,6 +23,8 @@ from taxi_shock.viz.figures import (
     f1_demand_map,
     f1b_citywide_weekly,
     f1c_vendor_weekly,
+    f2_model_comparison,
+    f2b_fan_chart,
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
@@ -70,6 +73,51 @@ def phase1(cfg: dict) -> None:
     logging.info("wrote F1, F1b, F1c to %s", figs)
 
 
+def phase2(cfg: dict) -> None:
+    res, figs = path("results", cfg), path("figures", cfg)
+    if not (res / "backtest_2024.csv").exists():
+        logging.warning("results/backtest_2024.csv missing: Phase-2 figures skipped")
+        return
+    summary = json.loads((res / "forecast_summary.json").read_text())
+    primary = summary["primary_window"]["chosen"] or "expanding"
+    t = pd.read_csv(res / "backtest_2024.csv")
+    sel = ((t["metric"] == "wape") & (t["horizon_bucket"] == "all") & (t["subset"] == "all")
+           & (t["calibration"] == "raw") & t["window"].isin([primary, "zero_shot"]))
+    wape = t.loc[sel, ["model", "zone_group", "value"]]
+    allz = wape[wape["zone_group"] == "all"].set_index("model")["value"]
+    base, lg = float(allz["seasonal_naive"]), float(allz.get("lgbm_quantile", float("nan")))
+    best = allz.idxmin()
+    stats = {"source_files": ["results/backtest_2024.csv", "results/forecast_summary.json",
+                              "results/fan_chart_f2b.csv"],
+             "primary_window": primary,
+             "wape_all_zones": {k: round(float(v), 4) for k, v in allz.items()},
+             "lgbm_wape_change_vs_seasonal_naive": round(lg / base - 1, 4),
+             "lowest_wape_model": best}
+    names = {"seasonal_naive": "seasonal naive", "stat_ets_profile": "AutoETS baseline",
+             "lgbm_quantile": "LightGBM", "chronos2_weather_past": "Chronos-2",
+             "chronos2_weather_future": "Chronos-2 (future weather)"}
+    title = (f"2024 day-ahead WAPE: {names[best]} lowest across modeled zones "
+             f"({allz[best]:.3f} vs seasonal naive {base:.3f})")
+    note = (f"Raw (uncalibrated) forecasts; trained models: {primary} training window, monthly "
+            "refit; Chronos-2 zero-shot, 2048 h context. Source: results/backtest_2024.csv.")
+    f2_model_comparison(wape, title, note, figs / "F2_model_comparison")
+
+    fan = pd.read_csv(res / "fan_chart_f2b.csv", parse_dates=["target_ts"])
+    fan = fan[(fan["model"] == "lgbm_quantile") & (fan["window"] == primary)]
+    if len(fan):
+        zs = pd.read_csv(res / "zone_summary.csv").set_index("zone_id")
+        zone = int(fan["zone_id"].iloc[0])
+        raw = fan[fan["calibration"] == "raw"]
+        inside = int(((raw["y"] >= raw["q10"]) & (raw["y"] <= raw["q90"])).sum())
+        stats.update({"f2b_zone_id": zone, "f2b_hours": len(raw),
+                      "f2b_hours_inside_raw_80": inside})
+        t2b = (f"LightGBM day-ahead forecast, {zs.loc[zone, 'zone_name']}: raw 80% band holds "
+               f"{inside} of {len(raw)} hours, week of {raw['target_ts'].min().date()}")
+        f2b_fan_chart(fan, zs.loc[zone, "zone_name"], t2b, figs / "F2b_fan_chart")
+    (res / "figure_stats_phase2.json").write_text(json.dumps(stats, indent=2) + "\n")
+    logging.info("wrote F2, F2b to %s", figs)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
@@ -84,6 +132,7 @@ def main() -> None:
         logging.info("wrote %s", ", ".join(str(p) for p in paths))
         return
     phase1(cfg)
+    phase2(cfg)
 
 
 if __name__ == "__main__":

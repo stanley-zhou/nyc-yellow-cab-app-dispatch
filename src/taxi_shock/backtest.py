@@ -34,6 +34,9 @@ class BacktestSpec:
     window: str = "expanding"
     refit: str = "monthly"
     model_start: pd.Timestamp | None = None
+    # MASE denominator: per-zone in-sample seasonal-naive MAE over [scale_start, refit origin),
+    # the same for every model and window (None: model_start, else the panel start)
+    scale_start: pd.Timestamp | None = None
 
 
 def daily_origins(start: str, end: str) -> pd.DatetimeIndex:
@@ -95,13 +98,15 @@ def run_backtest(
         history = panel.iloc[:cut]
         if do_refit or model is None:
             lo = window_start(origin, spec.window, spec.model_start)
-            train = history[history["hour_ts"] >= lo]
-            model = model_factory().fit(train)
-            res = seasonal_residuals(train)
+            model = model_factory().fit(history, train_start=lo)
+            s0 = spec.scale_start or spec.model_start
+            res = seasonal_residuals(history)
+            if s0 is not None:
+                res = res[res["hour_ts"] >= s0]
             scale = res.assign(a=res["resid"].abs()).groupby("zone_id")["a"].mean()
-            fit_start, fit_end = train["hour_ts"].min(), train["hour_ts"].max()
-            log.info("%s fit at %s on %s..%s (%d rows)", model.name, origin.date(),
-                     fit_start, fit_end, len(train))
+            fit_start = max(lo, history["hour_ts"].min())
+            fit_end = history["hour_ts"].max()
+            log.info("%s fit at %s on %s..%s", model.name, origin.date(), fit_start, fit_end)
         targets = targets_for(origin, hours, zones)
         pred = model.predict_quantiles(history, targets, spec.quantiles)
         pred["origin"] = origin

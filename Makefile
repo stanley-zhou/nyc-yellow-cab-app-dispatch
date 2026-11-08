@@ -47,7 +47,12 @@ chronos-import:   ## Phase 2: validate the Chronos-2 outputs copied back from Co
 figures:          ## every figure whose phase is implemented, from results/ only
 	$(PY) scripts/09_figures.py --all
 
-forecast causal adapt report:
+forecast:         ## Phase 2: LGBM grid (2023), rolling-origin backtests (2023 + 2024), evaluation
+	$(PY) scripts/04a_lgbm_tune.py
+	$(PY) scripts/04_backtest.py --full
+	$(PY) scripts/04b_evaluate.py
+
+causal adapt report:
 	@echo "make $@: not implemented yet (added in its phase, see PLAN.md §5)"; exit 1
 
 all: data dbt forecast causal adapt figures report

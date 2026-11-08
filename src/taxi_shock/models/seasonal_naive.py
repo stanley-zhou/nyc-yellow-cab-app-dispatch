@@ -35,8 +35,11 @@ class SeasonalNaive(BaseForecaster):
         self.resid_q_: pd.DataFrame | None = None
         self.scale_: pd.Series | None = None
 
-    def fit(self, history: pd.DataFrame) -> SeasonalNaive:
+    def fit(self, history: pd.DataFrame, train_start: pd.Timestamp | None = None
+            ) -> SeasonalNaive:
         res = seasonal_residuals(history, self.season)
+        if train_start is not None:
+            res = res[res["hour_ts"] >= train_start]
         if res.empty:
             raise ValueError("SeasonalNaive.fit needs more than one season of history")
         self._res = res

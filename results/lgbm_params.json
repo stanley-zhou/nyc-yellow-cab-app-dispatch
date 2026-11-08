@@ -1,0 +1,82 @@
+{
+  "generated_utc": "2026-11-08T05:24:26+00:00",
+  "source": "results/lgbm_tuning.csv",
+  "train": [
+    "2022-01-01",
+    "2022-12-31"
+  ],
+  "validation": [
+    "2023-01-01",
+    "2023-12-31"
+  ],
+  "selection": "lowest mean validation pinball loss over the quantiles",
+  "params": {
+    "feature_fraction": 0.9,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 1,
+    "learning_rate": 0.05,
+    "min_data_in_leaf": 200,
+    "num_leaves": 127
+  },
+  "rounds": {
+    "0.1": 388,
+    "0.5": 3253,
+    "0.9": 638
+  },
+  "early_stopping": {
+    "rounds": 100,
+    "min_delta": 0.001,
+    "max_rounds": 10000
+  },
+  "chosen_hit_max_rounds": false,
+  "mean_pinball_by_grid_point": [
+    {
+      "learning_rate": 0.05,
+      "min_data_in_leaf": 20,
+      "num_leaves": 31,
+      "mean_pinball": 2.3867040320347463
+    },
+    {
+      "learning_rate": 0.05,
+      "min_data_in_leaf": 20,
+      "num_leaves": 127,
+      "mean_pinball": 2.2266067615934104
+    },
+    {
+      "learning_rate": 0.05,
+      "min_data_in_leaf": 200,
+      "num_leaves": 31,
+      "mean_pinball": 2.3954203202168647
+    },
+    {
+      "learning_rate": 0.05,
+      "min_data_in_leaf": 200,
+      "num_leaves": 127,
+      "mean_pinball": 2.21830203407198
+    },
+    {
+      "learning_rate": 0.1,
+      "min_data_in_leaf": 20,
+      "num_leaves": 31,
+      "mean_pinball": 2.37425468244666
+    },
+    {
+      "learning_rate": 0.1,
+      "min_data_in_leaf": 20,
+      "num_leaves": 127,
+      "mean_pinball": 2.240240147094467
+    },
+    {
+      "learning_rate": 0.1,
+      "min_data_in_leaf": 200,
+      "num_leaves": 31,
+      "mean_pinball": 2.3513568254963446
+    },
+    {
+      "learning_rate": 0.1,
+      "min_data_in_leaf": 200,
+      "num_leaves": 127,
+      "mean_pinball": 2.2278852704085943
+    }
+  ]
+}

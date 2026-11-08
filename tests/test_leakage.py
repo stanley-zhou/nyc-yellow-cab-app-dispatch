@@ -3,7 +3,7 @@
 For each origin we poison every value with hour_ts >= origin (huge numbers and NaN) and assert
 that the forecasts are bit-for-bit identical to those from the clean panel. A power check
 confirms that poisoning the *past* does change forecasts, so the test can actually fail.
-Phase 2 adds every trained model to MODELS.
+Every trained model of Phase 2 is in MODELS (Chronos: tests/test_chronos_inputs.py).
 """
 
 from __future__ import annotations
@@ -13,9 +13,33 @@ import pandas as pd
 import pytest
 
 from taxi_shock.backtest import BacktestSpec, run_backtest
+from taxi_shock.features import WEATHER_FEATURES
+from taxi_shock.models.lgbm_quantile import GlobalLGBMQuantile
 from taxi_shock.models.seasonal_naive import SeasonalNaive
+from taxi_shock.models.stat_baselines import ETSDailyProfile
 
-MODELS = [SeasonalNaive]
+
+def _exog() -> pd.DataFrame:
+    hours = pd.date_range("2023-12-01", "2024-03-01", freq="h")
+    rng = np.random.default_rng(1)
+    ex = pd.DataFrame({c: rng.normal(size=len(hours)) for c in WEATHER_FEATURES}, index=hours)
+    ex["is_holiday"] = False
+    return ex
+
+
+def lgbm_factory():
+    return GlobalLGBMQuantile(_exog(), (0.1, 0.5, 0.9),
+                              {"learning_rate": 0.1, "num_leaves": 7, "min_data_in_leaf": 5},
+                              {0.1: 20, 0.5: 20, 0.9: 20}, seed=0, threads=1)
+
+
+def stat_factory():
+    return ETSDailyProfile(profile_weeks=2, residual_weeks=2)
+
+
+lgbm_factory.name = "lgbm_quantile"
+stat_factory.name = "stat_ets_profile"
+MODELS = [SeasonalNaive, stat_factory, lgbm_factory]
 ORIGINS = ["2024-01-22", "2024-01-29", "2024-02-05"]
 COLS = ["point", "q10", "q50", "q90"]
 

@@ -27,8 +27,12 @@ class BaseForecaster(ABC):
     name: str = "base"
 
     @abstractmethod
-    def fit(self, history: pd.DataFrame) -> BaseForecaster:
-        """Learn from `history` (all rows have hour_ts < the first origin served by this fit)."""
+    def fit(self, history: pd.DataFrame, train_start: pd.Timestamp | None = None
+            ) -> BaseForecaster:
+        """Learn from `history` (all rows have hour_ts < the first origin served by this fit).
+
+        Training targets are the rows with hour_ts >= `train_start` (None: all rows); earlier
+        rows may only serve as lag inputs of those targets."""
 
     @abstractmethod
     def predict_quantiles(
