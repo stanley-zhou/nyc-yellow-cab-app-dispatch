@@ -33,13 +33,23 @@ def lgbm_factory():
                               {0.1: 20, 0.5: 20, 0.9: 20}, seed=0, threads=1)
 
 
+def lgbm_es_factory():
+    """Rounds chosen per refit by early stopping on the last week of the training window."""
+    return GlobalLGBMQuantile(_exog(), (0.1, 0.5, 0.9),
+                              {"learning_rate": 0.1, "num_leaves": 7, "min_data_in_leaf": 5},
+                              {}, seed=0, threads=1,
+                              early_stopping={"holdout_weeks": 1, "rounds": 5,
+                                              "min_delta": 0.0, "max_rounds": 30})
+
+
 def stat_factory():
     return ETSDailyProfile(profile_weeks=2, residual_weeks=2)
 
 
 lgbm_factory.name = "lgbm_quantile"
+lgbm_es_factory.name = "lgbm_quantile_early_stopping"
 stat_factory.name = "stat_ets_profile"
-MODELS = [SeasonalNaive, stat_factory, lgbm_factory]
+MODELS = [SeasonalNaive, stat_factory, lgbm_factory, lgbm_es_factory]
 ORIGINS = ["2024-01-22", "2024-01-29", "2024-02-05"]
 COLS = ["point", "q10", "q50", "q90"]
 

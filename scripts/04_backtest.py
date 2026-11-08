@@ -59,6 +59,9 @@ def smoke(cfg: dict) -> None:
                  len(fc), len(table), out)
 
 
+FIT_LOG: list[dict] = []   # one entry per LightGBM refit (rows, rounds, wall time)
+
+
 def factories(cfg: dict, exog: pd.DataFrame) -> dict:
     mc = cfg["models"]
     sc = mc["stat"]
@@ -67,11 +70,19 @@ def factories(cfg: dict, exog: pd.DataFrame) -> dict:
         return ETSDailyProfile(sc["daily_season_length"], sc["profile_weeks"],
                                sc["residual_weeks"])
 
+    class LoggedLGBM(GlobalLGBMQuantile):
+        def fit(self, history, train_start=None):
+            super().fit(history, train_start)
+            FIT_LOG.append(dict(self.fit_info_))
+            logging.info("lgbm refit: %s", self.fit_info_)
+            return self
+
     def lgbm():
         tuned = json.loads((path("results", cfg) / "lgbm_params.json").read_text())
-        return GlobalLGBMQuantile(exog, cfg["forecast"]["quantiles"], tuned["params"],
-                                  {float(k): v for k, v in tuned["rounds"].items()},
-                                  seed=cfg["seed"], threads=mc["threads"])
+        return LoggedLGBM(exog, cfg["forecast"]["quantiles"], tuned["params"],
+                          {float(k): v for k, v in tuned["rounds"].items()},
+                          seed=cfg["seed"], threads=mc["threads"],
+                          early_stopping=mc["lgbm"].get("refit_early_stopping"))
 
     return {"seasonal_naive": SeasonalNaive, "stat_ets_profile": stat, "lgbm_quantile": lgbm}
 
@@ -113,11 +124,27 @@ def full(cfg: dict, models: list[str], periods: list[str]) -> None:
                                     quantiles=tuple(cfg["forecast"]["quantiles"]),
                                     window=window, refit=cfg["forecast"]["backtest"]["refit"],
                                     model_start=ms, scale_start=ms)
+                n_log = len(FIT_LOG)
                 fc = run_backtest(panel, make[model], spec)
                 fc["model"] = model
                 fc.to_parquet(out, index=False)
+                if model == "lgbm_quantile":
+                    write_fit_log(cfg, FIT_LOG[n_log:], window, period)
                 logging.info("%s %s %s: %d rows in %.0fs -> %s", model, window, period, len(fc),
                              time.perf_counter() - t0, out.name)
+
+
+def write_fit_log(cfg: dict, entries: list[dict], window: str, period: str) -> None:
+    """Append this run's LightGBM refits to results/lgbm_refits.csv (one row per refit)."""
+    f = path("results", cfg) / "lgbm_refits.csv"
+    rows = pd.DataFrame([{**{k: v for k, v in e.items() if k != "rounds"},
+                          **{f"rounds_q{k}": v for k, v in e["rounds"].items()},
+                          "window": window, "period": period} for e in entries])
+    if f.exists():
+        old = pd.read_csv(f)
+        old = old[~((old["window"] == window) & (old["period"] == period))]
+        rows = pd.concat([old, rows], ignore_index=True)
+    rows.to_csv(f, index=False, lineterminator="\n")
 
 
 def main() -> None:

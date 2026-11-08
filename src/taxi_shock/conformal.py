@@ -54,3 +54,55 @@ def conformal(val: pd.DataFrame, test: pd.DataFrame, groups: pd.Series, alpha: f
             "width_test_conformal": round(float((cc[hi] - cc[lo]).mean()), 4),
         })
     return pd.concat(out, ignore_index=True).drop(columns="zone_group"), report
+
+
+def rolling_conformal(fc: pd.DataFrame, groups: pd.Series, quantiles: list[float],
+                      weeks: int, origins: pd.DatetimeIndex) -> pd.DataFrame:
+    """Rolling per-quantile calibration (Stanley, 2026-11-08; primary calibration).
+
+    For each origin D in `origins`, zone group g and quantile level tau: the adjustment is the
+    empirical tau-quantile of the residuals y - q_tau of the forecasts in `fc` whose target day
+    lies in the trailing `weeks` weeks [D - 7*weeks days, D - 1] (all resolved at the 00:00
+    origin, so no future information); q_tau' = q_tau + adjustment, then the quantiles are
+    re-sorted per row and clipped at zero. The point forecast is unchanged. An origin whose
+    trailing window is not fully covered by forecasts in `fc` gets no calibrated values (NaN)
+    and is counted in `n_origins_uncalibrated` of the returned frame's attrs.
+
+    `fc` holds one model/window's forecasts over the calibration history and the evaluation
+    period (zone_id, target_ts, origin, y, q*); returns the rows with origin in `origins`.
+    """
+    qs = sorted(quantiles)
+    cols = [f"q{round(q * 100):02d}" for q in qs]
+    fc = fc[fc["y"].notna()].assign(zone_group=fc["zone_id"].map(groups),
+                                    day=fc["target_ts"].dt.normalize())
+    days_present = set(fc["day"].unique())
+    span = pd.Timedelta(days=7 * weeks)
+    # residual arrays per (zone group, day, quantile column), built once
+    resid: dict[tuple[str, pd.Timestamp], np.ndarray] = {}
+    for (g, day), d in fc.groupby(["zone_group", "day"]):
+        resid[(g, day)] = (d["y"].to_numpy()[:, None] - d[cols].to_numpy())
+    out, skipped = [], 0
+    by_origin = {o: d for o, d in fc[fc["origin"].isin(origins)].groupby("origin")}
+    for origin in origins:
+        target = by_origin.get(origin)
+        if target is None:
+            continue
+        window = pd.date_range(origin - span, origin - pd.Timedelta(days=1), freq="D")
+        if not set(window) <= days_present:
+            skipped += 1
+            out.append(target.assign(**{c: np.nan for c in cols}))
+            continue
+        parts = []
+        for g, t in target.groupby("zone_group"):
+            pool = np.concatenate([resid[(g, d)] for d in window if (g, d) in resid])
+            shift = np.array([np.quantile(pool[:, j], q) for j, q in enumerate(qs)])
+            t = t.copy()
+            t[cols] = t[cols].to_numpy() + shift
+            parts.append(t)
+        out.append(pd.concat(parts))
+    res = pd.concat(out, ignore_index=True)
+    ok = res[cols].notna().all(axis=1)
+    res.loc[ok, cols] = np.clip(np.sort(res.loc[ok, cols].to_numpy(), axis=1), 0.0, None)
+    res = res.drop(columns=["zone_group", "day"])
+    res.attrs["n_origins_uncalibrated"] = skipped
+    return res

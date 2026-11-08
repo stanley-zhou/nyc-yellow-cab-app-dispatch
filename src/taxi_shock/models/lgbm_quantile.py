@@ -1,5 +1,10 @@
 """Global LightGBM quantile forecaster, one model per quantile (PLAN Phase 2, model 3).
 
+Rounds: either fixed per quantile (`rounds`) or, when `early_stopping` is given, chosen at every
+refit by early stopping on the last `holdout_weeks` of the training window (those weeks are held
+out of the boosting data; the stopped booster is used as is, without a second fit on the full
+window). `fit_info_` records rows, rounds and wall time of each fit.
+
 One booster per quantile level (`objective='quantile'`), global across the modeled zones with
 `zone_id` as a categorical feature. Features come from `taxi_shock.features.build_features`,
 computed from the history the engine passes (truncated at the origin), plus the exogenous
@@ -12,6 +17,7 @@ at zero; `point` = q50.
 
 from __future__ import annotations
 
+import time
 from collections.abc import Mapping, Sequence
 
 import lightgbm as lgb
@@ -38,7 +44,8 @@ class GlobalLGBMQuantile(BaseForecaster):
 
     def __init__(self, exog: pd.DataFrame, quantiles: Sequence[float],
                  params: Mapping[str, object], rounds: Mapping[float, int], seed: int,
-                 weather: Sequence[str] = WEATHER_FEATURES, threads: int = 0) -> None:
+                 weather: Sequence[str] = WEATHER_FEATURES, threads: int = 0,
+                 early_stopping: Mapping[str, float] | None = None) -> None:
         self.exog = exog
         self.quantiles = sorted(quantiles)
         self.params = dict(params)
@@ -46,6 +53,8 @@ class GlobalLGBMQuantile(BaseForecaster):
         self.seed = seed
         self.weather = list(weather)
         self.threads = threads
+        self.early_stopping = dict(early_stopping) if early_stopping else None
+        self.fit_info_: dict[str, object] = {}
         self.cols = feature_columns(self.weather)
         self.boosters_: dict[float, lgb.Booster] = {}
         self.zones_: list[int] = []
@@ -62,13 +71,40 @@ class GlobalLGBMQuantile(BaseForecaster):
 
     def fit(self, history: pd.DataFrame, train_start: pd.Timestamp | None = None
             ) -> GlobalLGBMQuantile:
+        t0 = time.perf_counter()
         feats, y = training_frame(history, self.exog, train_start, self.weather)
         self.zones_ = sorted(int(z) for z in feats["zone_id"].unique())
-        data = lgb.Dataset(self._matrix(feats), y, categorical_feature=["zone_id"],
-                           free_raw_data=True)
-        self.boosters_ = {q: lgb.train(self.booster_params(q), data,
-                                       num_boost_round=self.rounds[q])
-                          for q in self.quantiles}
+        mat = self._matrix(feats)
+        info: dict[str, object] = {"train_start": str(feats["target_ts"].min()),
+                                   "train_end": str(feats["target_ts"].max())}
+        es = self.early_stopping
+        if es is None:
+            data = lgb.Dataset(mat, y, categorical_feature=["zone_id"], free_raw_data=True)
+            self.boosters_ = {q: lgb.train(self.booster_params(q), data,
+                                           num_boost_round=self.rounds[q])
+                              for q in self.quantiles}
+            info.update(rows_boost=len(y), rows_holdout=0,
+                        rounds={str(q): self.rounds[q] for q in self.quantiles})
+        else:
+            cut = feats["target_ts"].max().normalize() + pd.Timedelta(days=1) \
+                - pd.Timedelta(weeks=int(es["holdout_weeks"]))
+            hold = (feats["target_ts"] >= cut).to_numpy()
+            d_tr = lgb.Dataset(mat[~hold], y[~hold], categorical_feature=["zone_id"],
+                               free_raw_data=False)
+            d_va = lgb.Dataset(mat[hold], y[hold], categorical_feature=["zone_id"],
+                               reference=d_tr, free_raw_data=False)
+            self.boosters_ = {}
+            for q in self.quantiles:
+                self.boosters_[q] = lgb.train(
+                    {**self.booster_params(q), "metric": "quantile"}, d_tr,
+                    num_boost_round=int(es["max_rounds"]), valid_sets=[d_va],
+                    callbacks=[lgb.early_stopping(int(es["rounds"]), verbose=False,
+                                                  min_delta=float(es["min_delta"]))])
+            info.update(rows_boost=int((~hold).sum()), rows_holdout=int(hold.sum()),
+                        holdout_start=str(cut),
+                        rounds={str(q): int(b.best_iteration) for q, b in self.boosters_.items()})
+        info["seconds"] = round(time.perf_counter() - t0, 1)
+        self.fit_info_ = info
         return self
 
     def predict_quantiles(self, history: pd.DataFrame, targets: pd.DataFrame,
@@ -78,7 +114,7 @@ class GlobalLGBMQuantile(BaseForecaster):
         feats = build_features(hist, targets[["zone_id", "target_ts"]], self.exog, self.weather)
         mat = self._matrix(feats)
         qs = sorted(quantiles)
-        pred = np.column_stack([self.boosters_[q].predict(mat) for q in qs])
+        pred = np.column_stack([self.boosters_[q].predict(mat) for q in qs])  # best iteration
         pred = np.clip(np.sort(pred, axis=1), 0.0, None)
         out = targets.copy()
         for j, q in enumerate(qs):

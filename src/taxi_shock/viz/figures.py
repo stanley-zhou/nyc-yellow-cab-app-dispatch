@@ -199,13 +199,14 @@ MODEL_STYLE: dict[str, tuple[str, str]] = {
     "chronos2_weather_past": ("Chronos-2 zero-shot (weather as past covariate)", "#eb6834"),
     "chronos2_weather_future": ("Chronos-2 zero-shot (weather also over target day)", "#f4a582"),
 }
-GROUP_LABELS: dict[str, str] = {"all": "All modeled zones", "cbd": "CBD",
-                                "manhattan_non_cbd": "Manhattan non-CBD",
-                                "airports": "Airports", "other": "Other zones"}
+GROUP_LABELS: dict[str, str] = {"all": "All modeled\nzones", "cbd": "CBD",
+                                "manhattan_non_cbd": "Manhattan\nnon-CBD",
+                                "airports": "Airports", "other": "Other\nzones"}
 
 
 def f2_model_comparison(wape: pd.DataFrame, title: str, note: str, out_base: Path) -> list[Path]:
-    """F2: WAPE (2024 test year, day-ahead) by model and zone group; one panel per group.
+    """F2: WAPE (2024 test year, day-ahead) by model and zone group; one panel per group, each
+    with its own x-scale (the comparison is between models within a group).
 
     `wape` columns: model, zone_group, value (raw forecasts, primary window; Chronos zero-shot).
     """
@@ -213,9 +214,9 @@ def f2_model_comparison(wape: pd.DataFrame, title: str, note: str, out_base: Pat
     groups = [g for g in GROUP_LABELS if g in set(wape["zone_group"])]
     models = [m for m in MODEL_STYLE if m in set(wape["model"])]
     fig, axes = plt.subplots(1, len(groups), figsize=SIZES["small_multiples"], sharey=True)
-    vmax = float(wape["value"].max()) * 1.25
     for ax, g in zip(axes, groups, strict=True):
         d = wape[wape["zone_group"] == g].set_index("model")["value"]
+        vmax = float(d.max()) * 1.35   # each panel compares models within one zone group
         ys = range(len(models))[::-1]
         for y, m in zip(ys, models, strict=True):
             if m not in d:
@@ -241,14 +242,15 @@ def f2b_fan_chart(fan: pd.DataFrame, zone_name: str, title: str, out_base: Path)
     band as dashed edges). `fan` = results/fan_chart_f2b.csv rows of one model/window."""
     use_style()
     raw = fan[fan["calibration"] == "raw"].sort_values("target_ts")
-    cal = fan[fan["calibration"] == "conformal"].sort_values("target_ts")
+    cal = fan[fan["calibration"] != "raw"].sort_values("target_ts")
     fig, ax = plt.subplots(figsize=SIZES["single"])
     ax.fill_between(raw["target_ts"], raw["q10"], raw["q90"], color=tint(PALETTE["model"], 0.7),
                     linewidth=0, label="80% interval (raw q10-q90)")
     if len(cal):
         for c in ("q10", "q90"):
             ax.plot(cal["target_ts"], cal[c], color=PALETTE["model"], linewidth=0.8,
-                    linestyle="--", label="80% interval after conformal" if c == "q10" else None)
+                    linestyle="--", label="80% interval, rolling 12-week conformal" if c == "q10"
+                    else None)
     ax.plot(raw["target_ts"], raw["q50"], color=PALETTE["model"], linewidth=1.6,
             label="LightGBM median (q50)")
     ax.plot(raw["target_ts"], raw["y"], color=PALETTE["actual"], linewidth=1.1,

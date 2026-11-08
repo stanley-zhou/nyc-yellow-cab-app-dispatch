@@ -49,13 +49,20 @@ models:                                       # PLAN Phase 2
     residual_weeks: 52                        # interval residual quantiles (zone x hour)
   lgbm:
     grid: {learning_rate: [0.05, 0.1], num_leaves: [31, 127], min_data_in_leaf: [20, 200]}
-    fixed: {feature_fraction: 0.9, bagging_fraction: 0.8, bagging_freq: 1}
+    fixed: {feature_fraction: 0.9, bagging_fraction: 0.8, bagging_freq: 1, max_bin: 255}
+    refit_early_stopping:                     # every backtest refit (Stanley, 2026-11-08)
+      holdout_weeks: 4                        # last 4 weeks of the training window
+      rounds: 100
+      min_delta: 0.001
+      max_rounds: 10000
     max_rounds: 10000                         # run 1 (cap 3000, no tolerance) hit the cap: DECISIONS
     early_stopping_rounds: 100
     early_stopping_min_delta: 0.001           # pinball improvement (pickups) that counts as progress
   conformal:
     alpha: 0.2                                # 80% interval
     group_by: zone_group                      # PLAN: per zone group
+    rolling_weeks: 12                         # Stanley 2026-11-08: trailing-window calibration
+    primary: conformal_rolling_12w            # reported first; conformal_2023 kept beside it
   primary_window_rule:                        # pre-registered before any 2024 result (DECISIONS)
     metric: mean_pinball                      # LGBM, all modeled zones, test year
     tie_relative: 0.01                        # |difference| < 1% -> expanding

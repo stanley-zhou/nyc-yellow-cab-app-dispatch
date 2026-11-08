@@ -27,7 +27,7 @@ import pandas as pd
 
 from taxi_shock.backtest import evaluate
 from taxi_shock.config import load_config, path, repo_root
-from taxi_shock.conformal import conformal
+from taxi_shock.conformal import conformal, rolling_conformal
 
 TRAINED = ["seasonal_naive", "stat_ets_profile", "lgbm_quantile"]
 
@@ -69,13 +69,24 @@ def main() -> None:
     zs = pd.read_csv(res / "zone_summary.csv")
     groups = zs.set_index("zone_id")["zone_group"]
 
+    cc = mc["conformal"]
     val, test = load_forecasts(cfg, "validation"), load_forecasts(cfg, "test")
-    cal, report = conformal(val, test, groups, mc["conformal"]["alpha"], lo, hi)
-    frames = [test.assign(calibration="raw"), cal.assign(calibration="conformal")]
+    cal, report = conformal(val, test, groups, cc["alpha"], lo, hi)
+    frames = [test.assign(calibration="raw"), cal.assign(calibration="conformal_2023")]
     sn = test[(test["model"] == "seasonal_naive") & (test["window"] == "expanding")]
     ch = chronos_forecasts(cfg, sn)
     if ch is not None:
         frames.append(ch.assign(calibration="raw"))
+    # primary calibration: rolling per-quantile conformal on the trailing weeks of residuals;
+    # trained models use their 2023 forecasts as the history of the first 2024 origins
+    origins = pd.DatetimeIndex(sorted(test["origin"].unique()))
+    hist = pd.concat([val, test] + ([ch] if ch is not None else []), ignore_index=True)
+    rolling_label = f"conformal_rolling_{cc['rolling_weeks']}w"
+    uncal = {}
+    for (m, w), d in hist.groupby(["model", "window"]):
+        r = rolling_conformal(d, groups, list(qs), cc["rolling_weeks"], origins)
+        uncal[f"{m}|{w}"] = r.attrs["n_origins_uncalibrated"]
+        frames.append(r[r[lo].notna()].assign(calibration=rolling_label))
     allfc = pd.concat(frames, ignore_index=True)
 
     tables = []
@@ -95,10 +106,34 @@ def main() -> None:
         "alpha": mc["conformal"]["alpha"], "validation_year": mc["validation_year"],
         "group_by": mc["conformal"]["group_by"],
         "not_calibrated": ["chronos2_* (no validation-year forecasts)"],
-        "rows": report}, indent=2) + "\n")
+        "rows": report,
+        "rolling": {
+            "label": rolling_label, "primary": cc["primary"],
+            "method": ("per origin D, zone group and quantile level tau: q_tau + the empirical "
+                       "tau-quantile of y - q_tau over forecasts with target day in "
+                       f"[D - {7 * cc['rolling_weeks']} d, D - 1]; quantiles re-sorted and "
+                       "clipped at 0; point forecast unchanged (taxi_shock.conformal)"),
+            "origins_without_full_trailing_window": uncal,
+            "coverage_and_width": rolling_report(allfc, groups, lo, hi)}},
+        indent=2) + "\n")
     write_summary(cfg, table, res)
     write_fan_chart(cfg, allfc, zs, res)
     logging.info("backtest_2024.csv: %d rows", len(table))
+
+
+def rolling_report(allfc: pd.DataFrame, groups: pd.Series, lo: str, hi: str) -> list[dict]:
+    """80% coverage and mean width per (model, window, calibration, zone group)."""
+    d = allfc[allfc["y"].notna() & allfc[lo].notna()].assign(
+        zone_group=allfc["zone_id"].map(groups))
+    d = d.assign(inside=(d["y"] >= d[lo]) & (d["y"] <= d[hi]), width=d[hi] - d[lo])
+    rows = []
+    for keys, g in d.groupby(["model", "window", "calibration", "zone_group"]):
+        rows.append({**dict(zip(["model", "window", "calibration", "zone_group"], keys,
+                                strict=True)),
+                     "n": len(g), "first_origin": str(g["origin"].min().date()),
+                     "coverage_80": round(float(g["inside"].mean()), 4),
+                     "width_80": round(float(g["width"].mean()), 4)})
+    return rows
 
 
 def _metric(table: pd.DataFrame, metric: str, **kw) -> pd.DataFrame:
@@ -152,7 +187,8 @@ def write_fan_chart(cfg: dict, allfc: pd.DataFrame, zs: pd.DataFrame, res) -> No
     w0 = pd.Timestamp(cfg["models"]["f2b"]["week_start"])
     d = allfc[(allfc["zone_id"] == zone) & (allfc["target_ts"] >= w0)
               & (allfc["target_ts"] < w0 + pd.Timedelta(days=7))]
-    d = d[d["model"].isin(["lgbm_quantile", "seasonal_naive"])]
+    d = d[d["model"].isin(["lgbm_quantile", "seasonal_naive"])
+          & d["calibration"].isin(["raw", cfg["models"]["conformal"]["primary"]])]
     cols = ["model", "window", "calibration", "zone_id", "target_ts", "y", "point", "q10", "q50",
             "q90"]
     d[cols].sort_values(cols[:5]).to_csv(res / "fan_chart_f2b.csv", index=False,

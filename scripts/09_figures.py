@@ -98,8 +98,9 @@ def phase2(cfg: dict) -> None:
              "chronos2_weather_future": "Chronos-2 (future weather)"}
     title = (f"2024 day-ahead WAPE: {names[best]} lowest across modeled zones "
              f"({allz[best]:.3f} vs seasonal naive {base:.3f})")
-    note = (f"Raw (uncalibrated) forecasts; trained models: {primary} training window, monthly "
-            "refit; Chronos-2 zero-shot, 2048 h context. Source: results/backtest_2024.csv.")
+    note = (f"Raw forecasts (calibration does not change point forecasts); trained models: "
+            f"{primary} training window, monthly refit; Chronos-2 zero-shot, 2048 h context. "
+            "Each panel has its own scale. Source: results/backtest_2024.csv.")
     f2_model_comparison(wape, title, note, figs / "F2_model_comparison")
 
     fan = pd.read_csv(res / "fan_chart_f2b.csv", parse_dates=["target_ts"])
