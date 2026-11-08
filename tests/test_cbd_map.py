@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 from shapely.geometry import Point
 
-from taxi_shock.cbd import fee_labels, resolve, south_of_line
+from taxi_shock.cbd import area_share_south, fee_labels, resolve, south_of_line
 from taxi_shock.config import load_config, path
 
 CFG = load_config()
@@ -24,6 +24,17 @@ def test_south_of_line_sides():
     # Battery Park (far south), Central Park North (far north)
     s = south_of_line(_pts([(-74.0170, 40.7033), (-73.9550, 40.7990)]), LINE)
     assert s.tolist() == [True, False]
+
+
+def test_area_share_south_splits_a_straddling_square():
+    w, e = _pts([(-73.99, 40.77), (-73.96, 40.76)])  # LINE endpoints, planar
+    mid = Point((w.x + e.x) / 2, (w.y + e.y) / 2)
+    far_s, far_n = _pts([(-74.0170, 40.7033), (-73.9550, 40.7990)])
+    sq = [Point(p.x, p.y).buffer(500, cap_style="square") for p in (mid, far_s, far_n)]
+    zones = gpd.GeoDataFrame({"zone_id": [1, 2, 3]}, geometry=sq, crs="EPSG:2263")
+    share = area_share_south(zones, LINE)
+    assert share[1] == pytest.approx(0.5, abs=1e-6)   # line through the centre halves it
+    assert share[2] == pytest.approx(1.0) and share[3] == pytest.approx(0.0)
 
 
 def _toy(geo_cbd, share, n=1000):

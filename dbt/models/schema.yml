@@ -112,6 +112,23 @@ models:
               arguments:
                 expression: ">= 0"
 
+  - name: fct_weekly_zone_vendor
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, week_start, vendor_id]
+    columns:
+      - name: pickups
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 1"
+      - name: pickups_flex
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "between 0 and pickups"
   - name: fct_weekly_zone_panel
     data_tests:
       - dbt_utils.unique_combination_of_columns:

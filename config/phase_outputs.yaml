@@ -23,6 +23,13 @@
   - dbt/seeds/holidays_ny.csv
   - reports/figures/F1_demand_map.png
   - reports/figures/F1b_citywide_weekly.png
+  - results/vendor_series.csv              # Checkpoint 1 (Stanley)
+  - results/vendor_summary.json
+  - results/cbd_validation_trips.json
+  - results/modeled_zones.json
+  - results/record_format_shares.csv
+  - results/cbd_fee_daily_by_vendor.csv
+  - reports/figures/F1c_vendor_weekly.png
 2:
   - results/backtest_2024.csv
   - results/chronos_forecasts.parquet

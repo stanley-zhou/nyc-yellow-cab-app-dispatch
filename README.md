@@ -26,7 +26,7 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 |---|---|
 | `smoke` | sample month (`smoke.month` in `config/project.yaml`) through the whole pipeline; writes `results/smoke/` and `reports/figures/smoke/`; fails if over `smoke.max_runtime_minutes` |
 | `data` | full raw download (yellow months in config, zone lookups, weather) |
-| `dbt` | build and test the full DuckDB warehouse in two stages around the CBD mapping (`scripts/03a_cbd_map.py`), then write the Phase-1 result files (`scripts/03b_data_results.py`) |
+| `dbt` | build and test the full DuckDB warehouse in two stages around the CBD mapping (`scripts/03a_cbd_map.py`), then write the Phase-1 result files (`scripts/03b_data_results.py`) and the Checkpoint-1 checks: vendor series, trip-level CBD fee check, modeled zones (`scripts/03c_checks.py`) |
 | `figures` | every figure whose phase is implemented (Phase 1: F1, F1b), built from `results/` only |
 | `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, Open-Meteo offset |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
@@ -44,3 +44,9 @@ TLC trip records and the zone lookup/shapefile are public (NYC TLC); weather is 
 Open-Meteo archive API (one city-wide point). Raw files go to `data/raw/` (git-ignored);
 `data/raw/manifest.csv` records each file's size and download date. The 60th Street geometry for
 the CBD rule comes from OpenStreetMap (ODbL) via the Overpass API.
+
+**Why models start in 2022.** Yellow-taxi volume has not returned to its pre-COVID level: mean
+daily pickups in 2024 were 48% of 2019 (`results/citywide_yearly.csv`, `ratio_to_2019` = 0.4816;
+2022 and 2023 were at 0.4635 and 0.4488). Training data therefore start at `model_start =
+2022-01-01`, after the 2020–2021 recovery, so the models learn the current regime rather than
+the pre-COVID level.

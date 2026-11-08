@@ -1,0 +1,2997 @@
+{
+  "generated_utc": "2026-11-08T02:54:27+00:00",
+  "source": "int_trips_valid x dim_zones (is_cbd = config/zones_cbd.csv) in the warehouse",
+  "window": [
+    "2025-02-01",
+    "2026-09-30"
+  ],
+  "month_definition": "local pickup month",
+  "cbd_rule": "dim_zones.is_cbd: the 60th St geometric rule plus the three harbour-island overrides (103-105); fee check of PLAN Phase 1 extended to trips",
+  "share_definition": "trips with cbd_congestion_fee > 0 / trips with a non-NULL fee",
+  "groups": {
+    "i_both_outside": "pickup and dropoff zone both outside the CBD (dropoff known)",
+    "ii_pickup_or_dropoff_inside": "pickup zone or dropoff zone inside the CBD",
+    "outside:dropoff_zone_unknown": "pickup outside the CBD, dropoff id 264/265 (reported separately, in neither group)"
+  },
+  "totals": {
+    "i_both_outside": {
+      "n_trips": 21333925,
+      "n_fee_pos": 2119151,
+      "n_fee_null": 0,
+      "share_fee_pos": 0.099332
+    },
+    "ii_pickup_or_dropoff_inside": {
+      "n_trips": 55185853,
+      "n_fee_pos": 54197742,
+      "n_fee_null": 0,
+      "share_fee_pos": 0.982095
+    },
+    "outside:both_outside": {
+      "n_trips": 21333925,
+      "n_fee_pos": 2119151,
+      "n_fee_null": 0,
+      "share_fee_pos": 0.099332
+    },
+    "outside:dropoff_zone_unknown": {
+      "n_trips": 254957,
+      "n_fee_pos": 39354,
+      "n_fee_null": 0,
+      "share_fee_pos": 0.154355
+    },
+    "touches_cbd:dropoff_only": {
+      "n_trips": 11614913,
+      "n_fee_pos": 11155566,
+      "n_fee_null": 0,
+      "share_fee_pos": 0.960452
+    },
+    "touches_cbd:pickup_and_dropoff": {
+      "n_trips": 30587915,
+      "n_fee_pos": 30367600,
+      "n_fee_null": 0,
+      "share_fee_pos": 0.992797
+    },
+    "touches_cbd:pickup_only": {
+      "n_trips": 12983025,
+      "n_fee_pos": 12674576,
+      "n_fee_null": 0,
+      "share_fee_pos": 0.976242
+    }
+  },
+  "monthly_share_range": {
+    "i_both_outside": {
+      "min": 0.087969,
+      "max": 0.118682
+    },
+    "ii_pickup_or_dropoff_inside": {
+      "min": 0.906444,
+      "max": 0.9936
+    }
+  },
+  "monthly": [
+    {
+      "month": "2025-02",
+      "i_both_outside": {
+        "n_trips": 940576,
+        "n_fee_pos": 82742,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.087969
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2520058,
+        "n_fee_pos": 2490378,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.988222
+      },
+      "outside:both_outside": {
+        "n_trips": 940576,
+        "n_fee_pos": 82742,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.087969
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 9200,
+        "n_fee_pos": 1575,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.171196
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 475990,
+        "n_fee_pos": 457997,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.962199
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1498402,
+        "n_fee_pos": 1494316,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997273
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 545666,
+        "n_fee_pos": 538065,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.98607
+      }
+    },
+    {
+      "month": "2025-03",
+      "i_both_outside": {
+        "n_trips": 1096702,
+        "n_fee_pos": 101336,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.092401
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2909152,
+        "n_fee_pos": 2879998,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.989979
+      },
+      "outside:both_outside": {
+        "n_trips": 1096702,
+        "n_fee_pos": 101336,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.092401
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 10541,
+        "n_fee_pos": 1850,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.175505
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 565512,
+        "n_fee_pos": 549550,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.971774
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1701235,
+        "n_fee_pos": 1696847,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997421
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 642405,
+        "n_fee_pos": 633601,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.986295
+      }
+    },
+    {
+      "month": "2025-04",
+      "i_both_outside": {
+        "n_trips": 1063501,
+        "n_fee_pos": 102410,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.096295
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2762816,
+        "n_fee_pos": 2736361,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.990425
+      },
+      "outside:both_outside": {
+        "n_trips": 1063501,
+        "n_fee_pos": 102410,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.096295
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 11639,
+        "n_fee_pos": 2079,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.178624
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 568642,
+        "n_fee_pos": 554318,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.97481
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1562266,
+        "n_fee_pos": 1558764,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997758
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 631908,
+        "n_fee_pos": 623279,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.986345
+      }
+    },
+    {
+      "month": "2025-05",
+      "i_both_outside": {
+        "n_trips": 1276112,
+        "n_fee_pos": 122822,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.096247
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 3157924,
+        "n_fee_pos": 3128806,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.990779
+      },
+      "outside:both_outside": {
+        "n_trips": 1276112,
+        "n_fee_pos": 122822,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.096247
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 15142,
+        "n_fee_pos": 2639,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.174283
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 678729,
+        "n_fee_pos": 662726,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.976422
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1749479,
+        "n_fee_pos": 1745749,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997868
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 729716,
+        "n_fee_pos": 720331,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.987139
+      }
+    },
+    {
+      "month": "2025-06",
+      "i_both_outside": {
+        "n_trips": 1165332,
+        "n_fee_pos": 112997,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.096965
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 3009024,
+        "n_fee_pos": 2978990,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.990019
+      },
+      "outside:both_outside": {
+        "n_trips": 1165332,
+        "n_fee_pos": 112997,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.096965
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 14569,
+        "n_fee_pos": 2407,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.165214
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 633189,
+        "n_fee_pos": 617430,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.975112
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1679455,
+        "n_fee_pos": 1675400,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997586
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 696380,
+        "n_fee_pos": 686160,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.985324
+      }
+    },
+    {
+      "month": "2025-07",
+      "i_both_outside": {
+        "n_trips": 1012011,
+        "n_fee_pos": 98087,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.096923
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2739325,
+        "n_fee_pos": 2708230,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.988649
+      },
+      "outside:both_outside": {
+        "n_trips": 1012011,
+        "n_fee_pos": 98087,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.096923
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 14448,
+        "n_fee_pos": 2158,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.149363
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 562700,
+        "n_fee_pos": 546392,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.971018
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1555824,
+        "n_fee_pos": 1552088,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997599
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 620801,
+        "n_fee_pos": 609750,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.982199
+      }
+    },
+    {
+      "month": "2025-08",
+      "i_both_outside": {
+        "n_trips": 936319,
+        "n_fee_pos": 89079,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.095137
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2488392,
+        "n_fee_pos": 2452933,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.98575
+      },
+      "outside:both_outside": {
+        "n_trips": 936319,
+        "n_fee_pos": 89079,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.095137
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 15436,
+        "n_fee_pos": 2231,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.144532
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 518160,
+        "n_fee_pos": 499639,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.964256
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1393490,
+        "n_fee_pos": 1389444,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997096
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 576742,
+        "n_fee_pos": 563850,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.977647
+      }
+    },
+    {
+      "month": "2025-09",
+      "i_both_outside": {
+        "n_trips": 1119473,
+        "n_fee_pos": 113184,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.101105
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2977099,
+        "n_fee_pos": 2935603,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.986062
+      },
+      "outside:both_outside": {
+        "n_trips": 1119473,
+        "n_fee_pos": 113184,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.101105
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 14272,
+        "n_fee_pos": 2289,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.160384
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 621212,
+        "n_fee_pos": 599455,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.964977
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1659189,
+        "n_fee_pos": 1654855,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997388
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 696698,
+        "n_fee_pos": 681293,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.977889
+      }
+    },
+    {
+      "month": "2025-10",
+      "i_both_outside": {
+        "n_trips": 1178534,
+        "n_fee_pos": 122582,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.104012
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 3101382,
+        "n_fee_pos": 3051348,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.983867
+      },
+      "outside:both_outside": {
+        "n_trips": 1178534,
+        "n_fee_pos": 122582,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.104012
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 15110,
+        "n_fee_pos": 2450,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.162144
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 670275,
+        "n_fee_pos": 643937,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.960706
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1688265,
+        "n_fee_pos": 1683886,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997406
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 742842,
+        "n_fee_pos": 723525,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.973996
+      }
+    },
+    {
+      "month": "2025-11",
+      "i_both_outside": {
+        "n_trips": 1144572,
+        "n_fee_pos": 118702,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.103709
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2913361,
+        "n_fee_pos": 2864042,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.983071
+      },
+      "outside:both_outside": {
+        "n_trips": 1144572,
+        "n_fee_pos": 118702,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.103709
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 13742,
+        "n_fee_pos": 2185,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.159002
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 626098,
+        "n_fee_pos": 599887,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.958136
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1580359,
+        "n_fee_pos": 1576535,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.99758
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 706904,
+        "n_fee_pos": 687620,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.97272
+      }
+    },
+    {
+      "month": "2025-12",
+      "i_both_outside": {
+        "n_trips": 1221723,
+        "n_fee_pos": 122691,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.100425
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2956475,
+        "n_fee_pos": 2903585,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.98211
+      },
+      "outside:both_outside": {
+        "n_trips": 1221723,
+        "n_fee_pos": 122691,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.100425
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 14303,
+        "n_fee_pos": 2383,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.166608
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 634684,
+        "n_fee_pos": 606537,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.955652
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1635381,
+        "n_fee_pos": 1630939,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997284
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 686410,
+        "n_fee_pos": 666109,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.970424
+      }
+    },
+    {
+      "month": "2026-01",
+      "i_both_outside": {
+        "n_trips": 1098065,
+        "n_fee_pos": 103714,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.094452
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2525000,
+        "n_fee_pos": 2477337,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.981124
+      },
+      "outside:both_outside": {
+        "n_trips": 1098065,
+        "n_fee_pos": 103714,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.094452
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 12109,
+        "n_fee_pos": 1733,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.143117
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 535073,
+        "n_fee_pos": 509853,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.952866
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1394033,
+        "n_fee_pos": 1390379,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997379
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 595894,
+        "n_fee_pos": 577105,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.968469
+      }
+    },
+    {
+      "month": "2026-02",
+      "i_both_outside": {
+        "n_trips": 1003724,
+        "n_fee_pos": 90900,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.090563
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2314558,
+        "n_fee_pos": 2272801,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.981959
+      },
+      "outside:both_outside": {
+        "n_trips": 1003724,
+        "n_fee_pos": 90900,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.090563
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 10373,
+        "n_fee_pos": 1450,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.139786
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 476570,
+        "n_fee_pos": 454404,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.953488
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1300803,
+        "n_fee_pos": 1297579,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.997522
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 537185,
+        "n_fee_pos": 520818,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.969532
+      }
+    },
+    {
+      "month": "2026-03",
+      "i_both_outside": {
+        "n_trips": 1132447,
+        "n_fee_pos": 104544,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.092317
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2733854,
+        "n_fee_pos": 2674082,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.978136
+      },
+      "outside:both_outside": {
+        "n_trips": 1132447,
+        "n_fee_pos": 104544,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.092317
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 11072,
+        "n_fee_pos": 1530,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.138186
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 571958,
+        "n_fee_pos": 541138,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.946115
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1516581,
+        "n_fee_pos": 1511798,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.996846
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 645315,
+        "n_fee_pos": 621146,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.962547
+      }
+    },
+    {
+      "month": "2026-04",
+      "i_both_outside": {
+        "n_trips": 1089456,
+        "n_fee_pos": 103962,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.095426
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2663377,
+        "n_fee_pos": 2601829,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.976891
+      },
+      "outside:both_outside": {
+        "n_trips": 1089456,
+        "n_fee_pos": 103962,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.095426
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 11589,
+        "n_fee_pos": 1504,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.129778
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 575020,
+        "n_fee_pos": 543051,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.944404
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1448296,
+        "n_fee_pos": 1443237,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.996507
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 640061,
+        "n_fee_pos": 615541,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.961691
+      }
+    },
+    {
+      "month": "2026-05",
+      "i_both_outside": {
+        "n_trips": 1180210,
+        "n_fee_pos": 110611,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.093721
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2828585,
+        "n_fee_pos": 2563955,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.906444
+      },
+      "outside:both_outside": {
+        "n_trips": 1180210,
+        "n_fee_pos": 110611,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.093721
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 11542,
+        "n_fee_pos": 1700,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.147288
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 622778,
+        "n_fee_pos": 537926,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.863752
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1517014,
+        "n_fee_pos": 1389976,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.916258
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 688793,
+        "n_fee_pos": 636053,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.923431
+      }
+    },
+    {
+      "month": "2026-06",
+      "i_both_outside": {
+        "n_trips": 1011229,
+        "n_fee_pos": 107715,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.106519
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2743860,
+        "n_fee_pos": 2688473,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.979814
+      },
+      "outside:both_outside": {
+        "n_trips": 1011229,
+        "n_fee_pos": 107715,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.106519
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 11957,
+        "n_fee_pos": 1949,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.163001
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 583311,
+        "n_fee_pos": 564482,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.96772
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1502070,
+        "n_fee_pos": 1477718,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.983788
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 658479,
+        "n_fee_pos": 646273,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.981463
+      }
+    },
+    {
+      "month": "2026-07",
+      "i_both_outside": {
+        "n_trips": 850552,
+        "n_fee_pos": 97359,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.114466
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2598570,
+        "n_fee_pos": 2580556,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.993068
+      },
+      "outside:both_outside": {
+        "n_trips": 850552,
+        "n_fee_pos": 97359,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.114466
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 13093,
+        "n_fee_pos": 1854,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.141602
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 546738,
+        "n_fee_pos": 537179,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.982516
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1425595,
+        "n_fee_pos": 1422819,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.998053
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 626237,
+        "n_fee_pos": 620558,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.990932
+      }
+    },
+    {
+      "month": "2026-08",
+      "i_both_outside": {
+        "n_trips": 809172,
+        "n_fee_pos": 96034,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.118682
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2448990,
+        "n_fee_pos": 2432266,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.993171
+      },
+      "outside:both_outside": {
+        "n_trips": 809172,
+        "n_fee_pos": 96034,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.118682
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 12815,
+        "n_fee_pos": 1582,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.123449
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 525152,
+        "n_fee_pos": 516265,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.983077
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1309542,
+        "n_fee_pos": 1307145,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.99817
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 614296,
+        "n_fee_pos": 608856,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.991144
+      }
+    },
+    {
+      "month": "2026-09",
+      "i_both_outside": {
+        "n_trips": 1004215,
+        "n_fee_pos": 117680,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.117186
+      },
+      "ii_pickup_or_dropoff_inside": {
+        "n_trips": 2794051,
+        "n_fee_pos": 2776169,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.9936
+      },
+      "outside:both_outside": {
+        "n_trips": 1004215,
+        "n_fee_pos": 117680,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.117186
+      },
+      "outside:dropoff_zone_unknown": {
+        "n_trips": 12005,
+        "n_fee_pos": 1806,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.150437
+      },
+      "touches_cbd:dropoff_only": {
+        "n_trips": 623122,
+        "n_fee_pos": 613400,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.984398
+      },
+      "touches_cbd:pickup_and_dropoff": {
+        "n_trips": 1470636,
+        "n_fee_pos": 1468126,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.998293
+      },
+      "touches_cbd:pickup_only": {
+        "n_trips": 700293,
+        "n_fee_pos": 694643,
+        "n_fee_null": 0,
+        "share_fee_pos": 0.991932
+      }
+    }
+  ],
+  "group_i_by_borough_pair": [
+    {
+      "pu_borough": "Manhattan",
+      "do_borough": "Manhattan",
+      "n_trips": 13362606,
+      "share_fee_pos": 0.101518
+    },
+    {
+      "pu_borough": "Queens",
+      "do_borough": "Queens",
+      "n_trips": 1817472,
+      "share_fee_pos": 0.012818
+    },
+    {
+      "pu_borough": "Brooklyn",
+      "do_borough": "Brooklyn",
+      "n_trips": 1445848,
+      "share_fee_pos": 0.001353
+    },
+    {
+      "pu_borough": "Queens",
+      "do_borough": "Manhattan",
+      "n_trips": 1131542,
+      "share_fee_pos": 0.193766
+    },
+    {
+      "pu_borough": "Queens",
+      "do_borough": "Brooklyn",
+      "n_trips": 1102206,
+      "share_fee_pos": 0.017958
+    },
+    {
+      "pu_borough": "Manhattan",
+      "do_borough": "Queens",
+      "n_trips": 571521,
+      "share_fee_pos": 0.40033
+    },
+    {
+      "pu_borough": "Brooklyn",
+      "do_borough": "Queens",
+      "n_trips": 338793,
+      "share_fee_pos": 0.003279
+    },
+    {
+      "pu_borough": "Manhattan",
+      "do_borough": "Brooklyn",
+      "n_trips": 312052,
+      "share_fee_pos": 0.516895
+    },
+    {
+      "pu_borough": "Manhattan",
+      "do_borough": "Bronx",
+      "n_trips": 252119,
+      "share_fee_pos": 0.035404
+    },
+    {
+      "pu_borough": "Brooklyn",
+      "do_borough": "Manhattan",
+      "n_trips": 247653,
+      "share_fee_pos": 0.269187
+    },
+    {
+      "pu_borough": "Bronx",
+      "do_borough": "Bronx",
+      "n_trips": 232359,
+      "share_fee_pos": 0.000986
+    },
+    {
+      "pu_borough": "Bronx",
+      "do_borough": "Manhattan",
+      "n_trips": 170533,
+      "share_fee_pos": 0.013452
+    },
+    {
+      "pu_borough": "Queens",
+      "do_borough": "Bronx",
+      "n_trips": 154575,
+      "share_fee_pos": 0.026324
+    },
+    {
+      "pu_borough": "Brooklyn",
+      "do_borough": "Bronx",
+      "n_trips": 58823,
+      "share_fee_pos": 0.032079
+    },
+    {
+      "pu_borough": "Bronx",
+      "do_borough": "Queens",
+      "n_trips": 46726,
+      "share_fee_pos": 0.006977
+    },
+    {
+      "pu_borough": "Bronx",
+      "do_borough": "Brooklyn",
+      "n_trips": 44521,
+      "share_fee_pos": 0.020327
+    },
+    {
+      "pu_borough": "Manhattan",
+      "do_borough": "EWR",
+      "n_trips": 19187,
+      "share_fee_pos": 0.9176
+    },
+    {
+      "pu_borough": "Queens",
+      "do_borough": "Staten Island",
+      "n_trips": 7646,
+      "share_fee_pos": 0.047214
+    },
+    {
+      "pu_borough": "Queens",
+      "do_borough": "EWR",
+      "n_trips": 5398,
+      "share_fee_pos": 0.357355
+    },
+    {
+      "pu_borough": "Staten Island",
+      "do_borough": "Brooklyn",
+      "n_trips": 3674,
+      "share_fee_pos": 0.002177
+    },
+    {
+      "pu_borough": "Brooklyn",
+      "do_borough": "Staten Island",
+      "n_trips": 3097,
+      "share_fee_pos": 0.004843
+    },
+    {
+      "pu_borough": "Staten Island",
+      "do_borough": "Staten Island",
+      "n_trips": 1825,
+      "share_fee_pos": 0.046027
+    },
+    {
+      "pu_borough": "Manhattan",
+      "do_borough": "Staten Island",
+      "n_trips": 1688,
+      "share_fee_pos": 0.463863
+    },
+    {
+      "pu_borough": "Brooklyn",
+      "do_borough": "EWR",
+      "n_trips": 1034,
+      "share_fee_pos": 0.814313
+    },
+    {
+      "pu_borough": "Staten Island",
+      "do_borough": "Queens",
+      "n_trips": 283,
+      "share_fee_pos": 0.028269
+    },
+    {
+      "pu_borough": "EWR",
+      "do_borough": "EWR",
+      "n_trips": 235,
+      "share_fee_pos": 0.012766
+    },
+    {
+      "pu_borough": "Staten Island",
+      "do_borough": "Manhattan",
+      "n_trips": 211,
+      "share_fee_pos": 0.417062
+    },
+    {
+      "pu_borough": "Bronx",
+      "do_borough": "Staten Island",
+      "n_trips": 75,
+      "share_fee_pos": 0.106667
+    },
+    {
+      "pu_borough": "Staten Island",
+      "do_borough": "Bronx",
+      "n_trips": 54,
+      "share_fee_pos": 0.092593
+    },
+    {
+      "pu_borough": "Bronx",
+      "do_borough": "EWR",
+      "n_trips": 43,
+      "share_fee_pos": 0.116279
+    },
+    {
+      "pu_borough": "EWR",
+      "do_borough": "Manhattan",
+      "n_trips": 35,
+      "share_fee_pos": 0.742857
+    },
+    {
+      "pu_borough": "Staten Island",
+      "do_borough": "EWR",
+      "n_trips": 32,
+      "share_fee_pos": 0.03125
+    },
+    {
+      "pu_borough": "EWR",
+      "do_borough": "Queens",
+      "n_trips": 31,
+      "share_fee_pos": 0.451613
+    },
+    {
+      "pu_borough": "EWR",
+      "do_borough": "Brooklyn",
+      "n_trips": 16,
+      "share_fee_pos": 0.6875
+    },
+    {
+      "pu_borough": "EWR",
+      "do_borough": "Staten Island",
+      "n_trips": 10,
+      "share_fee_pos": 0.1
+    },
+    {
+      "pu_borough": "EWR",
+      "do_borough": "Bronx",
+      "n_trips": 2,
+      "share_fee_pos": 0.0
+    }
+  ],
+  "manhattan_zones": {
+    "note": "area_share_south_of_line: share of the zone polygon south of the 60th St line (cbd.area_share_south); 0 < share < 1 = the zone straddles the line",
+    "straddling_zone_ids": [
+      43,
+      140,
+      141,
+      142,
+      143,
+      202,
+      237
+    ],
+    "rows": [
+      {
+        "zone_id": 4,
+        "zone_name": "Alphabet City",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 2727,
+        "share_fee_intra": 0.973964,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 12,
+        "zone_name": "Battery Park",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 69,
+        "share_fee_intra": 0.927536,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 13,
+        "zone_name": "Battery Park City",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 6477,
+        "share_fee_intra": 0.951521,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 24,
+        "zone_name": "Bloomingdale",
+        "is_cbd": false,
+        "n_both_outside": 165536,
+        "share_fee_both_outside": 0.037901,
+        "n_intra": 2166,
+        "share_fee_intra": 0.014312,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 41,
+        "zone_name": "Central Harlem",
+        "is_cbd": false,
+        "n_both_outside": 268208,
+        "share_fee_both_outside": 0.026688,
+        "n_intra": 17213,
+        "share_fee_intra": 0.00273,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 42,
+        "zone_name": "Central Harlem North",
+        "is_cbd": false,
+        "n_both_outside": 178247,
+        "share_fee_both_outside": 0.028483,
+        "n_intra": 15043,
+        "share_fee_intra": 0.001064,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 43,
+        "zone_name": "Central Park",
+        "is_cbd": false,
+        "n_both_outside": 514554,
+        "share_fee_both_outside": 0.289517,
+        "n_intra": 36247,
+        "share_fee_intra": 0.36174,
+        "area_share_south_of_line": 0.0184
+      },
+      {
+        "zone_id": 45,
+        "zone_name": "Chinatown",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 2080,
+        "share_fee_intra": 0.985577,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 48,
+        "zone_name": "Clinton East",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 77518,
+        "share_fee_intra": 0.99671,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 50,
+        "zone_name": "Clinton West",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 10601,
+        "share_fee_intra": 0.970946,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 68,
+        "zone_name": "East Chelsea",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 83408,
+        "share_fee_intra": 0.996032,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 74,
+        "zone_name": "East Harlem North",
+        "is_cbd": false,
+        "n_both_outside": 234282,
+        "share_fee_both_outside": 0.029951,
+        "n_intra": 14672,
+        "share_fee_intra": 0.002863,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 75,
+        "zone_name": "East Harlem South",
+        "is_cbd": false,
+        "n_both_outside": 434244,
+        "share_fee_both_outside": 0.044866,
+        "n_intra": 29093,
+        "share_fee_intra": 0.003369,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 79,
+        "zone_name": "East Village",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 82451,
+        "share_fee_intra": 0.994251,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 87,
+        "zone_name": "Financial District North",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 7081,
+        "share_fee_intra": 0.981641,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 88,
+        "zone_name": "Financial District South",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 2222,
+        "share_fee_intra": 0.964896,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 90,
+        "zone_name": "Flatiron",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 26245,
+        "share_fee_intra": 0.994666,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 100,
+        "zone_name": "Garment District",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 13928,
+        "share_fee_intra": 0.994328,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 105,
+        "zone_name": "Governor's Island/Ellis Island/Liberty Island",
+        "is_cbd": false,
+        "n_both_outside": 5,
+        "share_fee_both_outside": 0.8,
+        "n_intra": 0,
+        "share_fee_intra": null,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 107,
+        "zone_name": "Gramercy",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 36629,
+        "share_fee_intra": 0.994867,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 113,
+        "zone_name": "Greenwich Village North",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 22175,
+        "share_fee_intra": 0.996077,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 114,
+        "zone_name": "Greenwich Village South",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 16518,
+        "share_fee_intra": 0.993764,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 116,
+        "zone_name": "Hamilton Heights",
+        "is_cbd": false,
+        "n_both_outside": 109359,
+        "share_fee_both_outside": 0.037555,
+        "n_intra": 4226,
+        "share_fee_intra": 0.003313,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 120,
+        "zone_name": "Highbridge Park",
+        "is_cbd": false,
+        "n_both_outside": 1168,
+        "share_fee_both_outside": 0.035103,
+        "n_intra": 6,
+        "share_fee_intra": 0.166667,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 125,
+        "zone_name": "Hudson Sq",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 2737,
+        "share_fee_intra": 0.989039,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 127,
+        "zone_name": "Inwood",
+        "is_cbd": false,
+        "n_both_outside": 24662,
+        "share_fee_both_outside": 0.028019,
+        "n_intra": 842,
+        "share_fee_intra": 0.001188,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 128,
+        "zone_name": "Inwood Hill Park",
+        "is_cbd": false,
+        "n_both_outside": 2259,
+        "share_fee_both_outside": 0.055777,
+        "n_intra": 11,
+        "share_fee_intra": 0.0,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 137,
+        "zone_name": "Kips Bay",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 13591,
+        "share_fee_intra": 0.988154,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 140,
+        "zone_name": "Lenox Hill East",
+        "is_cbd": false,
+        "n_both_outside": 871940,
+        "share_fee_both_outside": 0.130736,
+        "n_intra": 55242,
+        "share_fee_intra": 0.159444,
+        "area_share_south_of_line": 0.039
+      },
+      {
+        "zone_id": 141,
+        "zone_name": "Lenox Hill West",
+        "is_cbd": false,
+        "n_both_outside": 954136,
+        "share_fee_both_outside": 0.171027,
+        "n_intra": 89338,
+        "share_fee_intra": 0.193982,
+        "area_share_south_of_line": 0.0529
+      },
+      {
+        "zone_id": 142,
+        "zone_name": "Lincoln Square East",
+        "is_cbd": false,
+        "n_both_outside": 1233304,
+        "share_fee_both_outside": 0.305499,
+        "n_intra": 87732,
+        "share_fee_intra": 0.469213,
+        "area_share_south_of_line": 0.1302
+      },
+      {
+        "zone_id": 143,
+        "zone_name": "Lincoln Square West",
+        "is_cbd": false,
+        "n_both_outside": 488958,
+        "share_fee_both_outside": 0.198391,
+        "n_intra": 35360,
+        "share_fee_intra": 0.225396,
+        "area_share_south_of_line": 0.1329
+      },
+      {
+        "zone_id": 144,
+        "zone_name": "Little Italy/NoLiTa",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 11149,
+        "share_fee_intra": 0.990492,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 148,
+        "zone_name": "Lower East Side",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 21615,
+        "share_fee_intra": 0.991025,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 151,
+        "zone_name": "Manhattan Valley",
+        "is_cbd": false,
+        "n_both_outside": 469603,
+        "share_fee_both_outside": 0.035715,
+        "n_intra": 20057,
+        "share_fee_intra": 0.005534,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 152,
+        "zone_name": "Manhattanville",
+        "is_cbd": false,
+        "n_both_outside": 72370,
+        "share_fee_both_outside": 0.041523,
+        "n_intra": 1652,
+        "share_fee_intra": 0.004237,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 153,
+        "zone_name": "Marble Hill",
+        "is_cbd": false,
+        "n_both_outside": 3260,
+        "share_fee_both_outside": 0.007362,
+        "n_intra": 11,
+        "share_fee_intra": 0.0,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 158,
+        "zone_name": "Meatpacking/West Village West",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 12863,
+        "share_fee_intra": 0.977299,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 161,
+        "zone_name": "Midtown Center",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 115248,
+        "share_fee_intra": 0.997406,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 162,
+        "zone_name": "Midtown East",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 63472,
+        "share_fee_intra": 0.997463,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 163,
+        "zone_name": "Midtown North",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 35211,
+        "share_fee_intra": 0.995598,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 164,
+        "zone_name": "Midtown South",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 29276,
+        "share_fee_intra": 0.995013,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 166,
+        "zone_name": "Morningside Heights",
+        "is_cbd": false,
+        "n_both_outside": 345360,
+        "share_fee_both_outside": 0.0399,
+        "n_intra": 23400,
+        "share_fee_intra": 0.002479,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 170,
+        "zone_name": "Murray Hill",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 62218,
+        "share_fee_intra": 0.99558,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 186,
+        "zone_name": "Penn Station/Madison Sq West",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 21441,
+        "share_fee_intra": 0.995243,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 194,
+        "zone_name": "Randalls Island",
+        "is_cbd": false,
+        "n_both_outside": 3054,
+        "share_fee_both_outside": 0.035363,
+        "n_intra": 95,
+        "share_fee_intra": 0.031579,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 202,
+        "zone_name": "Roosevelt Island",
+        "is_cbd": false,
+        "n_both_outside": 7347,
+        "share_fee_both_outside": 0.059344,
+        "n_intra": 166,
+        "share_fee_intra": 0.024096,
+        "area_share_south_of_line": 0.2676
+      },
+      {
+        "zone_id": 209,
+        "zone_name": "Seaport",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 1266,
+        "share_fee_intra": 0.972354,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 211,
+        "zone_name": "SoHo",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 8201,
+        "share_fee_intra": 0.992318,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 224,
+        "zone_name": "Stuy Town/Peter Cooper Village",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 1155,
+        "share_fee_intra": 0.984416,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 229,
+        "zone_name": "Sutton Place/Turtle Bay North",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 33590,
+        "share_fee_intra": 0.996666,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 230,
+        "zone_name": "Times Sq/Theatre District",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 65822,
+        "share_fee_intra": 0.995883,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 231,
+        "zone_name": "TriBeCa/Civic Center",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 44977,
+        "share_fee_intra": 0.988394,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 232,
+        "zone_name": "Two Bridges/Seward Park",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 3923,
+        "share_fee_intra": 0.923018,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 233,
+        "zone_name": "UN/Turtle Bay South",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 15698,
+        "share_fee_intra": 0.993566,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 234,
+        "zone_name": "Union Sq",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 48215,
+        "share_fee_intra": 0.995852,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 236,
+        "zone_name": "Upper East Side North",
+        "is_cbd": false,
+        "n_both_outside": 2031128,
+        "share_fee_both_outside": 0.054832,
+        "n_intra": 296942,
+        "share_fee_intra": 0.005227,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 237,
+        "zone_name": "Upper East Side South",
+        "is_cbd": false,
+        "n_both_outside": 2005629,
+        "share_fee_both_outside": 0.22665,
+        "n_intra": 321628,
+        "share_fee_intra": 0.268758,
+        "area_share_south_of_line": 0.0584
+      },
+      {
+        "zone_id": 238,
+        "zone_name": "Upper West Side North",
+        "is_cbd": false,
+        "n_both_outside": 1050391,
+        "share_fee_both_outside": 0.041633,
+        "n_intra": 71323,
+        "share_fee_intra": 0.004907,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 239,
+        "zone_name": "Upper West Side South",
+        "is_cbd": false,
+        "n_both_outside": 1291122,
+        "share_fee_both_outside": 0.059634,
+        "n_intra": 105324,
+        "share_fee_intra": 0.007035,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 243,
+        "zone_name": "Washington Heights North",
+        "is_cbd": false,
+        "n_both_outside": 52070,
+        "share_fee_both_outside": 0.04081,
+        "n_intra": 3394,
+        "share_fee_intra": 0.001768,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 244,
+        "zone_name": "Washington Heights South",
+        "is_cbd": false,
+        "n_both_outside": 122596,
+        "share_fee_both_outside": 0.045214,
+        "n_intra": 7527,
+        "share_fee_intra": 0.002391,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 246,
+        "zone_name": "West Chelsea/Hudson Yards",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 55741,
+        "share_fee_intra": 0.956441,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 249,
+        "zone_name": "West Village",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 44226,
+        "share_fee_intra": 0.994189,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 261,
+        "zone_name": "World Trade Center",
+        "is_cbd": true,
+        "n_both_outside": 0,
+        "share_fee_both_outside": null,
+        "n_intra": 3987,
+        "share_fee_intra": 0.965388,
+        "area_share_south_of_line": 1.0
+      },
+      {
+        "zone_id": 262,
+        "zone_name": "Yorkville East",
+        "is_cbd": false,
+        "n_both_outside": 658033,
+        "share_fee_both_outside": 0.059821,
+        "n_intra": 25896,
+        "share_fee_intra": 0.012048,
+        "area_share_south_of_line": 0.0
+      },
+      {
+        "zone_id": 263,
+        "zone_name": "Yorkville West",
+        "is_cbd": false,
+        "n_both_outside": 926348,
+        "share_fee_both_outside": 0.060691,
+        "n_intra": 57612,
+        "share_fee_intra": 0.007325,
+        "area_share_south_of_line": 0.0
+      }
+    ]
+  },
+  "by_vendor_month": [
+    {
+      "month": "2025-02",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 217985,
+      "share_fee_pos": 0.09608
+    },
+    {
+      "month": "2025-02",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 516925,
+      "share_fee_pos": 0.976579
+    },
+    {
+      "month": "2025-02",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 721050,
+      "share_fee_pos": 0.085531
+    },
+    {
+      "month": "2025-02",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2000143,
+      "share_fee_pos": 0.99127
+    },
+    {
+      "month": "2025-02",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 86,
+      "share_fee_pos": 0.0
+    },
+    {
+      "month": "2025-02",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 82,
+      "share_fee_pos": 0.0
+    },
+    {
+      "month": "2025-02",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 1455,
+      "share_fee_pos": 0.086598
+    },
+    {
+      "month": "2025-02",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2908,
+      "share_fee_pos": 0.990028
+    },
+    {
+      "month": "2025-03",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 238807,
+      "share_fee_pos": 0.096065
+    },
+    {
+      "month": "2025-03",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 573259,
+      "share_fee_pos": 0.977152
+    },
+    {
+      "month": "2025-03",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 851938,
+      "share_fee_pos": 0.091307
+    },
+    {
+      "month": "2025-03",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2320378,
+      "share_fee_pos": 0.993162
+    },
+    {
+      "month": "2025-03",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 90,
+      "share_fee_pos": 0.0
+    },
+    {
+      "month": "2025-03",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 76,
+      "share_fee_pos": 0.0
+    },
+    {
+      "month": "2025-03",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 5867,
+      "share_fee_pos": 0.10346
+    },
+    {
+      "month": "2025-03",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 15439,
+      "share_fee_pos": 0.992681
+    },
+    {
+      "month": "2025-04",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 236238,
+      "share_fee_pos": 0.095438
+    },
+    {
+      "month": "2025-04",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 542271,
+      "share_fee_pos": 0.975319
+    },
+    {
+      "month": "2025-04",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 817415,
+      "share_fee_pos": 0.096611
+    },
+    {
+      "month": "2025-04",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2196496,
+      "share_fee_pos": 0.9942
+    },
+    {
+      "month": "2025-04",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 145,
+      "share_fee_pos": 0.0
+    },
+    {
+      "month": "2025-04",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 96,
+      "share_fee_pos": 0.0
+    },
+    {
+      "month": "2025-04",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 9703,
+      "share_fee_pos": 0.092033
+    },
+    {
+      "month": "2025-04",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 23953,
+      "share_fee_pos": 0.990189
+    },
+    {
+      "month": "2025-05",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 268177,
+      "share_fee_pos": 0.09644
+    },
+    {
+      "month": "2025-05",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 598704,
+      "share_fee_pos": 0.976783
+    },
+    {
+      "month": "2025-05",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 989780,
+      "share_fee_pos": 0.096269
+    },
+    {
+      "month": "2025-05",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2514658,
+      "share_fee_pos": 0.994154
+    },
+    {
+      "month": "2025-05",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 117,
+      "share_fee_pos": 0.0
+    },
+    {
+      "month": "2025-05",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 128,
+      "share_fee_pos": 0.015625
+    },
+    {
+      "month": "2025-05",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 18038,
+      "share_fee_pos": 0.092804
+    },
+    {
+      "month": "2025-05",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 44434,
+      "share_fee_pos": 0.991178
+    },
+    {
+      "month": "2025-06",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 248628,
+      "share_fee_pos": 0.093308
+    },
+    {
+      "month": "2025-06",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 563254,
+      "share_fee_pos": 0.974889
+    },
+    {
+      "month": "2025-06",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 897377,
+      "share_fee_pos": 0.09808
+    },
+    {
+      "month": "2025-06",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2397904,
+      "share_fee_pos": 0.993728
+    },
+    {
+      "month": "2025-06",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 631,
+      "share_fee_pos": 0.017433
+    },
+    {
+      "month": "2025-06",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 403,
+      "share_fee_pos": 0.004963
+    },
+    {
+      "month": "2025-06",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 18696,
+      "share_fee_pos": 0.09478
+    },
+    {
+      "month": "2025-06",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 47463,
+      "share_fee_pos": 0.990519
+    },
+    {
+      "month": "2025-07",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 212139,
+      "share_fee_pos": 0.09046
+    },
+    {
+      "month": "2025-07",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 495653,
+      "share_fee_pos": 0.966013
+    },
+    {
+      "month": "2025-07",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 784937,
+      "share_fee_pos": 0.098774
+    },
+    {
+      "month": "2025-07",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2201911,
+      "share_fee_pos": 0.994062
+    },
+    {
+      "month": "2025-07",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 1464,
+      "share_fee_pos": 0.004781
+    },
+    {
+      "month": "2025-07",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 831,
+      "share_fee_pos": 0.004813
+    },
+    {
+      "month": "2025-07",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 13471,
+      "share_fee_pos": 0.100883
+    },
+    {
+      "month": "2025-07",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 40930,
+      "share_fee_pos": 0.991547
+    },
+    {
+      "month": "2025-08",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 199511,
+      "share_fee_pos": 0.084331
+    },
+    {
+      "month": "2025-08",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 440418,
+      "share_fee_pos": 0.951119
+    },
+    {
+      "month": "2025-08",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 723647,
+      "share_fee_pos": 0.098234
+    },
+    {
+      "month": "2025-08",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2012574,
+      "share_fee_pos": 0.993682
+    },
+    {
+      "month": "2025-08",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 1741,
+      "share_fee_pos": 0.005169
+    },
+    {
+      "month": "2025-08",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 830,
+      "share_fee_pos": 0.00241
+    },
+    {
+      "month": "2025-08",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 11420,
+      "share_fee_pos": 0.101401
+    },
+    {
+      "month": "2025-08",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 34570,
+      "share_fee_pos": 0.988805
+    },
+    {
+      "month": "2025-09",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 255613,
+      "share_fee_pos": 0.086709
+    },
+    {
+      "month": "2025-09",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 544721,
+      "share_fee_pos": 0.953611
+    },
+    {
+      "month": "2025-09",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 846454,
+      "share_fee_pos": 0.105627
+    },
+    {
+      "month": "2025-09",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2391120,
+      "share_fee_pos": 0.993835
+    },
+    {
+      "month": "2025-09",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 1815,
+      "share_fee_pos": 0.008264
+    },
+    {
+      "month": "2025-09",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 1026,
+      "share_fee_pos": 0.009747
+    },
+    {
+      "month": "2025-09",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 15591,
+      "share_fee_pos": 0.102431
+    },
+    {
+      "month": "2025-09",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 40232,
+      "share_fee_pos": 0.988318
+    },
+    {
+      "month": "2025-10",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 280411,
+      "share_fee_pos": 0.087393
+    },
+    {
+      "month": "2025-10",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 577958,
+      "share_fee_pos": 0.941634
+    },
+    {
+      "month": "2025-10",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 876904,
+      "share_fee_pos": 0.109688
+    },
+    {
+      "month": "2025-10",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2474393,
+      "share_fee_pos": 0.994262
+    },
+    {
+      "month": "2025-10",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 2134,
+      "share_fee_pos": 0.00656
+    },
+    {
+      "month": "2025-10",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 1672,
+      "share_fee_pos": 0.004785
+    },
+    {
+      "month": "2025-10",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 19085,
+      "share_fee_pos": 0.098297
+    },
+    {
+      "month": "2025-10",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 47359,
+      "share_fee_pos": 0.99073
+    },
+    {
+      "month": "2025-11",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 271209,
+      "share_fee_pos": 0.085539
+    },
+    {
+      "month": "2025-11",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 532239,
+      "share_fee_pos": 0.933797
+    },
+    {
+      "month": "2025-11",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 853680,
+      "share_fee_pos": 0.109709
+    },
+    {
+      "month": "2025-11",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2337371,
+      "share_fee_pos": 0.994932
+    },
+    {
+      "month": "2025-11",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 2311,
+      "share_fee_pos": 0.005193
+    },
+    {
+      "month": "2025-11",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 1904,
+      "share_fee_pos": 0.005252
+    },
+    {
+      "month": "2025-11",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 17372,
+      "share_fee_pos": 0.10563
+    },
+    {
+      "month": "2025-11",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 41847,
+      "share_fee_pos": 0.99178
+    },
+    {
+      "month": "2025-12",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 283132,
+      "share_fee_pos": 0.084371
+    },
+    {
+      "month": "2025-12",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 523621,
+      "share_fee_pos": 0.926542
+    },
+    {
+      "month": "2025-12",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 918675,
+      "share_fee_pos": 0.10567
+    },
+    {
+      "month": "2025-12",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2392510,
+      "share_fee_pos": 0.994981
+    },
+    {
+      "month": "2025-12",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 2413,
+      "share_fee_pos": 0.007874
+    },
+    {
+      "month": "2025-12",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2103,
+      "share_fee_pos": 0.002378
+    },
+    {
+      "month": "2025-12",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 17503,
+      "share_fee_pos": 0.097583
+    },
+    {
+      "month": "2025-12",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 38241,
+      "share_fee_pos": 0.991606
+    },
+    {
+      "month": "2026-01",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 251948,
+      "share_fee_pos": 0.078429
+    },
+    {
+      "month": "2026-01",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 443492,
+      "share_fee_pos": 0.919739
+    },
+    {
+      "month": "2026-01",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 829455,
+      "share_fee_pos": 0.099424
+    },
+    {
+      "month": "2026-01",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2050399,
+      "share_fee_pos": 0.995155
+    },
+    {
+      "month": "2026-01",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 2085,
+      "share_fee_pos": 0.017266
+    },
+    {
+      "month": "2026-01",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 1908,
+      "share_fee_pos": 0.007338
+    },
+    {
+      "month": "2026-01",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 14577,
+      "share_fee_pos": 0.099472
+    },
+    {
+      "month": "2026-01",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 29201,
+      "share_fee_pos": 0.991815
+    },
+    {
+      "month": "2026-02",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 230090,
+      "share_fee_pos": 0.073975
+    },
+    {
+      "month": "2026-02",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 394455,
+      "share_fee_pos": 0.922759
+    },
+    {
+      "month": "2026-02",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 757323,
+      "share_fee_pos": 0.095929
+    },
+    {
+      "month": "2026-02",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 1891267,
+      "share_fee_pos": 0.995443
+    },
+    {
+      "month": "2026-02",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 3132,
+      "share_fee_pos": 0.009898
+    },
+    {
+      "month": "2026-02",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2444,
+      "share_fee_pos": 0.006137
+    },
+    {
+      "month": "2026-02",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 13179,
+      "share_fee_pos": 0.090978
+    },
+    {
+      "month": "2026-02",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 26392,
+      "share_fee_pos": 0.990831
+    },
+    {
+      "month": "2026-03",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 272117,
+      "share_fee_pos": 0.073127
+    },
+    {
+      "month": "2026-03",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 477387,
+      "share_fee_pos": 0.907572
+    },
+    {
+      "month": "2026-03",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 840531,
+      "share_fee_pos": 0.098829
+    },
+    {
+      "month": "2026-03",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2219434,
+      "share_fee_pos": 0.994943
+    },
+    {
+      "month": "2026-03",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 5331,
+      "share_fee_pos": 0.026637
+    },
+    {
+      "month": "2026-03",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 4080,
+      "share_fee_pos": 0.005147
+    },
+    {
+      "month": "2026-03",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 14468,
+      "share_fee_pos": 0.099115
+    },
+    {
+      "month": "2026-03",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 32953,
+      "share_fee_pos": 0.988924
+    },
+    {
+      "month": "2026-04",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 274024,
+      "share_fee_pos": 0.073786
+    },
+    {
+      "month": "2026-04",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 473164,
+      "share_fee_pos": 0.904147
+    },
+    {
+      "month": "2026-04",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 795130,
+      "share_fee_pos": 0.103508
+    },
+    {
+      "month": "2026-04",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2152165,
+      "share_fee_pos": 0.994685
+    },
+    {
+      "month": "2026-04",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 5421,
+      "share_fee_pos": 0.010699
+    },
+    {
+      "month": "2026-04",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 4409,
+      "share_fee_pos": 0.006351
+    },
+    {
+      "month": "2026-04",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 14881,
+      "share_fee_pos": 0.092937
+    },
+    {
+      "month": "2026-04",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 33639,
+      "share_fee_pos": 0.988852
+    },
+    {
+      "month": "2026-05",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 292520,
+      "share_fee_pos": 0.074033
+    },
+    {
+      "month": "2026-05",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 497998,
+      "share_fee_pos": 0.879688
+    },
+    {
+      "month": "2026-05",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 867244,
+      "share_fee_pos": 0.100764
+    },
+    {
+      "month": "2026-05",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2292626,
+      "share_fee_pos": 0.91239
+    },
+    {
+      "month": "2026-05",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 4125,
+      "share_fee_pos": 0.011879
+    },
+    {
+      "month": "2026-05",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 3496,
+      "share_fee_pos": 0.010584
+    },
+    {
+      "month": "2026-05",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 16321,
+      "share_fee_pos": 0.09307
+    },
+    {
+      "month": "2026-05",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 34465,
+      "share_fee_pos": 0.988452
+    },
+    {
+      "month": "2026-06",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 170905,
+      "share_fee_pos": 0.115947
+    },
+    {
+      "month": "2026-06",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 428021,
+      "share_fee_pos": 0.990444
+    },
+    {
+      "month": "2026-06",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 820102,
+      "share_fee_pos": 0.105383
+    },
+    {
+      "month": "2026-06",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2278901,
+      "share_fee_pos": 0.979358
+    },
+    {
+      "month": "2026-06",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 4726,
+      "share_fee_pos": 0.015023
+    },
+    {
+      "month": "2026-06",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 3929,
+      "share_fee_pos": 0.011962
+    },
+    {
+      "month": "2026-06",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 15496,
+      "share_fee_pos": 0.090539
+    },
+    {
+      "month": "2026-06",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 33009,
+      "share_fee_pos": 0.98867
+    },
+    {
+      "month": "2026-07",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 151678,
+      "share_fee_pos": 0.12102
+    },
+    {
+      "month": "2026-07",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 429594,
+      "share_fee_pos": 0.997321
+    },
+    {
+      "month": "2026-07",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 682606,
+      "share_fee_pos": 0.11395
+    },
+    {
+      "month": "2026-07",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2136841,
+      "share_fee_pos": 0.993806
+    },
+    {
+      "month": "2026-07",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 4156,
+      "share_fee_pos": 0.012271
+    },
+    {
+      "month": "2026-07",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 3317,
+      "share_fee_pos": 0.00814
+    },
+    {
+      "month": "2026-07",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 12112,
+      "share_fee_pos": 0.096516
+    },
+    {
+      "month": "2026-07",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 28818,
+      "share_fee_pos": 0.988306
+    },
+    {
+      "month": "2026-08",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 148387,
+      "share_fee_pos": 0.122659
+    },
+    {
+      "month": "2026-08",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 414982,
+      "share_fee_pos": 0.997407
+    },
+    {
+      "month": "2026-08",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 645681,
+      "share_fee_pos": 0.118701
+    },
+    {
+      "month": "2026-08",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2002507,
+      "share_fee_pos": 0.99374
+    },
+    {
+      "month": "2026-08",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 3800,
+      "share_fee_pos": 0.010263
+    },
+    {
+      "month": "2026-08",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2836,
+      "share_fee_pos": 0.012694
+    },
+    {
+      "month": "2026-08",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 11304,
+      "share_fee_pos": 0.101822
+    },
+    {
+      "month": "2026-08",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 28665,
+      "share_fee_pos": 0.989081
+    },
+    {
+      "month": "2026-09",
+      "vendor_id": 1,
+      "grp": "i_both_outside",
+      "n_trips": 191506,
+      "share_fee_pos": 0.113647
+    },
+    {
+      "month": "2026-09",
+      "vendor_id": 1,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 488622,
+      "share_fee_pos": 0.997188
+    },
+    {
+      "month": "2026-09",
+      "vendor_id": 2,
+      "grp": "i_both_outside",
+      "n_trips": 795066,
+      "share_fee_pos": 0.118761
+    },
+    {
+      "month": "2026-09",
+      "vendor_id": 2,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2270697,
+      "share_fee_pos": 0.99388
+    },
+    {
+      "month": "2026-09",
+      "vendor_id": 6,
+      "grp": "i_both_outside",
+      "n_trips": 2883,
+      "share_fee_pos": 0.014568
+    },
+    {
+      "month": "2026-09",
+      "vendor_id": 6,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 2337,
+      "share_fee_pos": 0.015404
+    },
+    {
+      "month": "2026-09",
+      "vendor_id": 7,
+      "grp": "i_both_outside",
+      "n_trips": 14760,
+      "share_fee_pos": 0.098306
+    },
+    {
+      "month": "2026-09",
+      "vendor_id": 7,
+      "grp": "ii_pickup_or_dropoff_inside",
+      "n_trips": 32395,
+      "share_fee_pos": 0.9904
+    }
+  ],
+  "daily_by_vendor_file": "results/cbd_fee_daily_by_vendor.csv"
+}

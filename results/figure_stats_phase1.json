@@ -1,8 +1,12 @@
 {
   "source_files": [
     "results/zone_summary.csv",
-    "results/citywide_yearly.csv"
+    "results/citywide_yearly.csv",
+    "results/vendor_summary.json"
   ],
+  "f1c_new_vendor_entry_week": "2025-04-20",
+  "f1c_new_vendor_post_policy_share_cbd": 0.011347,
+  "f1c_new_vendor_share_of_window_pickups": 0.005941,
   "share_2024_pickups_by_zone_group": {
     "cbd": 0.5878,
     "manhattan_non_cbd": 0.3041,

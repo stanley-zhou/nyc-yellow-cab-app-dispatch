@@ -1,9 +1,11 @@
--- Column projection only (plus two derived keys). `cbd_congestion_fee` exists only in 2025+
+-- Column projection only (plus two derived keys). VendorID is projected since Checkpoint 1 (vendor
+-- checks, DECISIONS.md). `cbd_congestion_fee` exists only in 2025+
 -- files; earlier files yield NULL through union_by_name, and if no file on disk has it the column
 -- is a typed NULL. `raw_row_hash` hashes every raw column (not just the projected ones) so that
 -- int_trips_flagged removes exact duplicates of the full raw row (DECISIONS.md, Phase 1).
 {%- set src = source('raw', 'yellow_trips') %}
 select
+    try_cast(VendorID as integer)                  as vendor_id,
     tpep_pickup_datetime                           as pickup_ts,
     tpep_dropoff_datetime                          as dropoff_ts,
     try_cast(PULocationID as integer)              as pu_zone_id,

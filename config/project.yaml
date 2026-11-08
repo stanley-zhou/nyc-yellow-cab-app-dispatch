@@ -36,6 +36,21 @@ forecast_eval:
   horizon_buckets: [[1, 6], [7, 12], [13, 18], [19, 24]]
   interval: [0.1, 0.9]                        # the 80% interval = outer quantiles
   mape_min_y: 10                              # MAPE (never primary) only on hours with y >= 10
+chronos:                                      # PLAN Phase 2 model 4 (Colab only; DECISIONS.md)
+  model_id: amazon/chronos-2
+  package: "chronos-forecasting==2.3.2"       # = pyproject [chronos]; torch comes with Colab
+  context_hours: 2048                         # PLAN: context 2048 h (grid hours before the origin)
+  origins: ["2024-01-01", "2026-09-30"]       # one Colab run serves Phase 2 (2024), 3 and 5
+  test_output: results/chronos_forecasts.parquet          # origins in forecast.backtest.pre_shock_test
+  post_output: results/chronos_forecasts_post.parquet     # origins after it (Phases 3 and 5)
+  run_record: results/chronos_run.json
+  calendar_covariates: [hour_sin, hour_cos, dow_sin, dow_cos, is_weekend, is_holiday]
+  weather_covariates: [temp_f, precip_in, snowfall_in, wind_mph, rel_humidity_pct]
+  variants:                                   # how the weather covariates enter
+    weather_past: past                        # PLAN: weather = past covariates only
+    weather_future: future                    # observed weather also over the target day (= LGBM's information)
+  batch_size: 256                             # series per GPU batch (target + covariates count)
+  bundle: data/processed/chronos_bundle.zip   # what Stanley uploads to Google Drive
 quality:                                      # PLAN Phase 1 filter rules, parameterised
   straggler_days: 1                           # keep pickups in [month_start - 1d, month_end + 1d]
   min_duration_minutes: 1
@@ -55,6 +70,17 @@ cbd:                                          # PLAN Phase 1 is_cbd derivation (
     103: {is_cbd: false, reason: "harbour island (Governor's/Ellis/Liberty), no road access, not in the Congestion Relief Zone"}
     104: {is_cbd: false, reason: "harbour island (Governor's/Ellis/Liberty), no road access, not in the Congestion Relief Zone"}
     105: {is_cbd: false, reason: "harbour island (Governor's/Ellis/Liberty), no road access, not in the Congestion Relief Zone"}
+  trip_check_window: ["2025-02-01", "2026-09-30"]   # Checkpoint 1: trip-level fee check, monthly
+
+vendors:                                      # Checkpoint 1 vendor checks (DECISIONS.md)
+  names:                                      # VendorID, TLC yellow data dictionary 2025-03-18
+    1: "Creative Mobile Technologies"
+    2: "Curb Mobility"
+    6: "Myle Technologies"
+    7: "Helix"
+  new_vendor_id: 7                            # Helix: records with missing dropoff time
+  entry_share_min: 0.01                       # entry week = first complete week with >= 1% of pickups
+  present_min_week_share: 1.0                 # "present throughout" = pickups in every complete week
 
 panel:
   week_start: sunday                          # sunday (policy-aligned) | monday (ISO); DECISIONS

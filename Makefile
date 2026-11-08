@@ -30,6 +30,7 @@ dbt:              ## build + test the full warehouse, derive is_cbd, write Phase
 	$(PY) scripts/03a_cbd_map.py
 	$(PY) scripts/03_dbt.py build --select "dim_zones+"
 	$(PY) scripts/03b_data_results.py
+	$(PY) scripts/03c_checks.py
 
 probes:           ## one-off evidence scripts behind DECISIONS.md entries
 	$(PY) scripts/probe_duplicates.py

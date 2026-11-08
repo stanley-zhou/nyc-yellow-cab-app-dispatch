@@ -61,6 +61,28 @@ def south_of_line(points: gpd.GeoSeries, line: dict[str, Any]) -> pd.Series:
     return pd.Series(cross < 0, index=points.index)
 
 
+def area_share_south(zones: gpd.GeoDataFrame, line: dict[str, Any]) -> pd.Series:
+    """Share of each zone's area strictly south of the 60th St line (`zones` in PLANAR_CRS with a
+    `zone_id` column). 0 < share < 1 marks a zone that straddles the line, so its trips can start
+    or end inside the Congestion Relief Zone whatever the zone-level label says."""
+    from shapely.geometry import Polygon
+
+    to_planar = Transformer.from_crs("EPSG:4326", PLANAR_CRS, always_xy=True)
+    wx, wy = to_planar.transform(line["west_endpoint"]["lon"], line["west_endpoint"]["lat"])
+    ex, ey = to_planar.transform(line["east_endpoint"]["lon"], line["east_endpoint"]["lat"])
+    length = ((ex - wx) ** 2 + (ey - wy) ** 2) ** 0.5
+    dx, dy = (ex - wx) / length, (ey - wy) / length
+    nx, ny = dy, -dx                          # unit normal pointing south (right of west->east)
+    big = 1e7                                 # feet: far beyond New York City
+    half = Polygon([(wx - dx * big, wy - dy * big), (ex + dx * big, ey + dy * big),
+                    (ex + dx * big + nx * big, ey + dy * big + ny * big),
+                    (wx - dx * big + nx * big, wy - dy * big + ny * big)])
+    area = zones.geometry.area
+    south = zones.geometry.intersection(half).area
+    return pd.Series((south / area).where(area > 0).to_numpy(), index=zones["zone_id"].to_numpy(),
+                     name="area_share_south")
+
+
 def geometric_labels(shapefile: Path, line: dict[str, Any]) -> pd.DataFrame:
     """zone_id, borough, centroid (lon/lat), geometric_is_cbd (Manhattan only), geometry flag."""
     zones = gpd.read_file(shapefile).to_crs(PLANAR_CRS)

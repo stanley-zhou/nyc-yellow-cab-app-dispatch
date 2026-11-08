@@ -3,7 +3,7 @@
 -- `pu_hour` / `do_hour` = floored local pickup/dropoff hour; a trip enters the hourly grid only if
 -- that hour exists in int_hours (misses are counted in int_grid_misses).
 select
-    pickup_ts, dropoff_ts, pu_zone_id, do_zone_id, trip_distance, fare_amount, total_amount,
+    vendor_id, pickup_ts, dropoff_ts, pu_zone_id, do_zone_id, trip_distance, fare_amount, total_amount,
     passenger_count, payment_type, cbd_congestion_fee, source_month, is_format_exempt,
     -- meter-derived fields are only known when the meter produced them (record-format exemptions):
     coalesce(trip_distance > 0, false)  as distance_known,

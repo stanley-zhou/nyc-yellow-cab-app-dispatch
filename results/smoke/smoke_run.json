@@ -1,15 +1,15 @@
 {
   "month": "2024-10",
-  "finished_utc": "2026-11-07T23:24:49+00:00",
+  "finished_utc": "2026-11-08T02:33:44+00:00",
   "stage_seconds": {
-    "download": 1.9,
-    "weather": 0.9,
-    "dbt_build": 26.9,
-    "data_results": 1.6,
-    "backtest": 1.5,
-    "figure": 2.9
+    "download": 0.9,
+    "weather": 0.6,
+    "dbt_build": 13.6,
+    "data_results": 1.1,
+    "backtest": 1.1,
+    "figure": 2.2
   },
-  "total_seconds": 35.7,
+  "total_seconds": 19.6,
   "limit_seconds": 600.0,
   "passed": true,
   "python": "3.12.14",

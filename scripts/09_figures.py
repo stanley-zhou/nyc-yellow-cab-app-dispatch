@@ -6,7 +6,7 @@ every title number has a source file.
 
 Usage:
     python scripts/09_figures.py --smoke     # Phase-0 placeholder figure
-    python scripts/09_figures.py --all       # every implemented figure (Phase 1: F1, F1b)
+    python scripts/09_figures.py --all       # every implemented figure (Phase 1: F1, F1b, F1c)
 """
 
 from __future__ import annotations
@@ -18,7 +18,12 @@ import logging
 import pandas as pd
 
 from taxi_shock.config import load_config, path
-from taxi_shock.viz.figures import f1_demand_map, f1b_citywide_weekly, smoke_placeholder
+from taxi_shock.viz.figures import (
+    f1_demand_map,
+    f1b_citywide_weekly,
+    f1c_vendor_weekly,
+    smoke_placeholder,
+)
 from taxi_shock.viz.maps import load_zones
 
 
@@ -35,8 +40,16 @@ def phase1(cfg: dict) -> None:
     base_year = int(yearly["year"].min())
     ratio_col = f"ratio_to_{base_year}"
     r2024 = float(yearly.loc[yearly["year"] == 2024, ratio_col].iloc[0])
+    vs = json.loads((res / "vendor_summary.json").read_text())
+    new_id = str(vs["new_vendor"]["vendor_id"])
+    new_share = vs["presence"][new_id]["share_of_window_pickups"]
+    post_share = vs["detectability"]["post_policy_new_vendor_share_by_zone_group"]
     stats = {
-        "source_files": ["results/zone_summary.csv", "results/citywide_yearly.csv"],
+        "source_files": ["results/zone_summary.csv", "results/citywide_yearly.csv",
+                         "results/vendor_summary.json"],
+        "f1c_new_vendor_entry_week": vs["new_vendor"]["entry_week"],
+        "f1c_new_vendor_post_policy_share_cbd": post_share["cbd"],
+        "f1c_new_vendor_share_of_window_pickups": new_share,
         "share_2024_pickups_by_zone_group": {k: round(v, 4) for k, v in share.items()},
         "n_cbd_zones": n_cbd,
         f"mean_daily_pickups_2024_vs_{base_year}": r2024,
@@ -50,7 +63,11 @@ def phase1(cfg: dict) -> None:
     t1b = (f"Weekly yellow-taxi pickups: 2024 daily mean at {r2024:.0%} of {base_year}")
     f1b_citywide_weekly(weekly, cfg["annotations"]["covid_ny_pause"], t1b,
                         figs / "F1b_citywide_weekly")
-    logging.info("wrote F1, F1b to %s", figs)
+    name = vs["presence"][new_id]["vendor_name"]
+    t1c = (f"{name} (VendorID {new_id}) passed 1% of weekly pickups on "
+           f"{vs['new_vendor']['entry_week']}; {post_share['cbd']:.1%} of post-policy CBD pickups")
+    f1c_vendor_weekly(pd.read_csv(res / "vendor_series.csv"), t1c, figs / "F1c_vendor_weekly")
+    logging.info("wrote F1, F1b, F1c to %s", figs)
 
 
 def main() -> None:
