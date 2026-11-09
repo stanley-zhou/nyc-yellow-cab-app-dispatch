@@ -32,6 +32,15 @@
   - reports/figures/F1c_vendor_weekly.png
 2:
   - results/backtest_2024.csv
+  - results/conformal.json
+  - results/forecast_summary.json
+  - results/wape_gap_bootstrap.csv
+  - results/fan_chart_f2b.csv
+  - results/figure_stats_phase2.json
+  - results/lgbm_params.json
+  - results/lgbm_tuning.csv
+  - results/lgbm_refits.csv
+  - results/stat_runs.csv
   - results/chronos_forecasts.parquet
   - results/chronos_forecasts_post.parquet
   - results/chronos_run.json

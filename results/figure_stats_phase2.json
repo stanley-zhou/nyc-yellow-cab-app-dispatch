@@ -2,6 +2,7 @@
   "source_files": [
     "results/backtest_2024.csv",
     "results/forecast_summary.json",
+    "results/wape_gap_bootstrap.csv",
     "results/fan_chart_f2b.csv"
   ],
   "primary_window": "expanding",
@@ -14,6 +15,10 @@
   },
   "lgbm_wape_change_vs_seasonal_naive": -0.3054,
   "lowest_wape_model": "chronos2_weather_future",
+  "tied_with_lowest_all_zones": [
+    "chronos2_weather_future",
+    "lgbm_quantile"
+  ],
   "f2b_zone_id": 161,
   "f2b_hours": 168,
   "f2b_hours_inside_raw_80": 131

@@ -197,8 +197,10 @@ MODEL_STYLE: dict[str, tuple[str, str]] = {
     "seasonal_naive": ("Seasonal naive (lag 168 h)", PALETTE["baseline"]),
     "stat_ets_profile": ("AutoETS daily x hourly profile", PALETTE["muted_text"]),
     "lgbm_quantile": ("Global LightGBM quantile", PALETTE["model"]),
-    "chronos2_weather_past": ("Chronos-2 zero-shot (weather as past covariate)", "#eb6834"),
-    "chronos2_weather_future": ("Chronos-2 zero-shot (weather also over target day)", "#f4a582"),
+    "chronos2_weather_past": ("Chronos-2 zero-shot (weather as past covariate)",
+                              PALETTE["foundation"]),
+    "chronos2_weather_future": ("Chronos-2 zero-shot (weather also over target day)",
+                                tint(PALETTE["foundation"], 0.45)),
 }
 GROUP_LABELS: dict[str, str] = {"all": "All modeled\nzones", "cbd": "CBD",
                                 "manhattan_non_cbd": "Manhattan\nnon-CBD",
@@ -214,17 +216,18 @@ def f2_model_comparison(wape: pd.DataFrame, title: str, note: str, out_base: Pat
     use_style()
     groups = [g for g in GROUP_LABELS if g in set(wape["zone_group"])]
     models = [m for m in MODEL_STYLE if m in set(wape["model"])]
-    fig, axes = plt.subplots(1, len(groups), figsize=SIZES["small_multiples"], sharey=True)
+    fig, axes = plt.subplots(1, len(groups), figsize=SIZES["small_multiples"], sharey=True,
+                             layout="constrained")
     for ax, g in zip(axes, groups, strict=True):
         d = wape[wape["zone_group"] == g].set_index("model")["value"]
-        vmax = float(d.max()) * 1.35   # each panel compares models within one zone group
+        vmax = float(d.max()) * 1.45   # each panel compares models within one zone group
         ys = range(len(models))[::-1]
         for y, m in zip(ys, models, strict=True):
             if m not in d:
                 continue
             ax.barh(y, d[m], color=MODEL_STYLE[m][1], height=0.7, edgecolor="white",
                     linewidth=2)
-            ax.annotate(f"{d[m]:.3f}", xy=(d[m], y), xytext=(3, 0), textcoords="offset points",
+            ax.annotate(f"{d[m]:.4f}", xy=(d[m], y), xytext=(3, 0), textcoords="offset points",
                         va="center", fontsize=8, color=PALETTE["text"])
         ax.set_title(GROUP_LABELS[g], fontsize=10)
         ax.set_xlim(0, vmax)
@@ -232,10 +235,11 @@ def f2_model_comparison(wape: pd.DataFrame, title: str, note: str, out_base: Pat
         ax.set_xlabel("WAPE")
     axes[0].set_yticks(list(range(len(models)))[::-1])
     axes[0].set_yticklabels([MODEL_STYLE[m][0] for m in models], fontsize=8.5)
-    # wrapped so the title never widens the canvas beyond the panels (tight bounding box)
+    # wrapped so the title never widens the canvas beyond the panels (tight bounding box);
+    # constrained layout places the title right above the panel titles and the note below
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
-    fig.text(0.01, 0.01, textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"])
-    fig.tight_layout(rect=(0, 0.06, 1, 0.93))
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
     return save(fig, out_base)
 
 

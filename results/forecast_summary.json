@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-09T23:05:04+00:00",
+  "generated_utc": "2026-11-09T23:36:16+00:00",
   "source": "results/backtest_2024.csv",
   "wape_by_zone_group": {
     "chronos2_weather_future|zero_shot": {
@@ -7,7 +7,7 @@
       "all": 0.1645,
       "cbd": 0.1586,
       "manhattan_non_cbd": 0.1512,
-      "other": 0.554
+      "other": 0.5539
     },
     "chronos2_weather_past|zero_shot": {
       "airports": 0.1589,
@@ -61,7 +61,7 @@
   },
   "wape_relative_to_seasonal_naive_expanding": {
     "chronos2_weather_future|zero_shot": {
-      "airports": 0.6986,
+      "airports": 0.6985,
       "all": 0.6823,
       "cbd": 0.6819,
       "manhattan_non_cbd": 0.6661,
@@ -118,8 +118,8 @@
     }
   },
   "mean_pinball_all_zones": {
-    "chronos2_weather_future|zero_shot": 2.3274,
-    "chronos2_weather_past|zero_shot": 2.3415,
+    "chronos2_weather_future|zero_shot": 2.3269,
+    "chronos2_weather_past|zero_shot": 2.3413,
     "lgbm_quantile|expanding": 2.4228,
     "lgbm_quantile|sliding_24m": 2.4163,
     "seasonal_naive|expanding": 3.7565,
@@ -130,8 +130,10 @@
   "coverage_80_all_zones": {
     "chronos2_weather_future|zero_shot|conformal_rolling_12w": 0.7932,
     "chronos2_weather_future|zero_shot|raw": 0.7121,
+    "chronos2_weather_future|zero_shot|raw_rolling_origins": 0.7142,
     "chronos2_weather_past|zero_shot|conformal_rolling_12w": 0.793,
-    "chronos2_weather_past|zero_shot|raw": 0.6918,
+    "chronos2_weather_past|zero_shot|raw": 0.6919,
+    "chronos2_weather_past|zero_shot|raw_rolling_origins": 0.6976,
     "lgbm_quantile|expanding|conformal_2023": 0.7969,
     "lgbm_quantile|expanding|conformal_rolling_12w": 0.817,
     "lgbm_quantile|expanding|raw": 0.7808,

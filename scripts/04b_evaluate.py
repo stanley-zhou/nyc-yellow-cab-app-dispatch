@@ -12,9 +12,13 @@ rerun skips every unit whose fingerprint still matches and only assembles the ou
 killed run resumes where it stopped; `--force` re-evaluates everything. One unit at a time also
 keeps peak memory at one model's forecasts instead of all of them.
 
-Calibrations per unit: `raw`; `conformal_2023` (pre-specified split-conformal CQR on the
-validation year; trained models only, Chronos-2 has no 2023 forecasts); and the primary
-`conformal_rolling_<w>w` (taxi_shock.conformal.rolling_conformal).
+Chronos-2 quantiles get the same post-processing as every trained model (sorted per row, clipped
+at zero, point = q50). Calibrations per unit: `raw`; `conformal_2023` (pre-specified
+split-conformal CQR on the validation year; trained models only, Chronos-2 has no 2023
+forecasts); and the primary
+`conformal_rolling_<w>w` (taxi_shock.conformal.rolling_conformal); where the rolling version
+starts later than the raw forecasts (Chronos-2), also `raw_rolling_origins` = raw on the same
+origins, so before/after compare the same rows.
 
 Writes:
     results/backtest_2024.csv      long metric table: model, window, calibration, zone_group,
@@ -24,6 +28,8 @@ Writes:
     results/forecast_summary.json  headline numbers (WAPE by zone group, coverage, relative WAPE
                                    vs seasonal naive) and the primary-window decision
     results/fan_chart_f2b.csv      input of F2b (busiest CBD zone of 2024, models.f2b.week_start)
+    results/wape_gap_bootstrap.csv paired block-bootstrap intervals of WAPE gaps vs the best
+                                   model, per zone group (basis of any ranking in F2's title)
 
 Usage:
     python scripts/04b_evaluate.py [--force]
@@ -40,6 +46,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from taxi_shock.backtest import evaluate
@@ -115,6 +122,10 @@ def load_unit(unit: Unit) -> tuple[pd.DataFrame | None, pd.DataFrame]:
         return val, test
     ch = pd.read_parquet(unit.files["test"], filters=[("variant", "==", unit.variant)])
     ch["zone_id"] = ch["zone_id"].astype("int64")
+    # same post-processing as every trained model: sort the quantiles per row (monotone
+    # rearrangement), clip at zero, point = q50
+    qc = [c for c in ("q10", "q50", "q90") if c in ch]
+    ch[qc] = np.clip(np.sort(ch[qc].to_numpy(), axis=1), 0.0, None)
     ch["point"] = ch["q50"]
     key = ["zone_id", "target_ts"]
     act = pd.read_parquet(unit.files["actuals"], columns=key + ["y", "origin", "mase_scale"])
@@ -154,7 +165,13 @@ def evaluate_unit(unit: Unit, cfg: dict, groups: pd.Series, fan: dict, out_dir: 
     hist = test if val is None else pd.concat([val, test], ignore_index=True)
     r = rolling_conformal(hist, groups, list(qs), cc["rolling_weeks"], origins)
     uncal = int(r.attrs["n_origins_uncalibrated"])
-    frames.append(r[r[lo].notna()].assign(calibration=rolling_label))
+    rolled = r[r[lo].notna()]
+    frames.append(rolled.assign(calibration=rolling_label))
+    if uncal:
+        # before/after on the same rows: raw forecasts restricted to the calibrated origins
+        matched = test[test["origin"].isin(rolled["origin"].unique())]
+        frames.append(matched.assign(calibration=MATCHED_RAW))
+    daily_errors(test, groups).to_parquet(out_dir / f"{unit.name}__daily.parquet")
     del hist, val
     fc = pd.concat(frames, ignore_index=True)
     del frames
@@ -175,6 +192,64 @@ def evaluate_unit(unit: Unit, cfg: dict, groups: pd.Series, fan: dict, out_dir: 
     os.replace(tmp, out_dir / f"{unit.name}.json")   # completion marker, written last
 
 
+MATCHED_RAW = "raw_rolling_origins"
+
+
+def daily_errors(test: pd.DataFrame, groups: pd.Series) -> pd.DataFrame:
+    """Per origin day and zone group (and 'all'): sum |y - point| and sum y of the raw
+    forecasts — the paired inputs of the WAPE-gap bootstrap."""
+    d = test.loc[test["y"].notna() & test["point"].notna(), ["origin", "zone_id", "y", "point"]]
+    d = d.assign(zone_group=d["zone_id"].map(groups), abs_err=(d["y"] - d["point"]).abs())
+    per = d.groupby(["origin", "zone_group"])[["abs_err", "y"]].sum().reset_index()
+    tot = d.groupby("origin")[["abs_err", "y"]].sum().reset_index().assign(zone_group="all")
+    return pd.concat([per, tot], ignore_index=True)
+
+
+def wape_gap_bootstrap(cfg: dict, todo: list[Unit], out_dir: Path, primary: str,
+                       res: Path) -> pd.DataFrame:
+    """Paired block bootstrap of WAPE differences against the lowest-WAPE model, per zone group.
+
+    Candidates: the trained models in the primary window and every Chronos-2 variant. Origin
+    days are cut into consecutive blocks of `block_days`; each replicate resamples blocks with
+    replacement and recomputes every model's WAPE on the same days (paired). Reported: the gap
+    WAPE(model) - WAPE(best) with its 2.5/97.5% percentiles; `tied_with_best` = the interval
+    contains 0."""
+    bc = cfg["models"]["f2"]
+    units_ = [u for u in todo if u.window in (primary, "zero_shot")]
+    daily = pd.concat([pd.read_parquet(out_dir / f"{u.name}__daily.parquet").assign(
+        model=u.model) for u in units_], ignore_index=True)
+    rng = np.random.default_rng(cfg["seed"])
+    rows = []
+    for g, d in daily.groupby("zone_group"):
+        err = d.pivot_table(index="origin", columns="model", values="abs_err")
+        ys = d.pivot_table(index="origin", columns="model", values="y")
+        common = err.dropna().index.intersection(ys.dropna().index)
+        # per-model denominators: a model's WAPE covers the hours it forecast (seasonal naive
+        # misses the lag-less hour a week after spring-forward), exactly as in backtest_2024.csv
+        err, y = err.loc[common].sort_index(), ys.loc[common, err.columns].sort_index()
+        block = np.arange(len(common)) // int(bc["block_days"])
+        e_b = err.groupby(block).sum().to_numpy()          # blocks x models
+        y_b = y.groupby(block).sum().to_numpy()            # blocks x models
+        draw = rng.integers(0, len(y_b), size=(int(bc["bootstrap_reps"]), len(y_b)))
+        boot = e_b[draw].sum(axis=1) / y_b[draw].sum(axis=1)   # reps x models
+        point = err.sum().to_numpy() / y.sum().to_numpy()
+        b = int(np.argmin(point))
+        for j, m in enumerate(err.columns):
+            gap = boot[:, j] - boot[:, b]
+            lo_, hi_ = np.percentile(gap, [2.5, 97.5])
+            rows.append({"zone_group": g, "model": m, "best_model": err.columns[b],
+                         "wape": round(float(point[j]), 6),
+                         "wape_best": round(float(point[b]), 6),
+                         "gap_vs_best": round(float(point[j] - point[b]), 6),
+                         "gap_ci_lo": round(float(lo_), 6), "gap_ci_hi": round(float(hi_), 6),
+                         "tied_with_best": bool(j == b or lo_ <= 0.0),
+                         "n_days": len(common), "block_days": int(bc["block_days"]),
+                         "reps": int(bc["bootstrap_reps"])})
+    out = pd.DataFrame(rows).sort_values(["zone_group", "wape"]).reset_index(drop=True)
+    out.to_csv(res / "wape_gap_bootstrap.csv", index=False, lineterminator="\n")
+    return out
+
+
 FAN_COLS = ["model", "window", "calibration", "zone_id", "target_ts", "y", "point", "q10", "q50",
             "q90"]
 
@@ -183,6 +258,8 @@ def is_done(unit: Unit, cfg: dict, out_dir: Path) -> bool:
     f = out_dir / f"{unit.name}.json"
     if not f.exists() or not all((out_dir / f"{unit.name}__{k}.parquet").exists()
                                  for k in ("metrics", "fan")):
+        return False
+    if not (out_dir / f"{unit.name}__daily.parquet").exists():
         return False
     return json.loads(f.read_text()).get("fingerprint") == fingerprint(unit, cfg)
 
@@ -232,6 +309,10 @@ def assemble(cfg: dict, todo: list[Unit], out_dir: Path, res: Path) -> None:
         "alpha": cc["alpha"], "validation_year": cfg["models"]["validation_year"],
         "group_by": cc["group_by"],
         "not_calibrated": ["chronos2_* (no validation-year forecasts)"],
+        "matched_raw_label": (f"{MATCHED_RAW}: raw forecasts restricted to the origins that have "
+                              "a rolling calibration (Chronos-2: from the first origin with 12 "
+                              "weeks of its own forecasts), so raw vs rolling compare the same "
+                              "rows"),
         "rows": [r for d in done for r in d["conformal_2023"]],
         "rolling": {
             "label": rolling_label, "primary": cc["primary"],
@@ -244,7 +325,11 @@ def assemble(cfg: dict, todo: list[Unit], out_dir: Path, res: Path) -> None:
                 for d in done},
             "coverage_and_width": [r for d in done for r in d["coverage_and_width"]]}},
         indent=2) + "\n")
-    write_summary(cfg, table, res)
+    primary = write_summary(cfg, table, res)
+    boot = wape_gap_bootstrap(cfg, todo, out_dir, primary or "expanding", res)
+    LOG.info("wape_gap_bootstrap.csv: %d rows; tied with the best over all zones: %s",
+             len(boot), ", ".join(boot.loc[(boot["zone_group"] == "all")
+                                           & boot["tied_with_best"], "model"]))
     fan = pd.concat([pd.read_parquet(out_dir / f"{u.name}__fan.parquet") for u in todo],
                     ignore_index=True)
     fan[FAN_COLS].sort_values(FAN_COLS[:5]).to_csv(res / "fan_chart_f2b.csv", index=False,
@@ -260,7 +345,7 @@ def _metric(table: pd.DataFrame, metric: str, **kw) -> pd.DataFrame:
     return table[sel]
 
 
-def write_summary(cfg: dict, table: pd.DataFrame, res) -> None:
+def write_summary(cfg: dict, table: pd.DataFrame, res) -> str | None:
     raw = table[table["calibration"] == "raw"]
     wape = _metric(raw, "wape").pivot_table(index=["model", "window"], columns="zone_group",
                                             values="value")
@@ -296,6 +381,7 @@ def write_summary(cfg: dict, table: pd.DataFrame, res) -> None:
     }
     (res / "forecast_summary.json").write_text(json.dumps(out, indent=2) + "\n")
     LOG.info("primary window: %s", primary)
+    return primary
 
 
 if __name__ == "__main__":

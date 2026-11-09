@@ -58,6 +58,8 @@ models:                                       # PLAN Phase 2
     max_rounds: 10000                         # run 1 (cap 3000, no tolerance) hit the cap: DECISIONS
     early_stopping_rounds: 100
     early_stopping_min_delta: 0.001           # pinball improvement (pickups) that counts as progress
+    predict_history_days: 30                  # history passed to the feature builder at predict
+                                              # time: 28-day rolling mean + 1 day + margin (DECISIONS)
   conformal:
     alpha: 0.2                                # 80% interval
     group_by: zone_group                      # PLAN: per zone group
@@ -66,6 +68,9 @@ models:                                       # PLAN Phase 2
   primary_window_rule:                        # pre-registered before any 2024 result (DECISIONS)
     metric: mean_pinball                      # LGBM, all modeled zones, test year
     tie_relative: 0.01                        # |difference| < 1% -> expanding
+  f2:                                         # WAPE-gap uncertainty behind any ranking in F2
+    bootstrap_reps: 2000                      # paired block bootstrap over origin days
+    block_days: 7                             # consecutive-day blocks keep weekly dependence
   f2b:                                        # fan chart: busiest CBD zone of 2024, this week
     week_start: "2024-10-13"                  # Sunday; no holiday, no DST change
 forecast_eval:
@@ -85,6 +90,8 @@ chronos:                                      # PLAN Phase 2 model 4 (Colab only
   variants:                                   # how the weather covariates enter
     weather_past: past                        # PLAN: weather = past covariates only
     weather_future: future                    # observed weather also over the target day (= LGBM's information)
+  primary_variant: weather_past               # PLAN's specification (weather = past covariate);
+                                              # weather_future reported beside it (DECISIONS)
   batch_size: 256                             # series per GPU batch (target + covariates count)
   bundle: data/processed/chronos_bundle.zip   # what Stanley uploads to Google Drive
 quality:                                      # PLAN Phase 1 filter rules, parameterised

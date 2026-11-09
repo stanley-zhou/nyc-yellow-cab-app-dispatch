@@ -86,21 +86,36 @@ def phase2(cfg: dict) -> None:
     wape = t.loc[sel, ["model", "zone_group", "value"]]
     allz = wape[wape["zone_group"] == "all"].set_index("model")["value"]
     base, lg = float(allz["seasonal_naive"]), float(allz.get("lgbm_quantile", float("nan")))
-    best = allz.idxmin()
+    boot = pd.read_csv(res / "wape_gap_bootstrap.csv")
+    ball = boot[boot["zone_group"] == "all"]
+    tied = ball.loc[ball["tied_with_best"], "model"].tolist()   # sorted by WAPE
+    best = ball["best_model"].iloc[0]
     stats = {"source_files": ["results/backtest_2024.csv", "results/forecast_summary.json",
-                              "results/fan_chart_f2b.csv"],
+                              "results/wape_gap_bootstrap.csv", "results/fan_chart_f2b.csv"],
              "primary_window": primary,
              "wape_all_zones": {k: round(float(v), 4) for k, v in allz.items()},
              "lgbm_wape_change_vs_seasonal_naive": round(lg / base - 1, 4),
-             "lowest_wape_model": best}
+             "lowest_wape_model": best,
+             "tied_with_lowest_all_zones": tied}
     names = {"seasonal_naive": "seasonal naive", "stat_ets_profile": "AutoETS baseline",
-             "lgbm_quantile": "LightGBM", "chronos2_weather_past": "Chronos-2",
+             "lgbm_quantile": "LightGBM", "chronos2_weather_past": "Chronos-2 (past weather)",
              "chronos2_weather_future": "Chronos-2 (future weather)"}
-    title = (f"2024 day-ahead WAPE: {names[best]} lowest across modeled zones "
-             f"({allz[best]:.3f} vs seasonal naive {base:.3f})")
+    # a single model is named lowest only if the bootstrap interval of every other model's gap
+    # to it excludes 0 (results/wape_gap_bootstrap.csv)
+    if len(tied) == 1:
+        title = (f"2024 day-ahead WAPE over all modeled zones: {names[best]} lowest "
+                 f"({allz[best]:.4f} vs seasonal naive {base:.4f})")
+    else:
+        listed = ", ".join(names[m] for m in tied[:-1]) + f" and {names[tied[-1]]}"
+        title = (f"2024 day-ahead WAPE over all modeled zones: {listed} within bootstrap "
+                 f"uncertainty ({allz[tied].min():.4f}-{allz[tied].max():.4f}) vs seasonal "
+                 f"naive {base:.4f}")
     note = (f"Raw forecasts (calibration does not change point forecasts); trained models: "
-            f"{primary} training window, monthly refit; Chronos-2 zero-shot, 2048 h context. "
-            "Each panel has its own scale. Source: results/backtest_2024.csv.")
+            f"{primary} training window, monthly refit; Chronos-2 zero-shot, "
+            f"{cfg['chronos']['context_hours']} h context. "
+            "Each panel has its own scale. Ties: 95% paired block bootstrap over origin days "
+            f"({int(ball['block_days'].iloc[0])}-day blocks). Sources: "
+            "results/backtest_2024.csv, results/wape_gap_bootstrap.csv.")
     f2_model_comparison(wape, title, note, figs / "F2_model_comparison")
 
     fan = pd.read_csv(res / "fan_chart_f2b.csv", parse_dates=["target_ts"])

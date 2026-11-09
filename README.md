@@ -23,8 +23,10 @@ hourly pickups ≥ 1.0 in 2024, which carry 99.04% of 2024 pickups (`results/mod
 ```bash
 make setup        # uv: Python 3.12 venv in .venv, installs the package with [dev] extras
 make smoke        # one sample month end to end: download -> dbt build+test -> backtest -> figure
-make data && make dbt && make figures   # full data
-make verify PHASE=1
+make data && make dbt                   # full data and warehouse
+make forecast && make chronos-import    # Phase 2 (Chronos-2 itself runs on Colab)
+make figures
+make verify PHASE=2                     # N = the phase to check
 ```
 
 The system Python 3.14 is not supported (missing wheels); `make setup` uses `uv` to install 3.12.
@@ -38,7 +40,7 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `data` | full raw download (yellow months in config, zone lookups, weather) |
 | `dbt` | build and test the full DuckDB warehouse in two stages around the CBD mapping (`scripts/03a_cbd_map.py`), then write the Phase-1 result files (`scripts/03b_data_results.py`) and the Checkpoint-1 checks: vendor series, trip-level CBD fee check, modeled zones (`scripts/03c_checks.py`) |
 | `chronos-bundle`, `chronos-import` | Phase 2: export the Chronos-2 input bundle for Colab; validate the forecasts copied back into `results/` |
-| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b), built from `results/` only |
+| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b), built from `results/` only |
 | `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, Open-Meteo offset |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
 | `forecast` | Phase 2: LightGBM grid on 2023 (`04a_lgbm_tune.py`), rolling-origin backtests of every trained model for 2023 and 2024 (`04_backtest.py --full`), conformal calibration and metrics (`04b_evaluate.py`); Chronos-2 runs on Colab (`chronos-bundle` / `chronos-import`) |

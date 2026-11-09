@@ -78,7 +78,8 @@ def main() -> None:
     hist_tr = panel[panel["hour_ts"] < v0]
     x_tr, y_tr = training_frame(hist_tr, exog, ms)
     x_va, y_va = training_frame(panel, exog, v0)
-    proto = GlobalLGBMQuantile(exog, qs, {}, {}, seed=cfg["seed"], threads=mc["threads"])
+    proto = GlobalLGBMQuantile(exog, qs, {}, {}, seed=cfg["seed"], threads=mc["threads"],
+                               predict_history_days=mc["lgbm"]["predict_history_days"])
     proto.zones_ = sorted(int(z) for z in x_tr["zone_id"].unique())
     d_tr = lgb.Dataset(proto._matrix(x_tr), y_tr, categorical_feature=["zone_id"],
                        free_raw_data=False)

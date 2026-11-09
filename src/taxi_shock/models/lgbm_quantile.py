@@ -27,8 +27,6 @@ import pandas as pd
 from taxi_shock.features import WEATHER_FEATURES, build_features, feature_columns
 from taxi_shock.models.base import BaseForecaster, quantile_col
 
-HISTORY_DAYS_FOR_FEATURES = 30   # >= 28-day rolling mean + 1 day; lag_336 needs 14
-
 
 def training_frame(history: pd.DataFrame, exog: pd.DataFrame, train_start: pd.Timestamp | None,
                    weather: Sequence[str] = WEATHER_FEATURES) -> tuple[pd.DataFrame, np.ndarray]:
@@ -43,10 +41,14 @@ class GlobalLGBMQuantile(BaseForecaster):
     name = "lgbm_quantile"
 
     def __init__(self, exog: pd.DataFrame, quantiles: Sequence[float],
-                 params: Mapping[str, object], rounds: Mapping[float, int], seed: int,
-                 weather: Sequence[str] = WEATHER_FEATURES, threads: int = 0,
-                 early_stopping: Mapping[str, float] | None = None) -> None:
+                 params: Mapping[str, object], rounds: Mapping[float, int], seed: int, *,
+                 predict_history_days: int, weather: Sequence[str] = WEATHER_FEATURES,
+                 threads: int = 0, early_stopping: Mapping[str, float] | None = None) -> None:
+        """`predict_history_days` (models.lgbm.predict_history_days): days of history before
+        the target day handed to the feature builder at predict time; must cover the longest
+        look-back (28-day rolling mean + 1 day) or the features would differ from training."""
         self.exog = exog
+        self.predict_history_days = int(predict_history_days)
         self.quantiles = sorted(quantiles)
         self.params = dict(params)
         self.rounds = {float(k): int(v) for k, v in rounds.items()}
@@ -110,7 +112,7 @@ class GlobalLGBMQuantile(BaseForecaster):
     def predict_quantiles(self, history: pd.DataFrame, targets: pd.DataFrame,
                           quantiles: Sequence[float]) -> pd.DataFrame:
         first = targets["target_ts"].min().normalize()
-        hist = history[history["hour_ts"] >= first - pd.Timedelta(days=HISTORY_DAYS_FOR_FEATURES)]
+        hist = history[history["hour_ts"] >= first - pd.Timedelta(days=self.predict_history_days)]
         feats = build_features(hist, targets[["zone_id", "target_ts"]], self.exog, self.weather)
         mat = self._matrix(feats)
         qs = sorted(quantiles)

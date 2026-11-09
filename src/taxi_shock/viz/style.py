@@ -20,6 +20,7 @@ PALETTE: dict[str, str] = {
     "cbd": "#B23A48",
     "non_cbd": "#8A8F98",
     "model": "#1F5F8B",
+    "foundation": "#EB6834",   # pretrained foundation model (Chronos-2); variant = tint()
     "baseline": "#B0B4BA",
     "actual": "#1A1A1A",       # observed series (near-black, distinct from every model colour)
     "muted_text": "#6B7078",   # notes, secondary labels, baseline lines drawn over a baseline band

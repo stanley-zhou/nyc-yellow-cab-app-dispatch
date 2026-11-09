@@ -1,0 +1,4 @@
+model,window,period,refits,zone_fits,zone_fit_failures,zone_day_fallbacks
+stat_ets_profile,expanding,test,12,1236,0,0
+stat_ets_profile,sliding_24m,test,12,1236,0,0
+stat_ets_profile,expanding,validation,12,1236,0,0
