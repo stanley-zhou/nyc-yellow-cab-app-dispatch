@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-09T23:36:16+00:00",
+  "generated_utc": "2026-11-09T23:50:44+00:00",
   "method": "split-conformal CQR: score max(q_lo - y, y - q_hi) on the validation year, Q = ceil((n+1)(1-alpha))/n quantile, interval [max(q_lo - Q, 0), q_hi + Q]",
   "alpha": 0.2,
   "validation_year": [

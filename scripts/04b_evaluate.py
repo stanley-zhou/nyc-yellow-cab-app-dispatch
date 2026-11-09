@@ -7,7 +7,7 @@ Resumable: the work is split into units, one per (model, window) — each Chrono
 own unit. A finished unit writes its metric rows, report rows and fan-chart rows to
 data/forecasts/eval/<model>__<window>.{parquet,json}; the JSON is written last (atomically) and
 records a fingerprint of the unit's input files (size, mtime), the evaluation settings and the
-sha256 of the evaluation code (this script, taxi_shock.conformal/backtest/metrics). A
+sha256 of the evaluation code (this script, taxi_shock.conformal/backtest/metrics/evaluation). A
 rerun skips every unit whose fingerprint still matches and only assembles the outputs, so a
 killed run resumes where it stopped; `--force` re-evaluates everything. One unit at a time also
 keeps peak memory at one model's forecasts instead of all of them.
@@ -28,8 +28,9 @@ Writes:
     results/forecast_summary.json  headline numbers (WAPE by zone group, coverage, relative WAPE
                                    vs seasonal naive) and the primary-window decision
     results/fan_chart_f2b.csv      input of F2b (busiest CBD zone of 2024, models.f2b.week_start)
-    results/wape_gap_bootstrap.csv paired block-bootstrap intervals of WAPE gaps vs the best
-                                   model, per zone group (basis of any ranking in F2's title)
+    results/wape_gap_bootstrap.csv paired block-bootstrap intervals of the WAPE gap between
+                                   every pair of models, per zone group (basis of any ranking
+                                   in F2's title)
 
 Usage:
     python scripts/04b_evaluate.py [--force]
@@ -46,17 +47,22 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from taxi_shock.backtest import evaluate
 from taxi_shock.config import load_config, path, repo_root
 from taxi_shock.conformal import conformal, rolling_conformal
+from taxi_shock.evaluation import (
+    daily_errors,
+    sort_clip_quantiles,
+    tied_with_best,
+    wape_gap_bootstrap,
+)
 
 TRAINED = ["seasonal_naive", "stat_ets_profile", "lgbm_quantile"]
 FAN_MODELS = ["lgbm_quantile", "seasonal_naive"]
 CODE = [Path(__file__), *(repo_root() / "src" / "taxi_shock" / f
-                          for f in ("conformal.py", "backtest.py", "metrics.py"))]
+                          for f in ("conformal.py", "backtest.py", "metrics.py", "evaluation.py"))]
 LOG = logging.getLogger("evaluate")
 
 
@@ -124,9 +130,7 @@ def load_unit(unit: Unit) -> tuple[pd.DataFrame | None, pd.DataFrame]:
     ch["zone_id"] = ch["zone_id"].astype("int64")
     # same post-processing as every trained model: sort the quantiles per row (monotone
     # rearrangement), clip at zero, point = q50
-    qc = [c for c in ("q10", "q50", "q90") if c in ch]
-    ch[qc] = np.clip(np.sort(ch[qc].to_numpy(), axis=1), 0.0, None)
-    ch["point"] = ch["q50"]
+    ch = sort_clip_quantiles(ch, ["q10", "q50", "q90"])
     key = ["zone_id", "target_ts"]
     act = pd.read_parquet(unit.files["actuals"], columns=key + ["y", "origin", "mase_scale"])
     ch = ch.drop(columns=["origin", "variant"]).merge(act.drop_duplicates(key), on=key,
@@ -195,57 +199,15 @@ def evaluate_unit(unit: Unit, cfg: dict, groups: pd.Series, fan: dict, out_dir: 
 MATCHED_RAW = "raw_rolling_origins"
 
 
-def daily_errors(test: pd.DataFrame, groups: pd.Series) -> pd.DataFrame:
-    """Per origin day and zone group (and 'all'): sum |y - point| and sum y of the raw
-    forecasts — the paired inputs of the WAPE-gap bootstrap."""
-    d = test.loc[test["y"].notna() & test["point"].notna(), ["origin", "zone_id", "y", "point"]]
-    d = d.assign(zone_group=d["zone_id"].map(groups), abs_err=(d["y"] - d["point"]).abs())
-    per = d.groupby(["origin", "zone_group"])[["abs_err", "y"]].sum().reset_index()
-    tot = d.groupby("origin")[["abs_err", "y"]].sum().reset_index().assign(zone_group="all")
-    return pd.concat([per, tot], ignore_index=True)
-
-
-def wape_gap_bootstrap(cfg: dict, todo: list[Unit], out_dir: Path, primary: str,
-                       res: Path) -> pd.DataFrame:
-    """Paired block bootstrap of WAPE differences against the lowest-WAPE model, per zone group.
-
-    Candidates: the trained models in the primary window and every Chronos-2 variant. Origin
-    days are cut into consecutive blocks of `block_days`; each replicate resamples blocks with
-    replacement and recomputes every model's WAPE on the same days (paired). Reported: the gap
-    WAPE(model) - WAPE(best) with its 2.5/97.5% percentiles; `tied_with_best` = the interval
-    contains 0."""
+def write_wape_gaps(cfg: dict, todo: list[Unit], out_dir: Path, primary: str,
+                    res: Path) -> pd.DataFrame:
+    """results/wape_gap_bootstrap.csv: paired block-bootstrap WAPE gaps between every pair of
+    candidates (trained models in the primary window, every Chronos-2 variant), per zone group
+    (taxi_shock.evaluation.wape_gap_bootstrap)."""
     bc = cfg["models"]["f2"]
-    units_ = [u for u in todo if u.window in (primary, "zero_shot")]
     daily = pd.concat([pd.read_parquet(out_dir / f"{u.name}__daily.parquet").assign(
-        model=u.model) for u in units_], ignore_index=True)
-    rng = np.random.default_rng(cfg["seed"])
-    rows = []
-    for g, d in daily.groupby("zone_group"):
-        err = d.pivot_table(index="origin", columns="model", values="abs_err")
-        ys = d.pivot_table(index="origin", columns="model", values="y")
-        common = err.dropna().index.intersection(ys.dropna().index)
-        # per-model denominators: a model's WAPE covers the hours it forecast (seasonal naive
-        # misses the lag-less hour a week after spring-forward), exactly as in backtest_2024.csv
-        err, y = err.loc[common].sort_index(), ys.loc[common, err.columns].sort_index()
-        block = np.arange(len(common)) // int(bc["block_days"])
-        e_b = err.groupby(block).sum().to_numpy()          # blocks x models
-        y_b = y.groupby(block).sum().to_numpy()            # blocks x models
-        draw = rng.integers(0, len(y_b), size=(int(bc["bootstrap_reps"]), len(y_b)))
-        boot = e_b[draw].sum(axis=1) / y_b[draw].sum(axis=1)   # reps x models
-        point = err.sum().to_numpy() / y.sum().to_numpy()
-        b = int(np.argmin(point))
-        for j, m in enumerate(err.columns):
-            gap = boot[:, j] - boot[:, b]
-            lo_, hi_ = np.percentile(gap, [2.5, 97.5])
-            rows.append({"zone_group": g, "model": m, "best_model": err.columns[b],
-                         "wape": round(float(point[j]), 6),
-                         "wape_best": round(float(point[b]), 6),
-                         "gap_vs_best": round(float(point[j] - point[b]), 6),
-                         "gap_ci_lo": round(float(lo_), 6), "gap_ci_hi": round(float(hi_), 6),
-                         "tied_with_best": bool(j == b or lo_ <= 0.0),
-                         "n_days": len(common), "block_days": int(bc["block_days"]),
-                         "reps": int(bc["bootstrap_reps"])})
-    out = pd.DataFrame(rows).sort_values(["zone_group", "wape"]).reset_index(drop=True)
+        model=u.model) for u in todo if u.window in (primary, "zero_shot")], ignore_index=True)
+    out = wape_gap_bootstrap(daily, bc["bootstrap_reps"], bc["block_days"], cfg["seed"])
     out.to_csv(res / "wape_gap_bootstrap.csv", index=False, lineterminator="\n")
     return out
 
@@ -326,10 +288,10 @@ def assemble(cfg: dict, todo: list[Unit], out_dir: Path, res: Path) -> None:
             "coverage_and_width": [r for d in done for r in d["coverage_and_width"]]}},
         indent=2) + "\n")
     primary = write_summary(cfg, table, res)
-    boot = wape_gap_bootstrap(cfg, todo, out_dir, primary or "expanding", res)
-    LOG.info("wape_gap_bootstrap.csv: %d rows; tied with the best over all zones: %s",
-             len(boot), ", ".join(boot.loc[(boot["zone_group"] == "all")
-                                           & boot["tied_with_best"], "model"]))
+    gaps = write_wape_gaps(cfg, todo, out_dir, primary or "expanding", res)
+    best, tied = tied_with_best(gaps, "all")
+    LOG.info("wape_gap_bootstrap.csv: %d rows; all zones: best %s, not distinguishable: %s",
+             len(gaps), best, ", ".join(tied) or "none")
     fan = pd.concat([pd.read_parquet(out_dir / f"{u.name}__fan.parquet") for u in todo],
                     ignore_index=True)
     fan[FAN_COLS].sort_values(FAN_COLS[:5]).to_csv(res / "fan_chart_f2b.csv", index=False,

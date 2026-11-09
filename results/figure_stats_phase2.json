@@ -15,8 +15,7 @@
   },
   "lgbm_wape_change_vs_seasonal_naive": -0.3054,
   "lowest_wape_model": "chronos2_weather_future",
-  "tied_with_lowest_all_zones": [
-    "chronos2_weather_future",
+  "not_distinguishable_from_lowest_all_zones": [
     "lgbm_quantile"
   ],
   "f2b_zone_id": 161,
