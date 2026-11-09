@@ -1,7 +1,9 @@
 # Forecasting Under a Policy Shock: NYC Yellow-Taxi Demand and Congestion Pricing
 
-**Status: Phase 2 (forecasting before the shock), in progress.** No forecasting or causal findings yet. This README is rewritten in
-Phase 7 with the summary, figures and limitations; until then it only explains how to run the code.
+**Status: Phase 2 (forecasting before the shock) built, under review.** Backtest metrics are in
+`results/backtest_2024.csv` and `results/forecast_summary.json`; no causal findings yet. This README
+is rewritten in Phase 7 with the summary, figures and limitations; until then it only explains how
+to run the code.
 
 Scope (honest wording, PLAN §0.6): NYC TLC **yellow taxi** pickups at the TLC-zone level,
 hourly, with Manhattan congestion pricing (from 2025-01-05) as a natural experiment. The

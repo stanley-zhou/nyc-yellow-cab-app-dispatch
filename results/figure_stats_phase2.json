@@ -1,0 +1,20 @@
+{
+  "source_files": [
+    "results/backtest_2024.csv",
+    "results/forecast_summary.json",
+    "results/fan_chart_f2b.csv"
+  ],
+  "primary_window": "expanding",
+  "wape_all_zones": {
+    "chronos2_weather_future": 0.1645,
+    "chronos2_weather_past": 0.1652,
+    "lgbm_quantile": 0.1675,
+    "seasonal_naive": 0.2411,
+    "stat_ets_profile": 0.1844
+  },
+  "lgbm_wape_change_vs_seasonal_naive": -0.3054,
+  "lowest_wape_model": "chronos2_weather_future",
+  "f2b_zone_id": 161,
+  "f2b_hours": 168,
+  "f2b_hours_inside_raw_80": 131
+}

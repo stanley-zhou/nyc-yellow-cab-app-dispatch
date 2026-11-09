@@ -85,10 +85,15 @@ def direct_labels(
 
 
 def save(fig: Figure, out_base: Path) -> list[Path]:
-    """Save PNG (200 dpi) and SVG next to each other; returns the paths."""
+    """Save PNG (200 dpi) and SVG next to each other; returns the paths.
+
+    Output is deterministic (no creation date, fixed SVG id salt), so regenerating an unchanged
+    figure leaves the committed files unchanged."""
     out_base.parent.mkdir(parents=True, exist_ok=True)
     paths = [out_base.with_suffix(".png"), out_base.with_suffix(".svg")]
-    for p in paths:
-        fig.savefig(p)
+    with mpl.rc_context({"svg.hashsalt": "taxi-shock"}):
+        for p in paths:
+            meta = {"Date": None} if p.suffix == ".svg" else {"Software": None}
+            fig.savefig(p, metadata=meta)
     plt.close(fig)
     return paths

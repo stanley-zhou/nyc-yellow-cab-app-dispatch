@@ -5,6 +5,7 @@ Titles state a finding only once the results support it; placeholder titles say 
 
 from __future__ import annotations
 
+import textwrap
 from pathlib import Path
 
 import matplotlib as mpl
@@ -231,9 +232,10 @@ def f2_model_comparison(wape: pd.DataFrame, title: str, note: str, out_base: Pat
         ax.set_xlabel("WAPE")
     axes[0].set_yticks(list(range(len(models)))[::-1])
     axes[0].set_yticklabels([MODEL_STYLE[m][0] for m in models], fontsize=8.5)
-    fig.suptitle(title, fontsize=11, fontweight="bold", x=0.01, ha="left")
-    fig.text(0.01, 0.01, note, fontsize=8, color=PALETTE["muted_text"])
-    fig.tight_layout(rect=(0, 0.04, 1, 0.95))
+    # wrapped so the title never widens the canvas beyond the panels (tight bounding box)
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.text(0.01, 0.01, textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"])
+    fig.tight_layout(rect=(0, 0.06, 1, 0.93))
     return save(fig, out_base)
 
 
@@ -257,10 +259,11 @@ def f2b_fan_chart(fan: pd.DataFrame, zone_name: str, title: str, out_base: Path)
             label="Actual pickups")
     ax.set_ylabel(f"Pickups per hour, {zone_name}")
     ax.set_xlabel("Local time (forecast issued 00:00 the same day)")
-    ax.set_ylim(bottom=0)
+    top = float(pd.concat([raw[["q90", "y"]], cal[["q90"]]]).max().max())
+    ax.set_ylim(0, top * 1.22)   # headroom so the legend never covers the data
     ax.set_xlim(raw["target_ts"].min(), raw["target_ts"].max())
     ax.xaxis.set_major_locator(mdates.DayLocator())
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%a %d %b"))
     ax.legend(loc="upper left", fontsize=8, frameon=False, ncol=2)
-    ax.set_title(title)
+    ax.set_title(textwrap.fill(title, 68), loc="left")
     return save(fig, out_base)

@@ -77,9 +77,11 @@ def rolling_conformal(fc: pd.DataFrame, groups: pd.Series, quantiles: list[float
                                     day=fc["target_ts"].dt.normalize())
     days_present = set(fc["day"].unique())
     span = pd.Timedelta(days=7 * weeks)
-    # residual arrays per (zone group, day, quantile column), built once
+    # residual arrays per (zone group, day, quantile column), built once; rows without a
+    # forecast (NaN quantiles, e.g. seasonal naive's missing lag hour a week after a DST
+    # spring-forward day) are left out of the pool rather than turning every shift into NaN
     resid: dict[tuple[str, pd.Timestamp], np.ndarray] = {}
-    for (g, day), d in fc.groupby(["zone_group", "day"]):
+    for (g, day), d in fc[fc[cols].notna().all(axis=1)].groupby(["zone_group", "day"]):
         resid[(g, day)] = (d["y"].to_numpy()[:, None] - d[cols].to_numpy())
     out, skipped = [], 0
     by_origin = {o: d for o, d in fc[fc["origin"].isin(origins)].groupby("origin")}
@@ -94,7 +96,10 @@ def rolling_conformal(fc: pd.DataFrame, groups: pd.Series, quantiles: list[float
             continue
         parts = []
         for g, t in target.groupby("zone_group"):
-            pool = np.concatenate([resid[(g, d)] for d in window if (g, d) in resid])
+            pool = [resid[(g, d)] for d in window if (g, d) in resid]
+            if not pool:
+                raise ValueError(f"zone group {g}: no residuals in the window before {origin}")
+            pool = np.concatenate(pool)
             shift = np.array([np.quantile(pool[:, j], q) for j, q in enumerate(qs)])
             t = t.copy()
             t[cols] = t[cols].to_numpy() + shift

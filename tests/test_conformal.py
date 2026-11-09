@@ -66,3 +66,26 @@ def test_rolling_conformal_uses_only_the_trailing_window_and_fixes_bias():
     early = rolling_conformal(fc, groups, [0.1, 0.5, 0.9], 4,
                               pd.DatetimeIndex([pd.Timestamp("2024-01-10")]))
     assert early.attrs["n_origins_uncalibrated"] == 1 and early["q10"].isna().all()
+
+
+def test_rolling_conformal_ignores_missing_forecasts_in_the_pool():
+    """A NaN forecast inside the trailing window (seasonal naive after a DST spring-forward
+    day) must not leave the origin uncalibrated; the NaN row itself stays NaN."""
+    from taxi_shock.conformal import rolling_conformal
+
+    rng = np.random.default_rng(2)
+    days = pd.date_range("2024-01-01", "2024-03-31", freq="D")
+    rows = []
+    for d in days:
+        ts = d + pd.to_timedelta(np.arange(24), unit="h")
+        y = rng.normal(20, 4, 24)
+        rows.append(pd.DataFrame({"zone_id": 1, "target_ts": ts, "origin": d, "y": y,
+                                  "q10": y - 5, "q50": y, "q90": y + 5}))
+    fc = pd.concat(rows, ignore_index=True)
+    hole = fc["target_ts"] == pd.Timestamp("2024-03-10 02:00")
+    fc.loc[hole, ["q10", "q50", "q90"]] = np.nan
+    origins = pd.date_range("2024-03-11", "2024-03-31", freq="D")
+    cal = rolling_conformal(fc, pd.Series({1: "a"}), [0.1, 0.5, 0.9], 4, origins)
+    assert cal.attrs["n_origins_uncalibrated"] == 0
+    assert len(cal) == 24 * len(origins)
+    assert cal["q10"].notna().all()

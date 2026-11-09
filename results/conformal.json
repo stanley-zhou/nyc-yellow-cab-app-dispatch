@@ -1,0 +1,1200 @@
+{
+  "generated_utc": "2026-11-09T23:05:04+00:00",
+  "method": "split-conformal CQR: score max(q_lo - y, y - q_hi) on the validation year, Q = ceil((n+1)(1-alpha))/n quantile, interval [max(q_lo - Q, 0), q_hi + Q]",
+  "alpha": 0.2,
+  "validation_year": [
+    "2023-01-01",
+    "2023-12-31"
+  ],
+  "group_by": "zone_group",
+  "not_calibrated": [
+    "chronos2_* (no validation-year forecasts)"
+  ],
+  "rows": [
+    {
+      "model": "seasonal_naive",
+      "window": "expanding",
+      "zone_group": "airports",
+      "n_calibration": 17516,
+      "Q": 8.0,
+      "coverage_validation_raw": 0.7601,
+      "coverage_test_raw": 0.7878,
+      "coverage_test_conformal": 0.8236,
+      "width_test_raw": 115.0343,
+      "width_test_conformal": 129.0939
+    },
+    {
+      "model": "seasonal_naive",
+      "window": "expanding",
+      "zone_group": "cbd",
+      "n_calibration": 332804,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.8007,
+      "coverage_test_raw": 0.7771,
+      "coverage_test_conformal": 0.7771,
+      "width_test_raw": 41.3037,
+      "width_test_conformal": 41.3037
+    },
+    {
+      "model": "seasonal_naive",
+      "window": "expanding",
+      "zone_group": "manhattan_non_cbd",
+      "n_calibration": 192676,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.8247,
+      "coverage_test_raw": 0.7738,
+      "coverage_test_conformal": 0.7738,
+      "width_test_raw": 37.0851,
+      "width_test_conformal": 37.0851
+    },
+    {
+      "model": "seasonal_naive",
+      "window": "expanding",
+      "zone_group": "other",
+      "n_calibration": 359078,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.8671,
+      "coverage_test_raw": 0.7548,
+      "coverage_test_conformal": 0.7548,
+      "width_test_raw": 3.0989,
+      "width_test_conformal": 3.0989
+    },
+    {
+      "model": "seasonal_naive",
+      "window": "sliding_24m",
+      "zone_group": "airports",
+      "n_calibration": 17516,
+      "Q": 8.0,
+      "coverage_validation_raw": 0.7601,
+      "coverage_test_raw": 0.7967,
+      "coverage_test_conformal": 0.8326,
+      "width_test_raw": 118.2892,
+      "width_test_conformal": 132.3194
+    },
+    {
+      "model": "seasonal_naive",
+      "window": "sliding_24m",
+      "zone_group": "cbd",
+      "n_calibration": 332804,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.8007,
+      "coverage_test_raw": 0.7829,
+      "coverage_test_conformal": 0.7829,
+      "width_test_raw": 42.2245,
+      "width_test_conformal": 42.2245
+    },
+    {
+      "model": "seasonal_naive",
+      "window": "sliding_24m",
+      "zone_group": "manhattan_non_cbd",
+      "n_calibration": 192676,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.8247,
+      "coverage_test_raw": 0.7766,
+      "coverage_test_conformal": 0.7766,
+      "width_test_raw": 37.6202,
+      "width_test_conformal": 37.6202
+    },
+    {
+      "model": "seasonal_naive",
+      "window": "sliding_24m",
+      "zone_group": "other",
+      "n_calibration": 359078,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.8671,
+      "coverage_test_raw": 0.7635,
+      "coverage_test_conformal": 0.7635,
+      "width_test_raw": 3.1704,
+      "width_test_conformal": 3.1704
+    },
+    {
+      "model": "stat_ets_profile",
+      "window": "expanding",
+      "zone_group": "airports",
+      "n_calibration": 17518,
+      "Q": 2.1595,
+      "coverage_validation_raw": 0.7674,
+      "coverage_test_raw": 0.7963,
+      "coverage_test_conformal": 0.8238,
+      "width_test_raw": 96.647,
+      "width_test_conformal": 100.614
+    },
+    {
+      "model": "stat_ets_profile",
+      "window": "expanding",
+      "zone_group": "cbd",
+      "n_calibration": 332842,
+      "Q": 0.1187,
+      "coverage_validation_raw": 0.7936,
+      "coverage_test_raw": 0.7701,
+      "coverage_test_conformal": 0.7767,
+      "width_test_raw": 36.0259,
+      "width_test_conformal": 36.2467
+    },
+    {
+      "model": "stat_ets_profile",
+      "window": "expanding",
+      "zone_group": "manhattan_non_cbd",
+      "n_calibration": 192698,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.812,
+      "coverage_test_raw": 0.7567,
+      "coverage_test_conformal": 0.7567,
+      "width_test_raw": 30.1266,
+      "width_test_conformal": 30.1266
+    },
+    {
+      "model": "stat_ets_profile",
+      "window": "expanding",
+      "zone_group": "other",
+      "n_calibration": 359119,
+      "Q": 0.0287,
+      "coverage_validation_raw": 0.7834,
+      "coverage_test_raw": 0.6807,
+      "coverage_test_conformal": 0.6936,
+      "width_test_raw": 3.141,
+      "width_test_conformal": 3.1855
+    },
+    {
+      "model": "stat_ets_profile",
+      "window": "sliding_24m",
+      "zone_group": "airports",
+      "n_calibration": 17518,
+      "Q": 2.1595,
+      "coverage_validation_raw": 0.7674,
+      "coverage_test_raw": 0.7935,
+      "coverage_test_conformal": 0.8213,
+      "width_test_raw": 96.1546,
+      "width_test_conformal": 100.1214
+    },
+    {
+      "model": "stat_ets_profile",
+      "window": "sliding_24m",
+      "zone_group": "cbd",
+      "n_calibration": 332842,
+      "Q": 0.1187,
+      "coverage_validation_raw": 0.7936,
+      "coverage_test_raw": 0.7694,
+      "coverage_test_conformal": 0.7761,
+      "width_test_raw": 36.0141,
+      "width_test_conformal": 36.2349
+    },
+    {
+      "model": "stat_ets_profile",
+      "window": "sliding_24m",
+      "zone_group": "manhattan_non_cbd",
+      "n_calibration": 192698,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.812,
+      "coverage_test_raw": 0.7567,
+      "coverage_test_conformal": 0.7567,
+      "width_test_raw": 30.1135,
+      "width_test_conformal": 30.1135
+    },
+    {
+      "model": "stat_ets_profile",
+      "window": "sliding_24m",
+      "zone_group": "other",
+      "n_calibration": 359119,
+      "Q": 0.0287,
+      "coverage_validation_raw": 0.7834,
+      "coverage_test_raw": 0.6807,
+      "coverage_test_conformal": 0.6937,
+      "width_test_raw": 3.1393,
+      "width_test_conformal": 3.1838
+    },
+    {
+      "model": "lgbm_quantile",
+      "window": "expanding",
+      "zone_group": "airports",
+      "n_calibration": 17518,
+      "Q": 3.2516,
+      "coverage_validation_raw": 0.754,
+      "coverage_test_raw": 0.7711,
+      "coverage_test_conformal": 0.8129,
+      "width_test_raw": 88.9745,
+      "width_test_conformal": 95.0601
+    },
+    {
+      "model": "lgbm_quantile",
+      "window": "expanding",
+      "zone_group": "cbd",
+      "n_calibration": 332842,
+      "Q": 0.4969,
+      "coverage_validation_raw": 0.7672,
+      "coverage_test_raw": 0.7532,
+      "coverage_test_conformal": 0.7849,
+      "width_test_raw": 33.247,
+      "width_test_conformal": 34.2046
+    },
+    {
+      "model": "lgbm_quantile",
+      "window": "expanding",
+      "zone_group": "manhattan_non_cbd",
+      "n_calibration": 192698,
+      "Q": 0.1365,
+      "coverage_validation_raw": 0.7821,
+      "coverage_test_raw": 0.7578,
+      "coverage_test_conformal": 0.7746,
+      "width_test_raw": 27.8867,
+      "width_test_conformal": 28.142
+    },
+    {
+      "model": "lgbm_quantile",
+      "window": "expanding",
+      "zone_group": "other",
+      "n_calibration": 359119,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.8607,
+      "coverage_test_raw": 0.8192,
+      "coverage_test_conformal": 0.8192,
+      "width_test_raw": 3.6219,
+      "width_test_conformal": 3.6219
+    },
+    {
+      "model": "lgbm_quantile",
+      "window": "sliding_24m",
+      "zone_group": "airports",
+      "n_calibration": 17518,
+      "Q": 3.2516,
+      "coverage_validation_raw": 0.754,
+      "coverage_test_raw": 0.7721,
+      "coverage_test_conformal": 0.8144,
+      "width_test_raw": 89.3599,
+      "width_test_conformal": 95.4468
+    },
+    {
+      "model": "lgbm_quantile",
+      "window": "sliding_24m",
+      "zone_group": "cbd",
+      "n_calibration": 332842,
+      "Q": 0.4969,
+      "coverage_validation_raw": 0.7672,
+      "coverage_test_raw": 0.7515,
+      "coverage_test_conformal": 0.7832,
+      "width_test_raw": 33.2139,
+      "width_test_conformal": 34.1716
+    },
+    {
+      "model": "lgbm_quantile",
+      "window": "sliding_24m",
+      "zone_group": "manhattan_non_cbd",
+      "n_calibration": 192698,
+      "Q": 0.1365,
+      "coverage_validation_raw": 0.7821,
+      "coverage_test_raw": 0.7584,
+      "coverage_test_conformal": 0.7746,
+      "width_test_raw": 27.9071,
+      "width_test_conformal": 28.1625
+    },
+    {
+      "model": "lgbm_quantile",
+      "window": "sliding_24m",
+      "zone_group": "other",
+      "n_calibration": 359119,
+      "Q": 0.0,
+      "coverage_validation_raw": 0.8607,
+      "coverage_test_raw": 0.8166,
+      "coverage_test_conformal": 0.8166,
+      "width_test_raw": 3.6172,
+      "width_test_conformal": 3.6172
+    }
+  ],
+  "rolling": {
+    "label": "conformal_rolling_12w",
+    "primary": "conformal_rolling_12w",
+    "method": "per origin D, zone group and quantile level tau: q_tau + the empirical tau-quantile of y - q_tau over forecasts with target day in [D - 84 d, D - 1]; quantiles re-sorted and clipped at 0; point forecast unchanged (taxi_shock.conformal)",
+    "origins_without_full_trailing_window": {
+      "seasonal_naive|expanding": 0,
+      "seasonal_naive|sliding_24m": 0,
+      "stat_ets_profile|expanding": 0,
+      "stat_ets_profile|sliding_24m": 0,
+      "lgbm_quantile|expanding": 0,
+      "lgbm_quantile|sliding_24m": 0,
+      "chronos2_weather_future|zero_shot": 84,
+      "chronos2_weather_past|zero_shot": 84
+    },
+    "coverage_and_width": [
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "airports",
+        "n": 17564,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8237,
+        "width_80": 129.0939
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "cbd",
+        "n": 333716,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7772,
+        "width_80": 41.3037
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193204,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7739,
+        "width_80": 37.0851
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "other",
+        "n": 360062,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7549,
+        "width_80": 3.0989
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "airports",
+        "n": 17564,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8045,
+        "width_80": 121.5236
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "cbd",
+        "n": 333716,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8045,
+        "width_80": 44.0602
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193204,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8068,
+        "width_80": 38.9182
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "other",
+        "n": 360062,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.84,
+        "width_80": 4.0705
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "airports",
+        "n": 17564,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7879,
+        "width_80": 115.0343
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "cbd",
+        "n": 333716,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7772,
+        "width_80": 41.3037
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193204,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7739,
+        "width_80": 37.0851
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "other",
+        "n": 360062,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7549,
+        "width_80": 3.0989
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "airports",
+        "n": 17564,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8327,
+        "width_80": 132.3194
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "cbd",
+        "n": 333716,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.783,
+        "width_80": 42.2245
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193204,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7767,
+        "width_80": 37.6202
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "other",
+        "n": 360062,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7636,
+        "width_80": 3.1704
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "airports",
+        "n": 17564,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8077,
+        "width_80": 122.8296
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "cbd",
+        "n": 333716,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8064,
+        "width_80": 44.619
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193204,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8079,
+        "width_80": 39.4046
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "other",
+        "n": 360062,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8448,
+        "width_80": 4.1344
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "airports",
+        "n": 17564,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7967,
+        "width_80": 118.2892
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "cbd",
+        "n": 333716,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.783,
+        "width_80": 42.2245
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193204,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7767,
+        "width_80": 37.6202
+      },
+      {
+        "model": "seasonal_naive",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "other",
+        "n": 360062,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7636,
+        "width_80": 3.1704
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8238,
+        "width_80": 100.614
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7767,
+        "width_80": 36.2467
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7567,
+        "width_80": 30.1266
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.6936,
+        "width_80": 3.1855
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8018,
+        "width_80": 97.8843
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8008,
+        "width_80": 37.4296
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7995,
+        "width_80": 31.2092
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7885,
+        "width_80": 3.7004
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7963,
+        "width_80": 96.647
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7701,
+        "width_80": 36.0259
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7567,
+        "width_80": 30.1266
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.6807,
+        "width_80": 3.141
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8213,
+        "width_80": 100.1214
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7761,
+        "width_80": 36.2349
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7567,
+        "width_80": 30.1135
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.6937,
+        "width_80": 3.1838
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8015,
+        "width_80": 97.6264
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8008,
+        "width_80": 37.4599
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7995,
+        "width_80": 31.2004
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7886,
+        "width_80": 3.6995
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7935,
+        "width_80": 96.1546
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7694,
+        "width_80": 36.0141
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7567,
+        "width_80": 30.1135
+      },
+      {
+        "model": "stat_ets_profile",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.6807,
+        "width_80": 3.1393
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8129,
+        "width_80": 95.0601
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7849,
+        "width_80": 34.2046
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7746,
+        "width_80": 28.142
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "conformal_2023",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8192,
+        "width_80": 3.6219
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7966,
+        "width_80": 92.7482
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7982,
+        "width_80": 35.1891
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7998,
+        "width_80": 29.1796
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8446,
+        "width_80": 3.854
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7711,
+        "width_80": 88.9745
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7532,
+        "width_80": 33.247
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7578,
+        "width_80": 27.8867
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "expanding",
+        "calibration": "raw",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8192,
+        "width_80": 3.6219
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8144,
+        "width_80": 95.4468
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7832,
+        "width_80": 34.1716
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7746,
+        "width_80": 28.1625
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "conformal_2023",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8166,
+        "width_80": 3.6172
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7967,
+        "width_80": 92.9002
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7978,
+        "width_80": 35.2436
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8008,
+        "width_80": 29.2144
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8434,
+        "width_80": 3.863
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7721,
+        "width_80": 89.3599
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7515,
+        "width_80": 33.2139
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7584,
+        "width_80": 27.9071
+      },
+      {
+        "model": "lgbm_quantile",
+        "window": "sliding_24m",
+        "calibration": "raw",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8166,
+        "width_80": 3.6172
+      },
+      {
+        "model": "chronos2_weather_future",
+        "window": "zero_shot",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "airports",
+        "n": 13536,
+        "first_origin": "2024-03-25",
+        "coverage_80": 0.7936,
+        "width_80": 87.4035
+      },
+      {
+        "model": "chronos2_weather_future",
+        "window": "zero_shot",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "cbd",
+        "n": 257184,
+        "first_origin": "2024-03-25",
+        "coverage_80": 0.796,
+        "width_80": 34.0197
+      },
+      {
+        "model": "chronos2_weather_future",
+        "window": "zero_shot",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "manhattan_non_cbd",
+        "n": 148896,
+        "first_origin": "2024-03-25",
+        "coverage_80": 0.7959,
+        "width_80": 28.6709
+      },
+      {
+        "model": "chronos2_weather_future",
+        "window": "zero_shot",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "other",
+        "n": 277488,
+        "first_origin": "2024-03-25",
+        "coverage_80": 0.7892,
+        "width_80": 4.1835
+      },
+      {
+        "model": "chronos2_weather_future",
+        "window": "zero_shot",
+        "calibration": "raw",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7614,
+        "width_80": 84.3129
+      },
+      {
+        "model": "chronos2_weather_future",
+        "window": "zero_shot",
+        "calibration": "raw",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7332,
+        "width_80": 32.327
+      },
+      {
+        "model": "chronos2_weather_future",
+        "window": "zero_shot",
+        "calibration": "raw",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7394,
+        "width_80": 28.0374
+      },
+      {
+        "model": "chronos2_weather_future",
+        "window": "zero_shot",
+        "calibration": "raw",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.6754,
+        "width_80": 3.7502
+      },
+      {
+        "model": "chronos2_weather_past",
+        "window": "zero_shot",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "airports",
+        "n": 13536,
+        "first_origin": "2024-03-25",
+        "coverage_80": 0.7956,
+        "width_80": 88.5459
+      },
+      {
+        "model": "chronos2_weather_past",
+        "window": "zero_shot",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "cbd",
+        "n": 257184,
+        "first_origin": "2024-03-25",
+        "coverage_80": 0.7972,
+        "width_80": 34.6152
+      },
+      {
+        "model": "chronos2_weather_past",
+        "window": "zero_shot",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "manhattan_non_cbd",
+        "n": 148896,
+        "first_origin": "2024-03-25",
+        "coverage_80": 0.7971,
+        "width_80": 29.8207
+      },
+      {
+        "model": "chronos2_weather_past",
+        "window": "zero_shot",
+        "calibration": "conformal_rolling_12w",
+        "zone_group": "other",
+        "n": 277488,
+        "first_origin": "2024-03-25",
+        "coverage_80": 0.7868,
+        "width_80": 4.2196
+      },
+      {
+        "model": "chronos2_weather_past",
+        "window": "zero_shot",
+        "calibration": "raw",
+        "zone_group": "airports",
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7438,
+        "width_80": 86.0403
+      },
+      {
+        "model": "chronos2_weather_past",
+        "window": "zero_shot",
+        "calibration": "raw",
+        "zone_group": "cbd",
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7288,
+        "width_80": 33.1295
+      },
+      {
+        "model": "chronos2_weather_past",
+        "window": "zero_shot",
+        "calibration": "raw",
+        "zone_group": "manhattan_non_cbd",
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7359,
+        "width_80": 29.316
+      },
+      {
+        "model": "chronos2_weather_past",
+        "window": "zero_shot",
+        "calibration": "raw",
+        "zone_group": "other",
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.6314,
+        "width_80": 3.8443
+      }
+    ]
+  }
+}
