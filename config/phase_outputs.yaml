@@ -79,6 +79,7 @@
   - results/elasticity_tradeoff.json
   - results/counterfactual.csv
   - results/effect_map.csv
+  - results/zone_growth.csv
   - results/pretrend_test_size.json
   - results/figure_stats_phase4.json
 5:

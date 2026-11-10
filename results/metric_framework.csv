@@ -1,29 +1,29 @@
 role,area,metric,coef,ci_lo,ci_hi,pvalue,pct,n_obs,source,note
-primary,demand (quantity),log1p CBD pickups,-0.504666,-0.735566,-0.273766,6.74441e-05,-0.396293,8538,did_static.json:main,pre-registered; pre-trend test rejects
-primary,demand (quantity),"CBD pickups, levels per zone-week",317.123,-116.234,750.48,0.156688,,8538,did_static.json:levels,
-primary,demand (quantity),"log1p CBD pickups, pre-volume weighted",-0.0534261,-0.136719,0.0298671,0.213566,-0.052024,,did_static.json:pre_volume_weighted_not_preregistered,not pre-registered
+primary,demand (quantity),log1p CBD pickups,-0.42533,-0.648803,-0.201856,0.000416893,-0.346446,8946,did_static.json:main,pre-registered; pre-trend test rejects
+primary,demand (quantity),"CBD pickups, levels per zone-week",440.401,9.76573,871.036,0.0493987,,8946,did_static.json:levels,
+primary,demand (quantity),"log1p CBD pickups, pre-volume weighted",-0.0534242,-0.136706,0.0298578,0.213521,-0.0520222,,did_static.json:pre_volume_weighted_not_preregistered,not pre-registered
 primary,service quality (speed),"log mean trip speed, within-CBD trips",0.0189546,0.002787,0.0351222,0.0251345,0.0191354,,speed_did.json,pre-registered
 primary,service quality (speed),"log mean trip duration, within-CBD trips",-0.0243186,-0.0392148,-0.00942236,0.00221501,-0.0240253,,speed_did.json,pre-registered
 secondary,service quality (speed),"log fare per minute, within-CBD trips",0.0484739,0.0385872,0.0583607,1.1191e-13,0.049668,,speed_did.json,B4
-guardrail,spillover,"log1p pickups, donut-control zones vs Brooklyn+Queens",-0.257864,-0.482421,-0.0333079,0.0258597,-0.2273,21204,guardrails (this script),
-guardrail,spillover,"log1p pickups, donut vs Brooklyn+Queens, pre-volume weighted",-0.664817,-1.00042,-0.329218,0.000154438,-0.485632,,guardrails (this script),not pre-registered
+guardrail,spillover,"log1p pickups, donut-control zones vs Brooklyn+Queens",-0.338129,-0.555368,-0.12089,0.00269508,-0.286897,21726,guardrails (this script),
+guardrail,spillover,"log1p pickups, donut vs Brooklyn+Queens, pre-volume weighted",-0.664949,-1.00058,-0.329319,0.000154199,-0.4857,,guardrails (this script),not pre-registered
 guardrail,price,"log mean fare per trip, CBD vs donut (trip-weighted)",-0.0246472,-0.043468,-0.00582645,0.0127792,-0.024346,8538,guardrails (this script),
-secondary,heterogeneity: hour_band,"log1p pickups, h00_06",-0.584729,-0.811038,-0.358419,4.1813e-06,-0.442743,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: hour_band,"log1p pickups, h06_10",-0.40314,-0.639194,-0.167086,0.00141321,-0.331781,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: hour_band,"log1p pickups, h10_16",-0.401021,-0.599055,-0.202988,0.000195493,-0.330364,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: hour_band,"log1p pickups, h16_20",-0.461055,-0.680918,-0.241191,0.000121912,-0.369382,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: hour_band,"log1p pickups, h20_24",-0.560531,-0.792767,-0.328296,1.40272e-05,-0.429094,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: day_type,"log1p pickups, weekday",-0.478212,-0.700475,-0.255949,8.4798e-05,-0.380109,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: day_type,"log1p pickups, weekend",-0.516772,-0.755244,-0.2783,7.64513e-05,-0.403557,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: dropoff,"log1p pickups, do_cbd",-0.710958,-0.968132,-0.453783,1.12188e-06,-0.508827,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: dropoff,"log1p pickups, do_non_cbd",-0.350987,-0.571093,-0.130881,0.0027357,-0.296007,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: distance_tercile,"log1p pickups, dist_t1",-0.257936,-0.415514,-0.100359,0.00214432,-0.227355,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: distance_tercile,"log1p pickups, dist_t2",-0.278438,-0.439147,-0.11773,0.0012191,-0.243035,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: distance_tercile,"log1p pickups, dist_t3",-0.587066,-0.815884,-0.358249,4.76261e-06,-0.444044,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: fare_tercile,"log1p pickups, fare_t1",-0.273532,-0.424438,-0.122626,0.000749945,-0.239312,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: fare_tercile,"log1p pickups, fare_t2",-0.382115,-0.571115,-0.193116,0.000199655,-0.317583,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: fare_tercile,"log1p pickups, fare_t3",-0.507524,-0.712864,-0.302185,9.31551e-06,-0.398016,8538,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
-secondary,heterogeneity: pass_through,"log1p pickups, dropoff_only_in_cbd",0.265906,0.170293,0.361518,1.78153e-05,0.304612,6284,heterogeneity.csv,control-zone pickups ending in the CBD vs ending outside it
-secondary,heterogeneity: pass_through,"log1p pickups, pickup_in_cbd",-0.504666,-0.735566,-0.273766,6.74441e-05,-0.396293,8538,heterogeneity.csv,CBD vs donut control zones (= main estimate)
-check,heterogeneity: airports,"log1p pickups, outer_boroughs",-0.761653,-0.848348,-0.674959,0,-0.533106,23458,heterogeneity.csv,CBD vs outer_boroughs
-check,heterogeneity: airports,"log1p pickups, outer_boroughs_with_airports",-0.746159,-0.834984,-0.657335,0,-0.525816,23742,heterogeneity.csv,CBD vs outer_boroughs_with_airports
+secondary,heterogeneity: hour_band,"log1p pickups, h00_06",-0.485486,-0.716566,-0.254406,0.000115121,-0.384602,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: hour_band,"log1p pickups, h06_10",-0.327863,-0.55586,-0.0998655,0.00646812,-0.279538,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: hour_band,"log1p pickups, h10_16",-0.337917,-0.529746,-0.146087,0.00100596,-0.286746,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: hour_band,"log1p pickups, h16_20",-0.384006,-0.598506,-0.169506,0.000844197,-0.318873,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: hour_band,"log1p pickups, h20_24",-0.468198,-0.699291,-0.237106,0.000188892,-0.37387,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: day_type,"log1p pickups, weekday",-0.400551,-0.61756,-0.183542,0.000598601,-0.330049,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: day_type,"log1p pickups, weekend",-0.435411,-0.665467,-0.205356,0.000445918,-0.353001,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: dropoff,"log1p pickups, do_cbd",-0.610323,-0.86531,-0.355335,1.54055e-05,-0.456825,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: dropoff,"log1p pickups, do_non_cbd",-0.279585,-0.491777,-0.0673927,0.012185,-0.243903,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: distance_tercile,"log1p pickups, dist_t1",-0.213874,-0.363279,-0.0644685,0.00669924,-0.19255,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: distance_tercile,"log1p pickups, dist_t2",-0.228972,-0.384217,-0.0737268,0.00529147,-0.204649,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: distance_tercile,"log1p pickups, dist_t3",-0.492417,-0.72197,-0.262863,8.56315e-05,-0.388853,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: fare_tercile,"log1p pickups, fare_t1",-0.238919,-0.379008,-0.0988293,0.0014106,-0.212521,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: fare_tercile,"log1p pickups, fare_t2",-0.323237,-0.505165,-0.14131,0.00091697,-0.276198,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: fare_tercile,"log1p pickups, fare_t3",-0.415852,-0.625481,-0.206224,0.000248783,-0.340222,8946,heterogeneity.csv,"CBD vs donut control zones, this trip subset"
+secondary,heterogeneity: pass_through,"log1p pickups, dropoff_only_in_cbd",0.236681,0.145307,0.328055,3.42208e-05,0.267037,7100,heterogeneity.csv,control-zone pickups ending in the CBD vs ending outside it
+secondary,heterogeneity: pass_through,"log1p pickups, pickup_in_cbd",-0.42533,-0.648803,-0.201856,0.000416893,-0.346446,8946,heterogeneity.csv,CBD vs donut control zones (= main estimate)
+check,heterogeneity: airports,"log1p pickups, outer_boroughs",-0.763459,-0.850047,-0.67687,0,-0.533948,23572,heterogeneity.csv,CBD vs outer_boroughs
+check,heterogeneity: airports,"log1p pickups, outer_boroughs_with_airports",-0.748074,-0.836746,-0.659402,0,-0.526723,23856,heterogeneity.csv,CBD vs outer_boroughs_with_airports

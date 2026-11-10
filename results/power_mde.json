@@ -1,21 +1,21 @@
 {
   "outcome": "log1p_pickups",
-  "real_beta": -0.5046658641407232,
+  "real_beta": -0.4253295502481945,
   "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake treatment vs the other Manhattan zones; static window <= 52 weeks before the fake week to the end of the pre-policy data; zone + week FE",
   "n_draws": 500,
-  "mean": 0.0011457435399734425,
-  "sd": 0.03596183174520772,
+  "mean": 0.00019843179882418171,
+  "sd": 0.036205920691775126,
   "quantiles": {
-    "0.025": -0.06731684857105405,
-    "0.05": -0.05935329270276327,
-    "0.5": 0.0007888733635837192,
-    "0.95": 0.05631152715147281,
-    "0.975": 0.07632015533532685
+    "0.025": -0.0658619086205918,
+    "0.05": -0.05596289898265698,
+    "0.5": 0.0019979054479358337,
+    "0.95": 0.060276470338511454,
+    "0.975": 0.0723886506402881
   },
   "share_abs_ge_abs_beta": 0.0,
   "mde_multiplier": 2.8015852181129683,
-  "mde": 0.10075013623363964,
-  "mde_pct": 0.10600025784567728,
+  "mde": 0.10143397221824765,
+  "mde_pct": 0.10675683928029958,
   "size": 0.05,
   "power": 0.8
 }

@@ -1,0 +1,277 @@
+zone_id,zone_name,is_cbd,is_donut_control,year,weeks,mean_weekly_pickups,share_cmt_curb,share_helix
+4,Alphabet City,True,False,2023,53,875.585,1,0
+4,Alphabet City,True,False,2024,52,1335.65,0.999986,0
+4,Alphabet City,True,False,2025,52,3001.52,0.996643,0.00259484
+4,Alphabet City,True,False,2026,38,3770.18,0.995156,0.00213587
+12,Battery Park,True,False,2023,53,319.887,1,0
+12,Battery Park,True,False,2024,52,317.5,1,0
+12,Battery Park,True,False,2025,52,318.231,0.993715,0.00622432
+12,Battery Park,True,False,2026,38,239.816,0.987271,0.0123999
+13,Battery Park City,True,False,2023,53,4175.58,1,0
+13,Battery Park City,True,False,2024,52,4786.94,0.999996,4.01734e-06
+13,Battery Park City,True,False,2025,52,5820.65,0.992827,0.00704058
+13,Battery Park City,True,False,2026,38,5402.53,0.995475,0.00387246
+24,Bloomingdale,False,True,2023,53,1822.55,1,0
+24,Bloomingdale,False,True,2024,52,1967.48,0.99998,0
+24,Bloomingdale,False,True,2025,52,2544.71,0.990508,0.00909125
+24,Bloomingdale,False,True,2026,38,2721.58,0.987875,0.0105202
+41,Central Harlem,False,True,2023,53,1634.13,1,0
+41,Central Harlem,False,True,2024,52,2189.56,0.999965,0
+41,Central Harlem,False,True,2025,52,4032.96,0.994268,0.00412943
+41,Central Harlem,False,True,2026,38,4248.39,0.989185,0.0053209
+42,Central Harlem North,False,True,2023,53,599.396,1,0
+42,Central Harlem North,False,True,2024,52,1076.87,0.999893,0
+42,Central Harlem North,False,True,2025,52,2761.87,0.995697,0.00165022
+42,Central Harlem North,False,True,2026,38,3067.63,0.987939,0.00222184
+43,Central Park,False,False,2023,53,11898.1,1,0
+43,Central Park,False,False,2024,52,12145.8,0.999984,1.425e-05
+43,Central Park,False,False,2025,52,11952.4,0.983178,0.0167588
+43,Central Park,False,False,2026,38,10237.1,0.980345,0.0193465
+45,Chinatown,True,False,2023,53,986.585,1,0
+45,Chinatown,True,False,2024,52,1202.31,1,0
+45,Chinatown,True,False,2025,52,2011.77,0.993462,0.00544871
+45,Chinatown,True,False,2026,38,2115.05,0.991813,0.00411835
+48,Clinton East,True,False,2023,53,19059,1,0
+48,Clinton East,True,False,2024,52,19304.8,0.999992,9.96164e-07
+48,Clinton East,True,False,2025,52,21454,0.988732,0.0110487
+48,Clinton East,True,False,2026,38,19356.2,0.98712,0.011839
+50,Clinton West,True,False,2023,53,4636.09,1,0
+50,Clinton West,True,False,2024,52,4691.27,0.999955,1.63971e-05
+50,Clinton West,True,False,2025,52,6250.31,0.99157,0.00791653
+50,Clinton West,True,False,2026,38,6227.63,0.990256,0.00778787
+68,East Chelsea,True,False,2023,53,18729.8,1,0
+68,East Chelsea,True,False,2024,52,20795,0.999973,1.47965e-05
+68,East Chelsea,True,False,2025,52,23416.6,0.987544,0.0122168
+68,East Chelsea,True,False,2026,38,21775.7,0.983771,0.0151521
+74,East Harlem North,False,True,2023,53,1468.4,1,0
+74,East Harlem North,False,True,2024,52,1953.63,0.999951,0
+74,East Harlem North,False,True,2025,52,3571.25,0.992429,0.00570798
+74,East Harlem North,False,True,2026,38,3687.05,0.983698,0.00867902
+75,East Harlem South,False,True,2023,53,4114.81,1,0
+75,East Harlem South,False,True,2024,52,4874.38,0.999949,3.94527e-06
+75,East Harlem South,False,True,2025,52,6740.92,0.989795,0.00865266
+75,East Harlem South,False,True,2026,38,6935.45,0.983373,0.0106357
+79,East Village,True,False,2023,53,17041.3,1,0
+79,East Village,True,False,2024,52,17769.3,0.999995,1.08225e-06
+79,East Village,True,False,2025,52,23021.3,0.991494,0.00842028
+79,East Village,True,False,2026,38,22642.3,0.992164,0.00741276
+87,Financial District North,True,False,2023,53,3781.25,1,0
+87,Financial District North,True,False,2024,52,4386.79,0.999974,0
+87,Financial District North,True,False,2025,52,6474.31,0.994172,0.00541786
+87,Financial District North,True,False,2026,38,6282.26,0.994634,0.00377839
+88,Financial District South,True,False,2023,53,1976.94,1,0
+88,Financial District South,True,False,2024,52,2350.5,1,0
+88,Financial District South,True,False,2025,52,3243.67,0.991718,0.00754724
+88,Financial District South,True,False,2026,38,3201.58,0.992578,0.00425777
+90,Flatiron,True,False,2023,53,11615.2,1,0
+90,Flatiron,True,False,2024,52,12181,0.999978,1.57876e-05
+90,Flatiron,True,False,2025,52,13813.4,0.988157,0.0116762
+90,Flatiron,True,False,2026,38,12942.6,0.987662,0.0113253
+100,Garment District,True,False,2023,53,11846.5,1,0
+100,Garment District,True,False,2024,52,11609.9,0.999985,1.65641e-06
+100,Garment District,True,False,2025,52,12509.2,0.988279,0.0114577
+100,Garment District,True,False,2026,38,11004.6,0.985879,0.0126741
+103,Governor's Island/Ellis Island/Liberty Island,False,True,2023,53,0,,
+103,Governor's Island/Ellis Island/Liberty Island,False,True,2024,52,0,,
+103,Governor's Island/Ellis Island/Liberty Island,False,True,2025,52,0,,
+103,Governor's Island/Ellis Island/Liberty Island,False,True,2026,38,0,,
+104,Governor's Island/Ellis Island/Liberty Island,False,True,2023,53,0,,
+104,Governor's Island/Ellis Island/Liberty Island,False,True,2024,52,0,,
+104,Governor's Island/Ellis Island/Liberty Island,False,True,2025,52,0,,
+104,Governor's Island/Ellis Island/Liberty Island,False,True,2026,38,0,,
+105,Governor's Island/Ellis Island/Liberty Island,False,True,2023,53,0.188679,1,0
+105,Governor's Island/Ellis Island/Liberty Island,False,True,2024,52,0.0769231,1,0
+105,Governor's Island/Ellis Island/Liberty Island,False,True,2025,52,0.134615,1,0
+105,Governor's Island/Ellis Island/Liberty Island,False,True,2026,38,0.236842,1,0
+107,Gramercy,True,False,2023,53,15111.3,1,0
+107,Gramercy,True,False,2024,52,15399.4,0.999975,4.9952e-06
+107,Gramercy,True,False,2025,52,17360.7,0.989143,0.0105499
+107,Gramercy,True,False,2026,38,15806,0.98744,0.0111134
+113,Greenwich Village North,True,False,2023,53,9866.72,1,0
+113,Greenwich Village North,True,False,2024,52,10939.4,0.999996,1.75794e-06
+113,Greenwich Village North,True,False,2025,52,12796.6,0.989148,0.0107495
+113,Greenwich Village North,True,False,2026,38,11730.6,0.988097,0.0113603
+114,Greenwich Village South,True,False,2023,53,9593.75,1,0
+114,Greenwich Village South,True,False,2024,52,11210.8,1,0
+114,Greenwich Village South,True,False,2025,52,13340.8,0.988948,0.0109843
+114,Greenwich Village South,True,False,2026,38,12115.1,0.988355,0.0113386
+116,Hamilton Heights,False,True,2023,53,482.189,1,0
+116,Hamilton Heights,False,True,2024,52,710.577,1,0
+116,Hamilton Heights,False,True,2025,52,1767.98,0.995878,0.00269756
+116,Hamilton Heights,False,True,2026,38,1993.16,0.992289,0.00269342
+120,Highbridge Park,False,True,2023,53,3.22642,1,0
+120,Highbridge Park,False,True,2024,52,4.44231,1,0
+120,Highbridge Park,False,True,2025,52,17.9808,0.995722,0.00106952
+120,Highbridge Park,False,True,2026,38,20.1579,0.989556,0.00130548
+125,Hudson Sq,True,False,2023,53,3559.74,1,0
+125,Hudson Sq,True,False,2024,52,3908.88,0.999995,4.91976e-06
+125,Hudson Sq,True,False,2025,52,4605.5,0.989185,0.0105977
+125,Hudson Sq,True,False,2026,38,4182.13,0.98868,0.010156
+127,Inwood,False,True,2023,53,40.4717,1,0
+127,Inwood,False,True,2024,52,81.1346,1,0
+127,Inwood,False,True,2025,52,380.115,0.998027,0.00025296
+127,Inwood,False,True,2026,38,408,0.991357,0.000257998
+128,Inwood Hill Park,False,True,2023,53,4.20755,1,0
+128,Inwood Hill Park,False,True,2024,52,7.28846,1,0
+128,Inwood Hill Park,False,True,2025,52,31.0385,0.993185,0
+128,Inwood Hill Park,False,True,2026,38,40.6579,0.990291,0
+137,Kips Bay,True,False,2023,53,7771.91,1,0
+137,Kips Bay,True,False,2024,52,8166,0.999943,7.06494e-06
+137,Kips Bay,True,False,2025,52,10047.7,0.989736,0.00915247
+137,Kips Bay,True,False,2026,38,10367.1,0.986864,0.00906463
+140,Lenox Hill East,False,False,2023,53,14178.2,1,0
+140,Lenox Hill East,False,False,2024,52,15081.4,0.999969,2.55026e-06
+140,Lenox Hill East,False,False,2025,52,17306.8,0.985049,0.0142374
+140,Lenox Hill East,False,False,2026,38,17153.1,0.983164,0.0143107
+141,Lenox Hill West,False,False,2023,53,17039.7,1,0
+141,Lenox Hill West,False,False,2024,52,17387.9,0.999986,1.10598e-05
+141,Lenox Hill West,False,False,2025,52,19325.1,0.985161,0.0145984
+141,Lenox Hill West,False,False,2026,38,19000.8,0.981825,0.0172707
+142,Lincoln Square East,False,False,2023,53,23716.4,1,0
+142,Lincoln Square East,False,False,2024,52,24590.5,0.999987,9.38449e-06
+142,Lincoln Square East,False,False,2025,52,26057.1,0.98416,0.0156476
+142,Lincoln Square East,False,False,2026,38,24229.3,0.980385,0.018755
+143,Lincoln Square West,False,False,2023,53,7782.53,1,0
+143,Lincoln Square West,False,False,2024,52,8588.75,0.999987,1.11953e-05
+143,Lincoln Square West,False,False,2025,52,10205.8,0.988984,0.0106877
+143,Lincoln Square West,False,False,2026,38,10023.6,0.987075,0.0114414
+144,Little Italy/NoLiTa,True,False,2023,53,6451.55,1,0
+144,Little Italy/NoLiTa,True,False,2024,52,7957.9,0.999998,0
+144,Little Italy/NoLiTa,True,False,2025,52,10258.2,0.99121,0.00873039
+144,Little Italy/NoLiTa,True,False,2026,38,9387.79,0.991632,0.00794425
+148,Lower East Side,True,False,2023,53,7476.38,1,0
+148,Lower East Side,True,False,2024,52,8400.25,0.999991,0
+148,Lower East Side,True,False,2025,52,11311.7,0.991926,0.00795467
+148,Lower East Side,True,False,2026,38,11520.2,0.992407,0.00706769
+151,Manhattan Valley,False,True,2023,53,5712.92,1,0
+151,Manhattan Valley,False,True,2024,52,6080.17,0.999991,0
+151,Manhattan Valley,False,True,2025,52,7107.46,0.987968,0.011667
+151,Manhattan Valley,False,True,2026,38,7067.92,0.984731,0.0134633
+152,Manhattanville,False,True,2023,53,433.151,1,0
+152,Manhattanville,False,True,2024,52,569.173,0.999966,0
+152,Manhattanville,False,True,2025,52,1165.94,0.996058,0.00296888
+152,Manhattanville,False,True,2026,38,1289.5,0.992776,0.00371421
+153,Marble Hill,False,True,2023,53,6.26415,1,0
+153,Marble Hill,False,True,2024,52,13.4615,1,0
+153,Marble Hill,False,True,2025,52,42.8269,0.994163,0.000898069
+153,Marble Hill,False,True,2026,38,41.4737,0.988579,0
+158,Meatpacking/West Village West,True,False,2023,53,6328.3,1,0
+158,Meatpacking/West Village West,True,False,2024,52,7823.27,0.999988,2.45815e-06
+158,Meatpacking/West Village West,True,False,2025,52,9341.1,0.989105,0.0108351
+158,Meatpacking/West Village West,True,False,2026,38,8489.18,0.989668,0.0100437
+161,Midtown Center,True,False,2023,53,33165.6,1,0
+161,Midtown Center,True,False,2024,52,35799.7,0.999988,7.52049e-06
+161,Midtown Center,True,False,2025,52,39022.4,0.985914,0.0139476
+161,Midtown Center,True,False,2026,38,34649.7,0.983597,0.015782
+162,Midtown East,True,False,2023,53,25426,1,0
+162,Midtown East,True,False,2024,52,26506.1,0.999989,8.70628e-06
+162,Midtown East,True,False,2025,52,28191.6,0.984582,0.0152541
+162,Midtown East,True,False,2026,38,25664.9,0.982829,0.0165145
+163,Midtown North,True,False,2023,53,20812.3,1,0
+163,Midtown North,True,False,2024,52,21838,0.999996,3.52244e-06
+163,Midtown North,True,False,2025,52,23058.5,0.986218,0.0136818
+163,Midtown North,True,False,2026,38,20577.3,0.983739,0.0158069
+164,Midtown South,True,False,2023,53,16628.6,1,0
+164,Midtown South,True,False,2024,52,17481,0.99999,8.80076e-06
+164,Midtown South,True,False,2025,52,19350.1,0.988798,0.0110286
+164,Midtown South,True,False,2026,38,16728.8,0.987706,0.011452
+166,Morningside Heights,False,True,2023,53,3235.09,1,0
+166,Morningside Heights,False,True,2024,52,3719.25,0.999995,0
+166,Morningside Heights,False,True,2025,52,5332.48,0.992513,0.00706844
+166,Morningside Heights,False,True,2026,38,5525.21,0.989765,0.00852075
+170,Murray Hill,True,False,2023,53,21207.9,1,0
+170,Murray Hill,True,False,2024,52,21951.4,0.999979,1.57691e-05
+170,Murray Hill,True,False,2025,52,24194.9,0.987691,0.0119328
+170,Murray Hill,True,False,2026,38,22167.9,0.985497,0.0129146
+186,Penn Station/Madison Sq West,True,False,2023,53,24539.2,1,0
+186,Penn Station/Madison Sq West,True,False,2024,52,25379.7,0.999996,3.03089e-06
+186,Penn Station/Madison Sq West,True,False,2025,52,28682.5,0.986612,0.0132753
+186,Penn Station/Madison Sq West,True,False,2026,38,25814.5,0.983455,0.0160192
+194,Randalls Island,False,True,2023,53,25.6792,1,0
+194,Randalls Island,False,True,2024,52,33.3077,1,0
+194,Randalls Island,False,True,2025,52,44.1154,0.996513,0.00348736
+194,Randalls Island,False,True,2026,38,43.6316,0.986128,0.0138721
+202,Roosevelt Island,False,True,2023,53,27.6981,1,0
+202,Roosevelt Island,False,True,2024,52,38.6154,1,0
+202,Roosevelt Island,False,True,2025,52,114.154,0.99781,0.00219003
+202,Roosevelt Island,False,True,2026,38,127.105,0.997723,0.00227743
+209,Seaport,True,False,2023,53,1343.91,1,0
+209,Seaport,True,False,2024,52,1623.69,0.999976,0
+209,Seaport,True,False,2025,52,2099.98,0.992976,0.00628211
+209,Seaport,True,False,2026,38,1920.68,0.992533,0.00452142
+211,SoHo,True,False,2023,53,5413.08,1,0
+211,SoHo,True,False,2024,52,6398.35,1,0
+211,SoHo,True,False,2025,52,7820.67,0.991158,0.00877359
+211,SoHo,True,False,2026,38,7052.55,0.991664,0.00808591
+224,Stuy Town/Peter Cooper Village,True,False,2023,53,930.377,1,0
+224,Stuy Town/Peter Cooper Village,True,False,2024,52,1175.31,1,0
+224,Stuy Town/Peter Cooper Village,True,False,2025,52,2011.23,0.995841,0.00388205
+224,Stuy Town/Peter Cooper Village,True,False,2026,38,2284.79,0.995312,0.0033632
+229,Sutton Place/Turtle Bay North,True,False,2023,53,13606.8,1,0
+229,Sutton Place/Turtle Bay North,True,False,2024,52,13352,0.999987,1.0082e-05
+229,Sutton Place/Turtle Bay North,True,False,2025,52,14227,0.987421,0.0124587
+229,Sutton Place/Turtle Bay North,True,False,2026,38,13513.7,0.986308,0.0131251
+230,Times Sq/Theatre District,True,False,2023,53,23738.5,1,0
+230,Times Sq/Theatre District,True,False,2024,52,25710.3,0.999994,7.47978e-07
+230,Times Sq/Theatre District,True,False,2025,52,27955.9,0.988823,0.0109781
+230,Times Sq/Theatre District,True,False,2026,38,24022.9,0.98631,0.0126995
+231,TriBeCa/Civic Center,True,False,2023,53,9642.3,1,0
+231,TriBeCa/Civic Center,True,False,2024,52,10472.2,0.999978,5.5091e-06
+231,TriBeCa/Civic Center,True,False,2025,52,12700.3,0.991514,0.00809639
+231,TriBeCa/Civic Center,True,False,2026,38,11793.4,0.990764,0.00741714
+232,Two Bridges/Seward Park,True,False,2023,53,854.245,1,0
+232,Two Bridges/Seward Park,True,False,2024,52,1174.27,0.999951,0
+232,Two Bridges/Seward Park,True,False,2025,52,2497.21,0.996049,0.00227176
+232,Two Bridges/Seward Park,True,False,2026,38,2829.21,0.990717,0.00227886
+233,UN/Turtle Bay South,True,False,2023,53,8934.36,1,0
+233,UN/Turtle Bay South,True,False,2024,52,8888.5,0.999991,6.49067e-06
+233,UN/Turtle Bay South,True,False,2025,52,9798.44,0.989468,0.0102096
+233,UN/Turtle Bay South,True,False,2026,38,9139.89,0.987639,0.0109382
+234,Union Sq,True,False,2023,53,19324.6,1,0
+234,Union Sq,True,False,2024,52,20768.3,0.999979,1.85194e-05
+234,Union Sq,True,False,2025,52,24335.9,0.988147,0.0116834
+234,Union Sq,True,False,2026,38,21952.7,0.987613,0.0117345
+236,Upper East Side North,False,True,2023,53,30080.8,1,0
+236,Upper East Side North,False,True,2024,52,32544.6,0.999975,2.30453e-05
+236,Upper East Side North,False,True,2025,52,35335.1,0.981114,0.0187763
+236,Upper East Side North,False,True,2026,38,33614.5,0.976772,0.0227894
+237,Upper East Side South,False,False,2023,53,33687.4,1,0
+237,Upper East Side South,False,False,2024,52,35951.5,0.999979,1.97916e-05
+237,Upper East Side South,False,False,2025,52,39922.4,0.981901,0.0179926
+237,Upper East Side South,False,False,2026,38,37589.6,0.97931,0.0202576
+238,Upper West Side North,False,True,2023,53,13853.2,1,0
+238,Upper West Side North,False,True,2024,52,14805.6,0.999983,1.169e-05
+238,Upper West Side North,False,True,2025,52,16386.9,0.985718,0.0140075
+238,Upper West Side North,False,True,2026,38,16144.1,0.98219,0.0166217
+239,Upper West Side South,False,True,2023,53,20034.6,1,0
+239,Upper West Side South,False,True,2024,52,21432.5,0.999992,7.17818e-06
+239,Upper West Side South,False,True,2025,52,22984.6,0.984671,0.0152225
+239,Upper West Side South,False,True,2026,38,21878.9,0.982467,0.0170063
+243,Washington Heights North,False,True,2023,53,98.4151,1,0
+243,Washington Heights North,False,True,2024,52,190.327,1,0
+243,Washington Heights North,False,True,2025,52,872.288,0.998258,0.000374788
+243,Washington Heights North,False,True,2026,38,957.105,0.992961,0.000522409
+244,Washington Heights South,False,True,2023,53,420.887,1,0
+244,Washington Heights South,False,True,2024,52,621.038,0.999907,0
+244,Washington Heights South,False,True,2025,52,1953,0.997597,0.00113238
+244,Washington Heights South,False,True,2026,38,2232.45,0.994,0.00139097
+246,West Chelsea/Hudson Yards,True,False,2023,53,12042,1,0
+246,West Chelsea/Hudson Yards,True,False,2024,52,13555.2,0.999989,8.51218e-06
+246,West Chelsea/Hudson Yards,True,False,2025,52,16568.4,0.989728,0.0101549
+246,West Chelsea/Hudson Yards,True,False,2026,38,16142.8,0.988263,0.0111325
+249,West Village,True,False,2023,53,16043,1,0
+249,West Village,True,False,2024,52,17777.7,0.999994,6.49042e-06
+249,West Village,True,False,2025,52,20043.2,0.988163,0.0117602
+249,West Village,True,False,2026,38,18789.6,0.988721,0.0109243
+261,World Trade Center,True,False,2023,53,3704.21,1,0
+261,World Trade Center,True,False,2024,52,4051.35,0.999991,0
+261,World Trade Center,True,False,2025,52,4667.23,0.991088,0.00837673
+261,World Trade Center,True,False,2026,38,3869.84,0.991554,0.00663702
+262,Yorkville East,False,True,2023,53,9621.83,1,0
+262,Yorkville East,False,True,2024,52,10574.5,0.999996,1.8186e-06
+262,Yorkville East,False,True,2025,52,12117.9,0.986281,0.0135734
+262,Yorkville East,False,True,2026,38,12396.6,0.987288,0.0120322
+263,Yorkville West,False,True,2023,53,13654.5,1,0
+263,Yorkville West,False,True,2024,52,14363.7,0.999988,1.20496e-05
+263,Yorkville West,False,True,2025,52,16139,0.986303,0.0135005
+263,Yorkville West,False,True,2026,38,16193.4,0.983037,0.0161177

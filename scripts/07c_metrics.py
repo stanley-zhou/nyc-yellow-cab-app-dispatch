@@ -12,6 +12,8 @@ Writes
                                    quarterly congestion-fee revenue collected
     results/counterfactual.csv     PLAN forecast counterfactual: CBD daily pickups vs the
                                    frozen-LightGBM forecast, implied effect by month
+    results/zone_growth.csv        per Manhattan zone and year: mean weekly pickups (complete
+                                   weeks) and the share of CMT + Curb (vendors 1, 2) and Helix (7)
     results/effect_map.csv         F4b input: per Manhattan zone, mean weekly pickups in the 52
                                    pre weeks and the post weeks, log change, and log change minus
                                    the donut-control mean log change
@@ -30,7 +32,7 @@ import numpy as np
 import pandas as pd
 
 from taxi_shock.causal.did import Z95, static_did
-from taxi_shock.causal.panel import control_zone_ids, full_weeks
+from taxi_shock.causal.panel import control_zone_ids, demand_panel, full_weeks
 from taxi_shock.config import load_config, path
 from taxi_shock.io import connect
 
@@ -55,13 +57,7 @@ def guardrails(cfg: dict) -> dict:
     cc = cfg["causal"]
     zs = pd.read_csv(path("results", cfg) / "zone_summary.csv")
     with connect(path("warehouse", cfg), cfg=cfg) as con:
-        w = con.execute("""select w.zone_id, w.week_start, w.event_week, w.n_days, w.pickups,
-                                  w.mean_temp_f, w.total_precip_in, s.n_revenue_known,
-                                  s.sum_fare_amount
-                           from fct_weekly_zone_panel w
-                           join fct_weekly_zone_trip_stats s using (zone_id, week_start)""").df()
-    w["week_start"] = pd.to_datetime(w["week_start"])
-    w = full_weeks(w[w["n_days"] == 7], cfg)
+        w = demand_panel(con, cfg)
     ctrl = [f"tr_{c}" for c in cc["weather_controls"]]
 
     def prep(treated: list[int], control: list[int]) -> pd.DataFrame:
@@ -177,6 +173,31 @@ def effect_map(cfg: dict) -> pd.DataFrame:
     return m.reset_index()
 
 
+def zone_growth(cfg: dict) -> pd.DataFrame:
+    zs = pd.read_csv(path("results", cfg) / "zone_summary.csv")
+    man = zs.loc[zs["borough"] == "Manhattan", ["zone_id", "zone_name", "is_cbd"]]
+    ctl = set(control_zone_ids(zs, cfg))
+    with connect(path("warehouse", cfg), cfg=cfg) as con:
+        w = demand_panel(con, cfg)
+        v = con.execute("""select zone_id, week_start, vendor_id, pickups
+                           from fct_weekly_zone_vendor""").df()
+    v["week_start"] = pd.to_datetime(v["week_start"])
+    w = w[w["zone_id"].isin(man["zone_id"])].assign(year=lambda x: x["week_start"].dt.year)
+    g = w.groupby(["zone_id", "year"]).agg(mean_weekly_pickups=("pickups", "mean"),
+                                           weeks=("pickups", "size"),
+                                           pickups=("pickups", "sum")).reset_index()
+    v = v.merge(w[["zone_id", "week_start", "year"]], on=["zone_id", "week_start"])
+    by = v.assign(cmt_curb=v["pickups"].where(v["vendor_id"].isin([1, 2]), 0),
+                  helix=v["pickups"].where(v["vendor_id"] == 7, 0))
+    by = by.groupby(["zone_id", "year"])[["cmt_curb", "helix"]].sum().reset_index()
+    g = g.merge(by, on=["zone_id", "year"], how="left").fillna({"cmt_curb": 0, "helix": 0})
+    g["share_cmt_curb"] = g["cmt_curb"] / g["pickups"].where(g["pickups"] > 0)
+    g["share_helix"] = g["helix"] / g["pickups"].where(g["pickups"] > 0)
+    g = g.merge(man, on="zone_id").assign(is_donut_control=lambda x: x["zone_id"].isin(ctl))
+    return g[["zone_id", "zone_name", "is_cbd", "is_donut_control", "year", "weeks",
+              "mean_weekly_pickups", "share_cmt_curb", "share_helix"]]
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     cfg = load_config()
@@ -267,6 +288,8 @@ def main() -> None:
                                "zones); fee recording varies by vendor (limitation, DECISIONS)",
            "z95": Z95}
     (res / "elasticity_tradeoff.json").write_text(json.dumps(out, indent=2, default=str) + "\n")
+    zone_growth(cfg).to_csv(res / "zone_growth.csv", index=False, lineterminator="\n",
+                            float_format="%.6g")
     effect_map(cfg).to_csv(res / "effect_map.csv", index=False, lineterminator="\n",
                            float_format="%.6g")
     cf = counterfactual(cfg)

@@ -1,61 +1,61 @@
 {
-  "generated_utc": "2026-11-10T02:28:19+00:00",
+  "generated_utc": "2026-11-10T02:45:40+00:00",
   "pretrend_tests": {
     "event_study_month": {
       "formula": "log1p_pickups ~ ev_m24 + ev_m23 + ev_m22 + ev_m21 + ev_m20 + ev_m19 + ev_m18 + ev_m17 + ev_m16 + ev_m15 + ev_m14 + ev_m13 + ev_m12 + ev_m11 + ev_m10 + ev_m09 + ev_m08 + ev_m07 + ev_m06 + ev_m05 + ev_m04 + ev_m03 + ev_m02 + ev_m01 + ev_p00 + ev_p01 + ev_p02 + ev_p03 + ev_p04 + ev_p05 + ev_p06 + ev_p07 + ev_p08 + ev_p09 + ev_p10 + ev_p11 + ev_p12 + ev_p13 + ev_p14 + ev_p15 + ev_p16 + ev_p17 + ev_p18 + ev_p19 + ev_p20 + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
-      "n_obs": 11723,
+      "n_obs": 12285,
       "reference": "event_week -1 (the week before the policy)",
       "bins": "month",
       "pretrend": {
         "n_restrictions": 24,
-        "wald_chi2": 466.58806807902874,
-        "p_chi2": 1.4071897348643349e-83,
-        "F": 19.441169503292866,
+        "wald_chi2": 384.88049483850114,
+        "p_chi2": 9.457591624887359e-67,
+        "F": 16.036687284937546,
         "df": [
           24,
-          60
+          62
         ],
-        "p_F": 4.388088146378877e-20,
-        "F_hotelling": 11.988721193697266,
+        "p_F": 2.2426206202420317e-18,
+        "F_hotelling": 10.08759361471878,
         "df_hotelling": [
           24,
-          37
+          39
         ],
-        "p_F_hotelling": 4.388356092716491e-11
+        "p_F_hotelling": 2.701998942054845e-10
       }
     },
     "event_study_week": {
       "formula": "log1p_pickups ~ ev_m105 + ev_m104 + ev_m103 + ev_m102 + ev_m101 + ev_m100 + ev_m99 + ev_m98 + ev_m97 + ev_m96 + ev_m95 + ev_m94 + ev_m93 + ev_m92 + ev_m91 + ev_m90 + ev_m89 + ev_m88 + ev_m87 + ev_m86 + ev_m85 + ev_m84 + ev_m83 + ev_m82 + ev_m81 + ev_m80 + ev_m79 + ev_m78 + ev_m77 + ev_m76 + ev_m75 + ev_m74 + ev_m73 + ev_m72 + ev_m71 + ev_m70 + ev_m69 + ev_m68 + ev_m67 + ev_m66 + ev_m65 + ev_m64 + ev_m63 + ev_m62 + ev_m61 + ev_m60 + ev_m59 + ev_m58 + ev_m57 + ev_m56 + ev_m55 + ev_m54 + ev_m53 + ev_m52 + ev_m51 + ev_m50 + ev_m49 + ev_m48 + ev_m47 + ev_m46 + ev_m45 + ev_m44 + ev_m43 + ev_m42 + ev_m41 + ev_m40 + ev_m39 + ev_m38 + ev_m37 + ev_m36 + ev_m35 + ev_m34 + ev_m33 + ev_m32 + ev_m31 + ev_m30 + ev_m29 + ev_m28 + ev_m27 + ev_m26 + ev_m25 + ev_m24 + ev_m23 + ev_m22 + ev_m21 + ev_m20 + ev_m19 + ev_m18 + ev_m17 + ev_m16 + ev_m15 + ev_m14 + ev_m13 + ev_m12 + ev_m11 + ev_m10 + ev_m09 + ev_m08 + ev_m07 + ev_m06 + ev_m05 + ev_m04 + ev_m03 + ev_m02 + ev_p00 + ev_p01 + ev_p02 + ev_p03 + ev_p04 + ev_p05 + ev_p06 + ev_p07 + ev_p08 + ev_p09 + ev_p10 + ev_p11 + ev_p12 + ev_p13 + ev_p14 + ev_p15 + ev_p16 + ev_p17 + ev_p18 + ev_p19 + ev_p20 + ev_p21 + ev_p22 + ev_p23 + ev_p24 + ev_p25 + ev_p26 + ev_p27 + ev_p28 + ev_p29 + ev_p30 + ev_p31 + ev_p32 + ev_p33 + ev_p34 + ev_p35 + ev_p36 + ev_p37 + ev_p38 + ev_p39 + ev_p40 + ev_p41 + ev_p42 + ev_p43 + ev_p44 + ev_p45 + ev_p46 + ev_p47 + ev_p48 + ev_p49 + ev_p50 + ev_p51 + ev_p52 + ev_p53 + ev_p54 + ev_p55 + ev_p56 + ev_p57 + ev_p58 + ev_p59 + ev_p60 + ev_p61 + ev_p62 + ev_p63 + ev_p64 + ev_p65 + ev_p66 + ev_p67 + ev_p68 + ev_p69 + ev_p70 + ev_p71 + ev_p72 + ev_p73 + ev_p74 + ev_p75 + ev_p76 + ev_p77 + ev_p78 + ev_p79 + ev_p80 + ev_p81 + ev_p82 + ev_p83 + ev_p84 + ev_p85 + ev_p86 + ev_p87 + ev_p88 + ev_p89 + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
-      "n_obs": 11723,
+      "n_obs": 12285,
       "reference": "event_week -1 (the week before the policy)",
       "bins": "week",
       "pretrend": {
         "n_restrictions": 104,
-        "n_clusters": 61,
+        "n_clusters": 63,
         "note": "not computed: restrictions >= clusters (cluster-robust covariance is singular); the monthly-bin test is the pre-trend test"
       }
     },
     "event_study_month_pre_volume_weighted_not_preregistered": {
       "formula": "log1p_pickups ~ ev_m24 + ev_m23 + ev_m22 + ev_m21 + ev_m20 + ev_m19 + ev_m18 + ev_m17 + ev_m16 + ev_m15 + ev_m14 + ev_m13 + ev_m12 + ev_m11 + ev_m10 + ev_m09 + ev_m08 + ev_m07 + ev_m06 + ev_m05 + ev_m04 + ev_m03 + ev_m02 + ev_m01 + ev_p00 + ev_p01 + ev_p02 + ev_p03 + ev_p04 + ev_p05 + ev_p06 + ev_p07 + ev_p08 + ev_p09 + ev_p10 + ev_p11 + ev_p12 + ev_p13 + ev_p14 + ev_p15 + ev_p16 + ev_p17 + ev_p18 + ev_p19 + ev_p20 + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
-      "n_obs": 11723,
+      "n_obs": 11895,
       "reference": "event_week -1 (the week before the policy)",
       "bins": "month",
       "pretrend": {
         "n_restrictions": 24,
-        "wald_chi2": 1161.7597541769542,
-        "p_chi2": 3.460644728971637e-230,
-        "F": 48.40665642403976,
+        "wald_chi2": 1161.917067589761,
+        "p_chi2": 3.2036314796570347e-230,
+        "F": 48.41321114957338,
         "df": [
           24,
           60
         ],
-        "p_F": 1.0046772084625732e-30,
-        "F_hotelling": 29.850771461491185,
+        "p_F": 1.0008747676089276e-30,
+        "F_hotelling": 29.854813542236915,
         "df_hotelling": [
           24,
           37
         ],
-        "p_F_hotelling": 1.577820733632656e-17
+        "p_F_hotelling": 1.5741757804099792e-17
       }
     }
   },
@@ -67,35 +67,35 @@
     ],
     "terms": {
       "treated_post": {
-        "coef": -0.17894823088177042,
-        "se": 0.04551107247311484,
-        "ci_lo": -0.2681482938268678,
-        "ci_hi": -0.08974816793667309,
-        "pvalue": 0.00022096458314124767,
-        "pct": -0.16385081501738752,
-        "pct_ci_lo": -0.23520564158904628,
-        "pct_ci_hi": -0.08583862856973498
+        "coef": -0.1486831652250138,
+        "se": 0.04636908006996023,
+        "ci_lo": -0.23956489215838986,
+        "ci_hi": -0.057801438291637725,
+        "pvalue": 0.002125725007919632,
+        "pct": -0.1381578667958249,
+        "pct_ci_lo": -0.21302979651013207,
+        "pct_ci_hi": -0.056162661213784916
       }
     },
-    "n_obs": 6189,
-    "n_units": 61,
+    "n_obs": 6489,
+    "n_units": 63,
     "n_treated_units": 38,
     "n_clusters": {
-      "zone_id": 61
+      "zone_id": 63
     },
     "formula": "log1p_pickups ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
     "vcov": "CRV1 by zone_id",
     "weights": null,
     "controls": {
-      "tr_mean_temp_f": 0.0008393117853222566,
-      "tr_total_precip_in": -0.009351695805455917
+      "tr_mean_temp_f": 0.0007173422851986483,
+      "tr_total_precip_in": -0.010316538167796518
     }
   },
   "leave_one_zone_out": {
-    "n": 61,
-    "min": -0.5350534681007252,
-    "max": -0.4628823519158205,
-    "median": -0.5032190030693614,
+    "n": 63,
+    "min": -0.450947700011127,
+    "max": -0.3852797279410978,
+    "median": -0.4239968859433438,
     "all_same_sign_as_main": true
   }
 }

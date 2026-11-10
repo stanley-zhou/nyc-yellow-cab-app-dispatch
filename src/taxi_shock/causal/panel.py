@@ -53,3 +53,28 @@ def pair_category(pu_cbd: pd.Series, do_cbd: pd.Series, pu_ctl: pd.Series,
     cat[pu_ctl & do_cbd] = "entering"
     cat[pu_cbd & do_ctl] = "leaving"
     return cat
+
+
+TRIP_STATS = ["n_revenue_known", "sum_fare_amount", "sum_cbd_fee", "pickups_fare_t1",
+              "pickups_fare_t2", "pickups_fare_t3"]
+
+
+def demand_panel(con, cfg: dict[str, Any]) -> pd.DataFrame:
+    """Complete zone x week demand panel (every zone, every complete week in the event-study
+    window, zero-pickup weeks included) with the trip statistics and the CMT + Curb count.
+
+    `fct_weekly_zone_panel` is complete; `fct_weekly_zone_trip_stats` and
+    `fct_weekly_zone_vendor` only have zone-weeks with trips, so they are LEFT-joined and their
+    missing counts are zeros (an inner join silently dropped every zero-pickup zone-week;
+    DECISIONS.md, Phase 4 review)."""
+    s = ", ".join(f"coalesce(s.{c}, 0) as {c}" for c in TRIP_STATS)
+    w = con.execute(f"""
+        select w.*, {s}, coalesce(v.pickups_cmt_curb, 0) as pickups_cmt_curb
+        from fct_weekly_zone_panel w
+        left join fct_weekly_zone_trip_stats s using (zone_id, week_start)
+        left join (select zone_id, week_start, sum(pickups) as pickups_cmt_curb
+                   from fct_weekly_zone_vendor where vendor_id in (1, 2) group by all) v
+               using (zone_id, week_start)""").df()
+    w["week_start"] = pd.to_datetime(w["week_start"])
+    w["pickups_literal"] = w["pickups"] - w["pickups_format_exempt"]
+    return full_weeks(w[w["n_days"] == 7], cfg)

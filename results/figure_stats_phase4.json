@@ -13,11 +13,11 @@
     "results/effect_map.csv"
   ],
   "demand_mean_monthly_coef": {
-    "2023": 0.03433595250000001,
-    "2024": -0.137130838,
-    "post": -0.6395151428571428
+    "2023": 0.050778192500000006,
+    "2024": -0.09354714999999998,
+    "post": -0.5183644333333333
   },
-  "demand_pretrend_p_F": 4.388088146378877e-20,
+  "demand_pretrend_p_F": 2.2426206202420317e-18,
   "speed": {
     "speed": {
       "coef": 0.018954577256015764,
@@ -53,13 +53,13 @@
   },
   "counterfactual": {
     "mean_post_monthly_rel": 0.019826465095238093,
-    "did_main_post_mean": -0.6395151428571428,
-    "did_weighted_post_mean": -0.11958365395238096
+    "did_main_post_mean": -0.5183644333333333,
+    "did_weighted_post_mean": -0.11957829352380953
   },
   "permutation": {
     "demand": {
-      "beta": -0.5046658641407232,
-      "mde": 0.10075013623363964,
+      "beta": -0.4253295502481945,
+      "mde": 0.10143397221824765,
       "share": 0.0
     },
     "speed": {
@@ -68,10 +68,10 @@
       "share": 0.064
     }
   },
-  "title_t4": "Pre-registered demand event study, CBD vs donut control: mean coefficient +3.5% in 2023, -12.8% in 2024, -47.2% after congestion pricing (pre-trend test p = 4e-20)",
+  "title_t4": "Pre-registered demand event study, CBD vs donut control: mean coefficient +5.2% in 2023, -8.9% in 2024, -40.5% after congestion pricing (pre-trend test p = 2e-18)",
   "title_t4b": "CBD zones: median post/pre change in weekly pickups -5.6% relative to the control group's aggregate change",
   "title_t4c": "Pre-registered demand DiD is negative in 15 of 15 trip subsets (same design, same pre-trend caveat); within-CBD speed estimates are positive in 8 of 8 hour bands and distance terciles",
-  "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the event-study paths say -47.2% (pre-registered) and -11.3% (volume-weighted)",
-  "title_t4e": "Permutation placebos: demand estimate -0.505 lies beyond 100% of 500 placebos (MDE 0.101); speed estimate +0.019: 6.4% of placebos as large (MDE 0.028)",
+  "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the event-study paths say -40.5% (pre-registered) and -11.3% (volume-weighted)",
+  "title_t4e": "Permutation placebos: demand estimate -0.425 lies beyond 100% of 500 placebos (MDE 0.101); speed estimate +0.019: 6.4% of placebos as large (MDE 0.028)",
   "title_t4f": "Within-CBD taxi trips: speed +1.9% [+0.3%, +3.6%], duration -2.4% (pre-registered DiD), but the monthly gap to the control is seasonal (pre-trend test p = 1e-32)"
 }

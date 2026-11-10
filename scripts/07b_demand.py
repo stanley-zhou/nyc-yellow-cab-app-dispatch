@@ -34,7 +34,7 @@ import pandas as pd
 
 from taxi_shock.causal.did import SEASONAL, add_seasonal, static_did
 from taxi_shock.causal.event_study import event_study
-from taxi_shock.causal.panel import control_zone_ids, full_weeks
+from taxi_shock.causal.panel import control_zone_ids, demand_panel
 from taxi_shock.causal.placebo import (
     leave_one_out,
     permutation,
@@ -50,20 +50,9 @@ LOG = logging.getLogger("demand")
 
 def load(cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
     with connect(path("warehouse", cfg), cfg=cfg) as con:
-        w = con.execute("""
-            select w.*, s.n_revenue_known, s.sum_fare_amount, s.sum_cbd_fee,
-                   s.pickups_fare_t1, s.pickups_fare_t2, s.pickups_fare_t3,
-                   v.pickups_cmt_curb
-            from fct_weekly_zone_panel w
-            join fct_weekly_zone_trip_stats s using (zone_id, week_start)
-            left join (select zone_id, week_start, sum(pickups) as pickups_cmt_curb
-                       from fct_weekly_zone_vendor where vendor_id in (1, 2) group by all) v
-                   using (zone_id, week_start)""").df()
-    w["week_start"] = pd.to_datetime(w["week_start"])
-    w["pickups_cmt_curb"] = w["pickups_cmt_curb"].fillna(0)
-    w["pickups_literal"] = w["pickups"] - w["pickups_format_exempt"]
+        w = demand_panel(con, cfg)
     zs = pd.read_csv(path("results", cfg) / "zone_summary.csv")
-    return full_weeks(w[w["n_days"] == 7], cfg), zs
+    return w, zs
 
 
 def design(w: pd.DataFrame, zs: pd.DataFrame, cfg: dict, control: str | None = None,
