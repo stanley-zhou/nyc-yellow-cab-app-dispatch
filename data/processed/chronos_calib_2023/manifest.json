@@ -1,0 +1,56 @@
+{
+  "generated_utc": "2026-11-10T00:26:14+00:00",
+  "source": "data/warehouse.duckdb (fct_hourly_zone_demand, int_hours, stg_weather, holidays_ny); zones from results/modeled_zones.json",
+  "model_id": "amazon/chronos-2",
+  "package": "chronos-forecasting==2.3.2",
+  "run": "calib_2023",
+  "context_hours": 2048,
+  "origins": [
+    "2023-10-01",
+    "2023-12-31"
+  ],
+  "test_period": [
+    "2023-10-01",
+    "2023-12-31"
+  ],
+  "quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "calendar_covariates": [
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "is_weekend",
+    "is_holiday"
+  ],
+  "weather_covariates": [
+    "temp_f",
+    "precip_in",
+    "snowfall_in",
+    "wind_mph",
+    "rel_humidity_pct"
+  ],
+  "variants": {
+    "weather_past": "past",
+    "weather_future": "future"
+  },
+  "batch_size": 256,
+  "n_zones": 103,
+  "first_hour": "2023-07-07 16:00:00",
+  "last_hour": "2023-12-31 23:00:00",
+  "n_hours": 4256,
+  "files": {
+    "pickups.parquet": {
+      "sha256": "159d9e29fb4468349a8ac85991f26a9bc3e7a5ff29e099b51e45b762455d0672",
+      "rows": 438368
+    },
+    "covariates.parquet": {
+      "sha256": "cbb5ba6ed36c0127d831529ede9481db965c758799d1bb09ea02fac79eb467ef",
+      "rows": 4256
+    }
+  },
+  "colab_script_sha256": "17d55c27ec49ad672fbf7aec2d79ec0bc052b938414a0faa6d15995b5735fbed"
+}

@@ -50,6 +50,7 @@ from pathlib import Path
 import pandas as pd
 
 from taxi_shock.backtest import evaluate
+from taxi_shock.chronos_runs import MAIN, with_run
 from taxi_shock.config import load_config, path, repo_root
 from taxi_shock.conformal import conformal, rolling_conformal
 from taxi_shock.evaluation import (
@@ -62,7 +63,8 @@ from taxi_shock.evaluation import (
 TRAINED = ["seasonal_naive", "stat_ets_profile", "lgbm_quantile"]
 FAN_MODELS = ["lgbm_quantile", "seasonal_naive"]
 CODE = [Path(__file__), *(repo_root() / "src" / "taxi_shock" / f
-                          for f in ("conformal.py", "backtest.py", "metrics.py", "evaluation.py"))]
+                          for f in ("conformal.py", "backtest.py", "metrics.py", "evaluation.py",
+                                    "chronos_runs.py"))]
 LOG = logging.getLogger("evaluate")
 
 
@@ -93,10 +95,11 @@ def units(cfg: dict) -> list[Unit]:
         raise SystemExit(f"no test forecasts in {fdir}")
     ch = repo_root() / cfg["chronos"]["test_output"]
     if ch.exists():
-        sn = fdir / "seasonal_naive__expanding__test.parquet"
+        sn = [fdir / f"seasonal_naive__expanding__{p}.parquet" for p in ("validation", "test")]
         variants = pd.read_parquet(ch, columns=["variant"])["variant"].astype(str).unique()
-        out += [Unit(f"chronos2_{v}", "zero_shot", [ch, sn], variant=v,
-                     files={"test": ch, "actuals": sn}) for v in sorted(variants)]
+        out += [Unit(f"chronos2_{v}", "zero_shot", [ch, *sn], variant=v,
+                     files={"test": ch, "actuals_validation": sn[0], "actuals": sn[1]})
+                for v in sorted(variants)]
     else:
         LOG.warning("no %s yet: Chronos-2 not evaluated", ch.name)
     return out
@@ -120,22 +123,33 @@ def fingerprint(unit: Unit, cfg: dict) -> str:
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
 
 
-def load_unit(unit: Unit) -> tuple[pd.DataFrame | None, pd.DataFrame]:
-    """(validation or None, test) forecasts of one unit, with model/window columns."""
+def load_unit(unit: Unit
+              ) -> tuple[pd.DataFrame | None, pd.DataFrame, pd.DataFrame | None]:
+    """(validation or None, test, extra calibration history or None), with model/window.
+
+    Trained models: their 2023 backtest is the validation set (split-conformal CQR and the
+    trailing history of the rolling calibration). Chronos-2: rows of a calibration run
+    (`run` != main; 2023-Q4 origins) are only rolling-calibration history, never evaluated
+    and not used for the 2023 CQR (they cover one quarter, not the validation year)."""
     if unit.variant is None:
         val, test = (pd.read_parquet(unit.files[p]).assign(model=unit.model, window=unit.window)
                      for p in ("validation", "test"))
-        return val, test
+        return val, test, None
     ch = pd.read_parquet(unit.files["test"], filters=[("variant", "==", unit.variant)])
     ch["zone_id"] = ch["zone_id"].astype("int64")
     # same post-processing as every trained model: sort the quantiles per row (monotone
     # rearrangement), clip at zero, point = q50
     ch = sort_clip_quantiles(ch, ["q10", "q50", "q90"])
     key = ["zone_id", "target_ts"]
-    act = pd.read_parquet(unit.files["actuals"], columns=key + ["y", "origin", "mase_scale"])
+    act = pd.concat([pd.read_parquet(unit.files[k], columns=key + ["y", "origin", "mase_scale"])
+                     for k in ("actuals_validation", "actuals")], ignore_index=True)
+    ch = with_run(ch)
     ch = ch.drop(columns=["origin", "variant"]).merge(act.drop_duplicates(key), on=key,
                                                        how="left")
-    return None, ch.assign(model=unit.model, window=unit.window)
+    ch = ch.assign(model=unit.model, window=unit.window)
+    test = ch[ch["run"] == MAIN].drop(columns="run").reset_index(drop=True)
+    extra = ch[ch["run"] != MAIN].drop(columns="run").reset_index(drop=True)
+    return None, test, (extra if len(extra) else None)
 
 
 def coverage_rows(fc: pd.DataFrame, groups: pd.Series, lo: str, hi: str) -> list[dict]:
@@ -159,14 +173,15 @@ def evaluate_unit(unit: Unit, cfg: dict, groups: pd.Series, fan: dict, out_dir: 
     qs = tuple(cfg["forecast"]["quantiles"])
     lo, hi = (f"q{round(q * 100):02d}" for q in ev["interval"])
     rolling_label = f"conformal_rolling_{cc['rolling_weeks']}w"
-    val, test = load_unit(unit)
+    val, test, extra = load_unit(unit)
     frames, report = [test.assign(calibration="raw")], []
     if val is not None:
         cal, report = conformal(val, test, groups, cc["alpha"], lo, hi)
         frames.append(cal.assign(calibration="conformal_2023"))
-    # rolling: trained models use their 2023 forecasts as the history of the first 2024 origins
+    # rolling: trained models use their 2023 forecasts as the history of the first 2024 origins,
+    # Chronos-2 its calibration-run forecasts (2023-Q4) once they are imported
     origins = pd.DatetimeIndex(sorted(test["origin"].dropna().unique()))
-    hist = test if val is None else pd.concat([val, test], ignore_index=True)
+    hist = pd.concat([d for d in (val, extra, test) if d is not None], ignore_index=True)
     r = rolling_conformal(hist, groups, list(qs), cc["rolling_weeks"], origins)
     uncal = int(r.attrs["n_origins_uncalibrated"])
     rolled = r[r[lo].notna()]
@@ -176,7 +191,7 @@ def evaluate_unit(unit: Unit, cfg: dict, groups: pd.Series, fan: dict, out_dir: 
         matched = test[test["origin"].isin(rolled["origin"].unique())]
         frames.append(matched.assign(calibration=MATCHED_RAW))
     daily_errors(test, groups).to_parquet(out_dir / f"{unit.name}__daily.parquet")
-    del hist, val
+    del hist, val, extra
     fc = pd.concat(frames, ignore_index=True)
     del frames
     tables = [evaluate(d, qs, ev["horizon_buckets"], zone_groups=groups,
@@ -270,7 +285,9 @@ def assemble(cfg: dict, todo: list[Unit], out_dir: Path, res: Path) -> None:
                   "Q = ceil((n+1)(1-alpha))/n quantile, interval [max(q_lo - Q, 0), q_hi + Q]",
         "alpha": cc["alpha"], "validation_year": cfg["models"]["validation_year"],
         "group_by": cc["group_by"],
-        "not_calibrated": ["chronos2_* (no validation-year forecasts)"],
+        "not_calibrated": ["conformal_2023: chronos2_* (no validation-year forecasts; a "
+                           "2023-Q4 calibration run, once imported, feeds only the rolling "
+                           "calibration)"],
         "matched_raw_label": (f"{MATCHED_RAW}: raw forecasts restricted to the origins that have "
                               "a rolling calibration (Chronos-2: from the first origin with 12 "
                               "weeks of its own forecasts), so raw vs rolling compare the same "

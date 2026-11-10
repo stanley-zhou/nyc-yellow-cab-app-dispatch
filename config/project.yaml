@@ -94,6 +94,14 @@ chronos:                                      # PLAN Phase 2 model 4 (Colab only
                                               # weather_future reported beside it (DECISIONS)
   batch_size: 256                             # series per GPU batch (target + covariates count)
   bundle: data/processed/chronos_bundle.zip   # what Stanley uploads to Google Drive
+  bundle_dir: data/processed/chronos          # committed bundle files + manifest of this run
+  calibration_run:                            # Stanley 2026-11-09: calibration parity only
+    name: calib_2023                          # second Colab run, same script, merged into
+    origins: ["2023-10-01", "2023-12-31"]     # test_output (column `run`) by chronos-import
+    bundle_dir: data/processed/chronos_calib_2023
+    bundle: data/processed/chronos_bundle_calib_2023.zip
+    inbox: data/chronos_inbox/calib_2023      # where the three returned files go (git-ignored)
+    run_record: results/chronos_run_calib_2023.json
 quality:                                      # PLAN Phase 1 filter rules, parameterised
   straggler_days: 1                           # keep pickups in [month_start - 1d, month_end + 1d]
   min_duration_minutes: 1

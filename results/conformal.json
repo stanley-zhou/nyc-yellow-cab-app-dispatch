@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-09T23:50:44+00:00",
+  "generated_utc": "2026-11-10T00:31:50+00:00",
   "method": "split-conformal CQR: score max(q_lo - y, y - q_hi) on the validation year, Q = ceil((n+1)(1-alpha))/n quantile, interval [max(q_lo - Q, 0), q_hi + Q]",
   "alpha": 0.2,
   "validation_year": [
@@ -8,7 +8,7 @@
   ],
   "group_by": "zone_group",
   "not_calibrated": [
-    "chronos2_* (no validation-year forecasts)"
+    "conformal_2023: chronos2_* (no validation-year forecasts; a 2023-Q4 calibration run, once imported, feeds only the rolling calibration)"
   ],
   "matched_raw_label": "raw_rolling_origins: raw forecasts restricted to the origins that have a rolling calibration (Chronos-2: from the first origin with 12 weeks of its own forecasts), so raw vs rolling compare the same rows",
   "rows": [

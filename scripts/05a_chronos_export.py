@@ -1,20 +1,24 @@
 """Export the Chronos-2 input bundle (PLAN Phase 2: "reads the small panel Parquet").
 
-Writes data/processed/chronos/ (committed: small) and the zip Stanley uploads to Google Drive:
+One bundle per Colab run (taxi_shock.chronos_runs): `main` (default) or the calibration run
+`calib_2023` (`--run calib_2023`; origins 2023-10-01 -> 2023-12-31, hours only up to the last
+origin day). Writes the run's bundle_dir (committed: small) and the zip Stanley uploads:
     pickups.parquet      zone_id, hour_ts, pickups for the modeled zones
                          (results/modeled_zones.json) over every grid hour from
                          context_hours before the first origin to the end of the panel
+                         (main) or of the last origin day (calibration run)
     covariates.parquet   hour_ts + city-wide calendar and observed weather covariates, same hours
     manifest.json        sha256 of each file and of the Colab script, and every setting the Colab
                          script uses (from config/project.yaml -> chronos, forecast)
     chronos_bundle.zip   the three files + scripts/05_chronos_colab.py
 
 Usage:
-    python scripts/05a_chronos_export.py
+    python scripts/05a_chronos_export.py [--run calib_2023]
 """
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import logging
@@ -25,6 +29,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from taxi_shock.chronos_runs import MAIN, run_spec
 from taxi_shock.config import load_config, path, repo_root
 from taxi_shock.io import connect
 
@@ -36,12 +41,19 @@ def _sha(p: Path) -> str:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--run", default=MAIN, help="main (default) or the calibration run's name")
+    args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     cfg = load_config()
     ch = cfg["chronos"]
+    spec = run_spec(cfg, args.run)
     zones = json.loads((path("results", cfg) / "modeled_zones.json").read_text())["zone_ids"]
-    first_origin = pd.Timestamp(ch["origins"][0])
-    out = path("processed", cfg) / "chronos"
+    first_origin = pd.Timestamp(spec.origins[0])
+    # main: to the end of the panel (one bundle serves Phases 2, 3, 5); calibration run: to the
+    # end of its last origin day
+    end = None if spec.name == MAIN else pd.Timestamp(spec.origins[1]) + pd.Timedelta(days=1)
+    out = spec.bundle_dir
     out.mkdir(parents=True, exist_ok=True)
 
     with connect(path("warehouse", cfg), cfg=cfg) as con:
@@ -54,7 +66,8 @@ def main() -> None:
         pk = con.execute("""
             select f.zone_id::smallint as zone_id, f.hour_ts, f.pickups::float as pickups
             from fct_hourly_zone_demand f join z using (zone_id)
-            where f.hour_ts >= ? order by zone_id, hour_ts""", [start]).df()
+            where f.hour_ts >= ? and (?::timestamp is null or f.hour_ts < ?)
+            order by zone_id, hour_ts""", [start, end, end]).df()
         wx = ", ".join(f"w.{c}" for c in ch["weather_covariates"])
         cov = con.execute(f"""
             select h.hour_ts, hour(h.hour_ts) as hour, isodow(h.hour_ts) - 1 as dow,
@@ -64,7 +77,8 @@ def main() -> None:
             left join stg_weather w using (hour_ts)
             left join (select distinct date from holidays_ny) hol
                    on hol.date = cast(h.hour_ts as date)
-            where h.hour_ts >= ? order by 1""", [start]).df()
+            where h.hour_ts >= ? and (?::timestamp is null or h.hour_ts < ?)
+            order by 1""", [start, end, end]).df()
     cov["hour_sin"] = np.sin(2 * np.pi * cov["hour"] / 24)
     cov["hour_cos"] = np.cos(2 * np.pi * cov["hour"] / 24)
     cov["dow_sin"] = np.sin(2 * np.pi * cov["dow"] / 7)
@@ -89,9 +103,10 @@ def main() -> None:
                   "holidays_ny); zones from results/modeled_zones.json",
         "model_id": ch["model_id"],
         "package": ch["package"],
+        "run": spec.name,
         "context_hours": int(ch["context_hours"]),
-        "origins": ch["origins"],
-        "test_period": cfg["forecast"]["backtest"]["pre_shock_test"],
+        "origins": list(spec.origins),
+        "test_period": list(spec.test_period),
         "quantiles": cfg["forecast"]["quantiles"],
         "calendar_covariates": ch["calendar_covariates"],
         "weather_covariates": ch["weather_covariates"],
@@ -104,7 +119,7 @@ def main() -> None:
         "colab_script_sha256": _sha(script),
     }
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    bundle = repo_root() / ch["bundle"]
+    bundle = spec.bundle
     with zipfile.ZipFile(bundle, "w", compression=zipfile.ZIP_STORED) as zf:
         for n in [*files, "manifest.json"]:
             zf.write(out / n, arcname=n)

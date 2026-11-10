@@ -46,6 +46,26 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `forecast` | Phase 2: LightGBM grid on 2023 (`04a_lgbm_tune.py`), rolling-origin backtests of every trained model for 2023 and 2024 (`04_backtest.py --full`), conformal calibration and metrics (`04b_evaluate.py`); Chronos-2 runs on Colab (`chronos-bundle` / `chronos-import`) |
 | `causal`, `adapt`, `report`, `all` | added in their phases; they fail with a message until then |
 
+## Chronos-2 on Colab
+
+Chronos-2 runs only on a Colab GPU (T4/L4), from a bundle exported here; no credentials are
+involved. Two runs use the same script (`scripts/05_chronos_colab.py`):
+
+| Run | Origins | Bundle (`make chronos-bundle ...`) | Returned files go to |
+|---|---|---|---|
+| `main` | 2024-01-01 → 2026-09-30 | `data/processed/chronos_bundle.zip` | `results/` |
+| `calib_2023` | 2023-10-01 → 2023-12-31 (calibration history only) | `RUN=calib_2023` → `data/processed/chronos_bundle_calib_2023.zip` | `data/chronos_inbox/calib_2023/` |
+
+1. Upload the run's zip to Google Drive and unzip it there (one folder per run).
+2. In a Colab GPU runtime: `!pip install chronos-forecasting==2.3.2`, mount Drive, then
+   `!python <bundle>/05_chronos_colab.py --bundle <bundle> --out-dir <bundle>/out`
+   (a separate `--out-dir` per run; after a disconnect the same command resumes from its chunks).
+3. Download `chronos_forecasts.parquet`, `chronos_forecasts_post.parquet` and `chronos_run.json`
+   from `<out-dir>` to the run's folder above, then `make chronos-import` (main) or
+   `make chronos-import RUN=calib_2023`, which validates the run against its own manifest and
+   merges it into the result files (column `run`, run record
+   `results/chronos_run_calib_2023.json`). Then `python scripts/04b_evaluate.py && make figures`.
+
 ## Layout
 
 `config/` (all dates, thresholds, paths) · `dbt/` (dbt-duckdb project over the raw Parquet) ·

@@ -1,44 +1,49 @@
 {
-  "generated_utc": "2026-11-08T21:09:14+00:00",
+  "generated_utc": "2026-11-10T00:31:24+00:00",
   "passed": true,
-  "checks": {
-    "full_run": true,
-    "inputs_match_manifest": true,
-    "script_matches_manifest": true,
-    "test_rows": 1809298,
-    "test_expected_rows": 1809298,
-    "test_missing": 0,
-    "test_unexpected": 0,
-    "test_duplicates": 0,
-    "test_quantiles_finite": true,
-    "test_quantile_crossings": 674,
-    "test_horizon_ok": true,
-    "post_rows": 3153860,
-    "post_expected_rows": 3153860,
-    "post_missing": 0,
-    "post_unexpected": 0,
-    "post_duplicates": 0,
-    "post_quantiles_finite": true,
-    "post_quantile_crossings": 345,
-    "post_horizon_ok": true
-  },
-  "run": {
-    "generated_utc": "2026-11-08T08:24:33+00:00",
-    "model_id": "amazon/chronos-2",
-    "model_revision": "29ec3766d36d6f73f0696f85560a422f50e8498c",
-    "environment": {
-      "python": "3.13.16",
-      "torch": "2.14.1+cu130",
-      "transformers": "5.22.1",
-      "chronos_forecasting": "2.3.2",
-      "device": "cuda",
-      "gpu": "NVIDIA L4"
-    },
-    "n_zones": 103,
-    "n_origins": 1004,
-    "variants": [
-      "weather_past",
-      "weather_future"
-    ]
+  "runs": {
+    "main": {
+      "passed": true,
+      "checks": {
+        "full_run": true,
+        "inputs_match_manifest": true,
+        "script_matches_manifest": true,
+        "test_rows": 1809298,
+        "test_expected_rows": 1809298,
+        "test_missing": 0,
+        "test_unexpected": 0,
+        "test_duplicates": 0,
+        "test_quantiles_finite": true,
+        "test_quantile_crossings": 674,
+        "test_horizon_ok": true,
+        "post_rows": 3153860,
+        "post_expected_rows": 3153860,
+        "post_missing": 0,
+        "post_unexpected": 0,
+        "post_duplicates": 0,
+        "post_quantiles_finite": true,
+        "post_quantile_crossings": 345,
+        "post_horizon_ok": true
+      },
+      "run": {
+        "generated_utc": "2026-11-08T08:24:33+00:00",
+        "model_id": "amazon/chronos-2",
+        "model_revision": "29ec3766d36d6f73f0696f85560a422f50e8498c",
+        "environment": {
+          "python": "3.13.16",
+          "torch": "2.14.1+cu130",
+          "transformers": "5.22.1",
+          "chronos_forecasting": "2.3.2",
+          "device": "cuda",
+          "gpu": "NVIDIA L4"
+        },
+        "n_zones": 103,
+        "n_origins": 1004,
+        "variants": [
+          "weather_past",
+          "weather_future"
+        ]
+      }
+    }
   }
 }
