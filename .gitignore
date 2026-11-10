@@ -23,3 +23,4 @@ data/forecasts/
 results/*.lock
 data/chronos_inbox/
 data/processed/chronos_bundle_calib_2023.zip
+data/models/
