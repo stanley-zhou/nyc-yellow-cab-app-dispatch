@@ -1,0 +1,21 @@
+{
+  "outcome": "log_mean_speed_mph",
+  "real_beta": 0.018954577256015764,
+  "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake CBD; fake treated = pairs within the fake set, control = pairs within the other Manhattan zones; static window <= 52 weeks before the fake week to the end of the pre-policy data; pair + week FE, weighted by trips",
+  "n_draws": 500,
+  "mean": 9.078318073248909e-05,
+  "sd": 0.00982904758661135,
+  "quantiles": {
+    "0.025": -0.020215029292770335,
+    "0.05": -0.0166743612135849,
+    "0.5": -0.00012565239634964768,
+    "0.95": 0.01677071887132654,
+    "0.975": 0.019763250480595355
+  },
+  "share_abs_ge_abs_beta": 0.064,
+  "mde_multiplier": 2.8015852181129683,
+  "mde": 0.027536914426779305,
+  "mde_pct": 0.027919559468214183,
+  "size": 0.05,
+  "power": 0.8
+}

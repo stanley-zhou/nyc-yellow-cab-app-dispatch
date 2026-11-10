@@ -1,0 +1,27 @@
+{
+  "generated_utc": "2026-11-10T02:26:54+00:00",
+  "reps": 200,
+  "design": "zone + common time path + AR(1) noise (rho 0.5, sd 0.05), no differential trend; monthly-bin event study, zone + week FE, CRV1 by zone; 24 pre-period restrictions",
+  "designs": [
+    {
+      "treated_zones": 38,
+      "control_zones": 23,
+      "reject_5pct_F": 0.6,
+      "reject_1pct_F": 0.41,
+      "reject_5pct_F_hotelling": 0.13,
+      "reject_1pct_F_hotelling": 0.03,
+      "min_p_F": 6.144254938689476e-07,
+      "min_p_F_hotelling": 0.001817887602250854
+    },
+    {
+      "treated_zones": 20,
+      "control_zones": 20,
+      "reject_5pct_F": 0.8,
+      "reject_1pct_F": 0.655,
+      "reject_5pct_F_hotelling": 0.085,
+      "reject_1pct_F_hotelling": 0.02,
+      "min_p_F": 1.1387311418969731e-10,
+      "min_p_F_hotelling": 0.001805433429073111
+    }
+  ]
+}

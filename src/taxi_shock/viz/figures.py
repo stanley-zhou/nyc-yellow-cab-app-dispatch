@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 from taxi_shock.viz.style import (
+    DIVERGING_CMAP,
     PALETTE,
     SIZES,
     direct_labels,
@@ -320,6 +321,213 @@ def f3_error_over_time(errors: pd.DataFrame, policy_date: str, markers: list[tup
     axes[0].set_ylim(bottom=0)
     axes[1].xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
     axes[1].xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+# ------------------------------------------------------------------------------------ Phase 4
+def _bin_dates(k: pd.Series, policy_date: str) -> pd.Series:
+    """Mid-month date of monthly event-time bin k (0 = the policy month)."""
+    p = pd.Timestamp(policy_date).to_period("M")
+    return pd.Series([(p + int(x)).to_timestamp() + pd.Timedelta(days=14) for x in k],
+                     index=k.index)
+
+
+def _event_panel(ax, es: pd.DataFrame, policy_date: str, ylabel: str, color: str,
+                 label_policy: bool = True, label_y: float = 1.0) -> None:
+    """Monthly coefficients x 100 (log points ~ %) with 95% CIs; pre bins tinted."""
+    x = _bin_dates(es["k"], policy_date)
+    for pre, c in ((True, tint(color)), (False, color)):
+        s = (es["k"] < 0) == pre
+        ax.errorbar(x[s], es.loc[s, "coef"] * 100,
+                    yerr=[(es.loc[s, "coef"] - es.loc[s, "ci_lo"]) * 100,
+                          (es.loc[s, "ci_hi"] - es.loc[s, "coef"]) * 100],
+                    fmt="o", ms=4, color=c, ecolor=c, elinewidth=1.0, capsize=0)
+    ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
+    ax.set_ylabel(ylabel)
+    ax.set_xlim(x.min() - pd.Timedelta(days=20), x.max() + pd.Timedelta(days=20))
+    policy_line(ax, label=label_policy, label_y=label_y)
+
+
+def f4_event_study(es: pd.DataFrame, policy_date: str, title: str, note: str,
+                   out_base: Path, ylabel: str) -> list[Path]:
+    """F4: monthly event-study coefficients +- 95% CI, zero line, policy line, nothing else."""
+    use_style()
+    fig, ax = plt.subplots(figsize=SIZES["single"], layout="constrained")
+    _event_panel(ax, es, policy_date, ylabel, PALETTE["cbd"])
+    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f4f_speed_event_study(panels: list[tuple[pd.DataFrame, str]], policy_date: str, title: str,
+                          note: str, out_base: Path) -> list[Path]:
+    """F4f (Amendment 2): speed and duration event studies, one panel each (own y-axis)."""
+    use_style()
+    fig, axes = plt.subplots(len(panels), 1, figsize=SIZES["small_multiples"], sharex=True,
+                             layout="constrained")
+    for i, (ax, (es, ylabel)) in enumerate(zip(axes, panels, strict=True)):
+        _event_panel(ax, es, policy_date, ylabel, PALETTE["cbd"], label_policy=i == 0,
+                     label_y=0.12)   # low: the first post-policy points sit at the top
+    axes[-1].xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
+    axes[-1].xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f4b_effect_map(zones, effects: pd.DataFrame, title: str, note: str, out_base: Path,
+                   min_pre_weekly: float) -> list[Path]:
+    """F4b: Manhattan zones, post/pre log change relative to the control aggregate (diverging,
+    centred at 0); zones below `min_pre_weekly` pre-period pickups hatched; CBD outlined."""
+    from taxi_shock.viz.maps import NO_DATA_COLOR, bounds_of, draw_boundary
+
+    use_style()
+    e = effects.set_index("zone_id")
+    gdf = zones.merge(e, left_on="zone_id", right_index=True, how="inner")
+    ok = gdf["pre_mean_weekly"] >= min_pre_weekly
+    v = gdf.loc[ok, "relative_to_control_aggregate"]
+    lim = float(np.nanquantile(np.abs(v), 0.95))
+    norm = mpl.colors.TwoSlopeNorm(vcenter=0.0, vmin=-lim, vmax=lim)
+    fig, ax = plt.subplots(figsize=SIZES["map"], layout="constrained")
+    gdf[~ok].plot(ax=ax, facecolor=NO_DATA_COLOR, edgecolor="white", hatch="////",
+                  linewidth=0.3)
+    gdf[ok].plot(ax=ax, column="relative_to_control_aggregate", cmap=DIVERGING_CMAP, norm=norm,
+                 edgecolor="white", linewidth=0.3)
+    sm = mpl.cm.ScalarMappable(norm=norm, cmap=DIVERGING_CMAP)
+    cb = fig.colorbar(sm, ax=ax, fraction=0.035, pad=0.01, shrink=0.6)
+    cb.set_label("Post/pre log change minus control aggregate (log points)")
+    cb.outline.set_visible(False)
+    draw_boundary(ax, zones, effects.loc[effects["is_cbd"], "zone_id"].tolist())
+    b = bounds_of(zones, effects["zone_id"].tolist(), pad=0.02)
+    ax.set_xlim(b[0], b[2])
+    ax.set_ylim(b[1], b[3])
+    ax.set_axis_off()
+    ax.set_aspect("equal")
+    fig.suptitle(textwrap.fill(title, 70), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 100), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f4b_effect_map_html(zones, effects: pd.DataFrame, title: str, out_file: Path) -> Path:
+    """Interactive F4b (Plotly): hover shows zone, pre and post mean weekly pickups, change."""
+    import plotly.express as px
+
+    gdf = zones.merge(effects, on="zone_id", how="inner").to_crs(4326)
+    gdf["change_pct"] = (np.exp(gdf["log_change"]) - 1) * 100
+    lim = float(np.nanquantile(np.abs(gdf["relative_to_control_aggregate"]), 0.95))
+    fig = px.choropleth(
+        gdf, geojson=gdf.set_index("zone_id").geometry.__geo_interface__,
+        locations="zone_id", color="relative_to_control_aggregate",
+        color_continuous_scale="RdBu_r", range_color=(-lim, lim),
+        hover_name="zone_name",
+        hover_data={"zone_id": True, "pre_mean_weekly": ":.0f", "post_mean_weekly": ":.0f",
+                    "change_pct": ":.1f", "relative_to_control_aggregate": ":.3f"},
+        labels={"pre_mean_weekly": "pre mean weekly pickups",
+                "post_mean_weekly": "post mean weekly pickups",
+                "change_pct": "change (%)",
+                "relative_to_control_aggregate": "vs control aggregate (log pts)"},
+        title=title)
+    fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(margin={"l": 0, "r": 0, "t": 60, "b": 0})
+    out_file.parent.mkdir(parents=True, exist_ok=True)
+    fig.write_html(out_file, include_plotlyjs="cdn", full_html=True,
+                   config={"displaylogo": False})
+    return out_file
+
+
+def f4c_heterogeneity(panels: list[tuple[str, pd.DataFrame]], title: str, note: str,
+                      out_base: Path) -> list[Path]:
+    """F4c: one small multiple per cut; horizontal point-ranges of the static DiD in %
+    (exp(b) - 1), own x-scale per panel. `panels`: (panel title, rows with label/coef/ci)."""
+    use_style()
+    n = len(panels)
+    ncol = 4
+    nrow = int(np.ceil(n / ncol))
+    fig, axes = plt.subplots(nrow, ncol, figsize=(SIZES["small_multiples"][0], 2.6 * nrow),
+                             layout="constrained")
+    for ax, (name, d) in zip(axes.flat, panels, strict=False):
+        y = np.arange(len(d))[::-1]
+        pct = (np.exp(d["coef"]) - 1) * 100
+        lo, hi = (np.exp(d["ci_lo"]) - 1) * 100, (np.exp(d["ci_hi"]) - 1) * 100
+        ax.errorbar(pct, y, xerr=[pct - lo, hi - pct], fmt="o", ms=4, color=PALETTE["cbd"],
+                    ecolor=PALETTE["cbd"], elinewidth=1.0, capsize=0)
+        ax.axvline(0, color=PALETTE["muted_text"], linewidth=0.8)
+        ax.set_yticks(y)
+        ax.set_yticklabels(d["label"], fontsize=8)
+        ax.set_title(textwrap.fill(name, 32), fontsize=9)
+        ax.tick_params(axis="x", labelsize=8)
+        ax.grid(axis="y", visible=False)
+    for ax in list(axes.flat)[n:]:
+        ax.set_visible(False)
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    return save(fig, out_base)
+
+
+def f4d_counterfactual_vs_did(cf: pd.DataFrame, paths: list[tuple[str, pd.DataFrame, str]],
+                              policy_date: str, title: str, note: str,
+                              out_base: Path) -> list[Path]:
+    """F4d: monthly implied effect from the frozen-forecast counterfactual vs event-study paths,
+    all in % (one axis; same unit)."""
+    use_style()
+    fig, ax = plt.subplots(figsize=SIZES["single"], layout="constrained")
+    x = pd.PeriodIndex(cf["month"], freq="M").to_timestamp() + pd.Timedelta(days=14)
+    y = cf["mean_daily_rel"] * 100
+    ins = cf["in_sample"].to_numpy()
+    ax.plot(x[ins], y[ins], color=tint(PALETTE["model"]), linewidth=1.4, marker="o", ms=3)
+    ax.plot(x[~ins], y[~ins], color=PALETTE["model"], linewidth=1.6, marker="o", ms=3)
+    ends = [(float(y.iloc[-1]), "Forecast counterfactual", PALETTE["model"])]
+    for label, es, color in paths:
+        es = es[es["k"] >= int((x.min().to_period("M") - pd.Timestamp(policy_date)
+                                .to_period("M")).n)]
+        ex = _bin_dates(es["k"], policy_date)
+        ey = (np.exp(es["coef"]) - 1) * 100
+        ax.plot(ex, ey, color=color, linewidth=1.4, marker="s", ms=3)
+        ends.append((float(ey.iloc[-1]), label, color))
+    ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
+    ax.set_ylabel("Effect on CBD pickups (%)")
+    ax.set_xlim(x.min() - pd.Timedelta(days=20), x.max() + pd.Timedelta(days=20))
+    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    direct_labels(ax, x.max() + pd.Timedelta(days=20), ends)
+    policy_line(ax, label_y=0.07, side="right")   # below the lowest path: free there
+    fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f4e_placebo_distribution(panels: list[tuple[str, pd.Series, float, float]], title: str,
+                             note: str, out_base: Path) -> list[Path]:
+    """F4e (A2): permutation-placebo estimates (histogram) with the real estimate (line) and
+    +-MDE (shaded); one panel per outcome, own x-scale. `panels`: (name, draws, beta, mde)."""
+    use_style()
+    fig, axes = plt.subplots(1, len(panels), figsize=(SIZES["small_multiples"][0], 4.2),
+                             layout="constrained")
+    for ax, (name, draws, beta, mde) in zip(np.atleast_1d(axes), panels, strict=True):
+        ax.axvspan(-mde, mde, color=tint(PALETTE["baseline"], 0.8), zorder=0)
+        ax.hist(draws, bins=40, color=PALETTE["baseline"], edgecolor="white", linewidth=0.5)
+        ax.axvline(beta, color=PALETTE["cbd"], linewidth=1.8)
+        ax.annotate(f"real estimate {beta:+.3f}", xy=(beta, 0.95), xycoords=("data",
+                    "axes fraction"), xytext=(4 if beta < 0 else -4, 0),
+                    textcoords="offset points", ha="left" if beta < 0 else "right",
+                    fontsize=8.5, color=PALETTE["cbd"], va="top")
+        ax.set_title(name, fontsize=10)
+        ax.set_xlabel("Placebo DiD estimate (log points)")
+        ax.set_ylabel("Draws")
+        lo = min(draws.min(), beta, -mde)
+        hi = max(draws.max(), beta, mde)
+        pad = (hi - lo) * 0.08
+        ax.set_xlim(lo - pad, hi + pad)
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")

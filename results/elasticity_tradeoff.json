@@ -1,0 +1,188 @@
+{
+  "generated_utc": "2026-11-10T02:28:38+00:00",
+  "fee_per_trip": 0.75,
+  "pre_period_stats": {
+    "pre_period": [
+      "2024-01-06",
+      "2025-01-04"
+    ],
+    "mean_fare_cbd_pickups": 16.92140968302334,
+    "mean_duration_min": {
+      "entering": 17.01491288660543,
+      "leaving": 17.583938705174063,
+      "within_cbd": 12.86153001567508
+    }
+  },
+  "price_change_pct": 0.044322548419381914,
+  "a3_implied_elasticity": {
+    "main": {
+      "pct_change_trips": -0.3962927380254584,
+      "pct_change_trips_ci": [
+        -0.5207657919739324,
+        -0.23948989438380575
+      ],
+      "implied_elasticity": -8.941109032714431,
+      "implied_elasticity_ci": [
+        -11.749455086526691,
+        -5.4033421570831575
+      ]
+    },
+    "pre_volume_weighted_not_preregistered": {
+      "pct_change_trips": -0.05202402196054625,
+      "pct_change_trips_ci": [
+        -0.12778502836263977,
+        0.030317621414887926
+      ],
+      "implied_elasticity": -1.1737597186040083,
+      "implied_elasticity_ci": [
+        -2.88307042170798,
+        0.6840225234348272
+      ]
+    }
+  },
+  "b5_rider_tradeoff": {
+    "within_cbd": {
+      "pre_mean_duration_min": 12.86153001567508,
+      "duration_effect_log": -0.02431858388180353,
+      "minutes_saved_per_trip": 0.30900172601945836,
+      "minutes_saved_ci": [
+        0.12061687085179244,
+        0.49460115652774955
+      ],
+      "value_of_time_saved": {
+        "20": 0.10300057533981945,
+        "30": 0.15450086300972918,
+        "40": 0.2060011506796389
+      },
+      "net_vs_fee": {
+        "20": -0.6469994246601806,
+        "30": -0.5954991369902708,
+        "40": -0.5439988493203611
+      },
+      "break_even_value_of_time_per_hour": 145.63025449626866,
+      "break_even_ci": [
+        90.98239946690315,
+        373.0821375335926
+      ]
+    },
+    "within_cbd_treated_seasonality_not_preregistered": {
+      "pre_mean_duration_min": 12.86153001567508,
+      "duration_effect_log": -0.015402007481268187,
+      "minutes_saved_per_trip": 0.19657566559792614,
+      "minutes_saved_ci": [
+        0.016620475135742864,
+        0.3740097117521581
+      ],
+      "value_of_time_saved": {
+        "20": 0.06552522186597537,
+        "30": 0.09828783279896307,
+        "40": 0.13105044373195074
+      },
+      "net_vs_fee": {
+        "20": -0.6844747781340246,
+        "30": -0.651712167201037,
+        "40": -0.6189495562680493
+      },
+      "break_even_value_of_time_per_hour": 228.91948432743726,
+      "break_even_ci": [
+        120.3177312941536,
+        2707.503824798971
+      ]
+    },
+    "entering": {
+      "pre_mean_duration_min": 17.01491288660543,
+      "duration_effect_log": -0.03435019915003269,
+      "minutes_saved_per_trip": 0.5745413488985535,
+      "minutes_saved_ci": [
+        0.40165393284006357,
+        0.745629596069436
+      ],
+      "value_of_time_saved": {
+        "20": 0.1915137829661845,
+        "30": 0.28727067444927673,
+        "40": 0.383027565932369
+      },
+      "net_vs_fee": {
+        "20": -0.5584862170338155,
+        "30": -0.46272932555072327,
+        "40": -0.366972434067631
+      },
+      "break_even_value_of_time_per_hour": 78.32334450125997,
+      "break_even_ci": [
+        60.351681635514666,
+        112.03674686267483
+      ]
+    },
+    "leaving": {
+      "pre_mean_duration_min": 17.583938705174063,
+      "duration_effect_log": -0.0321243495371759,
+      "minutes_saved_per_trip": 0.555895891234875,
+      "minutes_saved_ci": [
+        0.3417296782037036,
+        0.7674019366081571
+      ],
+      "value_of_time_saved": {
+        "20": 0.185298630411625,
+        "30": 0.2779479456174375,
+        "40": 0.37059726082325
+      },
+      "net_vs_fee": {
+        "20": -0.564701369588375,
+        "30": -0.4720520543825625,
+        "40": -0.37940273917675
+      },
+      "break_even_value_of_time_per_hour": 80.95040943734331,
+      "break_even_ci": [
+        58.6394141757,
+        131.68303156033085
+      ]
+    }
+  },
+  "b5_note": "minutes saved per trip = pre-period mean duration x (1 - exp(beta)); break-even value of time = fee / hours saved; the passenger's time only (no driver time, no unpriced trips); NBER w33584 benchmark: $46/h for the average priced taxi/FHV trip, $37/h including unpriced trips (DECISIONS)",
+  "fee_revenue_by_quarter": [
+    {
+      "quarter": "2025Q1",
+      "fee": 6211764.75,
+      "trips_with_fee": 8282275.0,
+      "weeks": 13
+    },
+    {
+      "quarter": "2025Q2",
+      "fee": 6792947.5,
+      "trips_with_fee": 9057302.0,
+      "weeks": 13
+    },
+    {
+      "quarter": "2025Q3",
+      "fee": 6322174.5,
+      "trips_with_fee": 8429573.0,
+      "weeks": 13
+    },
+    {
+      "quarter": "2025Q4",
+      "fee": 6766183.5,
+      "trips_with_fee": 9021595.0,
+      "weeks": 13
+    },
+    {
+      "quarter": "2026Q1",
+      "fee": 5882310.75,
+      "trips_with_fee": 7843101.0,
+      "weeks": 13
+    },
+    {
+      "quarter": "2026Q2",
+      "fee": 6099963.0,
+      "trips_with_fee": 8133294.0,
+      "weeks": 13
+    },
+    {
+      "quarter": "2026Q3",
+      "fee": 5859438.0,
+      "trips_with_fee": 7812639.0,
+      "weeks": 13
+    }
+  ],
+  "fee_revenue_note": "sum of cbd_congestion_fee on valid yellow trips (all pickup zones); fee recording varies by vendor (limitation, DECISIONS)",
+  "z95": 1.959963984540054
+}

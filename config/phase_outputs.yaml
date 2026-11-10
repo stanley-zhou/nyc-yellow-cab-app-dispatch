@@ -63,6 +63,24 @@
   - reports/figures/F4b_effect_map.png
   - reports/figures/F4c_heterogeneity.png
   - reports/figures/F4d_counterfactual_vs_did.png
+  - reports/figures/F4e_placebo_distribution.png
+  - reports/figures/F4f_speed_event_study.png
+  - reports/figures/F4b_effect_map.html
+  - results/speed_did.json
+  - results/speed_event_study.csv
+  - results/speed_heterogeneity.csv
+  - results/speed_exclusions.csv
+  - results/speed_power.json
+  - results/speed_placebo.csv
+  - results/power_mde.json
+  - results/demand_placebo_draws.csv
+  - results/leave_one_out.csv
+  - results/metric_framework.csv
+  - results/elasticity_tradeoff.json
+  - results/counterfactual.csv
+  - results/effect_map.csv
+  - results/pretrend_test_size.json
+  - results/figure_stats_phase4.json
 5:
   - results/adaptation.csv
   - reports/figures/F5_adaptation.png

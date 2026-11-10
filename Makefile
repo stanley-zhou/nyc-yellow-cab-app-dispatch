@@ -55,7 +55,13 @@ forecast:         ## Phase 2: LGBM grid (2023), rolling-origin backtests (2023 +
 shock:            ## Phase 3: frozen models 2024-07 -> 2026-09, rolling errors, drift monitors
 	$(PY) scripts/06_shock.py
 
-causal adapt report:
+causal:           ## Phase 4: speed/duration DiD (B1-B3), demand DiD + MDE + heterogeneity, A1/A3/A5, counterfactual
+	$(PY) scripts/07a_speed.py
+	$(PY) scripts/07b_demand.py
+	$(PY) scripts/07c_metrics.py
+	$(PY) scripts/07d_pretrend_size.py
+
+adapt report:
 	@echo "make $@: not implemented yet (added in its phase, see PLAN.md §5)"; exit 1
 
 all: data dbt forecast shock causal adapt figures report

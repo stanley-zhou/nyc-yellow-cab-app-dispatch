@@ -28,9 +28,17 @@ from taxi_shock.viz.figures import (
     f2_model_comparison,
     f2b_fan_chart,
     f3_error_over_time,
+    f4_event_study,
+    f4b_effect_map,
+    f4b_effect_map_html,
+    f4c_heterogeneity,
+    f4d_counterfactual_vs_did,
+    f4e_placebo_distribution,
+    f4f_speed_event_study,
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
+from taxi_shock.viz.style import PALETTE, tint
 
 
 def phase1(cfg: dict) -> None:
@@ -198,6 +206,169 @@ def phase3(cfg: dict) -> None:
     logging.info("wrote F3 to %s", figs)
 
 
+LEVEL_LABELS = {"weekday": "weekday", "weekend": "weekend", "do_cbd": "ends in CBD",
+                "do_non_cbd": "ends outside CBD", "dropoff_only_in_cbd": "dropoff only in CBD",
+                "pickup_in_cbd": "pickup in CBD", "outer_boroughs": "B+Q control",
+                "outer_boroughs_with_airports": "B+Q incl. airports"}
+
+
+def _label(level: str) -> str:
+    if level in LEVEL_LABELS:
+        return LEVEL_LABELS[level]
+    if level.startswith("h") and "_" in level:
+        a, b = level[1:].split("_")
+        return f"{a}-{b} h"
+    return level.replace("dist_t", "distance T").replace("fare_t", "fare T").replace(
+        "t1", "distance T1").replace("t2", "distance T2").replace("t3", "distance T3")
+
+
+def _pct_str(b: float) -> str:
+    """exp(b) - 1 as a signed percentage string (Phase-4 titles)."""
+    return f"{(np.exp(b) - 1) * 100:+.1f}%"
+
+
+def phase4(cfg: dict) -> None:
+    """F4, F4b (+ html), F4c, F4d, F4e, F4f from Phase-4 results; title numbers saved to
+    results/figure_stats_phase4.json."""
+    res, figs = path("results", cfg), path("figures", cfg)
+    if not (res / "did_static.json").exists() or not (res / "speed_did.json").exists():
+        logging.warning("Phase-4 results missing: F4 figures skipped")
+        return
+    policy = cfg["data"]["policy_date"]
+    sp = json.loads((res / "speed_did.json").read_text())["outcomes"]
+    pl = json.loads((res / "placebo.json").read_text())
+    es = pd.read_csv(res / "event_study.csv")
+    ses = pd.read_csv(res / "speed_event_study.csv")
+    month = es[(es["bins"] == "month")]
+    main_es = month[month["spec"] == "main"]
+    w_es = month[month["spec"] == "pre_volume_weighted_not_preregistered"]
+    p_f = pl["pretrend_tests"]["event_study_month"]["pretrend"]["p_F"]
+    yr = {lab: float(main_es.loc[main_es["k"].between(a, b), "coef"].mean())
+          for lab, (a, b) in {"2023": (-24, -13), "2024": (-12, -1), "post": (0, 99)}.items()}
+    stats: dict = {"source_files": ["results/did_static.json", "results/speed_did.json",
+                                    "results/event_study.csv", "results/speed_event_study.csv",
+                                    "results/placebo.json", "results/power_mde.json",
+                                    "results/speed_power.json", "results/heterogeneity.csv",
+                                    "results/speed_heterogeneity.csv",
+                                    "results/counterfactual.csv", "results/effect_map.csv"],
+                   "demand_mean_monthly_coef": yr, "demand_pretrend_p_F": p_f}
+    t4 = (f"Pre-registered demand event study, CBD vs donut control: mean coefficient "
+          f"{_pct_str(yr['2023'])} in 2023, {_pct_str(yr['2024'])} in 2024, "
+          f"{_pct_str(yr['post'])} after congestion pricing (pre-trend test p = {p_f:.1g})")
+    f4_event_study(main_es, policy, t4,
+                   "Monthly bins of log1p(weekly pickups) per zone; 38 CBD zones vs the donut "
+                   "control; zone and week FE, weather x treated; 95% CIs clustered by zone; "
+                   "reference: the week before 2025-01-05. Source: results/event_study.csv "
+                   "(spec main).", figs / "F4_event_study",
+                   "CBD pickups (log pts x 100)")
+
+    spd, dur = (sp[k]["main"]["terms"]["treated_post"] for k in ("log_mean_speed_mph",
+                                                                  "log_mean_duration_min"))
+    sp_f = sp["log_mean_speed_mph"]["event_study_month"]["pretrend"]["p_F"]
+    stats["speed"] = {"speed": spd, "duration": dur, "pretrend_p_F": sp_f}
+    t4f = (f"Within-CBD taxi trips: speed {_pct_str(spd['coef'])} [{_pct_str(spd['ci_lo'])}, "
+           f"{_pct_str(spd['ci_hi'])}], duration {_pct_str(dur['coef'])} (pre-registered "
+           f"DiD), but the monthly gap to the control is seasonal (pre-trend test p = {sp_f:.1g})")
+    sm = ses[ses["bins"] == "month"]
+    f4f_speed_event_study(
+        [(sm[sm["outcome"] == "log_mean_speed_mph"], "Speed (log pts x 100)"),
+         (sm[sm["outcome"] == "log_mean_duration_min"], "Duration (log pts x 100)")],
+        policy, t4f, "Pair-week means of trips with pickup and dropoff in the CBD vs pairs "
+        "within the donut control; pair and week FE, weather x treated, weighted by trips; 95% "
+        "CIs two-way clustered by pickup and dropoff zone. Source: "
+        "results/speed_event_study.csv.", figs / "F4f_speed_event_study")
+
+    em = pd.read_csv(res / "effect_map.csv")
+    min_pre = 50.0
+    cbd_rel = em.loc[em["is_cbd"] & (em["pre_mean_weekly"] >= min_pre),
+                     "relative_to_control_aggregate"]
+    stats["effect_map"] = {"cbd_median_relative": float(cbd_rel.median()),
+                           "min_pre_weekly": min_pre}
+    t4b = (f"CBD zones: median post/pre change in weekly pickups "
+           f"{_pct_str(float(cbd_rel.median()))} relative to the control group's aggregate change")
+    zones = load_zones(path("raw_lookup", cfg) / "taxi_zones.shp")
+    f4b_effect_map(zones, em, t4b, "Manhattan zones; log(mean weekly pickups after / in the 52 "
+                   "weeks before 2025-01-05) minus the same for the donut control's total "
+                   f"pickups. Hatched: < {min_pre:.0f} pickups per week before. Red outline: "
+                   "CBD. Source: results/effect_map.csv.", figs / "F4b_effect_map", min_pre)
+    f4b_effect_map_html(zones, em, t4b, figs / "F4b_effect_map.html")
+
+    het = pd.read_csv(res / "heterogeneity.csv")
+    sh = pd.read_csv(res / "speed_heterogeneity.csv")
+    panels = []
+    names = {"hour_band": "Demand: hour band", "day_type": "Demand: weekday / weekend",
+             "dropoff": "Demand: CBD pickups by dropoff", "distance_tercile":
+             "Demand: distance tercile", "fare_tercile": "Demand: fare tercile",
+             "pass_through": "Demand: pass-through (A1)"}
+    for cut, name in names.items():
+        d = het[het["cut"] == cut].assign(label=lambda x: x["level"].map(_label))
+        panels.append((name, d))
+    for cut, name in (("hour_band", "Speed: hour band"), ("dist_tercile",
+                                                          "Speed: distance tercile")):
+        d = sh[(sh["outcome"] == "log_mean_speed_mph") & (sh["cut"] == cut)]
+        panels.append((name, d.assign(label=d["level"].map(_label))))
+    dneg = int((het[het["cut"].isin(list(names)[:5])]["coef"] < 0).sum())
+    dn = int(het["cut"].isin(list(names)[:5]).sum())
+    spos = int((sh.loc[sh["outcome"] == "log_mean_speed_mph", "coef"] > 0).sum())
+    sn = int((sh["outcome"] == "log_mean_speed_mph").sum())
+    stats["heterogeneity"] = {"demand_negative": dneg, "demand_n": dn, "speed_positive": spos,
+                              "speed_n": sn}
+    t4c = (f"Pre-registered demand DiD is negative in {dneg} of {dn} trip subsets (same "
+           f"design, same pre-trend caveat); within-CBD speed estimates are positive in {spos} "
+           f"of {sn} hour bands and distance terciles")
+    f4c_heterogeneity(panels, t4c, "Static DiD (%) with 95% CIs on sub-panels; demand: "
+                      "log1p(weekly pickups of the subset) per zone, CBD vs donut control "
+                      "(pass-through: control-zone trips ending in the CBD vs ending outside "
+                      "it); speed: log mean trip speed of within-CBD vs within-control pairs. "
+                      "Sources: results/heterogeneity.csv, results/speed_heterogeneity.csv.",
+                      figs / "F4c_heterogeneity")
+
+    cf = pd.read_csv(res / "counterfactual.csv")
+    post = cf[~cf["in_sample"]]
+    cf_mean = float(post["mean_daily_rel"].mean())
+    stats["counterfactual"] = {"mean_post_monthly_rel": cf_mean,
+                               "did_main_post_mean": yr["post"],
+                               "did_weighted_post_mean": float(
+                                   w_es.loc[w_es["k"] >= 0, "coef"].mean())}
+    t4d = (f"After the policy, CBD pickups averaged {cf_mean * 100:+.1f}% against the frozen "
+           f"forecast, while the event-study paths say {_pct_str(yr['post'])} (pre-registered) and "
+           f"{_pct_str(stats['counterfactual']['did_weighted_post_mean'])} (volume-weighted)")
+    f4d_counterfactual_vs_did(
+        cf, [("DiD, pre-registered", main_es, PALETTE["cbd"]),
+             ("DiD, volume-weighted", w_es, tint(PALETTE["cbd"], 0.45))], policy, t4d,
+        "Counterfactual: mean over days of (actual - forecast) / forecast of CBD daily pickups, "
+        "frozen LightGBM (trained to 2024-12-31; 2024 months in-sample, lighter). DiD: monthly "
+        "event-study coefficients as exp(b) - 1; the volume-weighted path is not "
+        "pre-registered. Sources: results/counterfactual.csv, results/event_study.csv.",
+        figs / "F4d_counterfactual_vs_did")
+
+    dp = pd.read_csv(res / "demand_placebo_draws.csv")["coef"]
+    spl = pd.read_csv(res / "speed_placebo.csv")["coef"]
+    pw = json.loads((res / "power_mde.json").read_text())
+    spw = json.loads((res / "speed_power.json").read_text())
+    stats["permutation"] = {k: {"beta": v["real_beta"], "mde": v["mde"],
+                                "share": v["share_abs_ge_abs_beta"]}
+                            for k, v in (("demand", pw), ("speed", spw))}
+    t4e = (f"Permutation placebos: demand estimate {pw['real_beta']:+.3f} lies beyond "
+           f"{(1 - pw['share_abs_ge_abs_beta']) * 100:.0f}% of {pw['n_draws']} placebos (MDE "
+           f"{pw['mde']:.3f}); speed estimate {spw['real_beta']:+.3f}: "
+           f"{spw['share_abs_ge_abs_beta'] * 100:.1f}% of placebos as large (MDE "
+           f"{spw['mde']:.3f})")
+    f4e_placebo_distribution(
+        [("Demand: log1p weekly pickups, zone level", dp, pw["real_beta"], pw["mde"]),
+         ("Speed: log mean trip speed, pair level", spl, spw["real_beta"], spw["mde"])], t4e,
+        "Amendment 1 (A2): 500 draws on pre-policy weeks 2023-01 to 2025-01-04, each with a "
+        "random fake policy week and 38 random Manhattan zones as fake CBD; grey band = +- MDE "
+        "at 80% power / 5% size; red line = the real pre-registered estimate. Sources: "
+        "results/power_mde.json, results/speed_power.json.", figs / "F4e_placebo_distribution")
+    for k, v in (("t4", t4), ("t4b", t4b), ("t4c", t4c), ("t4d", t4d), ("t4e", t4e),
+                 ("t4f", t4f)):
+        stats[f"title_{k}"] = v
+    (res / "figure_stats_phase4.json").write_text(json.dumps(stats, indent=2, default=float)
+                                                  + "\n")
+    logging.info("wrote F4, F4b, F4c, F4d, F4e, F4f to %s", figs)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
@@ -214,6 +385,7 @@ def main() -> None:
     phase1(cfg)
     phase2(cfg)
     phase3(cfg)
+    phase4(cfg)
 
 
 if __name__ == "__main__":

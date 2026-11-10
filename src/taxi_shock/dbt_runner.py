@@ -47,6 +47,9 @@ def dbt_vars(cfg: dict[str, Any], yellow_glob: str | None = None) -> dict[str, A
         "week_start": str(cfg["panel"]["week_start"]),
         "hour_bands": [[int(lo), int(hi)] for lo, hi in cfg["panel"]["hour_bands"]],
         "distance_tercile_period": [str(d) for d in cfg["panel"]["distance_tercile_period"]],
+        "speed_window": [str(d) for d in cfg["speed"]["window"]],
+        "speed_tercile_period": [str(d) for d in cfg["speed"]["tercile_period"]],
+        "max_speed_mph": float(cfg["speed"]["max_speed_mph"]),
     }
 
 

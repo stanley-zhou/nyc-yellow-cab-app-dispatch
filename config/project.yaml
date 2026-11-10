@@ -41,6 +41,14 @@ shock:                                        # PLAN Phase 3: where the forecast
   rolling_bias:
     n_sigma: 2.0                              # PLAN: bias beyond 2 sigma ...
     consecutive_days: 7                       # ... for 7 consecutive days, same sign
+speed:                                        # Amendment 2 (B1-B3): trip duration and speed
+  window: ["2023-01-01", "2026-09-30"]        # = data.event_study_window
+  max_speed_mph: 65                           # fixed before any speed data were examined:
+                                              # NY's highest posted limit; faster = record error
+  tercile_period: ["2024-01-06", "2025-01-04"]  # distance terciles of the speed sample
+                                              # (B3: "fixed on 2024 quantiles"; = pre_period)
+  outcomes: [log_mean_speed_mph, log_mean_duration_min]   # pair-week means of trip values
+  cluster: [pu_zone_id, do_zone_id]           # two-way by pickup and dropoff zone (primary)
 causal:
   outcome: "log1p_pickups"
   unit: "zone_week"                           # primary; zone_day for heterogeneity
@@ -52,7 +60,23 @@ causal:
     manhattan_non_cbd_donut: {zone_groups: [manhattan_non_cbd], exclude_zones: [43, 140, 141, 142, 143, 237]}
     manhattan_non_cbd: {zone_groups: [manhattan_non_cbd], exclude_zones: []}
     outer_boroughs: {boroughs: [Brooklyn, Queens], exclude_airports: true, exclude_zones: []}
+    outer_boroughs_with_airports: {boroughs: [Brooklyn, Queens], exclude_airports: false, exclude_zones: []}   # PLAN heterogeneity: airports included
   cluster_se: "zone"
+  pre_weeks: 52                               # PLAN: static DiD pre = 52 weeks before
+  post_splits:                                # PLAN: persistence (week starts, inclusive)
+    post_2025_h1: ["2025-01-05", "2025-06-28"]
+    post_2025_h2: ["2025-06-29", "2025-12-27"]
+    post_2026: ["2025-12-28", "2026-09-30"]
+  placebo_week: "2024-01-07"                  # PLAN placebo in time, on 2023-2024 data only
+  placebo_window: ["2023-01-01", "2024-12-31"]
+  weather_controls: [mean_temp_f, total_precip_in]   # enter as x treated (week FE absorb levels)
+  permutation:                                # Amendment 1 (A2), pre-policy data only
+    draws: 500
+    window: ["2023-01-01", "2025-01-04"]
+    min_side_weeks: 26                        # fake week leaves >= 26 weeks on each side
+    pre_weeks: 52                             # placebo static window: <= 52 weeks before
+    size: 0.05
+    power: 0.8
 
 # ---- Additional keys (not in PLAN §4); each one has a DECISIONS.md line ----
 models:                                       # PLAN Phase 2

@@ -146,3 +146,32 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: "between 1 and 7"
+
+  - name: fct_weekly_pair_speed
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [pu_zone_id, do_zone_id, week_start, hour_band, dist_tercile]
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "n_trips = n_excl_duration + n_excl_distance + n_excl_speed + n_used"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "n_used = 0 or (sum_speed_mph / n_used between 0 and {{ var('max_speed_mph') }})"
+    columns:
+      - name: hour_band
+        data_tests: [not_null]
+      - name: dist_tercile
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['t1', 't2', 't3', 'unknown']
+
+  - name: fct_weekly_zone_trip_stats
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, week_start]
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "n_trips = pickups_fare_t1 + pickups_fare_t2 + pickups_fare_t3 + pickups_fare_unknown"
