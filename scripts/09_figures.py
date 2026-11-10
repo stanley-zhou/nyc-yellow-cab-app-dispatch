@@ -16,6 +16,7 @@ import argparse
 import json
 import logging
 
+import numpy as np
 import pandas as pd
 
 from taxi_shock.config import load_config, path
@@ -26,6 +27,7 @@ from taxi_shock.viz.figures import (
     f1c_vendor_weekly,
     f2_model_comparison,
     f2b_fan_chart,
+    f3_error_over_time,
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
@@ -133,6 +135,69 @@ def phase2(cfg: dict) -> None:
     logging.info("wrote F2, F2b to %s", figs)
 
 
+def _pct(log_ratio: float) -> float:
+    return (float(np.exp(log_ratio)) - 1) * 100
+
+
+def phase3(cfg: dict) -> None:
+    """F3 from results/shock_errors.csv and results/drift_detection.json; title numbers saved
+    to results/figure_stats_phase3.json."""
+    res, figs = path("results", cfg), path("figures", cfg)
+    if not (res / "shock_errors.csv").exists():
+        logging.warning("results/shock_errors.csv missing: F3 skipped")
+        return
+    sh = cfg["shock"]
+    det = json.loads((res / "drift_detection.json").read_text())
+    prim = det["primary"]
+    t = pd.read_csv(res / "shock_errors.csv", parse_dates=["date"])
+    sel = t[(t["model"] == prim["model"]) & (t["series"] == prim["series"])
+            & (t["window_days"] == sh["rolling_days"])]
+    policy = pd.Timestamp(cfg["data"]["policy_date"])
+    first_full = policy + pd.Timedelta(days=sh["rolling_days"] - 1)   # first all-post window
+    pre_end = policy - pd.Timedelta(days=1)                            # last all-pre window
+    at = sel.set_index(["zone_group", "date"])
+    stats = {"source_files": ["results/shock_errors.csv", "results/drift_detection.json"],
+             "model": prim["model"], "series": prim["series"],
+             "first_post_window_end": str(first_full.date()),
+             "last_pre_window_end": str(pre_end.date())}
+    for g in ("cbd", "non_cbd"):
+        stats[g] = {
+            "wape_last_pre_window": round(float(at.loc[(g, pre_end), "wape"]), 4),
+            "wape_first_post_window": round(float(at.loc[(g, first_full), "wape"]), 4),
+            "actual_vs_forecast_pct_first_post_window": round(
+                _pct(at.loc[(g, first_full), "log_actual_over_forecast"]), 2),
+            "cusum": prim["groups"][g]["cusum"]["first_alarm_on_or_after_policy"],
+            "rolling_bias": prim["groups"][g]["rolling_bias"]["first_alarm_on_or_after_policy"]}
+    c, n = stats["cbd"], stats["non_cbd"]
+
+    def gap(v: float) -> str:
+        return f"{abs(v):.1f}% {'below' if v < 0 else 'above'}"
+
+    title = (f"First four weeks of congestion pricing: CBD pickups "
+             f"{gap(c['actual_vs_forecast_pct_first_post_window'])} the frozen forecast, "
+             f"non-CBD {gap(n['actual_vs_forecast_pct_first_post_window'])}")
+    if c["cusum"]:
+        title += f"; CUSUM alarm for the CBD after {c['cusum']['delay_days']} days"
+    else:
+        title += "; no CUSUM alarm for the CBD"
+    markers = []
+    for key, name in (("cusum", "CUSUM"), ("rolling_bias", "rolling-bias rule")):
+        a = c[key]
+        if a:
+            markers.append((a["date"], f"{name} alarm (CBD), day {a['delay_days']}"))
+    note = (f"LightGBM day-ahead forecasts: Phase-2 out-of-sample backtest (monthly refits) "
+            f"before {sh['monitor_start']}, then the model frozen on data to "
+            f"{sh['frozen_train_end']}. Trailing {sh['rolling_days']}-day windows; pre-policy "
+            "segments lighter. Non-CBD = every modeled zone outside the CBD. Monitors: daily "
+            "log(actual/forecast) standardized on 2024. Sources: results/shock_errors.csv, "
+            "results/drift_detection.json.")
+    stats["title"] = title
+    f3_error_over_time(sel, cfg["data"]["policy_date"], markers, title, note,
+                       figs / "F3_error_over_time")
+    (res / "figure_stats_phase3.json").write_text(json.dumps(stats, indent=2) + "\n")
+    logging.info("wrote F3 to %s", figs)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
@@ -148,6 +213,7 @@ def main() -> None:
         return
     phase1(cfg)
     phase2(cfg)
+    phase3(cfg)
 
 
 if __name__ == "__main__":

@@ -25,6 +25,22 @@ forecast:
     refit: monthly
     windows: ["expanding", "sliding_24m"]
 
+shock:                                        # PLAN Phase 3: where the forecaster breaks
+  frozen_train_end: "2024-12-31"              # primary LGBM trained once through this day
+  forecast_window: ["2024-07-01", "2026-09-30"]   # day-ahead origins, no retraining
+  monitor_start: "2025-01-01"                 # frozen model deployed; monitors start here
+  calibration_period: ["2024-01-01", "2024-12-31"]  # out-of-sample Phase-2 backtest residuals
+  rolling_days: 28                            # rolling 4-week WAPE and bias
+  groups: [cbd, non_cbd, manhattan_non_cbd, airports, other, all]   # non_cbd = every modeled
+                                                                    # zone outside the CBD
+  monitored_groups: [cbd, non_cbd]            # drift monitors: CBD (PLAN) and its contrast
+  cusum:
+    k: 0.5                                    # reference value (sigma units): detects ~1 sigma
+    max_false_alarms: 1                       # PLAN: <= 1 false alarm per year on 2024
+    h_grid: [0.5, 30.0, 0.05]                 # smallest h on this grid meeting the rule
+  rolling_bias:
+    n_sigma: 2.0                              # PLAN: bias beyond 2 sigma ...
+    consecutive_days: 7                       # ... for 7 consecutive days, same sign
 causal:
   outcome: "log1p_pickups"
   unit: "zone_week"                           # primary; zone_day for heterogeneity

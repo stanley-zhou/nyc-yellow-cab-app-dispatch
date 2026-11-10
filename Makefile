@@ -4,10 +4,10 @@ SHELL := /bin/bash
 PY    := .venv/bin/python
 PHASE ?= 0
 
-.PHONY: help setup smoke smoke-clean data dbt probes chronos-bundle chronos-import forecast causal adapt figures report all verify lint test clean-smoke
+.PHONY: help setup smoke smoke-clean data dbt probes chronos-bundle chronos-import forecast shock causal adapt figures report all verify lint test clean-smoke
 
 help:
-	@echo "setup | smoke | smoke-clean | data | dbt | probes | forecast | causal | adapt | figures | report | all | verify PHASE=N | lint | test"
+	@echo "setup | smoke | smoke-clean | data | dbt | probes | forecast | shock | causal | adapt | figures | report | all | verify PHASE=N | lint | test"
 
 setup:            ## Python 3.12 venv via uv (system Python 3.14 is not supported)
 	uv python install 3.12
@@ -52,10 +52,13 @@ forecast:         ## Phase 2: LGBM grid (2023), rolling-origin backtests (2023 +
 	$(PY) scripts/04_backtest.py --full
 	$(PY) scripts/04b_evaluate.py
 
+shock:            ## Phase 3: frozen models 2024-07 -> 2026-09, rolling errors, drift monitors
+	$(PY) scripts/06_shock.py
+
 causal adapt report:
 	@echo "make $@: not implemented yet (added in its phase, see PLAN.md §5)"; exit 1
 
-all: data dbt forecast causal adapt figures report
+all: data dbt forecast shock causal adapt figures report
 
 verify:           ## make verify PHASE=N
 	$(PY) scripts/verify.py --phase $(PHASE)

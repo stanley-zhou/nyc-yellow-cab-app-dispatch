@@ -1,7 +1,9 @@
 # Forecasting Under a Policy Shock: NYC Yellow-Taxi Demand and Congestion Pricing
 
-**Status: Phase 2 (forecasting before the shock) built, under review.** Backtest metrics are in
-`results/backtest_2024.csv` and `results/forecast_summary.json`; no causal findings yet. This README
+**Status: Phase 3 (where the forecaster breaks) built, under review; Phase 2 passed review.**
+Backtest metrics are in `results/backtest_2024.csv` and `results/forecast_summary.json`, the
+post-policy error series and drift monitors in `results/shock_errors.csv` and
+`results/drift_detection.json`; no causal findings yet. This README
 is rewritten in Phase 7 with the summary, figures and limitations; until then it only explains how
 to run the code.
 
@@ -43,6 +45,7 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `figures` | every figure whose phase is implemented (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b), built from `results/` only |
 | `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, Open-Meteo offset |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
+| `shock` | Phase 3: LightGBM frozen on data to 2024-12-31 and seasonal naive, day-ahead 2024-07 → 2026-09 without retraining (with Chronos-2 zero-shot), rolling 4-week errors by zone group, CUSUM and rolling-bias drift monitors (`06_shock.py`) |
 | `forecast` | Phase 2: LightGBM grid on 2023 (`04a_lgbm_tune.py`), rolling-origin backtests of every trained model for 2023 and 2024 (`04_backtest.py --full`), conformal calibration and metrics (`04b_evaluate.py`); Chronos-2 runs on Colab (`chronos-bundle` / `chronos-import`) |
 | `causal`, `adapt`, `report`, `all` | added in their phases; they fail with a message until then |
 

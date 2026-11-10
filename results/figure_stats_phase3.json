@@ -1,0 +1,33 @@
+{
+  "source_files": [
+    "results/shock_errors.csv",
+    "results/drift_detection.json"
+  ],
+  "model": "lgbm_quantile",
+  "series": "monitored",
+  "first_post_window_end": "2025-02-01",
+  "last_pre_window_end": "2025-01-04",
+  "cbd": {
+    "wape_last_pre_window": 0.1904,
+    "wape_first_post_window": 0.1877,
+    "actual_vs_forecast_pct_first_post_window": 6.29,
+    "cusum": {
+      "date": "2025-01-19",
+      "side": "up",
+      "delay_days": 14
+    },
+    "rolling_bias": null
+  },
+  "non_cbd": {
+    "wape_last_pre_window": 0.2061,
+    "wape_first_post_window": 0.1773,
+    "actual_vs_forecast_pct_first_post_window": 5.34,
+    "cusum": {
+      "date": "2026-01-25",
+      "side": "down",
+      "delay_days": 385
+    },
+    "rolling_bias": null
+  },
+  "title": "First four weeks of congestion pricing: CBD pickups 6.3% above the frozen forecast, non-CBD 5.3% above; CUSUM alarm for the CBD after 14 days"
+}

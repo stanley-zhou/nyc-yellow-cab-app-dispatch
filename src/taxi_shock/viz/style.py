@@ -46,8 +46,9 @@ def tint(hex_color: str, amount: float = 0.55) -> str:
     return mpl.colors.to_hex((r + (1 - r) * amount, g + (1 - g) * amount, b + (1 - b) * amount))
 
 
-def policy_line(ax: Axes, label: bool = True) -> None:
-    """Dashed vertical line at the policy date, drawn only if the date is inside the x-range."""
+def policy_line(ax: Axes, label: bool = True, label_y: float = 1.0) -> None:
+    """Dashed vertical line at the policy date, drawn only if the date is inside the x-range;
+    the label sits at `label_y` (axes fraction, top-aligned) next to the line."""
     date = pd.Timestamp(load_config()["data"]["policy_date"])
     x = mdates.date2num(date)
     lo, hi = ax.get_xlim()
@@ -57,7 +58,7 @@ def policy_line(ax: Axes, label: bool = True) -> None:
     if label:
         # label on the side of the line with more room, so it never runs past the axes
         right = (x - lo) / (hi - lo) < 0.6
-        ax.annotate(f"Congestion pricing starts {date.date().isoformat()}", xy=(x, 1.0),
+        ax.annotate(f"Congestion pricing starts {date.date().isoformat()}", xy=(x, label_y),
                     xycoords=("data", "axes fraction"), xytext=(4 if right else -4, -4),
                     textcoords="offset points", ha="left" if right else "right", va="top",
                     fontsize=8.5, color=PALETTE["text"])

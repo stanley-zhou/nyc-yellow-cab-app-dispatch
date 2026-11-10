@@ -1,0 +1,221 @@
+{
+  "generated_utc": "2026-11-10T01:03:51+00:00",
+  "policy_date": "2025-01-05",
+  "primary": {
+    "model": "lgbm_quantile",
+    "series": "monitored",
+    "note": "Phase-2 out-of-sample backtest forecasts (expanding, monthly refits) before monitor_start, the frozen model from it",
+    "groups": {
+      "cbd": {
+        "series": "daily log(sum actual / sum forecast) over the group's modeled zones",
+        "calibration": {
+          "period": [
+            "2024-01-01",
+            "2024-12-31"
+          ],
+          "n_days": 366,
+          "mean": 0.013963,
+          "sd": 0.086679
+        },
+        "monitoring_period": [
+          "2025-01-01",
+          "2026-09-30"
+        ],
+        "cusum": {
+          "k": 0.5,
+          "h": 9.15,
+          "h_rule": "smallest h on the grid [0.5, 30.0, 0.05] with <= 1 alarm(s) over the calibration period",
+          "false_alarms_in_calibration": 1,
+          "first_alarm_on_or_after_policy": {
+            "date": "2025-01-19",
+            "side": "up",
+            "delay_days": 14
+          },
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 3,
+          "alarms": [
+            {
+              "date": "2025-01-19",
+              "side": "up"
+            },
+            {
+              "date": "2026-01-26",
+              "side": "down"
+            },
+            {
+              "date": "2026-02-23",
+              "side": "down"
+            }
+          ]
+        },
+        "rolling_bias": {
+          "n_sigma": 2.0,
+          "consecutive_days": 7,
+          "false_alarms_in_calibration": 0,
+          "first_alarm_on_or_after_policy": null,
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 0,
+          "alarms": []
+        }
+      },
+      "non_cbd": {
+        "series": "daily log(sum actual / sum forecast) over the group's modeled zones",
+        "calibration": {
+          "period": [
+            "2024-01-01",
+            "2024-12-31"
+          ],
+          "n_days": 366,
+          "mean": 0.021326,
+          "sd": 0.075647
+        },
+        "monitoring_period": [
+          "2025-01-01",
+          "2026-09-30"
+        ],
+        "cusum": {
+          "k": 0.5,
+          "h": 8.35,
+          "h_rule": "smallest h on the grid [0.5, 30.0, 0.05] with <= 1 alarm(s) over the calibration period",
+          "false_alarms_in_calibration": 1,
+          "first_alarm_on_or_after_policy": {
+            "date": "2026-01-25",
+            "side": "down",
+            "delay_days": 385
+          },
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 2,
+          "alarms": [
+            {
+              "date": "2026-01-25",
+              "side": "down"
+            },
+            {
+              "date": "2026-02-23",
+              "side": "down"
+            }
+          ]
+        },
+        "rolling_bias": {
+          "n_sigma": 2.0,
+          "consecutive_days": 7,
+          "false_alarms_in_calibration": 0,
+          "first_alarm_on_or_after_policy": null,
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 0,
+          "alarms": []
+        }
+      }
+    }
+  },
+  "chronos2_primary_variant": {
+    "model": "chronos2_weather_past",
+    "series": "zero_shot",
+    "groups": {
+      "cbd": {
+        "series": "daily log(sum actual / sum forecast) over the group's modeled zones",
+        "calibration": {
+          "period": [
+            "2024-01-01",
+            "2024-12-31"
+          ],
+          "n_days": 366,
+          "mean": 0.015495,
+          "sd": 0.088508
+        },
+        "monitoring_period": [
+          "2025-01-01",
+          "2026-09-30"
+        ],
+        "cusum": {
+          "k": 0.5,
+          "h": 8.45,
+          "h_rule": "smallest h on the grid [0.5, 30.0, 0.05] with <= 1 alarm(s) over the calibration period",
+          "false_alarms_in_calibration": 1,
+          "first_alarm_on_or_after_policy": {
+            "date": "2025-12-25",
+            "side": "down",
+            "delay_days": 354
+          },
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 3,
+          "alarms": [
+            {
+              "date": "2025-12-25",
+              "side": "down"
+            },
+            {
+              "date": "2026-01-25",
+              "side": "down"
+            },
+            {
+              "date": "2026-02-23",
+              "side": "down"
+            }
+          ]
+        },
+        "rolling_bias": {
+          "n_sigma": 2.0,
+          "consecutive_days": 7,
+          "false_alarms_in_calibration": 0,
+          "first_alarm_on_or_after_policy": null,
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 0,
+          "alarms": []
+        }
+      },
+      "non_cbd": {
+        "series": "daily log(sum actual / sum forecast) over the group's modeled zones",
+        "calibration": {
+          "period": [
+            "2024-01-01",
+            "2024-12-31"
+          ],
+          "n_days": 366,
+          "mean": 0.021441,
+          "sd": 0.083115
+        },
+        "monitoring_period": [
+          "2025-01-01",
+          "2026-09-30"
+        ],
+        "cusum": {
+          "k": 0.5,
+          "h": 9.0,
+          "h_rule": "smallest h on the grid [0.5, 30.0, 0.05] with <= 1 alarm(s) over the calibration period",
+          "false_alarms_in_calibration": 1,
+          "first_alarm_on_or_after_policy": {
+            "date": "2025-12-25",
+            "side": "down",
+            "delay_days": 354
+          },
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 3,
+          "alarms": [
+            {
+              "date": "2025-12-25",
+              "side": "down"
+            },
+            {
+              "date": "2026-01-25",
+              "side": "down"
+            },
+            {
+              "date": "2026-02-23",
+              "side": "down"
+            }
+          ]
+        },
+        "rolling_bias": {
+          "n_sigma": 2.0,
+          "consecutive_days": 7,
+          "false_alarms_in_calibration": 0,
+          "first_alarm_on_or_after_policy": null,
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 0,
+          "alarms": []
+        }
+      }
+    }
+  }
+}
