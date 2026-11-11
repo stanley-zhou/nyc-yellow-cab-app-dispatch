@@ -82,6 +82,11 @@
   - results/zone_growth.csv
   - results/pretrend_test_size.json
   - results/figure_stats_phase4.json
+  - results/app_dispatch_codes.csv
+  - results/app_dispatch_share.csv
+  - results/app_dispatch_summary.json
+  - reports/figures/F4g_app_dispatch_map.png
+  - results/figure_stats_phase4b.json
 5:
   - results/adaptation.csv
   - reports/figures/F5_adaptation.png

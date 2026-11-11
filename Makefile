@@ -60,6 +60,7 @@ causal:           ## Phase 4: speed/duration DiD (B1-B3), demand DiD + MDE + het
 	$(PY) scripts/07b_demand.py
 	$(PY) scripts/07c_metrics.py
 	$(PY) scripts/07d_pretrend_size.py
+	$(PY) scripts/07e_app_dispatch.py
 
 adapt report:
 	@echo "make $@: not implemented yet (added in its phase, see PLAN.md §5)"; exit 1

@@ -35,6 +35,7 @@ from taxi_shock.viz.figures import (
     f4d_counterfactual_vs_did,
     f4e_placebo_distribution,
     f4f_speed_event_study,
+    f4g_app_dispatch,
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
@@ -369,6 +370,43 @@ def phase4(cfg: dict) -> None:
     logging.info("wrote F4, F4b, F4c, F4d, F4e, F4f to %s", figs)
 
 
+def phase4b(cfg: dict) -> None:
+    """Amendment 3 figures whose results exist: F4g (C1)."""
+    res, figs = path("results", cfg), path("figures", cfg)
+    stats: dict = {}
+    f = res / "app_dispatch_summary.json"
+    if f.exists():
+        sm = json.loads(f.read_text())
+        share = pd.read_csv(res / "app_dispatch_share.csv")
+        g, c = sm["groups"], sm["correlation_growth_vs_app_share"]
+        fast = share[share["is_donut_control"]].nlargest(5, "growth_log")
+        stats["c1"] = {"cbd_pooled": g["cbd"]["share_app_pooled"],
+                       "donut_pooled": g["donut_control"]["share_app_pooled"],
+                       "cbd_median_zone": g["cbd"]["share_app_median_zone"],
+                       "fastest_donut_zones_share_range": [float(fast["share_app"].min()),
+                                                           float(fast["share_app"].max())],
+                       "r_manhattan": c["manhattan"]["pearson_r"], "r_all": c["all_zones"][
+                           "pearson_r"]}
+        t = (f"The fastest-growing donut-control zones are "
+             f"{fast['share_app'].min() * 100:.0f}-{fast['share_app'].max() * 100:.0f}% "
+             f"Uber/Lyft-dispatched vs a CBD median of "
+             f"{g['cbd']['share_app_median_zone'] * 100:.0f}%; growth vs app share "
+             f"r = {c['manhattan']['pearson_r']:.2f} in Manhattan")
+        stats["c1"]["title"] = t
+        zones = load_zones(path("raw_lookup", cfg) / "taxi_zones.shp")
+        f4g_app_dispatch(zones, share, t,
+                         f"request_source of yellow records {sm['months'][0]} to "
+                         f"{sm['months'][1]} (HV0003 Uber, HV0005 Lyft from 2026-08; other codes "
+                         f"undocumented, not counted); hatched: < {sm['min_trips']} records. "
+                         "Growth: log of 2025 / 2023 mean weekly pickups (zones with >= "
+                         f"{sm['min_weekly_base']} in 2023). Sources: "
+                         "results/app_dispatch_share.csv, results/app_dispatch_summary.json.",
+                         figs / "F4g_app_dispatch_map")
+    if stats:
+        (res / "figure_stats_phase4b.json").write_text(json.dumps(stats, indent=2) + "\n")
+        logging.info("wrote Phase-4b figures: %s", ", ".join(stats))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
@@ -386,6 +424,7 @@ def main() -> None:
     phase2(cfg)
     phase3(cfg)
     phase4(cfg)
+    phase4b(cfg)
 
 
 if __name__ == "__main__":

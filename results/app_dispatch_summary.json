@@ -1,0 +1,66 @@
+{
+  "generated_utc": "2026-11-11T08:22:49+00:00",
+  "months": [
+    "2026-06",
+    "2026-09"
+  ],
+  "app_codes": {
+    "HV0003": "uber",
+    "HV0005": "lyft"
+  },
+  "codes_note": "request_source is not in the yellow data dictionary (2025-03-25); HV0003 = Uber, HV0005 = Lyft per the HVFHS dictionary; other codes undocumented (results/app_dispatch_codes.csv)",
+  "groups": {
+    "cbd": {
+      "zones": 38,
+      "records": 8427202,
+      "share_app_pooled": 0.24011694510230086,
+      "share_app_median_zone": 0.27207020014583294
+    },
+    "donut_control": {
+      "zones": 20,
+      "records": 2342439,
+      "share_app_pooled": 0.304381031907341,
+      "share_app_median_zone": 0.5397708844168856
+    },
+    "manhattan_non_cbd_all": {
+      "zones": 26,
+      "records": 4325458,
+      "share_app_pooled": 0.23783701055472045,
+      "share_app_median_zone": 0.37580679594087485
+    },
+    "outer_boroughs_brooklyn_queens": {
+      "zones": 105,
+      "records": 744114,
+      "share_app_pooled": 0.6523126832716493,
+      "share_app_median_zone": 0.7128639882049392
+    },
+    "airports": {
+      "zones": 3,
+      "records": 983595,
+      "share_app_pooled": 7.523421733538702e-05,
+      "share_app_median_zone": 5.1308872793718474e-05
+    }
+  },
+  "correlation_growth_vs_app_share": {
+    "all_zones": {
+      "n": 200,
+      "pearson_r": 0.8997752147207099,
+      "pearson_p": 3.0653050799696985e-73,
+      "spearman_rho": 0.8518337958448962,
+      "spearman_p": 1.6544431544606163e-57
+    },
+    "manhattan": {
+      "n": 63,
+      "pearson_r": 0.9190677862394994,
+      "pearson_p": 2.3705382309526583e-26,
+      "spearman_rho": 0.9067300307219661,
+      "spearman_p": 1.494462616529636e-24
+    }
+  },
+  "growth_years": [
+    2023,
+    2025
+  ],
+  "min_trips": 500,
+  "min_weekly_base": 10
+}

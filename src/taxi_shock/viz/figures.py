@@ -17,6 +17,7 @@ import pandas as pd
 from taxi_shock.viz.style import (
     DIVERGING_CMAP,
     PALETTE,
+    SEQUENTIAL_CMAP,
     SIZES,
     direct_labels,
     policy_line,
@@ -528,6 +529,47 @@ def f4e_placebo_distribution(panels: list[tuple[str, pd.Series, float, float]], 
         hi = max(draws.max(), beta, mde)
         pad = (hi - lo) * 0.08
         ax.set_xlim(lo - pad, hi + pad)
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f4g_app_dispatch(zones, share: pd.DataFrame, title: str, note: str,
+                     out_base: Path) -> list[Path]:
+    """F4g (Amendment 3, C1): left, map of the app-dispatch share (Uber + Lyft) by pickup zone,
+    zones without enough records hatched, CBD outlined; right, 2023->2025 growth of mean weekly
+    pickups vs the app share (CBD accent, donut control grey, other zones light)."""
+    from taxi_shock.viz.maps import NO_DATA_COLOR, draw_boundary
+
+    use_style()
+    fig, (ax, sx) = plt.subplots(1, 2, figsize=SIZES["small_multiples"], layout="constrained",
+                                 gridspec_kw={"width_ratios": [1.0, 1.15]})
+    gdf = zones.merge(share, on="zone_id", how="left")
+    ok = gdf["share_app"].notna()
+    norm = mpl.colors.Normalize(vmin=0, vmax=1)
+    gdf[~ok].plot(ax=ax, facecolor=NO_DATA_COLOR, edgecolor="white", hatch="////",
+                  linewidth=0.2)
+    gdf[ok].plot(ax=ax, column="share_app", cmap=SEQUENTIAL_CMAP, norm=norm, edgecolor="white",
+                 linewidth=0.2)
+    cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=SEQUENTIAL_CMAP), ax=ax,
+                      fraction=0.04, pad=0.01, shrink=0.6)
+    cb.set_label("Uber + Lyft share")
+    cb.outline.set_visible(False)
+    draw_boundary(ax, zones, share.loc[share["is_cbd"], "zone_id"].tolist())
+    ax.set_axis_off()
+    ax.set_aspect("equal")
+    d = share.dropna(subset=["share_app", "growth_log"])
+    groups = [(~d["is_cbd"] & ~d["is_donut_control"], "Other zones", tint(PALETTE["non_cbd"], 0.6)),
+              (d["is_donut_control"], "Donut control", PALETTE["non_cbd"]),
+              (d["is_cbd"], "CBD", PALETTE["cbd"])]
+    for sel, label, color in groups:
+        sx.scatter(d.loc[sel, "share_app"] * 100, d.loc[sel, "growth_log"], s=18, color=color,
+                   label=label, edgecolor="white", linewidth=0.4)
+    sx.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
+    sx.set_xlabel("Uber + Lyft share of yellow trips, Jun-Sep 2026 (%)")
+    sx.set_ylabel("Growth of mean weekly pickups 2023 to 2025 (log)")
+    sx.legend(frameon=False, fontsize=8, loc="upper left")
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")

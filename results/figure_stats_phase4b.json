@@ -1,0 +1,14 @@
+{
+  "c1": {
+    "cbd_pooled": 0.24011694510230086,
+    "donut_pooled": 0.304381031907341,
+    "cbd_median_zone": 0.27207020014583294,
+    "fastest_donut_zones_share_range": [
+      0.705214,
+      0.834304
+    ],
+    "r_manhattan": 0.9190677862394994,
+    "r_all": 0.8997752147207099,
+    "title": "The fastest-growing donut-control zones are 71-83% Uber/Lyft-dispatched vs a CBD median of 27%; growth vs app share r = 0.92 in Manhattan"
+  }
+}
