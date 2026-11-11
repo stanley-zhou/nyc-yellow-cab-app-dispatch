@@ -67,6 +67,7 @@
   - reports/figures/F4f_speed_event_study.png
   - reports/figures/F4b_effect_map.html
   - results/speed_did.json
+  - results/speed_did_outer.json
   - results/speed_event_study.csv
   - results/speed_heterogeneity.csv
   - results/speed_exclusions.csv

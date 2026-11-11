@@ -20,26 +20,51 @@
   "demand_pretrend_p_F": 2.2426206202420317e-18,
   "speed": {
     "speed": {
-      "coef": 0.018954577256015764,
-      "se": 0.008248914444567861,
-      "ci_lo": 0.002787002033110532,
-      "ci_hi": 0.035122152478921,
-      "pvalue": 0.025134495425094716,
-      "pct": 0.01913535564169438,
-      "pct_ci_lo": 0.0027908893337428528,
-      "pct_ci_hi": 0.03574622004094614
+      "coef": 0.018954577256015768,
+      "se": 0.008248914444567866,
+      "ci_lo": 0.002787002033110525,
+      "ci_hi": 0.03512215247892101,
+      "pvalue": 0.025134495425094938,
+      "pct": 0.019135355641694385,
+      "pct_ci_lo": 0.002790889333742846,
+      "pct_ci_hi": 0.03574622004094615
     },
     "duration": {
-      "coef": -0.02431858388180353,
+      "coef": -0.02431858388180354,
       "se": 0.007600252086126309,
-      "ci_lo": -0.03921480424403651,
-      "ci_hi": -0.009422363519570551,
+      "ci_lo": -0.03921480424403652,
+      "ci_hi": -0.009422363519570561,
       "pvalue": 0.002215010333438183,
-      "pct": -0.024025269594119856,
-      "pct_ci_lo": -0.03845585680124767,
-      "pct_ci_hi": -0.009378112145661503
+      "pct": -0.024025269594119866,
+      "pct_ci_lo": -0.038455856801247676,
+      "pct_ci_hi": -0.009378112145661513
     },
-    "pretrend_p_F": 1.3244292424785942e-32
+    "pretrend_p_F": 1.3244292422983798e-32
+  },
+  "speed_outer": {
+    "speed": {
+      "coef": -0.04049978442353905,
+      "se": 0.009289561683232953,
+      "ci_lo": -0.058706990754838914,
+      "ci_hi": -0.02229257809223918,
+      "pvalue": 2.2848355168747503e-05,
+      "pct": -0.03969062846851358,
+      "pct_ci_lo": -0.05701696857233812,
+      "pct_ci_hi": -0.022045934744964944
+    },
+    "speed_seasonality": {
+      "coef": -0.055370124906599635,
+      "se": 0.009263689395877005,
+      "ci_lo": -0.07352662248648417,
+      "ci_hi": -0.0372136273267151,
+      "pvalue": 1.3605421234075266e-08,
+      "pct": -0.053865104950840105,
+      "pct_ci_lo": -0.07088858979370113,
+      "pct_ci_hi": -0.03652971021965818
+    },
+    "pretrend_p_F_hotelling": 5.932989059304112e-46,
+    "pre_first_month_coef": 0.143508,
+    "pre_last_month_coef": -0.0266322
   },
   "effect_map": {
     "cbd_median_relative": -0.057351650000000004,
@@ -63,8 +88,8 @@
       "share": 0.0
     },
     "speed": {
-      "beta": 0.018954577256015764,
-      "mde": 0.027536914426779305,
+      "beta": 0.018954577256015768,
+      "mde": 0.0275369144267793,
       "share": 0.064
     }
   },
@@ -73,5 +98,5 @@
   "title_t4c": "Pre-registered demand DiD is negative in 15 of 15 trip subsets (same design, same pre-trend caveat); within-CBD speed estimates are positive in 8 of 8 hour bands and distance terciles",
   "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the event-study paths say -40.5% (pre-registered) and -11.3% (volume-weighted)",
   "title_t4e": "Permutation placebos: demand estimate -0.425 lies beyond 100% of 500 placebos (MDE 0.101); speed estimate +0.019: 6.4% of placebos as large (MDE 0.028)",
-  "title_t4f": "Within-CBD taxi trips: speed +1.9% [+0.3%, +3.6%], duration -2.4% (pre-registered DiD), but the monthly gap to the control is seasonal (pre-trend test p = 1e-32)"
+  "title_t4f": "Within-CBD taxi speed: +1.9% vs the Manhattan donut, -4.0% vs Brooklyn/Queens; but the Brooklyn/Queens gap already fell from +14 to -3 log pts before the policy (pre-trend p = 6e-46), and both comparisons fail the pre-trend test"
 }

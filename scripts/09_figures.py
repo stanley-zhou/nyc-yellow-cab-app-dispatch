@@ -274,11 +274,15 @@ def phase4(cfg: dict) -> None:
     so_f = so["event_study_month"]["pretrend"]["p_F_hotelling"]
     stats["speed_outer"] = {"speed": so_m, "speed_seasonality": so_s,
                             "pretrend_p_F_hotelling": so_f}
-    t4f = (f"Within-CBD taxi trips vs Brooklyn/Queens trips: speed {_pct_str(so_m['coef'])} "
-           f"[{_pct_str(so_m['ci_lo'])}, {_pct_str(so_m['ci_hi'])}] "
-           f"({_pct_str(so_s['coef'])} with CBD-specific seasonality); against the Manhattan "
-           f"donut control {_pct_str(spd['coef'])}")
     sm = ses[ses["bins"] == "month"]
+    om = sm[(sm["control"] == "outer") & (sm["outcome"] == "log_mean_speed_mph")].sort_values("k")
+    pre_first, pre_last = (float(om.loc[om["k"] < 0, "coef"].iloc[i]) for i in (0, -1))
+    stats["speed_outer"].update({"pre_first_month_coef": pre_first,
+                                 "pre_last_month_coef": pre_last})
+    t4f = (f"Within-CBD taxi speed: {_pct_str(spd['coef'])} vs the Manhattan donut, "
+           f"{_pct_str(so_m['coef'])} vs Brooklyn/Queens; but the Brooklyn/Queens gap already "
+           f"fell from {pre_first * 100:+.0f} to {pre_last * 100:+.0f} log pts before the policy "
+           f"(pre-trend p = {so_f:.0e}), and both comparisons fail the pre-trend test")
     ser = {o: [("vs donut control (pre-registered)", sm[(sm["outcome"] == o)
                                                          & (sm["control"] == "donut")],
                 tint(PALETTE["cbd"], 0.45)),

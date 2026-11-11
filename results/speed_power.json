@@ -1,21 +1,109 @@
 {
-  "outcome": "log_mean_speed_mph",
-  "real_beta": 0.018954577256015764,
-  "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake CBD; fake treated = pairs within the fake set, control = pairs within the other Manhattan zones; static window <= 52 weeks before the fake week to the end of the pre-policy data; pair + week FE, weighted by trips",
+  "outcome": "log_mean_speed_mph (top level: donut control, pre-registered)",
+  "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake CBD (pairs within the fake set); control = pairs within the other Manhattan zones; static window <= 52 weeks before the fake week to the end of the pre-policy data; pair + week FE, weighted by trips",
+  "real_beta": 0.018954577256015768,
   "n_draws": 500,
-  "mean": 9.078318073248909e-05,
-  "sd": 0.00982904758661135,
+  "mean": 9.078318073248887e-05,
+  "sd": 0.009829047586611349,
   "quantiles": {
-    "0.025": -0.020215029292770335,
+    "0.025": -0.02021502929277033,
     "0.05": -0.0166743612135849,
-    "0.5": -0.00012565239634964768,
+    "0.5": -0.00012565239634964865,
     "0.95": 0.01677071887132654,
-    "0.975": 0.019763250480595355
+    "0.975": 0.01976325048059535
   },
   "share_abs_ge_abs_beta": 0.064,
   "mde_multiplier": 2.8015852181129683,
-  "mde": 0.027536914426779305,
-  "mde_pct": 0.027919559468214183,
+  "mde": 0.0275369144267793,
+  "mde_pct": 0.027919559468214176,
   "size": 0.05,
-  "power": 0.8
+  "power": 0.8,
+  "by_control": {
+    "donut": {
+      "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake CBD (pairs within the fake set); control = pairs within the other Manhattan zones; static window <= 52 weeks before the fake week to the end of the pre-policy data; pair + week FE, weighted by trips",
+      "outcomes": {
+        "log_mean_speed_mph": {
+          "real_beta": 0.018954577256015768,
+          "n_draws": 500,
+          "mean": 9.078318073248887e-05,
+          "sd": 0.009829047586611349,
+          "quantiles": {
+            "0.025": -0.02021502929277033,
+            "0.05": -0.0166743612135849,
+            "0.5": -0.00012565239634964865,
+            "0.95": 0.01677071887132654,
+            "0.975": 0.01976325048059535
+          },
+          "share_abs_ge_abs_beta": 0.064,
+          "mde_multiplier": 2.8015852181129683,
+          "mde": 0.0275369144267793,
+          "mde_pct": 0.027919559468214176,
+          "size": 0.05,
+          "power": 0.8
+        },
+        "log_mean_duration_min": {
+          "real_beta": -0.02431858388180354,
+          "n_draws": 500,
+          "mean": 0.0004978875025074143,
+          "sd": 0.010416171184158345,
+          "quantiles": {
+            "0.025": -0.020018273866662082,
+            "0.05": -0.017071669380657628,
+            "0.5": 0.0005048769307607822,
+            "0.95": 0.017909794767997502,
+            "0.975": 0.0218068389135495
+          },
+          "share_abs_ge_abs_beta": 0.034,
+          "mde_multiplier": 2.8015852181129683,
+          "mde": 0.029181791218872273,
+          "mde_pct": 0.029611751838164693,
+          "size": 0.05,
+          "power": 0.8
+        }
+      }
+    },
+    "outer": {
+      "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake CBD (pairs within the fake set); control = the outer-borough pairs; static window <= 52 weeks before the fake week to the end of the pre-policy data; pair + week FE, weighted by trips",
+      "outcomes": {
+        "log_mean_speed_mph": {
+          "real_beta": -0.04049978442353905,
+          "n_draws": 500,
+          "mean": -0.08634693934440597,
+          "sd": 0.006521496749340126,
+          "quantiles": {
+            "0.025": -0.09884432030298951,
+            "0.05": -0.09659563756848324,
+            "0.5": -0.08678436949608237,
+            "0.95": -0.07571214318340377,
+            "0.975": -0.0726493651749678
+          },
+          "share_abs_ge_abs_beta": 1.0,
+          "mde_multiplier": 2.8015852181129683,
+          "mde": 0.018270528892923073,
+          "mde_pct": 0.018438456153549408,
+          "size": 0.05,
+          "power": 0.8
+        },
+        "log_mean_duration_min": {
+          "real_beta": 0.02919970730434528,
+          "n_draws": 500,
+          "mean": 0.044667789097613556,
+          "sd": 0.010456613377439514,
+          "quantiles": {
+            "0.025": 0.026305110200156655,
+            "0.05": 0.027770063574682695,
+            "0.5": 0.044563125262093856,
+            "0.95": 0.062064383131737,
+            "0.975": 0.06433909467855235
+          },
+          "share_abs_ge_abs_beta": 0.928,
+          "mde_multiplier": 2.8015852181129683,
+          "mde": 0.029295093469756863,
+          "mde_pct": 0.029728415776203766,
+          "size": 0.05,
+          "power": 0.8
+        }
+      }
+    }
+  }
 }
