@@ -40,7 +40,6 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 
-from taxi_shock.backtest import targets_for
 from taxi_shock.chronos_runs import MAIN, with_run
 from taxi_shock.config import load_config, path, repo_root
 from taxi_shock.drift import calibrate_h, cusum, rolling_bias_alarms, standardize
@@ -48,7 +47,7 @@ from taxi_shock.evaluation import sort_clip_quantiles
 from taxi_shock.io import read_exog, read_modeled_panel
 from taxi_shock.models.lgbm_quantile import GlobalLGBMQuantile
 from taxi_shock.models.seasonal_naive import SeasonalNaive
-from taxi_shock.shock import daily_table, rolling_table
+from taxi_shock.shock import daily_table, forecast_frozen, rolling_table
 
 LOG = logging.getLogger("shock")
 QCOLS = ["q10", "q50", "q90"]
@@ -105,27 +104,6 @@ def frozen_lgbm(cfg: dict, panel: pd.DataFrame, exog: pd.DataFrame, force: bool
     record.write_text(json.dumps(rec, indent=2) + "\n")
     LOG.info("frozen LightGBM fitted: %s", model.fit_info_)
     return model
-
-
-def forecast_frozen(model, panel: pd.DataFrame, origins: pd.DatetimeIndex, qs: list[float]
-                    ) -> pd.DataFrame:
-    """Day-ahead forecasts for every origin with a model that is never refitted."""
-    ts = panel["hour_ts"].to_numpy()
-    hours = pd.DatetimeIndex(np.unique(ts))
-    zones = np.sort(panel["zone_id"].unique())
-    out = []
-    t0 = time.perf_counter()
-    for i, origin in enumerate(origins, 1):
-        lo = int(np.searchsorted(ts, np.datetime64(origin - pd.Timedelta(days=35)), "left"))
-        cut = int(np.searchsorted(ts, np.datetime64(origin), "left"))
-        pred = model.predict_quantiles(panel.iloc[lo:cut], targets_for(origin, hours, zones), qs)
-        out.append(pred.assign(origin=origin))
-        if i % 100 == 0:
-            LOG.info("  %d/%d origins (%.0f s)", i, len(origins), time.perf_counter() - t0)
-    fc = pd.concat(out, ignore_index=True)
-    act = panel.rename(columns={"hour_ts": "target_ts", "pickups": "y"})[
-        ["zone_id", "target_ts", "y"]]
-    return fc.merge(act, on=["zone_id", "target_ts"], how="left")
 
 
 def frozen_forecasts(cfg: dict, force: bool) -> dict[str, pd.DataFrame]:

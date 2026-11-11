@@ -267,17 +267,31 @@ def phase4(cfg: dict) -> None:
                                                                   "log_mean_duration_min"))
     sp_f = sp["log_mean_speed_mph"]["event_study_month"]["pretrend"]["p_F"]
     stats["speed"] = {"speed": spd, "duration": dur, "pretrend_p_F": sp_f}
-    t4f = (f"Within-CBD taxi trips: speed {_pct_str(spd['coef'])} [{_pct_str(spd['ci_lo'])}, "
-           f"{_pct_str(spd['ci_hi'])}], duration {_pct_str(dur['coef'])} (pre-registered "
-           f"DiD), but the monthly gap to the control is seasonal (pre-trend test p = {sp_f:.1g})")
+    spo = json.loads((res / "speed_did_outer.json").read_text())["outcomes"]
+    so = spo["log_mean_speed_mph"]
+    so_m, so_s = so["main"]["terms"]["treated_post"], so[
+        "treated_seasonality_not_preregistered"]["terms"]["treated_post"]
+    so_f = so["event_study_month"]["pretrend"]["p_F_hotelling"]
+    stats["speed_outer"] = {"speed": so_m, "speed_seasonality": so_s,
+                            "pretrend_p_F_hotelling": so_f}
+    t4f = (f"Within-CBD taxi trips vs Brooklyn/Queens trips: speed {_pct_str(so_m['coef'])} "
+           f"[{_pct_str(so_m['ci_lo'])}, {_pct_str(so_m['ci_hi'])}] "
+           f"({_pct_str(so_s['coef'])} with CBD-specific seasonality); against the Manhattan "
+           f"donut control {_pct_str(spd['coef'])}")
     sm = ses[ses["bins"] == "month"]
+    ser = {o: [("vs donut control (pre-registered)", sm[(sm["outcome"] == o)
+                                                         & (sm["control"] == "donut")],
+                tint(PALETTE["cbd"], 0.45)),
+               ("vs Brooklyn/Queens (C4)", sm[(sm["outcome"] == o) & (sm["control"] == "outer")],
+                PALETTE["cbd"])] for o in ("log_mean_speed_mph", "log_mean_duration_min")}
     f4f_speed_event_study(
-        [(sm[sm["outcome"] == "log_mean_speed_mph"], "Speed (log pts x 100)"),
-         (sm[sm["outcome"] == "log_mean_duration_min"], "Duration (log pts x 100)")],
-        policy, t4f, "Pair-week means of trips with pickup and dropoff in the CBD vs pairs "
-        "within the donut control; pair and week FE, weather x treated, weighted by trips; 95% "
-        "CIs two-way clustered by pickup and dropoff zone. Source: "
-        "results/speed_event_study.csv.", figs / "F4f_speed_event_study")
+        [("Speed (log pts x 100)", ser["log_mean_speed_mph"]),
+         ("Duration (log pts x 100)", ser["log_mean_duration_min"])],
+        policy, t4f, "Pair-week means of trips with pickup and dropoff in the CBD vs pairs within "
+        "the donut control or with both ends in Brooklyn/Queens (no airports); pair and week FE, "
+        "weather x treated, weighted by trips; 95% CIs two-way clustered by pickup and dropoff "
+        "zone; lighter points = before the policy. Sources: results/speed_event_study.csv, "
+        "results/speed_did_outer.json.", figs / "F4f_speed_event_study")
 
     em = pd.read_csv(res / "effect_map.csv")
     min_pre = 50.0
@@ -306,12 +320,14 @@ def phase4(cfg: dict) -> None:
         panels.append((name, d))
     for cut, name in (("hour_band", "Speed: hour band"), ("dist_tercile",
                                                           "Speed: distance tercile")):
-        d = sh[(sh["outcome"] == "log_mean_speed_mph") & (sh["cut"] == cut)]
+        d = sh[(sh["outcome"] == "log_mean_speed_mph") & (sh["cut"] == cut)
+               & (sh["control"] == "donut")]
         panels.append((name, d.assign(label=d["level"].map(_label))))
     dneg = int((het[het["cut"].isin(list(names)[:5])]["coef"] < 0).sum())
     dn = int(het["cut"].isin(list(names)[:5]).sum())
-    spos = int((sh.loc[sh["outcome"] == "log_mean_speed_mph", "coef"] > 0).sum())
-    sn = int((sh["outcome"] == "log_mean_speed_mph").sum())
+    shd = sh[(sh["outcome"] == "log_mean_speed_mph") & (sh["control"] == "donut")]
+    spos = int((shd["coef"] > 0).sum())
+    sn = len(shd)
     stats["heterogeneity"] = {"demand_negative": dneg, "demand_n": dn, "speed_positive": spos,
                               "speed_n": sn}
     t4c = (f"Pre-registered demand DiD is negative in {dneg} of {dn} trip subsets (same "
@@ -344,7 +360,8 @@ def phase4(cfg: dict) -> None:
         figs / "F4d_counterfactual_vs_did")
 
     dp = pd.read_csv(res / "demand_placebo_draws.csv")["coef"]
-    spl = pd.read_csv(res / "speed_placebo.csv")["coef"]
+    spl = pd.read_csv(res / "speed_placebo.csv")
+    spl = spl[(spl["control"] == "donut") & (spl["outcome"] == "log_mean_speed_mph")]["coef"]
     pw = json.loads((res / "power_mde.json").read_text())
     spw = json.loads((res / "speed_power.json").read_text())
     stats["permutation"] = {k: {"beta": v["real_beta"], "mde": v["mde"],

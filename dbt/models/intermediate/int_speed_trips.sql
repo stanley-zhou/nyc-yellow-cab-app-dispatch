@@ -1,16 +1,24 @@
--- Trip-level speed sample (Amendment 2, B1-B3; DECISIONS.md Phase 4): valid in-grid trips with
--- pickup AND dropoff in Manhattan, picked up inside var('speed_window'). Treated / control /
--- entering / leaving categories are assigned downstream from the two zones.
+-- Trip-level speed sample (Amendment 2, B1-B3; Amendment 3, C4; DECISIONS.md Phase 4/4b): valid
+-- in-grid trips picked up inside var('speed_window') with pickup AND dropoff in Manhattan
+-- (region 'manhattan') or both ends in var('speed_outer_boroughs') outside the airport zones
+-- (region 'outer', the C4 control). Treated / control / entering / leaving categories are
+-- assigned downstream from the two zones.
 -- `exclusion` (NULL = used in the speed analysis), checked in this order:
 --   'duration' duration missing or < min_duration_minutes (incl. dropoff = pickup records)
 --   'distance' no metered distance (trip_distance <= 0, e.g. Flex Fare records)
 --   'speed'    distance / duration > max_speed_mph (record error; fixed before any speed data)
 {{ config(materialized='view') }}
+{%- set outer = var('speed_outer_boroughs') %}
 with z as (
-    select zone_id from {{ ref('dim_zones') }} where borough = 'Manhattan'
+    select zone_id, 'manhattan' as region from {{ ref('dim_zones') }} where borough = 'Manhattan'
+    union all
+    select zone_id, 'outer' as region from {{ ref('dim_zones') }}
+    where borough in ({% for b in outer %}'{{ b }}'{{ "," if not loop.last }}{% endfor %})
+      and not is_airport
 ),
 t as (
     select
+        zp.region,
         v.pu_zone_id,
         v.do_zone_id,
         v.pu_hour,
@@ -20,9 +28,9 @@ t as (
         v.distance_known,
         date_diff('second', v.pickup_ts, v.dropoff_ts) / 60.0 as duration_min
     from {{ ref('int_trips_valid') }} as v
-    where v.pu_zone_id in (select zone_id from z)
-      and v.do_zone_id in (select zone_id from z)
-      and v.pu_hour in (select hour_ts from {{ ref('int_hours') }})
+    join z as zp on zp.zone_id = v.pu_zone_id
+    join z as zd on zd.zone_id = v.do_zone_id and zd.region = zp.region
+    where v.pu_hour in (select hour_ts from {{ ref('int_hours') }})
       and v.pickup_ts >= date '{{ var("speed_window")[0] }}'
       and v.pickup_ts <  date '{{ var("speed_window")[1] }}' + interval 1 day
 )

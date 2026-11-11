@@ -50,6 +50,7 @@ def dbt_vars(cfg: dict[str, Any], yellow_glob: str | None = None) -> dict[str, A
         "speed_window": [str(d) for d in cfg["speed"]["window"]],
         "speed_tercile_period": [str(d) for d in cfg["speed"]["tercile_period"]],
         "max_speed_mph": float(cfg["speed"]["max_speed_mph"]),
+        "speed_outer_boroughs": [str(b) for b in cfg["speed"]["outer_boroughs"]],
     }
 
 

@@ -49,12 +49,24 @@ speed:                                        # Amendment 2 (B1-B3): trip durati
                                               # (B3: "fixed on 2024 quantiles"; = pre_period)
   outcomes: [log_mean_speed_mph, log_mean_duration_min]   # pair-week means of trip values
   cluster: [pu_zone_id, do_zone_id]           # two-way by pickup and dropoff zone (primary)
+  outer_boroughs: [Brooklyn, Queens]          # C4 control region (airports excluded): trips
+                                              # with both ends in these boroughs
 app_dispatch:                                 # Amendment 3, C1 (mechanism check)
   months: ["2026-06", "2026-09"]              # yellow files that carry request_source
   app_codes: {HV0003: uber, HV0005: lyft}     # TLC HVFHS licence numbers (HVFHS dictionary)
   min_trips: 500                              # zones with fewer records in the window: no share
   growth_years: [2023, 2025]                  # growth = log(mean weekly pickups 2025 / 2023)
   min_weekly_base: 10                         # zones below this in the base year: no growth
+shocks:                                       # Amendment 3, C5: three shocks, one monitor
+  events:
+    covid: "2020-03-01"
+    fare_increase: "2022-12-19"               # TLC industry notice 22-02 (DECISIONS)
+    congestion_pricing: "2025-01-05"
+  train_months: 12                            # frozen model: the 12 months before the event
+  monitor_months: 12                          # day-ahead forecasts for 12 months from it
+  calibration_folds: 2                        # cross-fit halves of the training year (DECISIONS)
+  groups: [cbd, non_cbd, all]
+  level_windows_days: [28, 365]               # post-event mean log(actual / forecast)
 causal:
   outcome: "log1p_pickups"
   unit: "zone_week"                           # primary; zone_day for heterogeneity

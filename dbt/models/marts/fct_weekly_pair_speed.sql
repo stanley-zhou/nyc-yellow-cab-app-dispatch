@@ -23,6 +23,7 @@ with t as (
     cross join {{ ref('int_speed_terciles') }} as c
 )
 select
+    region,
     pu_zone_id,
     do_zone_id,
     week_start,

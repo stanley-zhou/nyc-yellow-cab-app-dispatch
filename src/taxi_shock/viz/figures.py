@@ -337,19 +337,23 @@ def _bin_dates(k: pd.Series, policy_date: str) -> pd.Series:
 
 
 def _event_panel(ax, es: pd.DataFrame, policy_date: str, ylabel: str, color: str,
-                 label_policy: bool = True, label_y: float = 1.0) -> None:
-    """Monthly coefficients x 100 (log points ~ %) with 95% CIs; pre bins tinted."""
-    x = _bin_dates(es["k"], policy_date)
+                 label_policy: bool = True, label_y: float = 1.0, shift_days: int = 0,
+                 label: str | None = None) -> None:
+    """Monthly coefficients x 100 (log points ~ %) with 95% CIs; pre bins tinted. `shift_days`
+    offsets the points so two series in one panel do not overlap."""
+    x = _bin_dates(es["k"], policy_date) + pd.Timedelta(days=shift_days)
     for pre, c in ((True, tint(color)), (False, color)):
         s = (es["k"] < 0) == pre
         ax.errorbar(x[s], es.loc[s, "coef"] * 100,
                     yerr=[(es.loc[s, "coef"] - es.loc[s, "ci_lo"]) * 100,
                           (es.loc[s, "ci_hi"] - es.loc[s, "coef"]) * 100],
-                    fmt="o", ms=4, color=c, ecolor=c, elinewidth=1.0, capsize=0)
+                    fmt="o", ms=4, color=c, ecolor=c, elinewidth=1.0, capsize=0,
+                    label=label if not pre else None)
     ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
     ax.set_ylabel(ylabel)
     ax.set_xlim(x.min() - pd.Timedelta(days=20), x.max() + pd.Timedelta(days=20))
-    policy_line(ax, label=label_policy, label_y=label_y)
+    if label_policy is not None:
+        policy_line(ax, label=label_policy, label_y=label_y)
 
 
 def f4_event_study(es: pd.DataFrame, policy_date: str, title: str, note: str,
@@ -366,15 +370,22 @@ def f4_event_study(es: pd.DataFrame, policy_date: str, title: str, note: str,
     return save(fig, out_base)
 
 
-def f4f_speed_event_study(panels: list[tuple[pd.DataFrame, str]], policy_date: str, title: str,
-                          note: str, out_base: Path) -> list[Path]:
-    """F4f (Amendment 2): speed and duration event studies, one panel each (own y-axis)."""
+def f4f_speed_event_study(panels: list[tuple[str, list[tuple[str, pd.DataFrame, str]]]],
+                          policy_date: str, title: str, note: str,
+                          out_base: Path) -> list[Path]:
+    """F4f (Amendment 2; C4): speed and duration event studies, one panel per outcome (own
+    y-axis), one series per control group (offset by a few days, legend in the first panel).
+    `panels`: (y label, [(series label, monthly event-study rows, colour), ...])."""
     use_style()
     fig, axes = plt.subplots(len(panels), 1, figsize=SIZES["small_multiples"], sharex=True,
                              layout="constrained")
-    for i, (ax, (es, ylabel)) in enumerate(zip(axes, panels, strict=True)):
-        _event_panel(ax, es, policy_date, ylabel, PALETTE["cbd"], label_policy=i == 0,
-                     label_y=0.12)   # low: the first post-policy points sit at the top
+    for i, (ax, (ylabel, series)) in enumerate(zip(axes, panels, strict=True)):
+        for j, (label, es, color) in enumerate(series):
+            _event_panel(ax, es, policy_date, ylabel, color, label_policy=i == 0 if j == 0
+                         else None, label_y=0.12, shift_days=(j - (len(series) - 1) / 2) * 6,
+                         label=label)
+        if i == 0 and len(series) > 1:
+            ax.legend(frameon=False, fontsize=8, loc="upper right")
     axes[-1].xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
     axes[-1].xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")

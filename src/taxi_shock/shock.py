@@ -7,8 +7,15 @@ group and window (negative = actual below forecast; exp(.) - 1 is the % gap).
 
 from __future__ import annotations
 
+import logging
+import time
+
 import numpy as np
 import pandas as pd
+
+from taxi_shock.backtest import targets_for
+
+LOG = logging.getLogger(__name__)
 
 
 def daily_table(allfc: pd.DataFrame, groups: dict[str, list[int]]) -> pd.DataFrame:
@@ -50,3 +57,27 @@ def rolling_table(daily: pd.DataFrame, days: int) -> pd.DataFrame:
             "forecast", "abs_error", "wape", "bias", "log_actual_over_forecast", "in_sample"]
     t["n_hours"] = t["n_hours"].astype("int64")
     return t[cols].sort_values(cols[:5]).reset_index(drop=True)
+
+
+def forecast_frozen(model, panel: pd.DataFrame, origins: pd.DatetimeIndex, qs: list[float],
+                    history_days: int = 35) -> pd.DataFrame:
+    """Day-ahead forecasts for every origin with a model that is never refitted. `panel` must
+    be sorted by hour_ts; each origin sees the `history_days` days before it (features need
+    at most 30, models.lgbm.predict_history_days)."""
+    ts = panel["hour_ts"].to_numpy()
+    hours = pd.DatetimeIndex(np.unique(ts))
+    zones = np.sort(panel["zone_id"].unique())
+    out = []
+    t0 = time.perf_counter()
+    for i, origin in enumerate(origins, 1):
+        start = origin - pd.Timedelta(days=history_days)
+        lo = int(np.searchsorted(ts, np.datetime64(start), "left"))
+        cut = int(np.searchsorted(ts, np.datetime64(origin), "left"))
+        pred = model.predict_quantiles(panel.iloc[lo:cut], targets_for(origin, hours, zones), qs)
+        out.append(pred.assign(origin=origin))
+        if i % 100 == 0:
+            LOG.info("  %d/%d origins (%.0f s)", i, len(origins), time.perf_counter() - t0)
+    fc = pd.concat(out, ignore_index=True)
+    act = panel.rename(columns={"hour_ts": "target_ts", "pickups": "y"})[
+        ["zone_id", "target_ts", "y"]]
+    return fc.merge(act, on=["zone_id", "target_ts"], how="left")
