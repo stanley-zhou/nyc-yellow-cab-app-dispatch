@@ -43,7 +43,9 @@ def term(k: int) -> str:
 def event_study(df: pd.DataFrame, y: str, unit_col: str, cluster: Sequence[str],
                 policy_date: str, unit: str = "month", weights: str | None = None,
                 controls: Sequence[str] = ()) -> tuple[pd.DataFrame, dict]:
-    d = df.copy()
+    keep = list(dict.fromkeys([unit_col, "week_start", "event_week", "treated", y, *controls,
+                               *cluster, *([weights] if weights else [])]))
+    d = df[keep].copy()            # only what the fit needs: the dummies are wide
     b = bins(d, policy_date, unit)
     ks = sorted(int(k) for k in b.dropna().unique())
     terms = [term(k) for k in ks]

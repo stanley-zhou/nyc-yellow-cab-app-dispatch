@@ -9,6 +9,7 @@ city-wide weekly weather is collinear with the week fixed effects (DECISIONS.md,
 
 from __future__ import annotations
 
+import gc
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 
@@ -75,7 +76,11 @@ def vcov_spec(cluster: Sequence[str]) -> dict[str, str]:
 def fit(df: pd.DataFrame, y: str, terms: Sequence[str], fe: Sequence[str],
         cluster: Sequence[str], weights: str | None = None) -> tuple[object, str]:
     fml = f"{y} ~ {' + '.join(terms)} | {' + '.join(fe)}"
-    m = pf.feols(fml, data=df, vcov=vcov_spec(cluster), weights=weights)
+    # lean / no data copies: only coefficients, SEs and the covariance are used, and the
+    # pair-level speed designs (~1.2M rows) otherwise kept GBs alive per fit
+    m = pf.feols(fml, data=df, vcov=vcov_spec(cluster), weights=weights, lean=True,
+                 copy_data=False, store_data=False)
+    gc.collect()
     return m, fml
 
 
@@ -85,7 +90,9 @@ def static_did(df: pd.DataFrame, y: str, unit: str, cluster: Sequence[str],
                post_splits: Mapping[str, tuple[str, str]] | None = None,
                post_end: pd.Timestamp | None = None) -> DidResult:
     """Static DiD on `df` (columns unit, week_start, event_week, treated, y, controls)."""
-    d = static_window(df, pre_weeks, post_end).copy()
+    keep = list(dict.fromkeys([unit, "week_start", "event_week", "treated", y, *controls,
+                               *cluster, *([weights] if weights else [])]))
+    d = static_window(df[keep], pre_weeks, post_end).copy()
     post = d["event_week"] >= 0
     terms = []
     if post_splits:

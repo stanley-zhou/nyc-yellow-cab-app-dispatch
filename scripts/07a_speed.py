@@ -80,10 +80,13 @@ def load(cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
                             from fct_weekly_zone_panel group by 1""").df()
     p["week_start"] = pd.to_datetime(p["week_start"])
     wx["week_start"] = pd.to_datetime(wx["week_start"])
+    # 8M+ cells: low-cardinality text as categoricals (object strings took ~3 GB)
+    for c in ("region", "hour_band", "dist_tercile"):
+        p[c] = p[c].astype("category")
     man = p["region"] == "manhattan"
     pu, do = p["pu_zone_id"], p["do_zone_id"]
     cat = pair_category(pu.isin(cbd), do.isin(cbd), pu.isin(ctl), do.isin(ctl))
-    p["category"] = cat.where(man, "within_outer")
+    p["category"] = cat.where(man, "within_outer").astype("category")
     p["within_cbd"] = cat.eq("within_cbd") & man
     p["entering"] = cat.eq("entering") & man
     p["leaving"] = cat.eq("leaving") & man

@@ -1,0 +1,681 @@
+{
+  "generated_utc": "2026-11-11T23:26:16+00:00",
+  "control": "outer",
+  "control_definition": "pairs with both ends in Brooklyn/Queens outside the airports (Amendment 3, C4)",
+  "pre_registration": "DECISIONS.md, Phase 4b (Amendment 3, C4)",
+  "expected_direction": {
+    "log_mean_speed_mph": "+",
+    "log_mean_duration_min": "-"
+  },
+  "zones": {
+    "cbd": 38,
+    "control": 25,
+    "control_group": "manhattan_non_cbd_donut"
+  },
+  "sample": {
+    "pairs_treated": 1444,
+    "pairs_control": 15469,
+    "trips_used": 66002616
+  },
+  "outcomes": {
+    "log_mean_speed_mph": {
+      "label": "mean trip speed (mph)",
+      "main": {
+        "terms": {
+          "treated_post": {
+            "coef": -0.04049978442353905,
+            "se": 0.009289561683232953,
+            "ci_lo": -0.058706990754838914,
+            "ci_hi": -0.02229257809223918,
+            "pvalue": 2.2848355168747503e-05,
+            "pct": -0.03969062846851358,
+            "pct_ci_lo": -0.05701696857233812,
+            "pct_ci_hi": -0.022045934744964944
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_speed_mph ~ treated_post + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": -0.0006363511618930888,
+          "tr_total_precip_in": -0.005443095215940262
+        }
+      },
+      "persistence": {
+        "terms": {
+          "post_2025_h1": {
+            "coef": -0.028677180637045125,
+            "se": 0.011632653569519444,
+            "ci_lo": -0.05147676267793454,
+            "ci_hi": -0.005877598596155713,
+            "pvalue": 0.014716335216076404,
+            "pct": -0.028269892866933082,
+            "pct_ci_lo": -0.05017427888805112,
+            "pct_ci_hi": -0.005860359305274183
+          },
+          "post_2025_h2": {
+            "coef": -0.052788315280661614,
+            "se": 0.008190085458963221,
+            "ci_lo": -0.06884058781053473,
+            "ci_hi": -0.0367360427507885,
+            "pvalue": 1.2163510199059147e-09,
+            "pct": -0.05141920871078042,
+            "pct_ci_lo": -0.06652452441264659,
+            "pct_ci_hi": -0.036069461774864454
+          },
+          "post_2026": {
+            "coef": -0.039159161927934553,
+            "se": 0.009333122678519157,
+            "ci_lo": -0.0574517462411261,
+            "ci_hi": -0.020866577614743004,
+            "pvalue": 4.432326795522634e-05,
+            "pct": -0.0384023527695555,
+            "pct_ci_lo": -0.055832551084355246,
+            "pct_ci_hi": -0.020650376984411727
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_speed_mph ~ post_2025_h1 + post_2025_h2 + post_2026 + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": -0.0005450300323539795,
+          "tr_total_precip_in": -0.007310748711432214
+        }
+      },
+      "cluster_pickup_zone_only": {
+        "terms": {
+          "treated_post": {
+            "coef": -0.04049978442353905,
+            "se": 0.007274275876935145,
+            "ci_lo": -0.05475710315594045,
+            "ci_hi": -0.026242465691137647,
+            "pvalue": 1.0277224871124702e-07,
+            "pct": -0.03969062846851358,
+            "pct_ci_lo": -0.05328492586808789,
+            "pct_ci_hi": -0.025901124584076313
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166
+        },
+        "formula": "log_mean_speed_mph ~ treated_post + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": -0.0006363511618930888,
+          "tr_total_precip_in": -0.005443095215940262
+        }
+      },
+      "without_weather": {
+        "terms": {
+          "treated_post": {
+            "coef": -0.03949504351117856,
+            "se": 0.009091087393769483,
+            "ci_lo": -0.057313247383272856,
+            "ci_hi": -0.021676839639084265,
+            "pvalue": 2.4327960844061636e-05,
+            "pct": -0.03872528147381277,
+            "pct_ci_lo": -0.055701775915161476,
+            "pct_ci_hi": -0.0214435853957709
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_speed_mph ~ treated_post | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {}
+      },
+      "distance_control": {
+        "terms": {
+          "treated_post": {
+            "coef": -0.03485725686549681,
+            "se": 0.00936147450105358,
+            "ci_lo": -0.0532054097297519,
+            "ci_hi": -0.01650910400124172,
+            "pvalue": 0.0002693262560196086,
+            "pct": -0.03425674036075953,
+            "pct_ci_lo": -0.051814773993564336,
+            "pct_ci_hi": -0.01637357558627986
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_speed_mph ~ treated_post + tr_mean_temp_f + tr_total_precip_in + log_mean_distance_mi | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": -0.0006169871175103396,
+          "tr_total_precip_in": -0.006824079064494119,
+          "log_mean_distance_mi": 0.6853686123673756
+        }
+      },
+      "treated_seasonality_not_preregistered": {
+        "terms": {
+          "treated_post": {
+            "coef": -0.055370124906599635,
+            "se": 0.009263689395877005,
+            "ci_lo": -0.07352662248648417,
+            "ci_hi": -0.0372136273267151,
+            "pvalue": 1.3605421234075266e-08,
+            "pct": -0.053865104950840105,
+            "pct_ci_lo": -0.07088858979370113,
+            "pct_ci_hi": -0.03652971021965818
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_speed_mph ~ treated_post + tr_mean_temp_f + tr_total_precip_in + tr_month_02 + tr_month_03 + tr_month_04 + tr_month_05 + tr_month_06 + tr_month_07 + tr_month_08 + tr_month_09 + tr_month_10 + tr_month_11 + tr_month_12 | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": 0.00041823690109633855,
+          "tr_total_precip_in": -0.009288513493385907,
+          "tr_month_02": -0.03768967448637665,
+          "tr_month_03": -0.04004819129777941,
+          "tr_month_04": -0.07598079662980259,
+          "tr_month_05": -0.07969394743751358,
+          "tr_month_06": -0.09745001729508615,
+          "tr_month_07": -0.1168819339452729,
+          "tr_month_08": -0.07773695652301375,
+          "tr_month_09": -0.13591410056489128,
+          "tr_month_10": -0.1297277760529092,
+          "tr_month_11": -0.12448551704616137,
+          "tr_month_12": -0.13254996015681156
+        }
+      },
+      "treated_seasonality_persistence_not_preregistered": {
+        "terms": {
+          "post_2025_h1": {
+            "coef": -0.07842838184176786,
+            "se": 0.013585376631766512,
+            "ci_lo": -0.10505523075644228,
+            "ci_hi": -0.05180153292709343,
+            "pvalue": 3.76800040058356e-08,
+            "pct": -0.07543172656261636,
+            "pct_ci_lo": -0.09972520164499427,
+            "pct_ci_hi": -0.050482703937803096
+          },
+          "post_2025_h2": {
+            "coef": -0.026359905034101867,
+            "se": 0.0071383039977443675,
+            "ci_lo": -0.040350723780379114,
+            "ci_hi": -0.01236908628782462,
+            "pvalue": 0.00030123328735220944,
+            "pct": -0.026015515398864805,
+            "pct_ci_lo": -0.03954747346683734,
+            "pct_ci_hi": -0.012292903567072907
+          },
+          "post_2026": {
+            "coef": -0.07799716335455575,
+            "se": 0.010846651367279334,
+            "ci_lo": -0.09925620938728538,
+            "ci_hi": -0.056738117321826126,
+            "pvalue": 2.1297630325989303e-11,
+            "pct": -0.07503294965661268,
+            "pct_ci_lo": -0.09448932203530355,
+            "pct_ci_hi": -0.05515852541464711
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_speed_mph ~ post_2025_h1 + post_2025_h2 + post_2026 + tr_mean_temp_f + tr_total_precip_in + tr_month_02 + tr_month_03 + tr_month_04 + tr_month_05 + tr_month_06 + tr_month_07 + tr_month_08 + tr_month_09 + tr_month_10 + tr_month_11 + tr_month_12 | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": 0.00039682444364563373,
+          "tr_total_precip_in": -0.006480375042285185,
+          "tr_month_02": -0.03742332419876448,
+          "tr_month_03": -0.04186019840906959,
+          "tr_month_04": -0.07602968110275268,
+          "tr_month_05": -0.08154021350046042,
+          "tr_month_06": -0.10436204153289388,
+          "tr_month_07": -0.14906811236309503,
+          "tr_month_08": -0.10944208454680901,
+          "tr_month_09": -0.16522586483505108,
+          "tr_month_10": -0.16941966108937923,
+          "tr_month_11": -0.16487440878532783,
+          "tr_month_12": -0.16443834322555032
+        }
+      },
+      "placebo_in_time": {
+        "fake_policy_week": "2024-01-07",
+        "data": [
+          "2023-01-01",
+          "2024-12-31"
+        ],
+        "terms": {
+          "treated_post": {
+            "coef": -0.08720193581961529,
+            "se": 0.014197476916066955,
+            "ci_lo": -0.11502847924644531,
+            "ci_hi": -0.05937539239278526,
+            "pvalue": 5.881962472642499e-09,
+            "pct": -0.08350799561857117,
+            "pct_ci_lo": -0.10865924116777835,
+            "pct_ci_hi": -0.05764704937812073
+          }
+        },
+        "n_obs": 475610,
+        "n_units": 15539,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_speed_mph ~ treated_post + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": 0.0003802107438738084,
+          "tr_total_precip_in": 0.007967000309775853
+        }
+      },
+      "event_study_month": {
+        "formula": "log_mean_speed_mph ~ ev_m24 + ev_m23 + ev_m22 + ev_m21 + ev_m20 + ev_m19 + ev_m18 + ev_m17 + ev_m16 + ev_m15 + ev_m14 + ev_m13 + ev_m12 + ev_m11 + ev_m10 + ev_m09 + ev_m08 + ev_m07 + ev_m06 + ev_m05 + ev_m04 + ev_m03 + ev_m02 + ev_m01 + ev_p00 + ev_p01 + ev_p02 + ev_p03 + ev_p04 + ev_p05 + ev_p06 + ev_p07 + ev_p08 + ev_p09 + ev_p10 + ev_p11 + ev_p12 + ev_p13 + ev_p14 + ev_p15 + ev_p16 + ev_p17 + ev_p18 + ev_p19 + ev_p20 + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "n_obs": 1222595,
+        "reference": "event_week -1 (the week before the policy)",
+        "bins": "month",
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 902.867331793647,
+          "p_chi2": 3.5885296661825264e-175,
+          "F": 37.619472158068625,
+          "df": [
+            24,
+            165
+          ],
+          "p_F": 1.2901642655009183e-54,
+          "F_hotelling": 32.375545736034816,
+          "df_hotelling": [
+            24,
+            142
+          ],
+          "p_F_hotelling": 5.932989059304112e-46
+        }
+      }
+    },
+    "log_mean_duration_min": {
+      "label": "mean trip duration (minutes)",
+      "main": {
+        "terms": {
+          "treated_post": {
+            "coef": 0.02919970730434528,
+            "se": 0.010586580964824005,
+            "ci_lo": 0.008450389893872933,
+            "ci_hi": 0.04994902471481763,
+            "pvalue": 0.006468316581691669,
+            "pct": 0.02963019861556116,
+            "pct_ci_lo": 0.008486195223822024,
+            "pct_ci_hi": 0.051217508897912385
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_duration_min ~ treated_post + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": 0.0008176351605194333,
+          "tr_total_precip_in": 0.010577392280195882
+        }
+      },
+      "persistence": {
+        "terms": {
+          "post_2025_h1": {
+            "coef": 0.010796588619589934,
+            "se": 0.013491211385856608,
+            "ci_lo": -0.01564569980450573,
+            "ci_hi": 0.0372388770436856,
+            "pvalue": 0.4247060841598711,
+            "pct": 0.010855082102990618,
+            "pct_ci_lo": -0.015523941667456192,
+            "pct_ci_hi": 0.03794093148813079
+          },
+          "post_2025_h2": {
+            "coef": 0.04231794504353431,
+            "se": 0.008561673804903747,
+            "ci_lo": 0.02553737273854296,
+            "ci_hi": 0.05909851734852566,
+            "pvalue": 1.8794496390306392e-06,
+            "pct": 0.04322611459940478,
+            "pct_ci_lo": 0.025866244984982554,
+            "pct_ci_hi": 0.06087975065219359
+          },
+          "post_2026": {
+            "coef": 0.03255850266490392,
+            "se": 0.011023524443707083,
+            "ci_lo": 0.010952791772541104,
+            "ci_hi": 0.054164213557266735,
+            "pvalue": 0.0036005048443841225,
+            "pct": 0.03309433014750325,
+            "pct_ci_lo": 0.011012993186775327,
+            "pct_ci_hi": 0.05565794126816685
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_duration_min ~ post_2025_h1 + post_2025_h2 + post_2026 + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": 0.000725157717887353,
+          "tr_total_precip_in": 0.012905245075815301
+        }
+      },
+      "cluster_pickup_zone_only": {
+        "terms": {
+          "treated_post": {
+            "coef": 0.02919970730434528,
+            "se": 0.008030539563969565,
+            "ci_lo": 0.013460138982540941,
+            "ci_hi": 0.04493927562614962,
+            "pvalue": 0.00036961272268132284,
+            "pct": 0.02963019861556116,
+            "pct_ci_lo": 0.013551134465512718,
+            "pct_ci_hi": 0.04596434245044239
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166
+        },
+        "formula": "log_mean_duration_min ~ treated_post + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": 0.0008176351605194333,
+          "tr_total_precip_in": 0.010577392280195882
+        }
+      },
+      "without_weather": {
+        "terms": {
+          "treated_post": {
+            "coef": 0.027858442261118874,
+            "se": 0.01034790335446116,
+            "ci_lo": 0.007576924370873785,
+            "ci_hi": 0.04813996015136396,
+            "pvalue": 0.00783070567796429,
+            "pct": 0.02825011735697857,
+            "pct_ci_lo": 0.007605701898135481,
+            "pct_ci_hi": 0.049317507684695915
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_duration_min ~ treated_post | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {}
+      },
+      "distance_control": {
+        "terms": {
+          "treated_post": {
+            "coef": 0.03119672887335859,
+            "se": 0.010482280400994538,
+            "ci_lo": 0.01065183681155922,
+            "ci_hi": 0.05174162093515796,
+            "pvalue": 0.003358205322369967,
+            "pct": 0.03168844682930175,
+            "pct_ci_lo": 0.010708769591954905,
+            "pct_ci_hi": 0.05310360743260468
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_duration_min ~ treated_post + tr_mean_temp_f + tr_total_precip_in + log_mean_distance_mi | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": 0.000824488545619975,
+          "tr_total_precip_in": 0.0100886300183102,
+          "log_mean_distance_mi": 0.24256787185231513
+        }
+      },
+      "treated_seasonality_not_preregistered": {
+        "terms": {
+          "treated_post": {
+            "coef": 0.046451050535890354,
+            "se": 0.01016311179606336,
+            "ci_lo": 0.026531717444751985,
+            "ci_hi": 0.06637038362702873,
+            "pvalue": 9.493933141868638e-06,
+            "pct": 0.04754680095898933,
+            "pct_ci_lo": 0.026886816971049284,
+            "pct_ci_hi": 0.06862244413285695
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_duration_min ~ treated_post + tr_mean_temp_f + tr_total_precip_in + tr_month_02 + tr_month_03 + tr_month_04 + tr_month_05 + tr_month_06 + tr_month_07 + tr_month_08 + tr_month_09 + tr_month_10 + tr_month_11 + tr_month_12 | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": -0.0006055599476480125,
+          "tr_total_precip_in": 0.014615509937446487,
+          "tr_month_02": 0.03873641872212886,
+          "tr_month_03": 0.041519498924645876,
+          "tr_month_04": 0.07709242667048413,
+          "tr_month_05": 0.09693681147471883,
+          "tr_month_06": 0.12473710026003136,
+          "tr_month_07": 0.14210907262013128,
+          "tr_month_08": 0.09462784347492725,
+          "tr_month_09": 0.16149665954690978,
+          "tr_month_10": 0.14725917251675408,
+          "tr_month_11": 0.13302973198540824,
+          "tr_month_12": 0.16192663353149447
+        }
+      },
+      "treated_seasonality_persistence_not_preregistered": {
+        "terms": {
+          "post_2025_h1": {
+            "coef": 0.0686707953051443,
+            "se": 0.014999601833246298,
+            "ci_lo": 0.039272115929540594,
+            "ci_hi": 0.09806947468074802,
+            "pvalue": 9.192315312711585e-06,
+            "pct": 0.07108354537052688,
+            "pct_ci_lo": 0.04005346026130082,
+            "pct_ci_hi": 0.10303941575779423
+          },
+          "post_2025_h2": {
+            "coef": 0.011820492056633661,
+            "se": 0.007882769933312125,
+            "ci_lo": -0.003629453111073308,
+            "ci_hi": 0.02727043722434063,
+            "pvalue": 0.135645735025417,
+            "pct": 0.01189063015604386,
+            "pct_ci_lo": -0.0036228746073274525,
+            "pct_ci_hi": 0.027645678832768555
+          },
+          "post_2026": {
+            "coef": 0.07774922111578615,
+            "se": 0.01194957673357749,
+            "ci_lo": 0.05432848108747649,
+            "ci_hi": 0.10116996114409582,
+            "pvalue": 8.811846807788015e-10,
+            "pct": 0.08085156992913026,
+            "pct_ci_lo": 0.05583136583454792,
+            "pct_ci_hi": 0.10646468178644018
+          }
+        },
+        "n_obs": 1026029,
+        "n_units": 16868,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_duration_min ~ post_2025_h1 + post_2025_h2 + post_2026 + tr_mean_temp_f + tr_total_precip_in + tr_month_02 + tr_month_03 + tr_month_04 + tr_month_05 + tr_month_06 + tr_month_07 + tr_month_08 + tr_month_09 + tr_month_10 + tr_month_11 + tr_month_12 | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": -0.0005568522588462434,
+          "tr_total_precip_in": 0.01161870015331053,
+          "tr_month_02": 0.03920173583142831,
+          "tr_month_03": 0.04442861978146679,
+          "tr_month_04": 0.07799550923889238,
+          "tr_month_05": 0.09966383713117527,
+          "tr_month_06": 0.1343096663478986,
+          "tr_month_07": 0.1788284443047742,
+          "tr_month_08": 0.13103905495806994,
+          "tr_month_09": 0.19540328051762432,
+          "tr_month_10": 0.19476529958267785,
+          "tr_month_11": 0.18169775675240077,
+          "tr_month_12": 0.20004893627674278
+        }
+      },
+      "placebo_in_time": {
+        "fake_policy_week": "2024-01-07",
+        "data": [
+          "2023-01-01",
+          "2024-12-31"
+        ],
+        "terms": {
+          "treated_post": {
+            "coef": 0.034528670732479165,
+            "se": 0.010598833576745873,
+            "ci_lo": 0.01375533864392341,
+            "ci_hi": 0.055302002821034923,
+            "pvalue": 0.001363287857192974,
+            "pct": 0.03513170593489519,
+            "pct_ci_lo": 0.013850378583408809,
+            "pct_ci_hi": 0.05685974110778015
+          }
+        },
+        "n_obs": 475610,
+        "n_units": 15539,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_mean_duration_min ~ treated_post + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": -0.0004954689849257417,
+          "tr_total_precip_in": -0.0073201696616662796
+        }
+      },
+      "event_study_month": {
+        "formula": "log_mean_duration_min ~ ev_m24 + ev_m23 + ev_m22 + ev_m21 + ev_m20 + ev_m19 + ev_m18 + ev_m17 + ev_m16 + ev_m15 + ev_m14 + ev_m13 + ev_m12 + ev_m11 + ev_m10 + ev_m09 + ev_m08 + ev_m07 + ev_m06 + ev_m05 + ev_m04 + ev_m03 + ev_m02 + ev_m01 + ev_p00 + ev_p01 + ev_p02 + ev_p03 + ev_p04 + ev_p05 + ev_p06 + ev_p07 + ev_p08 + ev_p09 + ev_p10 + ev_p11 + ev_p12 + ev_p13 + ev_p14 + ev_p15 + ev_p16 + ev_p17 + ev_p18 + ev_p19 + ev_p20 + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "n_obs": 1222595,
+        "reference": "event_week -1 (the week before the policy)",
+        "bins": "month",
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 809.0119159406516,
+          "p_chi2": 2.5837822384757273e-155,
+          "F": 33.70882983086049,
+          "df": [
+            24,
+            165
+          ],
+          "p_F": 2.104418521639625e-51,
+          "F_hotelling": 29.010023248376903,
+          "df_hotelling": [
+            24,
+            142
+          ],
+          "p_F_hotelling": 3.3612675758572133e-43
+        }
+      }
+    },
+    "log_fare_per_min": {
+      "label": "fare per minute (fare_amount / duration)",
+      "main": {
+        "terms": {
+          "treated_post": {
+            "coef": 0.006800790646905786,
+            "se": 0.007462339739455095,
+            "ci_lo": -0.007825126482828213,
+            "ci_hi": 0.021426707776639783,
+            "pvalue": 0.36344140253918455,
+            "pct": 0.006823968536484399,
+            "pct_ci_lo": -0.007794589883422414,
+            "pct_ci_hi": 0.021657908013677646
+          }
+        },
+        "n_obs": 1010681,
+        "n_units": 16826,
+        "n_treated_units": 1444,
+        "n_clusters": {
+          "pu_zone_id": 166,
+          "do_zone_id": 166
+        },
+        "formula": "log_fare_per_min ~ treated_post + tr_mean_temp_f + tr_total_precip_in | pair + week_start",
+        "vcov": "CRV1 by pu_zone_id + do_zone_id",
+        "weights": "n_used",
+        "controls": {
+          "tr_mean_temp_f": -0.0011994748368826425,
+          "tr_total_precip_in": -0.020230279964032986
+        }
+      }
+    }
+  }
+}
