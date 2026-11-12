@@ -1,0 +1,79 @@
+{
+  "generated_utc": "2026-11-12T21:22:48+00:00",
+  "purpose": "C6 disk report before the HVFHV download (Stanley, Amendment 3)",
+  "months": [
+    "2024-01",
+    "2026-09"
+  ],
+  "n_files": 33,
+  "total_gb": 16.33,
+  "largest_file_gb": 0.54,
+  "file_bytes": {
+    "2024-01": 472757547,
+    "2024-02": 462475428,
+    "2024-03": 507940560,
+    "2024-04": 476115643,
+    "2024-05": 498575918,
+    "2024-06": 484417715,
+    "2024-07": 468437522,
+    "2024-08": 465991646,
+    "2024-09": 466470118,
+    "2024-10": 485102359,
+    "2024-11": 480228052,
+    "2024-12": 507534115,
+    "2025-01": 491076642,
+    "2025-02": 461632254,
+    "2025-03": 501783767,
+    "2025-04": 487219586,
+    "2025-05": 517386544,
+    "2025-06": 490819474,
+    "2025-07": 487222980,
+    "2025-08": 479574607,
+    "2025-09": 480851341,
+    "2025-10": 518486063,
+    "2025-11": 507485661,
+    "2025-12": 535754793,
+    "2026-01": 505868728,
+    "2026-02": 476780037,
+    "2026-03": 532615621,
+    "2026-04": 509865567,
+    "2026-05": 537576484,
+    "2026-06": 506800012,
+    "2026-07": 511176663,
+    "2026-08": 502392134,
+    "2026-09": 509720685
+  },
+  "disk": {
+    "wsl_root": {
+      "total_gb": 1081.1,
+      "free_gb": 967.4
+    },
+    "windows_c": {
+      "total_gb": 508.5,
+      "free_gb": 23.4
+    },
+    "windows_c_df_readings_gib_avail": {
+      "2026-11-12 ~16:16 EST": 34,
+      "2026-11-12 ~16:25 EST": 22
+    },
+    "windows_c_note": "C: free space fell by ~12 GiB within ~10 minutes while this session wrote only small result/figure files; cause outside the repo (Windows side or WSL virtual-disk growth), not identified"
+  },
+  "repo_data_gb": {
+    "raw": 5.1,
+    "warehouse_duckdb": 17.0
+  },
+  "note": "the WSL virtual disk lives on C:, so /mnt/c free space is the real ceiling; repo_data_gb from du -sh on 2026-11-12",
+  "options": {
+    "1_full_download": {
+      "peak_extra_gb": 16.33,
+      "c_free_after_gb_approx": 7.1
+    },
+    "2_month_by_month": {
+      "peak_extra_gb": 0.54,
+      "how": "download one month -> aggregate to zone x week x platform x shared tables in DuckDB -> delete the file; manifest kept so make data can re-fetch"
+    },
+    "3_external_drive": {
+      "how": "data/raw/tlc/hvfhv symlinked to an external drive"
+    }
+  }
+}
