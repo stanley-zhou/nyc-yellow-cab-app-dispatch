@@ -25,6 +25,7 @@ PALETTE: dict[str, str] = {
     "actual": "#1A1A1A",       # observed series (near-black, distinct from every model colour)
     "muted_text": "#6B7078",   # notes, secondary labels, baseline lines drawn over a baseline band
     "text": "#2B2B2B",
+    "comparison": "#4B3F72",   # second estimate of the same quantity (robustness / other spec)
 }
 DIVERGING_CMAP = "RdBu_r"   # blue-white-red, centred at 0 with a TwoSlopeNorm
 SEQUENTIAL_CMAP = "Blues"   # single-hue, used on a log scale

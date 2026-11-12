@@ -215,15 +215,20 @@ def main() -> None:
     ds = json.loads((res / "did_static.json").read_text())["estimates"]
     sp = json.loads((res / "speed_did.json").read_text())["outcomes"]
     spo = json.loads((res / "speed_did_outer.json").read_text())["outcomes"]
-    mde_w = json.loads((res / "power_mde.json").read_text())["pre_volume_weighted"]["mde"]
+    pw = json.loads((res / "power_mde.json").read_text())
+    pwv, tov = pw["pre_volume_weighted"], pw["time_only_real_assignment"]["pre_volume_weighted"]
     het = pd.read_csv(res / "heterogeneity.csv")
     g = guardrails(cfg)
     rows = [
         row("primary", "demand (quantity)", "log1p CBD pickups, pre-volume weighted",
             term_of(ds["pre_volume_weighted_not_preregistered"]),
             "did_static.json:pre_volume_weighted_not_preregistered",
-            "C2 primary (Checkpoint 4; not pre-registered): no detectable change; permutation "
-            f"MDE {mde_w:.4f}"),
+            "C2 primary (Checkpoint 4; not pre-registered). Inconclusive (Stanley, 2026-11-12): "
+            "the DiD cannot identify the effect - pre-trends fail and the estimate depends on "
+            "the control; the clustered 95% CI includes zero, but the placebo inferences put it "
+            f"in the tail (random-zone MDE {pwv['mde']:.4f}, share as large "
+            f"{pwv['share_abs_ge_abs_beta']:.3f}; time-only MDE {tov['mde']:.4f}, share "
+            f"{tov['share_abs_ge_abs_beta']:.3f}); no causal conclusion"),
         row("pre-registered", "demand (quantity)", "log1p CBD pickups, equal zone weights",
             term_of(ds["main"]), "did_static.json:main",
             "pre-registered; an artifact of fast-growing small control zones; pre-trends fail",

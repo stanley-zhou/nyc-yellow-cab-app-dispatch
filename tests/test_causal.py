@@ -114,3 +114,19 @@ def test_pair_categories():
     do_ctl = pd.Series([False, False, True, True, True])
     assert pair_category(pu_cbd, do_cbd, pu_ctl, do_ctl).tolist() == [
         "within_cbd", "entering", "leaving", "within_control", "other"]
+
+
+def test_quick_beta_uses_the_reported_controls():
+    """Review round 3: placebos must be estimated on the reported specification. quick_beta with
+    the same controls reproduces the static DiD point estimate, and a control that matters
+    (a treated-specific covariate) changes it when left out."""
+    rng = np.random.default_rng(5)
+    d = panel(beta=-0.05, seed=4)
+    temp = 0.3 * np.sin(d["event_week"].to_numpy() / 9) + 0.5 * (d["event_week"] >= 0)
+    d = d.assign(tr_temp=d["treated"] * (temp + rng.normal(0, 0.1, len(d))))
+    d["y"] = d["y"] + 0.4 * d["tr_temp"]
+    win = d[d["event_week"] >= -52]
+    full = static_did(d, "y", "zone_id", ["zone_id"], 52, controls=["tr_temp"])
+    assert quick_beta(win, "y", "zone_id", controls=["tr_temp"]) == pytest.approx(
+        full.coef["treated_post"], abs=1e-9)
+    assert abs(quick_beta(win, "y", "zone_id") - full.coef["treated_post"]) > 0.05

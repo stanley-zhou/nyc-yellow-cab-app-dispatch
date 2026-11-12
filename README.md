@@ -1,14 +1,17 @@
 # Forecasting Under a Policy Shock: NYC Yellow-Taxi Demand and Congestion Pricing
 
-**Status: Phase 4b (Amendment 3: C1, C4, C5, C2 done; C3, C6 next) under re-review; Phase 3
-escalated (open); Phase 2 passed review.** Phase 4 effect (DoD sentence): a difference-in-differences
-of log1p(weekly pickups) per zone — 38 CBD zones vs 25 Manhattan "donut" control zones, zone and
-week fixed effects, zones weighted by their pre-period volume, SEs clustered by zone — gives
-−5.2% [−12.8%, +3.0%] for CBD pickups (−0.053 log points [−0.137, +0.030];
-`results/did_static.json`): no detectable change. The same design at fake pre-policy dates gives
-−3.8% to +2.8% (`results/placebo_time_distribution.csv`), the pre-trend test fails
-(`results/placebo.json`), and with the full Manhattan non-CBD control the estimate is −1.0%.
-No wording of findings before Checkpoint 6. This README
+**Status: Phase 4b (Amendment 3: C1, C4, C5, C2 done; C3, C6 next); Phase 3 and Phase 4
+formal status resolved at Checkpoint 6; Phase 2 passed review.** Yellow-taxi demand (Stanley's
+decision, 2026-11-12): the difference-in-differences design cannot identify the policy's effect
+on yellow-taxi demand: the pre-trend test rejects (p = 1.6e−17, `results/placebo.json`), the
+estimate moves from −5.2% [−12.8%, +3.0%] (−0.053 log points [−0.137, +0.030]; 38 CBD zones vs
+25 Manhattan "donut" zones, zone and week fixed effects, weather × treated, zones weighted by
+pre-period volume, SEs clustered by zone) to −1.0% with the alternative control (full Manhattan
+non-CBD; `results/did_static.json`), and the placebo-based inferences (0/500 random-zone, 0/54
+time-only; `results/power_mde.json`) are consistent with the diverging app-dispatch trend
+documented in C1 (`results/app_dispatch_summary.json`) rather than with a policy step. We report
+the estimates, both inferences and the control sensitivity side by side and draw no causal
+conclusion from the DiD. No wording of findings before Checkpoint 6. This README
 is rewritten in Phase 7 with the summary, figures and limitations; until then it only explains how
 to run the code.
 
@@ -47,7 +50,7 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `data` | full raw download (yellow months in config, zone lookups, weather) |
 | `dbt` | build and test the full DuckDB warehouse in two stages around the CBD mapping (`scripts/03a_cbd_map.py`), then write the Phase-1 result files (`scripts/03b_data_results.py`) and the Checkpoint-1 checks: vendor series, trip-level CBD fee check, modeled zones (`scripts/03c_checks.py`) |
 | `chronos-bundle`, `chronos-import` | Phase 2: export the Chronos-2 input bundle for Colab; validate the forecasts copied back into `results/` |
-| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b; Phase 3: F3, F3b; Phase 4: F4, F4b (+ html), F4c, F4d, F4e, F4f, F4g, F4h, F4i), built from `results/` only |
+| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b; Phase 3: F3, F3b; Phase 4: F4, F4b (+ html), F4c, F4d, F4e, F4f, F4g, F4h (C3), F4i), built from `results/` only |
 | `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, Open-Meteo offset |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
 | `causal` | Phase 4 / 4b: trip speed/duration DiD and event study vs the donut and the Brooklyn/Queens control (`07a`), demand DiD with checks, permutation and time-only placebos, MDE, heterogeneity (`07b`), metric framework, trade-off table, counterfactual (`07c`), pre-trend test size simulation (`07d`), app-dispatch share (`07e`), synthetic control (`07f`); dbt marts `fct_weekly_pair_speed`, `fct_weekly_zone_trip_stats` |

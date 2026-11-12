@@ -208,20 +208,27 @@ def main() -> None:
     k = int(pc["min_side_weeks"])
     n_tr = int(zs["is_cbd"].sum())
 
+    wctl = [f"tr_{c}" for c in cc["weather_controls"]]
+
     def assign(df, fake):
-        return df.assign(treated=df["zone_id"].isin(fake).astype(int))
+        t = df["zone_id"].isin(fake).astype(int)
+        return df.assign(treated=t, **{f"tr_{c}": t * df[c] for c in cc["weather_controls"]})
 
-    def estimate(df):
+    # Every placebo is estimated on the specification of the estimate it is compared with
+    # (review round 3): the reported estimates have weather x treated; the variants without
+    # weather are kept beside them, compared with the real estimates without weather.
+    def estimate(df, weather=True):
         return quick_beta(df[df["event_week"] >= -int(pc["pre_weeks"])], "log1p_pickups",
-                          "zone_id")
+                          "zone_id", controls=wctl if weather else ())
 
-    def estimate_w(df):
+    def estimate_w(df, weather=True):
         """Weighted spec (C2 primary): weights = each zone's mean weekly pickups in the
         placebo's own pre window (<= pre_weeks before the fake week)."""
         x = df[df["event_week"] >= -int(pc["pre_weeks"])]
         wpre = x[x["event_week"] < 0].groupby("zone_id")["pickups"].mean()
         x = x.assign(w_pre=x["zone_id"].map(wpre).fillna(0.0))
-        return quick_beta(x[x["w_pre"] > 0], "log1p_pickups", "zone_id", weights="w_pre")
+        return quick_beta(x[x["w_pre"] > 0], "log1p_pickups", "zone_id", weights="w_pre",
+                          controls=wctl if weather else ())
 
     zones_m = sorted(man["zone_id"].unique())
     fake_weeks = weeks[k:len(weeks) - k + 1]
@@ -234,37 +241,59 @@ def main() -> None:
     for wk in fake_weeks:
         x = with_fake_policy(real, pd.Timestamp(wk))
         tp.append({"fake_week": pd.Timestamp(wk), "equal_weight": estimate(x),
-                   "pre_volume_weighted": estimate_w(x)})
+                   "pre_volume_weighted": estimate_w(x),
+                   "equal_weight_no_weather": estimate(x, weather=False),
+                   "pre_volume_weighted_no_weather": estimate_w(x, weather=False)})
     tp = pd.DataFrame(tp)
     tp.to_csv(res / "placebo_time_distribution.csv", index=False, lineterminator="\n",
               float_format="%.6g")
-    draws = permutation(pre, zones_m, n_tr, int(pc["draws"]), fake_weeks, assign, estimate,
-                        cfg["seed"])
-    draws_w = permutation(pre, zones_m, n_tr, int(pc["draws"]), fake_weeks, assign,
-                          estimate_w, cfg["seed"])          # same seed: the same draws, paired
-    pd.concat([draws.assign(spec="equal_weight"), draws_w.assign(spec="pre_volume_weighted")]
-              ).to_csv(res / "demand_placebo_draws.csv", index=False, lineterminator="\n",
-                       float_format="%.6g")
+    n_d, seed = int(pc["draws"]), cfg["seed"]      # same seed: the same draws, paired
+    specs = {"equal_weight": lambda d: estimate(d),
+             "pre_volume_weighted": lambda d: estimate_w(d),
+             "equal_weight_no_weather": lambda d: estimate(d, weather=False),
+             "pre_volume_weighted_no_weather": lambda d: estimate_w(d, weather=False)}
+    dr = {s_: permutation(pre, zones_m, n_tr, n_d, fake_weeks, assign, f, seed)
+          for s_, f in specs.items()}
+    pd.concat([v.assign(spec=s_) for s_, v in dr.items()]).to_csv(
+        res / "demand_placebo_draws.csv", index=False, lineterminator="\n", float_format="%.6g")
     bw = e["pre_volume_weighted_not_preregistered"]["terms"]["treated_post"]
+    b_nw = e["without_weather"]["terms"]["treated_post"]
+    bw_nw = e["pre_volume_weighted_without_weather"]["terms"]["treated_post"]
+    real_b = {"equal_weight": b["coef"], "pre_volume_weighted": bw["coef"],
+              "equal_weight_no_weather": b_nw["coef"],
+              "pre_volume_weighted_no_weather": bw_nw["coef"]}
+
+    def summ(x, s_):
+        return {"real_beta": real_b[s_], **power_summary(x, real_b[s_], pc["size"], pc["power"])}
+
+    def lag1(x):
+        return float(pd.Series(x).autocorr(lag=1))
+
     power = {"outcome": "log1p_pickups", "real_beta": b["coef"],
+             "specification": "every placebo is estimated with the controls of the real "
+                              "estimate it is compared with: weather x treated (the reported "
+                              "specification); the *_no_weather variants omit them and are "
+                              "compared with the real estimates without weather "
+                              "(did_static.json: without_weather, "
+                              "pre_volume_weighted_without_weather)",
              "design": f"{pc['draws']} draws on pre-policy weeks {pc['window']}: fake policy "
                        f"week uniform over weeks with >= {k} weeks on each side, {n_tr} random "
                        "Manhattan zones as fake treatment vs the other Manhattan zones; static "
                        f"window <= {pc['pre_weeks']} weeks before the fake week to the end of "
-                       "the pre-policy data; zone + week FE",
-             **power_summary(draws["coef"], b["coef"], pc["size"], pc["power"]),
+                       "the pre-policy data; zone + week FE, weather x treated",
+             **power_summary(dr["equal_weight"]["coef"], b["coef"], pc["size"], pc["power"]),
              "pre_volume_weighted": {
-                 "real_beta": bw["coef"], "weights": "each zone's mean weekly pickups in the "
-                 "(placebo) pre window", **power_summary(draws_w["coef"], bw["coef"],
-                                                         pc["size"], pc["power"])},
+                 "weights": "each zone's mean weekly pickups in the (placebo) pre window",
+                 **summ(dr["pre_volume_weighted"]["coef"], "pre_volume_weighted")},
+             "no_weather": {s_: summ(dr[s_]["coef"], s_) for s_ in
+                            ("equal_weight_no_weather", "pre_volume_weighted_no_weather")},
              "time_only_real_assignment": {
                  "design": "the real CBD / donut assignment with the fake policy week moved over "
                            f"the {len(fake_weeks)} admissible pre-policy weeks (consecutive "
-                           "weeks: strongly dependent draws)",
-                 "equal_weight": power_summary(tp["equal_weight"], b["coef"], pc["size"],
-                                               pc["power"]),
-                 "pre_volume_weighted": power_summary(tp["pre_volume_weighted"], bw["coef"],
-                                                      pc["size"], pc["power"])}}
+                           "weeks: strongly dependent draws, see lag1_autocorrelation)",
+                 **{s_: {**summ(tp[s_], s_), "lag1_autocorrelation": lag1(tp[s_]),
+                         "min": float(tp[s_].min()), "max": float(tp[s_].max())}
+                    for s_ in specs}}}
     (res / "power_mde.json").write_text(json.dumps(power, indent=2, default=str) + "\n")
     tw = power["time_only_real_assignment"]["pre_volume_weighted"]
     LOG.info("demand permutation: sd %.4f, MDE %.4f, share %.3f; weighted MDE %.4f, share %.3f; "

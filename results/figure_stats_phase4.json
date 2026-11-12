@@ -17,22 +17,22 @@
     "2024": -0.09354714999999998,
     "post": -0.5183644333333333
   },
-  "demand_pretrend_p_F": 2.2426206200118153e-18,
+  "demand_pretrend_p_F": 2.2426206202420317e-18,
   "demand_weighted": {
     "coef": -0.053424173857202197,
-    "se": 0.042491580019967855,
+    "se": 0.04249158001996786,
     "ci_lo": -0.13670614034254094,
-    "ci_hi": 0.029857792628136544,
+    "ci_hi": 0.029857792628136558,
     "pvalue": 0.21352123915815313,
     "pct": -0.05202218021984467,
     "pct_ci_lo": -0.12777349934339707,
-    "pct_ci_hi": 0.030308006141333017
+    "pct_ci_hi": 0.03030800614133303
   },
-  "demand_weighted_mde_pct": 0.03354278967539373,
-  "demand_weighted_pretrend_p_F_hotelling": 1.574175780372441e-17,
+  "demand_weighted_mde_pct": 0.0334768743634118,
+  "demand_weighted_pretrend_p_F_hotelling": 1.5741757804099792e-17,
   "demand_weighted_time_placebo_range": [
-    -0.039021,
-    0.0277584
+    -0.0359929,
+    0.00753213
   ],
   "speed": {
     "speed": {
@@ -100,8 +100,8 @@
   "permutation": {
     "demand_weighted": {
       "beta": -0.053424173857202197,
-      "mde": 0.03299250196805014,
-      "mean": 0.0009500811399130235,
+      "mde": 0.032928723850066025,
+      "mean": 0.0007301320291864206,
       "share": 0.0
     },
     "speed_donut": {
@@ -120,22 +120,22 @@
   "leave_one_out": {
     "equal_weight": {
       "n": 63,
-      "min": -0.45094770001112716,
+      "min": -0.450947700011127,
       "max": -0.3852797279410978,
-      "median": -0.42399688594334367,
+      "median": -0.4239968859433438,
       "all_same_sign_as_main": true
     },
     "pre_volume_weighted": {
       "n": 61,
-      "min": -0.08998342415628285,
-      "max": -0.04426743031063075,
+      "min": -0.08998342415628288,
+      "max": -0.04426743031063076,
       "median": -0.05334283606148936,
       "dropped_zone_at_min": 236,
       "dropped_zone_at_max": 41,
       "all_same_sign_as_main": true
     }
   },
-  "title_t4": "Weighted DiD (primary): no detectable change in CBD pickups, -5.2% [-12.8%, +3.0%]; at fake pre-policy dates the same design gives -3.8% to +2.8%",
+  "title_t4": "Weighted DiD, CBD pickups -5.2% [-12.8%, +3.0%]: inconclusive. Pre-trends fail; outside every fake-date placebo (-3.5% to +0.8%)",
   "title_t4b": "CBD zones: median post/pre change in weekly pickups -5.6% relative to the control group's aggregate change",
   "title_t4c": "95% CI includes zero in 10 of 15 trip subsets for weighted demand and in 4 of 8 for within-CBD speed (vs the donut)",
   "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the event-study paths say -40.5% (pre-registered) and -11.3% (volume-weighted)",

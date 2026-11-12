@@ -1,80 +1,173 @@
 {
   "outcome": "log1p_pickups",
-  "real_beta": -0.4253295502481946,
-  "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake treatment vs the other Manhattan zones; static window <= 52 weeks before the fake week to the end of the pre-policy data; zone + week FE",
+  "real_beta": -0.4253295502481945,
+  "specification": "every placebo is estimated with the controls of the real estimate it is compared with: weather x treated (the reported specification); the *_no_weather variants omit them and are compared with the real estimates without weather (did_static.json: without_weather, pre_volume_weighted_without_weather)",
+  "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake treatment vs the other Manhattan zones; static window <= 52 weeks before the fake week to the end of the pre-policy data; zone + week FE, weather x treated",
   "n_draws": 500,
-  "mean": 0.00019843179882418128,
-  "sd": 0.03620592069177512,
+  "mean": 5.653462807455933e-05,
+  "sd": 0.03694544893988991,
   "quantiles": {
-    "0.025": -0.06586190862059178,
-    "0.05": -0.05596289898265697,
-    "0.5": 0.001997905447935838,
-    "0.95": 0.06027647033851144,
-    "0.975": 0.0723886506402881
+    "0.025": -0.06548499663581721,
+    "0.05": -0.05734481368924376,
+    "0.5": 0.0013292811270478487,
+    "0.95": 0.06173316343469804,
+    "0.975": 0.07251072031312224
   },
   "share_abs_ge_abs_beta": 0.0,
   "mde_multiplier": 2.8015852181129683,
-  "mde": 0.10143397221824763,
-  "mde_pct": 0.10675683928029955,
+  "mde": 0.10350582362654301,
+  "mde_pct": 0.10905225205239395,
   "size": 0.05,
   "power": 0.8,
   "pre_volume_weighted": {
-    "real_beta": -0.053424173857202197,
     "weights": "each zone's mean weekly pickups in the (placebo) pre window",
+    "real_beta": -0.053424173857202197,
     "n_draws": 500,
-    "mean": 0.0009500811399130235,
-    "sd": 0.011776369233655696,
+    "mean": 0.0007301320291864206,
+    "sd": 0.011753604222771224,
     "quantiles": {
-      "0.025": -0.022109345360625834,
-      "0.05": -0.0186489518807196,
-      "0.5": 0.001151870450129243,
-      "0.95": 0.021272467420942225,
-      "0.975": 0.024867445359915558
+      "0.025": -0.021911060784097828,
+      "0.05": -0.019189585521498565,
+      "0.5": 0.0008437979452941592,
+      "0.95": 0.02155082057170734,
+      "0.975": 0.024718846172890205
     },
     "share_abs_ge_abs_beta": 0.0,
     "mde_multiplier": 2.8015852181129683,
-    "mde": 0.03299250196805014,
-    "mde_pct": 0.03354278967539373,
+    "mde": 0.032928723850066025,
+    "mde_pct": 0.0334768743634118,
     "size": 0.05,
     "power": 0.8
   },
-  "time_only_real_assignment": {
-    "design": "the real CBD / donut assignment with the fake policy week moved over the 54 admissible pre-policy weeks (consecutive weeks: strongly dependent draws)",
-    "equal_weight": {
-      "n_draws": 54,
-      "mean": -0.11918420330758747,
-      "sd": 0.026884733567447142,
+  "no_weather": {
+    "equal_weight_no_weather": {
+      "real_beta": -0.4251971973279795,
+      "n_draws": 500,
+      "mean": 0.00019843179882418171,
+      "sd": 0.036205920691775126,
       "quantiles": {
-        "0.025": -0.15601271190816995,
-        "0.05": -0.15289642323252314,
-        "0.5": -0.12298872889346649,
-        "0.95": -0.062185515764209304,
-        "0.975": -0.059302587700606334
+        "0.025": -0.0658619086205918,
+        "0.05": -0.05596289898265698,
+        "0.5": 0.0019979054479358337,
+        "0.95": 0.060276470338511454,
+        "0.975": 0.0723886506402881
       },
       "share_abs_ge_abs_beta": 0.0,
       "mde_multiplier": 2.8015852181129683,
-      "mde": 0.07531987215546544,
-      "mde_pct": 0.07822899116077797,
+      "mde": 0.10143397221824765,
+      "mde_pct": 0.10675683928029958,
       "size": 0.05,
       "power": 0.8
     },
-    "pre_volume_weighted": {
+    "pre_volume_weighted_no_weather": {
+      "real_beta": -0.05293953590205247,
+      "n_draws": 500,
+      "mean": 0.0009500811399130234,
+      "sd": 0.011776369233655696,
+      "quantiles": {
+        "0.025": -0.02210934536062583,
+        "0.05": -0.0186489518807196,
+        "0.5": 0.001151870450129241,
+        "0.95": 0.02127246742094223,
+        "0.975": 0.024867445359915554
+      },
+      "share_abs_ge_abs_beta": 0.0,
+      "mde_multiplier": 2.8015852181129683,
+      "mde": 0.03299250196805014,
+      "mde_pct": 0.03354278967539373,
+      "size": 0.05,
+      "power": 0.8
+    }
+  },
+  "time_only_real_assignment": {
+    "design": "the real CBD / donut assignment with the fake policy week moved over the 54 admissible pre-policy weeks (consecutive weeks: strongly dependent draws, see lag1_autocorrelation)",
+    "equal_weight": {
+      "real_beta": -0.4253295502481945,
       "n_draws": 54,
-      "mean": -0.012365792707681612,
+      "mean": -0.12783888912256736,
+      "sd": 0.02394513033043096,
+      "quantiles": {
+        "0.025": -0.15609662345708114,
+        "0.05": -0.15484346153009923,
+        "0.5": -0.1293482564025772,
+        "0.95": -0.07664025764653916,
+        "0.975": -0.07429316491809078
+      },
+      "share_abs_ge_abs_beta": 0.0,
+      "mde_multiplier": 2.8015852181129683,
+      "mde": 0.06708432317952387,
+      "mde_pct": 0.06938564837083577,
+      "size": 0.05,
+      "power": 0.8,
+      "lag1_autocorrelation": 0.9802030453750467,
+      "min": -0.15932257241301992,
+      "max": -0.06478606244138681
+    },
+    "pre_volume_weighted": {
+      "real_beta": -0.053424173857202197,
+      "n_draws": 54,
+      "mean": -0.020035279815346915,
+      "sd": 0.010866428784470389,
+      "quantiles": {
+        "0.025": -0.03523936255990184,
+        "0.05": -0.03396812425022762,
+        "0.5": -0.023649597909127122,
+        "0.95": 0.0009519605384505012,
+        "0.975": 0.0029973369721530115
+      },
+      "share_abs_ge_abs_beta": 0.0,
+      "mde_multiplier": 2.8015852181129683,
+      "mde": 0.03044322625624951,
+      "mde_pct": 0.030911359689938266,
+      "size": 0.05,
+      "power": 0.8,
+      "lag1_autocorrelation": 0.9617430520973617,
+      "min": -0.0359928981026688,
+      "max": 0.007532128893293146
+    },
+    "equal_weight_no_weather": {
+      "real_beta": -0.4251971973279795,
+      "n_draws": 54,
+      "mean": -0.11918420330758747,
+      "sd": 0.026884733567447153,
+      "quantiles": {
+        "0.025": -0.15601271190816995,
+        "0.05": -0.15289642323252345,
+        "0.5": -0.12298872889346649,
+        "0.95": -0.062185515764209304,
+        "0.975": -0.05930258770060634
+      },
+      "share_abs_ge_abs_beta": 0.0,
+      "mde_multiplier": 2.8015852181129683,
+      "mde": 0.07531987215546547,
+      "mde_pct": 0.078228991160778,
+      "size": 0.05,
+      "power": 0.8,
+      "lag1_autocorrelation": 0.985183379390222,
+      "min": -0.15948685025825834,
+      "max": -0.05502274340510354
+    },
+    "pre_volume_weighted_no_weather": {
+      "real_beta": -0.05293953590205247,
+      "n_draws": 54,
+      "mean": -0.012365792707681613,
       "sd": 0.019571471923629773,
       "quantiles": {
-        "0.025": -0.03769023749766848,
+        "0.025": -0.037690237497668484,
         "0.05": -0.03475876131961616,
-        "0.5": -0.014513357548564004,
-        "0.95": 0.022112265455262525,
-        "0.975": 0.023351060123036536
+        "0.5": -0.01451335754856401,
+        "0.95": 0.022112265455262518,
+        "0.975": 0.02335106012303653
       },
       "share_abs_ge_abs_beta": 0.0,
       "mde_multiplier": 2.8015852181129683,
       "mde": 0.054831146437954156,
       "mde_pct": 0.05636222909020481,
       "size": 0.05,
-      "power": 0.8
+      "power": 0.8,
+      "lag1_autocorrelation": 0.9811326636232213,
+      "min": -0.039020996493256535,
+      "max": 0.027758384553954248
     }
   }
 }

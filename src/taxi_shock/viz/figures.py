@@ -338,7 +338,7 @@ def _bin_dates(k: pd.Series, policy_date: str) -> pd.Series:
 
 def _event_panel(ax, es: pd.DataFrame, policy_date: str, ylabel: str, color: str,
                  label_policy: bool = True, label_y: float = 1.0, shift_days: int = 0,
-                 label: str | None = None) -> None:
+                 label: str | None = None, marker: str = "o") -> None:
     """Monthly coefficients as % effects (exp(b) - 1) with 95% CIs; pre bins tinted.
     `shift_days` offsets the points so two series in one panel do not overlap."""
     x = _bin_dates(es["k"], policy_date) + pd.Timedelta(days=shift_days)
@@ -347,7 +347,7 @@ def _event_panel(ax, es: pd.DataFrame, policy_date: str, ylabel: str, color: str
         s = (es["k"] < 0) == pre
         ax.errorbar(x[s], pct["coef"][s],
                     yerr=[pct["coef"][s] - pct["ci_lo"][s], pct["ci_hi"][s] - pct["coef"][s]],
-                    fmt="o", ms=4, color=c, ecolor=c, elinewidth=1.0, capsize=0,
+                    fmt=marker, ms=4, color=c, ecolor=c, elinewidth=1.0, capsize=0,
                     label=label if not pre else None)
     ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
     ax.set_ylabel(ylabel)
@@ -383,7 +383,7 @@ def f4f_speed_event_study(panels: list[tuple[str, list[tuple[str, pd.DataFrame, 
         for j, (label, es, color) in enumerate(series):
             _event_panel(ax, es, policy_date, ylabel, color, label_policy=i == 0 if j == 0
                          else None, label_y=0.12, shift_days=(j - (len(series) - 1) / 2) * 6,
-                         label=label)
+                         label=label, marker="os^"[j % 3])
         if i == 0 and len(series) > 1:
             ax.legend(frameon=False, fontsize=8, loc="upper right")
     axes[-1].xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))

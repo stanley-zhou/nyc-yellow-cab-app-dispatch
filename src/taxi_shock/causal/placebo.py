@@ -24,10 +24,13 @@ def with_fake_policy(df: pd.DataFrame, fake_week: pd.Timestamp) -> pd.DataFrame:
     return df.assign(event_week=((df["week_start"] - fake_week).dt.days // 7).astype(int))
 
 
-def quick_beta(df: pd.DataFrame, y: str, unit: str, weights: str | None = None) -> float:
-    """Point estimate of the static DiD (treated x post), unit + week FE; no SEs needed."""
+def quick_beta(df: pd.DataFrame, y: str, unit: str, weights: str | None = None,
+               controls: Sequence[str] = ()) -> float:
+    """Point estimate of the static DiD (treated x post) with `controls`, unit + week FE; no
+    SEs needed. Placebos pass the controls of the estimate they are compared with (the
+    reported specification has weather x treated; DECISIONS.md, Phase 4 review round 3)."""
     d = df.assign(treated_post=(df["treated"] * (df["event_week"] >= 0)).astype(float))
-    m, _ = fit(d, y, ["treated_post"], [unit, "week_start"], [unit], weights)
+    m, _ = fit(d, y, ["treated_post", *controls], [unit, "week_start"], [unit], weights)
     return float(m.coef()["treated_post"])
 
 

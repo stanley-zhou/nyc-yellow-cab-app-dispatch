@@ -42,7 +42,7 @@ from taxi_shock.viz.figures import (
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
-from taxi_shock.viz.style import PALETTE, tint
+from taxi_shock.viz.style import PALETTE
 
 
 def phase1(cfg: dict) -> None:
@@ -266,9 +266,10 @@ def phase4(cfg: dict) -> None:
                   "demand_weighted_pretrend_p_F_hotelling": p_fw})
     tpd = pd.read_csv(res / "placebo_time_distribution.csv")["pre_volume_weighted"]
     stats["demand_weighted_time_placebo_range"] = [float(tpd.min()), float(tpd.max())]
-    t4 = (f"Weighted DiD (primary): no detectable change in CBD pickups, "
-          f"{_pct_str(bw['coef'])} [{_pct_str(bw['ci_lo'])}, {_pct_str(bw['ci_hi'])}]; at fake "
-          f"pre-policy dates the same design gives {_pct_str(tpd.min())} to {_pct_str(tpd.max())}")
+    # wording: Stanley's decision (a) "inconclusive" (DECISIONS 2026-11-12)
+    t4 = (f"Weighted DiD, CBD pickups {_pct_str(bw['coef'])} [{_pct_str(bw['ci_lo'])}, "
+          f"{_pct_str(bw['ci_hi'])}]: inconclusive. Pre-trends fail; outside every fake-date "
+          f"placebo ({_pct_str(tpd.min())} to {_pct_str(tpd.max())})")
     f4_event_study(w_es, policy, t4,
                    "Monthly bins of log1p(weekly pickups) per zone, zones weighted by their mean "
                    "weekly pickups in the 52 pre weeks (primary since Checkpoint 4, C2; not "
@@ -298,9 +299,9 @@ def phase4(cfg: dict) -> None:
            f"{_pct_str(pre_last)} before the policy; both fail the pre-trend test")
     ser = {o: [("vs donut control (pre-registered)", sm[(sm["outcome"] == o)
                                                          & (sm["control"] == "donut")],
-                PALETTE["non_cbd"]),
+                PALETTE["cbd"]),
                ("vs Brooklyn/Queens (C4)", sm[(sm["outcome"] == o) & (sm["control"] == "outer")],
-                PALETTE["cbd"])] for o in ("log_mean_speed_mph", "log_mean_duration_min")}
+                PALETTE["comparison"])] for o in ("log_mean_speed_mph", "log_mean_duration_min")}
     f4f_speed_event_study(
         [("Speed (%)", ser["log_mean_speed_mph"]),
          ("Duration (%)", ser["log_mean_duration_min"])],
@@ -372,8 +373,8 @@ def phase4(cfg: dict) -> None:
            f"forecast, while the event-study paths say {_pct_str(yr['post'])} (pre-registered) and "
            f"{_pct_str(stats['counterfactual']['did_weighted_post_mean'])} (volume-weighted)")
     f4d_counterfactual_vs_did(
-        cf, [("DiD, pre-registered", main_es, PALETTE["cbd"]),
-             ("DiD, volume-weighted", w_es, tint(PALETTE["cbd"], 0.45))], policy, t4d,
+        cf, [("DiD, volume-weighted (primary)", w_es, PALETTE["cbd"]),
+             ("DiD, pre-registered", main_es, PALETTE["comparison"])], policy, t4d,
         "Counterfactual: mean over days of (actual - forecast) / forecast of CBD daily pickups, "
         "frozen LightGBM (trained to 2024-12-31; 2024 months in-sample, lighter). DiD: monthly "
         "event-study coefficients as exp(b) - 1; the volume-weighted path is not "
@@ -406,7 +407,8 @@ def phase4(cfg: dict) -> None:
         "Amendment 1 (A2): 500 draws on pre-policy weeks 2023-01 to 2025-01-04, each with a "
         "random fake policy week and 38 random Manhattan zones as fake CBD (speed: pairs within "
         "the fake set vs the other Manhattan zones' pairs, or vs the fixed Brooklyn/Queens "
-        "pairs); grey band = +- MDE at 80% power / 5% size; red line = the real estimate. "
+        "pairs); demand placebos with weather x treated, as the real estimate; grey band = +- MDE "
+        "at 80% power / 5% size; red line = the real estimate. "
         "Sources: results/power_mde.json, results/speed_power.json.",
         figs / "F4e_placebo_distribution")
 

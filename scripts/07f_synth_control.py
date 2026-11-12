@@ -87,13 +87,22 @@ def main() -> None:
     gap, wts, act = fit_one(y, "CBD", donors, pre)
     paths = [pd.DataFrame({"week_start": weeks, "unit": "CBD", "actual": act.to_numpy(),
                            "synthetic": (act - gap).to_numpy(), "gap": gap.to_numpy()})]
-    ratios = {}
+    ratios, pre_fit = {}, {}
     for z in donors:                                   # in-space placebos
         g, _, _ = fit_one(y, z, [d for d in donors if d != z], pre)
         ratios[z] = rmspe(g[post]) / rmspe(g[pre])
+        pre_fit[z] = rmspe(g[pre])
         paths.append(pd.DataFrame({"week_start": weeks, "unit": str(z), "gap": g.to_numpy()}))
     cbd_ratio = rmspe(gap[post]) / rmspe(gap[pre])
     rank = 1 + sum(r >= cbd_ratio for r in ratios.values())
+    pre_cbd = rmspe(gap[pre])
+
+    def restricted(mult: float) -> dict:
+        """Abadie et al. (2010): placebos whose pre-period MSPE is <= mult x the CBD's."""
+        keep = [z for z in donors if pre_fit[z] ** 2 <= mult * pre_cbd ** 2]
+        r = 1 + sum(ratios[z] >= cbd_ratio for z in keep)
+        return {"mspe_multiple": mult, "n": len(keep), "cbd_rank": r,
+                "p_value": r / (len(keep) + 1)}
     # in-time placebo: fake treatment week, pre = weeks before it (from the window start)
     fake = pd.Timestamp(sc["in_time_placebo_week"])
     pre_t = weeks[(weeks >= pd.Timestamp(sc["pre_period"][0])) & (weeks < fake)]
@@ -124,16 +133,37 @@ def main() -> None:
                                                   for q in (0.5, 0.9, 0.95)}},
         "in_time_placebo": {"fake_week": str(fake.date()), "pre_rmspe": rmspe(gap_t[pre_t]),
                             "post_rmspe": rmspe(gap_t[post_t]),
+                            "post_gap_mean_log": float(gap_t[post_t].mean()),
                             "post_gap_mean_pct": float(np.expm1(gap_t[post_t].mean()))},
         "decision_rule": "if p_value > 0.10 the method cannot resolve the question",
     }
     out["resolves"] = out["in_space_placebos"]["p_value"] <= 0.10
+    # pre-fit gate (Stanley 2026-11-12: "its pre-fit quality decides whether it can speak at
+    # all"; rule fixed in DECISIONS.md before the run)
+    med_pre = float(np.median(list(pre_fit.values())))
+    gate_fit = pre_cbd <= med_pre
+    # the method must not invent a gap where there is no policy: the in-time placebo's mean
+    # post gap (log points) must lie within the CBD's own pre-period fit error
+    gate_time = abs(float(gap_t[post_t].mean())) <= pre_cbd
+    out["pre_fit"] = {"cbd_pre_rmspe": pre_cbd, "donor_pre_rmspe_median": med_pre,
+                      "cbd_pre_rmspe_rank_among_units": 1 + sum(v < pre_cbd
+                                                               for v in pre_fit.values()),
+                      "donor_pre_rmspe_quantiles": {q: float(np.quantile(
+                          list(pre_fit.values()), q)) for q in (0.1, 0.5, 0.9)},
+                      "restricted_placebos": [restricted(5.0), restricted(2.0)],
+                      "gate_cbd_fit_at_most_donor_median": bool(gate_fit),
+                      "gate_in_time_mean_gap_within_cbd_pre_rmspe": bool(gate_time),
+                      "rule": "C3 speaks only if both gates hold; otherwise the method cannot "
+                              "resolve the question"}
+    out["can_speak"] = bool(gate_fit and gate_time)
     (res / "synth_control.json").write_text(json.dumps(out, indent=2) + "\n")
     pd.concat(paths, ignore_index=True).to_csv(res / "synth_control_paths.csv", index=False,
                                                lineterminator="\n", float_format="%.6g")
-    LOG.info("C3: pre RMSPE %.4f, post gap %.4f (%.2f%%), ratio %.2f, rank %d of %d, p %.3f",
-             out["pre_rmspe"], out["post_gap_mean_log"], out["post_gap_mean_pct"] * 100,
-             cbd_ratio, rank, len(ratios) + 1, out["in_space_placebos"]["p_value"])
+    LOG.info("C3: pre RMSPE %.4f (donor median %.4f), post gap %.4f (%.2f%%), ratio %.2f, "
+             "rank %d of %d, p %.3f, in-time %.2f%%, can speak %s", pre_cbd, med_pre,
+             out["post_gap_mean_log"], out["post_gap_mean_pct"] * 100, cbd_ratio, rank,
+             len(ratios) + 1, out["in_space_placebos"]["p_value"],
+             out["in_time_placebo"]["post_gap_mean_pct"] * 100, out["can_speak"])
 
 
 if __name__ == "__main__":
