@@ -17,7 +17,20 @@
     "2024": -0.09354714999999998,
     "post": -0.5183644333333333
   },
-  "demand_pretrend_p_F": 2.2426206202420317e-18,
+  "demand_pretrend_p_F": 2.2426206200118153e-18,
+  "demand_weighted": {
+    "coef": -0.053424173857202197,
+    "se": 0.042491580019967855,
+    "ci_lo": -0.13670614034254094,
+    "ci_hi": 0.029857792628136544,
+    "pvalue": 0.21352123915815313,
+    "pct": -0.05202218021984467,
+    "pct_ci_lo": -0.12777349934339707,
+    "pct_ci_hi": 0.030308006141333017
+  },
+  "demand_weighted_mde_pct": 0.03354278967539373,
+  "demand_weighted_pretrend_p_F_hotelling": 1.574175780372441e-17,
+  "demand_weighted_permutation_share": 0.0,
   "speed": {
     "speed": {
       "coef": 0.018954577256015768,
@@ -71,7 +84,7 @@
     "min_pre_weekly": 50.0
   },
   "heterogeneity": {
-    "demand_negative": 15,
+    "demand_ci_includes_zero": 10,
     "demand_n": 15,
     "speed_positive": 8,
     "speed_n": 8
@@ -82,21 +95,48 @@
     "did_weighted_post_mean": -0.11957829352380953
   },
   "permutation": {
-    "demand": {
-      "beta": -0.4253295502481945,
-      "mde": 0.10143397221824765,
+    "demand_weighted": {
+      "beta": -0.053424173857202197,
+      "mde": 0.03299250196805014,
+      "mean": 0.0009500811399130235,
       "share": 0.0
     },
-    "speed": {
+    "speed_donut": {
       "beta": 0.018954577256015768,
       "mde": 0.0275369144267793,
+      "mean": 9.078318073248887e-05,
       "share": 0.064
+    },
+    "speed_outer": {
+      "beta": -0.04049978442353905,
+      "mde": 0.018270528892923073,
+      "mean": -0.08634693934440597,
+      "share": 1.0
     }
   },
-  "title_t4": "Pre-registered demand event study, CBD vs donut control: mean coefficient +5.2% in 2023, -8.9% in 2024, -40.5% after congestion pricing (pre-trend test p = 2e-18)",
+  "leave_one_out": {
+    "equal_weight": {
+      "n": 63,
+      "min": -0.45094770001112716,
+      "max": -0.3852797279410978,
+      "median": -0.42399688594334367,
+      "all_same_sign_as_main": true
+    },
+    "pre_volume_weighted": {
+      "n": 61,
+      "min": -0.08998342415628285,
+      "max": -0.04426743031063075,
+      "median": -0.05334283606148936,
+      "dropped_zone_at_min": 236,
+      "dropped_zone_at_max": 41,
+      "all_same_sign_as_main": true
+    }
+  },
+  "title_t4": "Weighted DiD: CBD pickups -5.2% [-12.8%, +3.0%]; CI includes 0, yet beyond 100% of placebos (MDE 3.4%); pre-trends fail (p = 2e-17)",
   "title_t4b": "CBD zones: median post/pre change in weekly pickups -5.6% relative to the control group's aggregate change",
-  "title_t4c": "Pre-registered demand DiD is negative in 15 of 15 trip subsets (same design, same pre-trend caveat); within-CBD speed estimates are positive in 8 of 8 hour bands and distance terciles",
+  "title_t4c": "Weighted demand DiD: 95% CI includes zero in 10 of 15 trip subsets; within-CBD speed (vs the donut) positive in 8 of 8 subsets",
   "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the event-study paths say -40.5% (pre-registered) and -11.3% (volume-weighted)",
-  "title_t4e": "Permutation placebos: demand estimate -0.425 lies beyond 100% of 500 placebos (MDE 0.101); speed estimate +0.019: 6.4% of placebos as large (MDE 0.028)",
-  "title_t4f": "Within-CBD taxi speed: +1.9% vs the Manhattan donut, -4.0% vs Brooklyn/Queens; but the Brooklyn/Queens gap already fell from +14 to -3 log pts before the policy (pre-trend p = 6e-46), and both comparisons fail the pre-trend test"
+  "title_t4e": "Permutation placebos: weighted demand -0.053 (0% of placebos as large, MDE 0.033); speed vs donut +0.019 (6%, MDE 0.028); vs Brooklyn/Queens the placebos themselves centre on -0.086",
+  "title_t4f": "Within-CBD taxi speed: +1.9% vs the Manhattan donut, -4.0% vs Brooklyn/Queens; but the Brooklyn/Queens gap already fell from +15.4% to -2.6% before the policy (pre-trend p = 6e-46), and both comparisons fail the pre-trend test",
+  "title_t4i": "Leave one zone out: weighted -8.6% to -4.3%; equal-weight (pre-registered) -36.3% to -32.0%"
 }

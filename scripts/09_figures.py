@@ -263,9 +263,11 @@ def phase4(cfg: dict) -> None:
         "pretrend"]["p_F_hotelling"]
     stats.update({"demand_weighted": bw, "demand_weighted_mde_pct": mde_w,
                   "demand_weighted_pretrend_p_F_hotelling": p_fw})
-    t4 = (f"Volume-weighted DiD (primary): no detectable change in CBD pickups, "
-          f"{_pct_str(bw['coef'])} [{_pct_str(bw['ci_lo'])}, {_pct_str(bw['ci_hi'])}], MDE "
-          f"{mde_w * 100:.0f}%; the pre-trend test rejects (p = {p_fw:.0e})")
+    share_w = pw["pre_volume_weighted"]["share_abs_ge_abs_beta"]
+    stats["demand_weighted_permutation_share"] = share_w
+    t4 = (f"Weighted DiD: CBD pickups {_pct_str(bw['coef'])} [{_pct_str(bw['ci_lo'])}, "
+          f"{_pct_str(bw['ci_hi'])}]; CI includes 0, yet beyond {(1 - share_w) * 100:.0f}% of "
+          f"placebos (MDE {mde_w * 100:.1f}%); pre-trends fail (p = {p_fw:.0e})")
     f4_event_study(w_es, policy, t4,
                    "Monthly bins of log1p(weekly pickups) per zone, zones weighted by their mean "
                    "weekly pickups in the 52 pre weeks (primary since Checkpoint 4, C2; not "
@@ -347,9 +349,8 @@ def phase4(cfg: dict) -> None:
     sn = len(shd)
     stats["heterogeneity"] = {"demand_ci_includes_zero": dzero, "demand_n": dn,
                               "speed_positive": spos, "speed_n": sn}
-    t4c = (f"By trip subset, the volume-weighted demand DiD's 95% CI includes zero in {dzero} "
-           f"of {dn} subsets; within-CBD speed estimates (vs the donut) are positive in {spos} "
-           f"of {sn} hour bands and distance terciles")
+    t4c = (f"Weighted demand DiD: 95% CI includes zero in {dzero} of {dn} trip subsets; "
+           f"within-CBD speed (vs the donut) positive in {spos} of {sn} subsets")
     f4c_heterogeneity(panels, t4c, "Static DiD (%) with 95% CIs on sub-panels; demand: "
                       "log1p(weekly pickups of the subset) per zone, CBD vs donut control, zones "
                       "weighted by their pre-period count of the subset (pass-through: "
@@ -410,14 +411,15 @@ def phase4(cfg: dict) -> None:
     loo = pd.read_csv(res / "leave_one_out.csv")
     lw = ds["leave_one_zone_out_pre_volume_weighted"]
     stats["leave_one_out"] = {"equal_weight": ds["leave_one_zone_out"], "pre_volume_weighted": lw}
-    t4i = (f"Dropping any one zone moves the volume-weighted estimate between "
-           f"{_pct_str(lw['min'])} and {_pct_str(lw['max'])}; the equal-weight (pre-registered) "
-           f"estimate stays between {_pct_str(ds['leave_one_zone_out']['min'])} and "
+    t4i = (f"Leave one zone out: weighted {_pct_str(lw['min'])} to {_pct_str(lw['max'])}; "
+           f"equal-weight (pre-registered) {_pct_str(ds['leave_one_zone_out']['min'])} to "
            f"{_pct_str(ds['leave_one_zone_out']['max'])}")
     f4i_leave_one_out(loo, {"equal_weight": ds["main"]["terms"]["treated_post"]["coef"],
                             "pre_volume_weighted": bw["coef"]}, t4i,
                       "Static DiD of log1p(weekly pickups), CBD vs donut control, re-estimated "
-                      "without each of the 63 zones (dots) and on all zones (bar). Source: "
+                      f"without each zone (dots: {ds['leave_one_zone_out']['n']} equal-weight, "
+                      f"{lw['n']} weighted — zones without pre-period pickups carry no weight) "
+                      "and on all zones (bar). Source: "
                       "results/leave_one_out.csv, results/did_static.json.",
                       figs / "F4i_leave_one_out")
     for k, v in (("t4", t4), ("t4b", t4b), ("t4c", t4c), ("t4d", t4d), ("t4e", t4e),

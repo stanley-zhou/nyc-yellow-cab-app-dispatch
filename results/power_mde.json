@@ -1,21 +1,41 @@
 {
   "outcome": "log1p_pickups",
-  "real_beta": -0.4253295502481945,
+  "real_beta": -0.4253295502481946,
   "design": "500 draws on pre-policy weeks ['2023-01-01', '2025-01-04']: fake policy week uniform over weeks with >= 26 weeks on each side, 38 random Manhattan zones as fake treatment vs the other Manhattan zones; static window <= 52 weeks before the fake week to the end of the pre-policy data; zone + week FE",
   "n_draws": 500,
-  "mean": 0.00019843179882418171,
-  "sd": 0.036205920691775126,
+  "mean": 0.00019843179882418128,
+  "sd": 0.03620592069177512,
   "quantiles": {
-    "0.025": -0.0658619086205918,
-    "0.05": -0.05596289898265698,
-    "0.5": 0.0019979054479358337,
-    "0.95": 0.060276470338511454,
+    "0.025": -0.06586190862059178,
+    "0.05": -0.05596289898265697,
+    "0.5": 0.001997905447935838,
+    "0.95": 0.06027647033851144,
     "0.975": 0.0723886506402881
   },
   "share_abs_ge_abs_beta": 0.0,
   "mde_multiplier": 2.8015852181129683,
-  "mde": 0.10143397221824765,
-  "mde_pct": 0.10675683928029958,
+  "mde": 0.10143397221824763,
+  "mde_pct": 0.10675683928029955,
   "size": 0.05,
-  "power": 0.8
+  "power": 0.8,
+  "pre_volume_weighted": {
+    "real_beta": -0.053424173857202197,
+    "weights": "each zone's mean weekly pickups in the (placebo) pre window",
+    "n_draws": 500,
+    "mean": 0.0009500811399130235,
+    "sd": 0.011776369233655696,
+    "quantiles": {
+      "0.025": -0.022109345360625834,
+      "0.05": -0.0186489518807196,
+      "0.5": 0.001151870450129243,
+      "0.95": 0.021272467420942225,
+      "0.975": 0.024867445359915558
+    },
+    "share_abs_ge_abs_beta": 0.0,
+    "mde_multiplier": 2.8015852181129683,
+    "mde": 0.03299250196805014,
+    "mde_pct": 0.03354278967539373,
+    "size": 0.05,
+    "power": 0.8
+  }
 }

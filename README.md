@@ -1,9 +1,13 @@
 # Forecasting Under a Policy Shock: NYC Yellow-Taxi Demand and Congestion Pricing
 
-**Status: Phase 4 (causal effect) built, at Checkpoint 4 (Stanley); Phase 3 escalated (open);
-Phase 2 passed review.** Results are in `results/` (Phase 2: `backtest_2024.csv`; Phase 3:
-`shock_errors.csv`, `drift_detection.json`; Phase 4: `speed_did.json`, `did_static.json`,
-`metric_framework.csv`); no wording of findings before Checkpoint 4. This README
+**Status: Phase 4b (Amendment 3: C1, C4, C5, C2 done) under re-review; Phase 3 escalated
+(open); Phase 2 passed review.** Phase 4 effect (DoD sentence): a difference-in-differences of
+log1p(weekly pickups) per zone — 38 CBD zones vs 25 Manhattan "donut" control zones, zone and
+week fixed effects, zones weighted by their pre-period volume, SEs clustered by zone — gives
+−5.2% [−12.8%, +3.0%] for CBD pickups (`results/did_static.json`): no detectable change by the
+clustered CI, although the estimate lies outside all 500 permutation placebos (MDE 3.4%,
+`results/power_mde.json`) and the pre-trend test fails (`results/placebo.json`). No wording of
+findings before Checkpoint 6. This README
 is rewritten in Phase 7 with the summary, figures and limitations; until then it only explains how
 to run the code.
 

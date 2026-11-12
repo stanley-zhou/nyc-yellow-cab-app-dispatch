@@ -1,20 +1,39 @@
-cut,level,comparison,coef,se,ci_lo,ci_hi,pvalue,pct,pct_ci_lo,pct_ci_hi,n_obs
-hour_band,h00_06,"CBD vs donut control zones, this trip subset",-0.485486,0.1179,-0.716566,-0.254406,0.000115121,-0.384602,-0.511573,-0.224623,8946
-hour_band,h06_10,"CBD vs donut control zones, this trip subset",-0.327863,0.116327,-0.55586,-0.0998655,0.00646812,-0.279538,-0.426421,-0.0950409,8946
-hour_band,h10_16,"CBD vs donut control zones, this trip subset",-0.337917,0.0978739,-0.529746,-0.146087,0.00100596,-0.286745,-0.411245,-0.135918,8946
-hour_band,h16_20,"CBD vs donut control zones, this trip subset",-0.384006,0.109441,-0.598506,-0.169506,0.000844197,-0.318873,-0.450368,-0.155918,8946
-hour_band,h20_24,"CBD vs donut control zones, this trip subset",-0.468198,0.117906,-0.699291,-0.237106,0.000188892,-0.373871,-0.503062,-0.211092,8946
-day_type,weekday,"CBD vs donut control zones, this trip subset",-0.400551,0.110721,-0.61756,-0.183542,0.000598601,-0.330049,-0.460742,-0.167683,8946
-day_type,weekend,"CBD vs donut control zones, this trip subset",-0.435411,0.117377,-0.665467,-0.205356,0.000445918,-0.353002,-0.485966,-0.185643,8946
-dropoff,do_cbd,"CBD vs donut control zones, this trip subset",-0.610323,0.130098,-0.86531,-0.355335,1.54055e-05,-0.456824,-0.579079,-0.299062,8946
-dropoff,do_non_cbd,"CBD vs donut control zones, this trip subset",-0.279585,0.108263,-0.491777,-0.0673927,0.012185,-0.243902,-0.388461,-0.065172,8946
-distance_tercile,dist_t1,"CBD vs donut control zones, this trip subset",-0.213874,0.0762285,-0.363279,-0.0644685,0.00669924,-0.19255,-0.304607,-0.0624344,8946
-distance_tercile,dist_t2,"CBD vs donut control zones, this trip subset",-0.228972,0.0792082,-0.384217,-0.0737268,0.00529147,-0.204649,-0.319016,-0.0710745,8946
-distance_tercile,dist_t3,"CBD vs donut control zones, this trip subset",-0.492417,0.117121,-0.72197,-0.262863,8.56315e-05,-0.388852,-0.514206,-0.231153,8946
-fare_tercile,fare_t1,"CBD vs donut control zones, this trip subset",-0.238919,0.0714756,-0.379008,-0.0988293,0.0014106,-0.212521,-0.31546,-0.0941027,8946
-fare_tercile,fare_t2,"CBD vs donut control zones, this trip subset",-0.323237,0.0928219,-0.505165,-0.14131,0.00091697,-0.276198,-0.396594,-0.13178,8946
-fare_tercile,fare_t3,"CBD vs donut control zones, this trip subset",-0.415852,0.106955,-0.625481,-0.206224,0.000248783,-0.340222,-0.464996,-0.186349,8946
-pass_through,dropoff_only_in_cbd,control-zone pickups ending in the CBD vs ending outside it,0.236681,0.0466201,0.145307,0.328055,3.42208e-05,0.267037,0.156395,0.388265,7100
-pass_through,pickup_in_cbd,CBD vs donut control zones (= main estimate),-0.42533,0.114019,-0.648803,-0.201856,0.000416893,-0.346446,-0.477329,-0.182787,8946
-airports,outer_boroughs,CBD vs outer_boroughs,-0.763459,0.0441785,-0.850047,-0.67687,0,-0.533948,-0.572605,-0.491795,23572
-airports,outer_boroughs_with_airports,CBD vs outer_boroughs_with_airports,-0.748074,0.0452418,-0.836746,-0.659402,0,-0.526723,-0.566883,-0.482839,23856
+spec,cut,level,comparison,coef,se,ci_lo,ci_hi,pvalue,pct,pct_ci_lo,pct_ci_hi,n_obs
+equal_weight,hour_band,h00_06,"CBD vs donut control zones, this subset",-0.485486,0.1179,-0.716566,-0.254406,0.000115121,-0.384602,-0.511573,-0.224623,8946
+pre_volume_weighted,hour_band,h00_06,"CBD vs donut control zones, this subset",-0.28533,0.0836839,-0.449347,-0.121312,0.00117888,-0.248234,-0.361955,-0.114243,8520
+equal_weight,hour_band,h06_10,"CBD vs donut control zones, this subset",-0.327863,0.116327,-0.55586,-0.0998655,0.00646812,-0.279538,-0.426421,-0.0950409,8946
+pre_volume_weighted,hour_band,h06_10,"CBD vs donut control zones, this subset",-0.0583068,0.0450847,-0.146671,0.0300576,0.200874,-0.0566395,-0.136422,0.0305139,8662
+equal_weight,hour_band,h10_16,"CBD vs donut control zones, this subset",-0.337917,0.0978739,-0.529746,-0.146087,0.00100596,-0.286745,-0.411245,-0.135918,8946
+pre_volume_weighted,hour_band,h10_16,"CBD vs donut control zones, this subset",-0.0639467,0.0319827,-0.126632,-0.00126181,0.0500978,-0.061945,-0.118942,-0.00126102,8662
+equal_weight,hour_band,h16_20,"CBD vs donut control zones, this subset",-0.384006,0.109441,-0.598506,-0.169506,0.000844197,-0.318873,-0.450368,-0.155918,8946
+pre_volume_weighted,hour_band,h16_20,"CBD vs donut control zones, this subset",-0.0518361,0.0420037,-0.134162,0.0304897,0.222065,-0.0505155,-0.125552,0.0309593,8520
+equal_weight,hour_band,h20_24,"CBD vs donut control zones, this subset",-0.468198,0.117906,-0.699291,-0.237106,0.000188892,-0.373871,-0.503062,-0.211092,8946
+pre_volume_weighted,hour_band,h20_24,"CBD vs donut control zones, this subset",-0.0808028,0.0582632,-0.194997,0.033391,0.170703,-0.0776245,-0.177163,0.0339547,8520
+equal_weight,day_type,weekday,"CBD vs donut control zones, this subset",-0.400551,0.110721,-0.61756,-0.183542,0.000598601,-0.330049,-0.460742,-0.167683,8946
+pre_volume_weighted,day_type,weekday,"CBD vs donut control zones, this subset",-0.0575747,0.039874,-0.135726,0.020577,0.153965,-0.0559486,-0.126918,0.0207902,8662
+equal_weight,day_type,weekend,"CBD vs donut control zones, this subset",-0.435411,0.117377,-0.665467,-0.205356,0.000445918,-0.353002,-0.485966,-0.185643,8946
+pre_volume_weighted,day_type,weekend,"CBD vs donut control zones, this subset",-0.0440455,0.0508893,-0.143787,0.0556956,0.390261,-0.0430896,-0.133928,0.0572758,8520
+equal_weight,dropoff,do_cbd,"CBD vs donut control zones, this subset",-0.610323,0.130098,-0.86531,-0.355335,1.54055e-05,-0.456824,-0.579079,-0.299062,8946
+pre_volume_weighted,dropoff,do_cbd,"CBD vs donut control zones, this subset",-0.130535,0.0559435,-0.240182,-0.0208876,0.0230002,-0.122374,-0.213515,-0.020671,8662
+equal_weight,dropoff,do_non_cbd,"CBD vs donut control zones, this subset",-0.279585,0.108263,-0.491777,-0.0673927,0.012185,-0.243902,-0.388461,-0.065172,8946
+pre_volume_weighted,dropoff,do_non_cbd,"CBD vs donut control zones, this subset",-0.000941444,0.0416783,-0.0826295,0.0807466,0.982055,-0.000941001,-0.0793078,0.0840961,8520
+equal_weight,distance_tercile,dist_t1,"CBD vs donut control zones, this subset",-0.213874,0.0762285,-0.363279,-0.0644685,0.00669924,-0.19255,-0.304607,-0.0624344,8946
+pre_volume_weighted,distance_tercile,dist_t1,"CBD vs donut control zones, this subset",0.00372533,0.0159275,-0.027492,0.0349426,0.815878,0.00373228,-0.0271175,0.0355603,8520
+equal_weight,distance_tercile,dist_t2,"CBD vs donut control zones, this subset",-0.228972,0.0792082,-0.384217,-0.0737268,0.00529147,-0.204649,-0.319016,-0.0710745,8946
+pre_volume_weighted,distance_tercile,dist_t2,"CBD vs donut control zones, this subset",-0.0026102,0.024408,-0.050449,0.0452286,0.915193,-0.0026068,-0.0491975,0.046267,8662
+equal_weight,distance_tercile,dist_t3,"CBD vs donut control zones, this subset",-0.492417,0.117121,-0.72197,-0.262863,8.56315e-05,-0.388852,-0.514206,-0.231153,8946
+pre_volume_weighted,distance_tercile,dist_t3,"CBD vs donut control zones, this subset",-0.190055,0.0713133,-0.329827,-0.0502838,0.00987374,-0.173087,-0.280952,-0.0490405,8662
+equal_weight,fare_tercile,fare_t1,"CBD vs donut control zones, this subset",-0.238919,0.0714756,-0.379008,-0.0988293,0.0014106,-0.212521,-0.31546,-0.0941027,8946
+pre_volume_weighted,fare_tercile,fare_t1,"CBD vs donut control zones, this subset",-0.0260016,0.0138124,-0.0530735,0.00107028,0.0647052,-0.0256665,-0.0516897,0.00107085,8520
+equal_weight,fare_tercile,fare_t2,"CBD vs donut control zones, this subset",-0.323237,0.0928219,-0.505165,-0.14131,0.00091697,-0.276198,-0.396594,-0.13178,8946
+pre_volume_weighted,fare_tercile,fare_t2,"CBD vs donut control zones, this subset",-0.0386712,0.0308738,-0.0991827,0.0218404,0.215228,-0.037933,-0.0944227,0.0220806,8662
+equal_weight,fare_tercile,fare_t3,"CBD vs donut control zones, this subset",-0.415852,0.106955,-0.625481,-0.206224,0.000248783,-0.340222,-0.464996,-0.186349,8946
+pre_volume_weighted,fare_tercile,fare_t3,"CBD vs donut control zones, this subset",-0.160877,0.0676426,-0.293454,-0.0282997,0.0205922,-0.148603,-0.254316,-0.027903,8662
+equal_weight,pass_through,dropoff_only_in_cbd,control-zone pickups ending in the CBD vs ending outside it,0.236681,0.0466201,0.145307,0.328055,3.42208e-05,0.267037,0.156395,0.388265,7100
+pre_volume_weighted,pass_through,dropoff_only_in_cbd,control-zone pickups ending in the CBD vs ending outside it,0.0989912,0.0255088,0.0489949,0.148987,0.000806484,0.104057,0.050215,0.160658,6390
+equal_weight,pass_through,pickup_in_cbd,CBD vs donut control zones (= main estimate),-0.42533,0.114019,-0.648803,-0.201856,0.000416893,-0.346446,-0.477329,-0.182787,8946
+pre_volume_weighted,pass_through,pickup_in_cbd,CBD vs donut control zones (= main estimate),-0.0534242,0.0424916,-0.136706,0.0298578,0.213521,-0.0520222,-0.127773,0.030308,8662
+equal_weight,airports,outer_boroughs,CBD vs outer_boroughs,-0.763459,0.0441785,-0.850047,-0.67687,0,-0.533948,-0.572605,-0.491795,23572
+pre_volume_weighted,airports,outer_boroughs,CBD vs outer_boroughs,-0.718373,0.167231,-1.04614,-0.390607,2.96561e-05,-0.512455,-0.648709,-0.323354,23572
+equal_weight,airports,outer_boroughs_with_airports,CBD vs outer_boroughs_with_airports,-0.748074,0.0452418,-0.836746,-0.659402,0,-0.526723,-0.566883,-0.482839,23856
+pre_volume_weighted,airports,outer_boroughs_with_airports,CBD vs outer_boroughs_with_airports,-0.0757962,0.124006,-0.318843,0.16725,0.541877,-0.0729949,-0.27301,0.18205,23856
