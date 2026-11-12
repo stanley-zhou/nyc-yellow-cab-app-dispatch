@@ -1,0 +1,165 @@
+{
+  "events": {
+    "covid": {
+      "date": "2020-03-01",
+      "windows": {
+        "train": [
+          "2019-03-01",
+          "2020-03-01"
+        ],
+        "fold_a": [
+          "2019-03-01",
+          "2019-08-31"
+        ],
+        "fold_b": [
+          "2019-08-31",
+          "2020-03-01"
+        ],
+        "monitor": [
+          "2020-03-01",
+          "2021-03-01"
+        ]
+      },
+      "fit_rounds": {
+        "monitoring": {
+          "0.1": 1635,
+          "0.5": 2121,
+          "0.9": 168
+        }
+      },
+      "groups": {
+        "cbd": {
+          "calibration": {
+            "n_days": 366,
+            "mean": 0.008177209185455581,
+            "sd": 0.11122956496232271,
+            "period": [
+              "2019-03-01",
+              "2020-02-29"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 14.2,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2020-03-14",
+              "side": "down",
+              "delay_days": 13,
+              "n_alarms": 22
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": {
+              "date": "2020-03-18",
+              "side": "down",
+              "delay_days": 17,
+              "n_alarms": 5
+            }
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": -0.8208145460707785,
+              "pct": -0.5599269512973236,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": -0.13145772118553725,
+              "pct": -0.12318365489027319,
+              "n_days": 365
+            }
+          }
+        },
+        "non_cbd": {
+          "calibration": {
+            "n_days": 366,
+            "mean": 0.011451286429195797,
+            "sd": 0.11266871055522092,
+            "period": [
+              "2019-03-01",
+              "2020-02-29"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 14.65,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2020-03-15",
+              "side": "down",
+              "delay_days": 14,
+              "n_alarms": 15
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": {
+              "date": "2020-03-19",
+              "side": "down",
+              "delay_days": 18,
+              "n_alarms": 4
+            }
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": -0.6129828537310039,
+              "pct": -0.4582674522847048,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": -0.06765199659449643,
+              "pct": -0.06541434401734376,
+              "n_days": 365
+            }
+          }
+        },
+        "all": {
+          "calibration": {
+            "n_days": 366,
+            "mean": 0.009671690859480496,
+            "sd": 0.10870277951886816,
+            "period": [
+              "2019-03-01",
+              "2020-02-29"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 14.8,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2020-03-15",
+              "side": "down",
+              "delay_days": 14,
+              "n_alarms": 16
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": {
+              "date": "2020-03-18",
+              "side": "down",
+              "delay_days": 17,
+              "n_alarms": 5
+            }
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": -0.7239569773397339,
+              "pct": -0.5151700060052297,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": -0.09878426346418204,
+              "pct": -0.09406186910311122,
+              "n_days": 365
+            }
+          }
+        }
+      }
+    }
+  },
+  "generated_utc": "2026-11-11T23:52:43+00:00",
+  "procedure": "DECISIONS.md, Phase 4b (C5 specification)"
+}

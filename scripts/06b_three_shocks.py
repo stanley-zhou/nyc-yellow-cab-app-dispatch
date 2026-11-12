@@ -149,6 +149,9 @@ def monitor(dd: pd.DataFrame, event: pd.Timestamp, cfg: dict) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--events", nargs="+", default=None,
+                    help="run only these events; their results are merged into the existing "
+                         "results files (one event per run, committed in between)")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     cfg = load_config()
@@ -158,10 +161,15 @@ def main() -> None:
     groups = {"cbd": zs.index[zs["is_cbd"]].tolist(), "non_cbd": zs.index[~zs["is_cbd"]].tolist(),
               "all": list(zones)}
     groups = {g: groups[g] for g in cfg["shocks"]["groups"]}
-    out = {"generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
-           "procedure": "DECISIONS.md, Phase 4b (C5 specification)", "events": {}}
+    jf, cf = res / "shock_comparison.json", res / "shock_daily.csv"
+    out = json.loads(jf.read_text()) if args.events and jf.exists() else {"events": {}}
+    out.update({"generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
+                "procedure": "DECISIONS.md, Phase 4b (C5 specification)"})
     days = []
+    old = pd.read_csv(cf, parse_dates=["day"]) if args.events and cf.exists() else None
     for key, date in cfg["shocks"]["events"].items():
+        if args.events and key not in args.events:
+            continue
         fc = run_event(key, date, cfg, zones, args.force)
         dd = daily(fc, groups)
         days.append(dd.assign(event=key))
@@ -174,9 +182,13 @@ def main() -> None:
         out["events"][key] = ev
         LOG.info("%s: %s", key, {g: (v["cusum"]["first_alarm"], round(
             v["post_event_level"]["first_28_days"]["pct"], 4)) for g, v in ev["groups"].items()})
-    (res / "shock_comparison.json").write_text(json.dumps(out, indent=2) + "\n")
-    pd.concat(days, ignore_index=True).to_csv(res / "shock_daily.csv", index=False,
-                                              lineterminator="\n", float_format="%.6g")
+    out["events"] = {k: out["events"][k] for k in cfg["shocks"]["events"] if k in out["events"]}
+    jf.write_text(json.dumps(out, indent=2) + "\n")
+    new = pd.concat(days, ignore_index=True)
+    if old is not None:
+        new = pd.concat([old[~old["event"].isin(new["event"].unique())], new],
+                        ignore_index=True)
+    new.to_csv(cf, index=False, lineterminator="\n", float_format="%.6g")
 
 
 if __name__ == "__main__":

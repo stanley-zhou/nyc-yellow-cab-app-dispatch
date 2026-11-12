@@ -28,6 +28,7 @@ from taxi_shock.viz.figures import (
     f2_model_comparison,
     f2b_fan_chart,
     f3_error_over_time,
+    f3b_three_shocks,
     f4_event_study,
     f4b_effect_map,
     f4b_effect_map_html,
@@ -423,6 +424,31 @@ def phase4b(cfg: dict) -> None:
                          f"{sm['min_weekly_base']} in 2023). Sources: "
                          "results/app_dispatch_share.csv, results/app_dispatch_summary.json.",
                          figs / "F4g_app_dispatch_map")
+    f = res / "shock_comparison.json"
+    if f.exists():
+        sc = json.loads(f.read_text())["events"]
+        names = {"covid": "COVID-19, 2020-03-01", "fare_increase":
+                 "Metered-fare increase (+23%), 2022-12-19", "congestion_pricing":
+                 "Congestion pricing, 2025-01-05"}
+        evs, parts, c5 = [], [], {}
+        for key, ev in sc.items():
+            g = ev["groups"]["cbd"]
+            alarm = g["cusum"]["first_alarm"]
+            lvl = g["post_event_level"]["first_28_days"]["pct"]
+            c5[key] = {"cusum_first_alarm": alarm, "first_28_days_pct": lvl}
+            evs.append((key, f"{names.get(key, key)}: CBD {lvl * 100:+.0f}% vs forecast in the "
+                        "first 4 weeks", alarm))
+            when = (f"day {alarm['delay_days']}" if alarm else "no alarm")
+            parts.append(f"{names.get(key, key).split(',')[0]} {when}")
+        stats["c5"] = c5
+        t = "One CUSUM monitor, three shocks (CBD): " + "; ".join(parts)
+        stats["c5"]["title"] = t
+        daily = pd.read_csv(res / "shock_daily.csv", parse_dates=["day"])
+        f3b_three_shocks(daily, evs, t, "Frozen LightGBM trained on the 12 months before each "
+                         "event, day-ahead forecasts for 12 months from it; calibration year = "
+                         "two-fold cross-fit out-of-sample residuals; 7-day means of the daily "
+                         "log(actual / forecast). Sources: results/shock_comparison.json, "
+                         "results/shock_daily.csv.", figs / "F3b_three_shocks")
     if stats:
         (res / "figure_stats_phase4b.json").write_text(json.dumps(stats, indent=2) + "\n")
         logging.info("wrote Phase-4b figures: %s", ", ".join(stats))

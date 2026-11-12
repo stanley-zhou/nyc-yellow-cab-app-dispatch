@@ -585,3 +585,42 @@ def f4g_app_dispatch(zones, share: pd.DataFrame, title: str, note: str,
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
     return save(fig, out_base)
+
+
+def f3b_three_shocks(daily: pd.DataFrame, events: list[tuple[str, str, dict | None]],
+                     title: str, note: str, out_base: Path) -> list[Path]:
+    """F3b (Amendment 3, C5): one panel per event, x = days since the event, y = 7-day mean of
+    the daily log(actual / forecast) in % for the CBD (accent) and non-CBD (grey); the
+    calibration year left of 0 is lighter; the CBD's first CUSUM alarm is a dotted line.
+    `events`: (event key, panel title, first CUSUM alarm of the CBD or None)."""
+    use_style()
+    fig, axes = plt.subplots(len(events), 1, figsize=SIZES["small_multiples"], sharex=True,
+                             layout="constrained")
+    for ax, (key, name, alarm) in zip(np.atleast_1d(axes), events, strict=True):
+        d = daily[daily["event"] == key]
+        t0 = pd.Timestamp(d.loc[d["stage"] == "monitoring", "day"].min())
+        ends = []
+        for g, (label, color) in F3_GROUPS.items():
+            s = d[d["group"] == g].sort_values("day")
+            x = (s["day"] - t0).dt.days
+            y = (np.exp(s["log_ratio"].rolling(7, min_periods=4, center=True).mean()) - 1) * 100
+            pre = (x < 0).to_numpy()
+            ax.plot(x[pre], y[pre], color=tint(color), linewidth=1.2)
+            ax.plot(x[~pre], y[~pre], color=color, linewidth=1.4)
+            ends.append((float(y.dropna().iloc[-1]), label, color))
+        ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
+        ax.axvline(0, color=PALETTE["text"], linestyle="--", linewidth=1.0)
+        if alarm:
+            ax.axvline(alarm["delay_days"], color=PALETTE["cbd"], linestyle=":", linewidth=1.2)
+            ax.annotate(f"CUSUM alarm (CBD), day {alarm['delay_days']}",
+                        xy=(alarm["delay_days"], 0.08), xycoords=("data", "axes fraction"),
+                        xytext=(4, 0), textcoords="offset points", fontsize=8,
+                        color=PALETTE["cbd"])
+        ax.set_title(name, fontsize=10, loc="left")
+        ax.set_ylabel("Actual vs forecast (%)")
+        direct_labels(ax, float(x.max()), ends)
+    np.atleast_1d(axes)[-1].set_xlabel("Days since the event (left of 0: calibration year)")
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
