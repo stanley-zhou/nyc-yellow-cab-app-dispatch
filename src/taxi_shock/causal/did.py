@@ -33,13 +33,14 @@ class DidResult:
     vcov: str
     weights: str | None
     extra: dict[str, object] = field(default_factory=dict)
+    log_outcome: bool = True          # % effects (exp(b) - 1) only make sense for log outcomes
 
-    def row(self, name: str) -> dict[str, float]:
+    def row(self, name: str) -> dict[str, float | None]:
         b, s = self.coef[name], self.se[name]
+        pct = (lambda v: float(np.expm1(v))) if self.log_outcome else (lambda v: None)
         return {"coef": b, "se": s, "ci_lo": b - Z95 * s, "ci_hi": b + Z95 * s,
-                "pvalue": self.pvalue[name], "pct": float(np.expm1(b)),
-                "pct_ci_lo": float(np.expm1(b - Z95 * s)),
-                "pct_ci_hi": float(np.expm1(b + Z95 * s))}
+                "pvalue": self.pvalue[name], "pct": pct(b), "pct_ci_lo": pct(b - Z95 * s),
+                "pct_ci_hi": pct(b + Z95 * s)}
 
     def to_dict(self) -> dict[str, object]:
         return {"terms": {k: self.row(k) for k in self.coef}, "n_obs": self.n_obs,
@@ -128,4 +129,5 @@ def static_did(df: pd.DataFrame, y: str, unit: str, cluster: Sequence[str],
                                                             .nunique()),
         n_clusters={c: int(d[c].nunique()) for c in cluster}, formula=fml,
         vcov=f"CRV1 by {' + '.join(cluster)}", weights=weights,
-        extra={"controls": {c: float(coef[c]) for c in controls if c in coef}})
+        extra={"controls": {c: float(coef[c]) for c in controls if c in coef}},
+        log_outcome=y.startswith("log"))

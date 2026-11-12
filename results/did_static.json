@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-12T00:25:46+00:00",
+  "generated_utc": "2026-11-12T00:42:00+00:00",
   "outcome": "log1p(weekly pickups) per zone",
   "control": "manhattan_non_cbd_donut",
   "n_treated_zones": 38,
@@ -88,9 +88,9 @@
           "ci_lo": 9.765733356254145,
           "ci_hi": 871.0362008894882,
           "pvalue": 0.0493987487638361,
-          "pct": 1.835311755365697e+191,
-          "pct_ci_lo": 17425.256747216106,
-          "pct_ci_hi": Infinity
+          "pct": null,
+          "pct_ci_lo": null,
+          "pct_ci_hi": null
         }
       },
       "n_obs": 8946,
@@ -612,6 +612,165 @@
         "tr_total_precip_in": 0.05118192796649959
       }
     },
+    "pre_volume_weighted_without_weather": {
+      "terms": {
+        "treated_post": {
+          "coef": -0.052939535902052484,
+          "se": 0.04253217666777605,
+          "ci_lo": -0.13630107035498834,
+          "ci_hi": 0.030421998550883372,
+          "pvalue": 0.21808427707058353,
+          "pct": -0.05156264284210605,
+          "pct_ci_lo": -0.1274201149977688,
+          "pct_ci_hi": 0.030889476039606824
+        }
+      },
+      "n_obs": 8662,
+      "n_units": 61,
+      "n_treated_units": 38,
+      "n_clusters": {
+        "zone_id": 61
+      },
+      "formula": "log1p_pickups ~ treated_post | zone_id + week_start",
+      "vcov": "CRV1 by zone_id",
+      "weights": "w_pre",
+      "controls": {}
+    },
+    "pre_volume_weighted_vendors_present_throughout_cmt_curb": {
+      "terms": {
+        "treated_post": {
+          "coef": -0.04960005301915124,
+          "se": 0.0437122015258511,
+          "ci_lo": -0.13527439369477617,
+          "ci_hi": 0.036074287656473705,
+          "pvalue": 0.26101566434428447,
+          "pct": -0.04839005807453706,
+          "pct_ci_lo": -0.12652379756030122,
+          "pct_ci_hi": 0.03673286008487359
+        }
+      },
+      "n_obs": 8662,
+      "n_units": 61,
+      "n_treated_units": 38,
+      "n_clusters": {
+        "zone_id": 61
+      },
+      "formula": "log1p_pickups_cmt_curb ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+      "vcov": "CRV1 by zone_id",
+      "weights": "w_pre",
+      "controls": {
+        "tr_mean_temp_f": 0.0025479139368713316,
+        "tr_total_precip_in": -0.0007060560520990141
+      }
+    },
+    "pre_volume_weighted_plan_literal_filters": {
+      "terms": {
+        "treated_post": {
+          "coef": -0.04213179882686472,
+          "se": 0.03797260932676354,
+          "ci_lo": -0.116556745506331,
+          "ci_hi": 0.03229314785260156,
+          "pvalue": 0.271628313883991,
+          "pct": -0.04125658901184652,
+          "pct_ci_lo": -0.11002040679888053,
+          "pct_ci_hi": 0.03282022996394606
+        }
+      },
+      "n_obs": 8662,
+      "n_units": 61,
+      "n_treated_units": 38,
+      "n_clusters": {
+        "zone_id": 61
+      },
+      "formula": "log1p_pickups_literal ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+      "vcov": "CRV1 by zone_id",
+      "weights": "w_pre",
+      "controls": {
+        "tr_mean_temp_f": 0.0026225530301084115,
+        "tr_total_precip_in": -0.0011632768027280208
+      }
+    },
+    "pre_volume_weighted_control_manhattan_non_cbd": {
+      "terms": {
+        "treated_post": {
+          "coef": -0.009823618088152663,
+          "se": 0.02606734608183518,
+          "ci_lo": -0.06091467758109091,
+          "ci_hi": 0.04126744140478558,
+          "pvalue": 0.7074900744784505,
+          "pct": -0.009775523966913936,
+          "pct_ci_lo": -0.05909648348475261,
+          "pct_ci_hi": 0.042130777198673655
+        }
+      },
+      "n_obs": 9514,
+      "n_units": 67,
+      "n_treated_units": 38,
+      "n_clusters": {
+        "zone_id": 67
+      },
+      "formula": "log1p_pickups ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+      "vcov": "CRV1 by zone_id",
+      "weights": "w_pre",
+      "controls": {
+        "tr_mean_temp_f": 0.0023127425468108254,
+        "tr_total_precip_in": 0.0006129529700449001
+      }
+    },
+    "pre_volume_weighted_control_outer_boroughs": {
+      "terms": {
+        "treated_post": {
+          "coef": -0.7183732566097775,
+          "se": 0.16723074004124072,
+          "ci_lo": -1.0461394841985896,
+          "ci_hi": -0.39060702902096534,
+          "pvalue": 2.96561477846069e-05,
+          "pct": -0.5124552786307943,
+          "pct_ci_lo": -0.6487086996569948,
+          "pct_ci_hi": -0.3233539939563454
+        }
+      },
+      "n_obs": 23572,
+      "n_units": 166,
+      "n_treated_units": 38,
+      "n_clusters": {
+        "zone_id": 166
+      },
+      "formula": "log1p_pickups ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+      "vcov": "CRV1 by zone_id",
+      "weights": "w_pre",
+      "controls": {
+        "tr_mean_temp_f": -0.00215634105218612,
+        "tr_total_precip_in": 0.03924388388855075
+      }
+    },
+    "pre_volume_weighted_control_outer_boroughs_with_airports": {
+      "terms": {
+        "treated_post": {
+          "coef": -0.0757961802481897,
+          "se": 0.1240055363457506,
+          "ci_lo": -0.3188425653694335,
+          "ci_hi": 0.16725020487305414,
+          "pvalue": 0.5418769513035369,
+          "pct": -0.07299487073898801,
+          "pct_ci_lo": -0.27301000630156996,
+          "pct_ci_hi": 0.18204998297775243
+        }
+      },
+      "n_obs": 23856,
+      "n_units": 168,
+      "n_treated_units": 38,
+      "n_clusters": {
+        "zone_id": 168
+      },
+      "formula": "log1p_pickups ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+      "vcov": "CRV1 by zone_id",
+      "weights": "w_pre",
+      "controls": {
+        "tr_mean_temp_f": -0.002626859280075232,
+        "tr_total_precip_in": 0.013468356116508484
+      }
+    },
     "leave_one_zone_out": {
       "n": 63,
       "min": -0.45094770001112716,
@@ -628,5 +787,7 @@
       "dropped_zone_at_max": 41,
       "all_same_sign_as_main": true
     }
-  }
+  },
+  "primary": "pre_volume_weighted_not_preregistered",
+  "primary_note": "C2 (Checkpoint 4, Amendment 3): the pre-volume-weighted estimate is primary; `main` is the pre-registered equal-weight estimate"
 }

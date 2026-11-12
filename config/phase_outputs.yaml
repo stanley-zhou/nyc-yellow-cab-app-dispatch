@@ -70,6 +70,7 @@
   - reports/figures/F4f_speed_event_study.png
   - reports/figures/F4i_leave_one_out.png
   - results/fee_revenue_weekly.csv
+  - results/placebo_time_distribution.csv
   - reports/figures/F4b_effect_map.html
   - results/speed_did.json
   - results/speed_did_outer.json

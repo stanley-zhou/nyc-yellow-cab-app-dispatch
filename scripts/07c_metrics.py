@@ -232,12 +232,15 @@ def main() -> None:
             term_of(ds["levels"]), "did_static.json:levels", "", ds["levels"]["n_obs"]),
         row("robustness", "demand (quantity)", "log1p CBD pickups, zone linear trends",
             term_of(ds["zone_trends_not_preregistered"]),
-            "did_static.json:zone_trends_not_preregistered", "C2, not pre-registered"),
+            "did_static.json:zone_trends_not_preregistered",
+            "C2, not pre-registered; trends fitted on pre and post weeks can absorb a gradual "
+            "effect"),
         row("robustness", "demand (quantity)",
             "log1p CBD pickups, pre-volume weighted, zone linear trends",
             term_of(ds["pre_volume_weighted_zone_trends_not_preregistered"]),
             "did_static.json:pre_volume_weighted_zone_trends_not_preregistered",
-            "C2, not pre-registered"),
+            "C2, not pre-registered; trends fitted on pre and post weeks can absorb a gradual "
+            "effect"),
         row("primary", "service quality (speed)", "log mean trip speed, within-CBD trips",
             term_of(sp["log_mean_speed_mph"]["main"]), "speed_did.json",
             "pre-registered (donut control); pre-trends fail"),
@@ -273,9 +276,9 @@ def main() -> None:
                  "coef": float(full["fee"].mean()), "ci_lo": np.nan, "ci_hi": np.nan,
                  "pvalue": np.nan, "pct": np.nan, "n_obs": len(full),
                  "source": "fee_revenue_weekly.csv",
-                 "note": f"descriptive mean; min {full['fee'].min():.0f}, max "
-                         f"{full['fee'].max():.0f}; CBD pickups "
-                         f"{full['fee_cbd_pickups'].mean():.0f} per week"})
+                 "note": f"descriptive mean; min ${full['fee'].min():.0f}, max "
+                         f"${full['fee'].max():.0f}; fee on trips picked up in the CBD "
+                         f"${full['fee_cbd_pickups'].mean():.0f} per week"})
     fw = pd.DataFrame(rows)
     fw.to_csv(res / "metric_framework.csv", index=False, lineterminator="\n",
               float_format="%.6g")

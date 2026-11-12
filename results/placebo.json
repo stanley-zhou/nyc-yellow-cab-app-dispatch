@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-12T00:25:46+00:00",
+  "generated_utc": "2026-11-12T00:42:00+00:00",
   "pretrend_tests": {
     "event_study_month": {
       "formula": "log1p_pickups ~ ev_m24 + ev_m23 + ev_m22 + ev_m21 + ev_m20 + ev_m19 + ev_m18 + ev_m17 + ev_m16 + ev_m15 + ev_m14 + ev_m13 + ev_m12 + ev_m11 + ev_m10 + ev_m09 + ev_m08 + ev_m07 + ev_m06 + ev_m05 + ev_m04 + ev_m03 + ev_m02 + ev_m01 + ev_p00 + ev_p01 + ev_p02 + ev_p03 + ev_p04 + ev_p05 + ev_p06 + ev_p07 + ev_p08 + ev_p09 + ev_p10 + ev_p11 + ev_p12 + ev_p13 + ev_p14 + ev_p15 + ev_p16 + ev_p17 + ev_p18 + ev_p19 + ev_p20 + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
@@ -89,6 +89,38 @@
     "controls": {
       "tr_mean_temp_f": 0.0007173422851986483,
       "tr_total_precip_in": -0.01031653816779652
+    }
+  },
+  "placebo_in_time_pre_volume_weighted": {
+    "fake_policy_week": "2024-01-07",
+    "data": [
+      "2023-01-01",
+      "2024-12-31"
+    ],
+    "terms": {
+      "treated_post": {
+        "coef": -0.027920274837179734,
+        "se": 0.012691646512012437,
+        "ci_lo": -0.05279544490523751,
+        "ci_hi": -0.0030451047691219604,
+        "pvalue": 0.03167716495469164,
+        "pct": -0.0275341062875036,
+        "pct_ci_lo": -0.051425971711593355,
+        "pct_ci_hi": -0.0030404731400524966
+      }
+    },
+    "n_obs": 6283,
+    "n_units": 61,
+    "n_treated_units": 38,
+    "n_clusters": {
+      "zone_id": 61
+    },
+    "formula": "log1p_pickups ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+    "vcov": "CRV1 by zone_id",
+    "weights": "w_pre",
+    "controls": {
+      "tr_mean_temp_f": 0.0035017412077053773,
+      "tr_total_precip_in": -0.0036361433515922693
     }
   },
   "leave_one_zone_out": {

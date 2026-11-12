@@ -30,7 +30,10 @@
   },
   "demand_weighted_mde_pct": 0.03354278967539373,
   "demand_weighted_pretrend_p_F_hotelling": 1.574175780372441e-17,
-  "demand_weighted_permutation_share": 0.0,
+  "demand_weighted_time_placebo_range": [
+    -0.039021,
+    0.0277584
+  ],
   "speed": {
     "speed": {
       "coef": 0.018954577256015768,
@@ -86,7 +89,7 @@
   "heterogeneity": {
     "demand_ci_includes_zero": 10,
     "demand_n": 15,
-    "speed_positive": 8,
+    "speed_ci_includes_zero": 4,
     "speed_n": 8
   },
   "counterfactual": {
@@ -132,11 +135,11 @@
       "all_same_sign_as_main": true
     }
   },
-  "title_t4": "Weighted DiD: CBD pickups -5.2% [-12.8%, +3.0%]; CI includes 0, yet beyond 100% of placebos (MDE 3.4%); pre-trends fail (p = 2e-17)",
+  "title_t4": "Weighted DiD (primary): no detectable change in CBD pickups, -5.2% [-12.8%, +3.0%]; at fake pre-policy dates the same design gives -3.8% to +2.8%",
   "title_t4b": "CBD zones: median post/pre change in weekly pickups -5.6% relative to the control group's aggregate change",
-  "title_t4c": "Weighted demand DiD: 95% CI includes zero in 10 of 15 trip subsets; within-CBD speed (vs the donut) positive in 8 of 8 subsets",
+  "title_t4c": "95% CI includes zero in 10 of 15 trip subsets for weighted demand and in 4 of 8 for within-CBD speed (vs the donut)",
   "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the event-study paths say -40.5% (pre-registered) and -11.3% (volume-weighted)",
   "title_t4e": "Permutation placebos: weighted demand -0.053 (0% of placebos as large, MDE 0.033); speed vs donut +0.019 (6%, MDE 0.028); vs Brooklyn/Queens the placebos themselves centre on -0.086",
-  "title_t4f": "Within-CBD taxi speed: +1.9% vs the Manhattan donut, -4.0% vs Brooklyn/Queens; but the Brooklyn/Queens gap already fell from +15.4% to -2.6% before the policy (pre-trend p = 6e-46), and both comparisons fail the pre-trend test",
+  "title_t4f": "Within-CBD speed +1.9% vs the donut, -4.0% vs Brooklyn/Queens; that gap fell from +15.4% to -2.6% before the policy; both fail the pre-trend test",
   "title_t4i": "Leave one zone out: weighted -8.6% to -4.3%; equal-weight (pre-registered) -36.3% to -32.0%"
 }

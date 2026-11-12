@@ -395,7 +395,7 @@ def f4f_speed_event_study(panels: list[tuple[str, list[tuple[str, pd.DataFrame, 
 
 
 def f4b_effect_map(zones, effects: pd.DataFrame, title: str, note: str, out_base: Path,
-                   min_pre_weekly: float) -> list[Path]:
+                   min_pre_weekly: float, colour_quantile: float) -> list[Path]:
     """F4b: Manhattan zones, post/pre log change relative to the control aggregate (diverging,
     centred at 0); zones below `min_pre_weekly` pre-period pickups hatched; CBD outlined."""
     from taxi_shock.viz.maps import NO_DATA_COLOR, bounds_of, draw_boundary
@@ -405,7 +405,7 @@ def f4b_effect_map(zones, effects: pd.DataFrame, title: str, note: str, out_base
     gdf = zones.merge(e, left_on="zone_id", right_index=True, how="inner")
     ok = gdf["pre_mean_weekly"] >= min_pre_weekly
     v = gdf.loc[ok, "relative_to_control_aggregate"]
-    lim = float(np.nanquantile(np.abs(v), 0.95))
+    lim = float(np.nanquantile(np.abs(v), colour_quantile))
     norm = mpl.colors.TwoSlopeNorm(vcenter=0.0, vmin=-lim, vmax=lim)
     fig, ax = plt.subplots(figsize=SIZES["map"], layout="constrained")
     gdf[~ok].plot(ax=ax, facecolor=NO_DATA_COLOR, edgecolor="white", hatch="////",
@@ -431,13 +431,16 @@ def f4b_effect_map(zones, effects: pd.DataFrame, title: str, note: str, out_base
     return save(fig, out_base)
 
 
-def f4b_effect_map_html(zones, effects: pd.DataFrame, title: str, out_file: Path) -> Path:
+def f4b_effect_map_html(zones, effects: pd.DataFrame, title: str, out_file: Path,
+                        min_pre_weekly: float, colour_quantile: float) -> Path:
     """Interactive F4b (Plotly): hover shows zone, pre and post mean weekly pickups, change."""
     import plotly.express as px
 
     gdf = zones.merge(effects, on="zone_id", how="inner").to_crs(4326)
     gdf["change_pct"] = (np.exp(gdf["log_change"]) - 1) * 100
-    lim = float(np.nanquantile(np.abs(gdf["relative_to_control_aggregate"]), 0.95))
+    ok = gdf["pre_mean_weekly"] >= min_pre_weekly        # same zones as the PNG's limit
+    lim = float(np.nanquantile(np.abs(gdf.loc[ok, "relative_to_control_aggregate"]),
+                               colour_quantile))
     fig = px.choropleth(
         gdf, geojson=gdf.set_index("zone_id").geometry.__geo_interface__,
         locations="zone_id", color="relative_to_control_aggregate",
@@ -653,5 +656,40 @@ def f4i_leave_one_out(loo: pd.DataFrame, full: dict[str, float], title: str, not
     ax.grid(axis="y", visible=False)
     fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f4h_synth_control(paths: pd.DataFrame, policy_date: str, title: str, note: str,
+                      out_base: Path) -> list[Path]:
+    """F4h (Amendment 3, C3): top, the CBD's demeaned log weekly pickups (actual) and its
+    synthetic control; bottom, the gap (actual - synthetic) of the CBD (accent) against the
+    in-space placebo gaps (thin grey). Gaps in % (exp(gap) - 1)."""
+    use_style()
+    fig, (a1, a2) = plt.subplots(2, 1, figsize=SIZES["small_multiples"], sharex=True,
+                                 layout="constrained")
+    c = paths[paths["unit"] == "CBD"].sort_values("week_start")
+    a1.plot(c["week_start"], (np.exp(c["actual"]) - 1) * 100, color=PALETTE["actual"],
+            linewidth=1.4)
+    a1.plot(c["week_start"], (np.exp(c["synthetic"]) - 1) * 100, color=PALETTE["model"],
+            linewidth=1.4, linestyle="--")
+    direct_labels(a1, c["week_start"].max(), [
+        (float((np.exp(c["actual"].iloc[-1]) - 1) * 100), "CBD", PALETTE["actual"]),
+        (float((np.exp(c["synthetic"].iloc[-1]) - 1) * 100), "Synthetic CBD", PALETTE["model"])])
+    a1.set_ylabel("Weekly pickups vs pre-period mean (%)")
+    for _unit, d in paths[paths["unit"] != "CBD"].groupby("unit"):
+        d = d.sort_values("week_start")
+        a2.plot(d["week_start"], (np.exp(d["gap"]) - 1) * 100, color=PALETTE["baseline"],
+                linewidth=0.6, alpha=0.6)
+    a2.plot(c["week_start"], (np.exp(c["gap"]) - 1) * 100, color=PALETTE["cbd"], linewidth=1.6)
+    a2.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
+    a2.set_ylabel("Actual vs synthetic (%)")
+    for ax in (a1, a2):
+        ax.set_xlim(c["week_start"].min(), c["week_start"].max())
+        policy_line(ax, label=ax is a1)
+    a2.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
+    a2.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
     return save(fig, out_base)

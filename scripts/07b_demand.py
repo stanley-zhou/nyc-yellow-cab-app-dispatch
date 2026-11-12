@@ -16,6 +16,7 @@ Writes
     results/power_mde.json      Amendment 1 (A2) permutation placebo: distribution, share
                                 |placebo| >= |beta|, MDE at 80% power / 5% size
     results/demand_placebo_draws.csv, results/leave_one_out.csv
+    results/placebo_time_distribution.csv  time-only placebos with the real assignment
     results/heterogeneity.csv   static DiD on sub-panels (hour band, weekday/weekend, dropoff in
                                 CBD or not, pass-through, distance and fare terciles, airports)
 
@@ -123,6 +124,20 @@ def main() -> None:
     e["plan_literal_filters"] = did(d, "log1p_pickups_literal", cfg)
     for c in [*cc["control_robustness"], "outer_boroughs_with_airports"]:
         e[f"control_{c}"] = did(design(w, zs, cfg, control=c), "log1p_pickups", cfg)
+    # PLAN's checks on the weighted (C2 primary) specification too (review round 2)
+    e["pre_volume_weighted_without_weather"] = did(dw, "log1p_pickups", cfg, weather=False,
+                                                   weights="w_pre")
+    for col, key in (("pickups_cmt_curb", "vendors_present_throughout_cmt_curb"),
+                     ("pickups_literal", "plan_literal_filters")):
+        e[f"pre_volume_weighted_{key}"] = did(add_pre_volume_weight(d, cc["pre_weeks"], col=col),
+                                              f"log1p_{col}", cfg, weights="w_pre")
+    for c in [*cc["control_robustness"], "outer_boroughs_with_airports"]:
+        e[f"pre_volume_weighted_control_{c}"] = did(
+            add_pre_volume_weight(design(w, zs, cfg, control=c), cc["pre_weeks"]),
+            "log1p_pickups", cfg, weights="w_pre")
+    out["primary"] = "pre_volume_weighted_not_preregistered"
+    out["primary_note"] = ("C2 (Checkpoint 4, Amendment 3): the pre-volume-weighted estimate is "
+                           "primary; `main` is the pre-registered equal-weight estimate")
     b = e["main"]["terms"]["treated_post"]
     LOG.info("demand main: %.4f [%.4f, %.4f]", b["coef"], b["ci_lo"], b["ci_hi"])
 
@@ -149,6 +164,8 @@ def main() -> None:
     pdat = d[(d["week_start"] >= plo) & (d["week_start"] + pd.Timedelta(days=6) <= phi)]
     pdat = with_fake_policy(pdat, pd.Timestamp(cc["placebo_week"]))
     placebo_time = did(pdat, "log1p_pickups", cfg)
+    placebo_time_w = did(add_pre_volume_weight(pdat, cc["pre_weeks"]), "log1p_pickups", cfg,
+                         weights="w_pre")
 
     # leave one zone out
     loo = leave_one_out(d, sorted(d["zone_id"].unique()),
@@ -175,6 +192,9 @@ def main() -> None:
         "generated_utc": out["generated_utc"], "pretrend_tests": tests,
         "placebo_in_time": {"fake_policy_week": cc["placebo_week"],
                             "data": cc["placebo_window"], **placebo_time},
+        "placebo_in_time_pre_volume_weighted": {"fake_policy_week": cc["placebo_week"],
+                                                "data": cc["placebo_window"],
+                                                **placebo_time_w},
         "leave_one_zone_out": loo_sum}, indent=2, default=str) + "\n")
     (res / "did_static.json").write_text(json.dumps(out, indent=2, default=str) + "\n")
 
@@ -205,6 +225,19 @@ def main() -> None:
 
     zones_m = sorted(man["zone_id"].unique())
     fake_weeks = weeks[k:len(weeks) - k + 1]
+    # time-only placebos (review round 2): the REAL CBD / donut assignment, the fake policy week
+    # moved over the same weeks; this keeps the design's spatial structure, which random zone
+    # sets do not reproduce
+    real = design(w, zs, cfg)
+    real = real[(real["week_start"] >= lo) & (real["week_start"] + pd.Timedelta(days=6) <= hi)]
+    tp = []
+    for wk in fake_weeks:
+        x = with_fake_policy(real, pd.Timestamp(wk))
+        tp.append({"fake_week": pd.Timestamp(wk), "equal_weight": estimate(x),
+                   "pre_volume_weighted": estimate_w(x)})
+    tp = pd.DataFrame(tp)
+    tp.to_csv(res / "placebo_time_distribution.csv", index=False, lineterminator="\n",
+              float_format="%.6g")
     draws = permutation(pre, zones_m, n_tr, int(pc["draws"]), fake_weeks, assign, estimate,
                         cfg["seed"])
     draws_w = permutation(pre, zones_m, n_tr, int(pc["draws"]), fake_weeks, assign,
@@ -223,12 +256,23 @@ def main() -> None:
              "pre_volume_weighted": {
                  "real_beta": bw["coef"], "weights": "each zone's mean weekly pickups in the "
                  "(placebo) pre window", **power_summary(draws_w["coef"], bw["coef"],
-                                                         pc["size"], pc["power"])}}
+                                                         pc["size"], pc["power"])},
+             "time_only_real_assignment": {
+                 "design": "the real CBD / donut assignment with the fake policy week moved over "
+                           f"the {len(fake_weeks)} admissible pre-policy weeks (consecutive "
+                           "weeks: strongly dependent draws)",
+                 "equal_weight": power_summary(tp["equal_weight"], b["coef"], pc["size"],
+                                               pc["power"]),
+                 "pre_volume_weighted": power_summary(tp["pre_volume_weighted"], bw["coef"],
+                                                      pc["size"], pc["power"])}}
     (res / "power_mde.json").write_text(json.dumps(power, indent=2, default=str) + "\n")
-    LOG.info("demand permutation: sd %.4f, MDE %.4f, share %.3f; weighted MDE %.4f, share %.3f",
+    tw = power["time_only_real_assignment"]["pre_volume_weighted"]
+    LOG.info("demand permutation: sd %.4f, MDE %.4f, share %.3f; weighted MDE %.4f, share %.3f; "
+             "time-only weighted sd %.4f, mean %.4f, share %.3f",
              power["sd"], power["mde"], power["share_abs_ge_abs_beta"],
              power["pre_volume_weighted"]["mde"],
-             power["pre_volume_weighted"]["share_abs_ge_abs_beta"])
+             power["pre_volume_weighted"]["share_abs_ge_abs_beta"], tw["sd"], tw["mean"],
+             tw["share_abs_ge_abs_beta"])
 
     heterogeneity(w, zs, cfg, res)
 

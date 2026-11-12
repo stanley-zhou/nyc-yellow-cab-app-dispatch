@@ -37,6 +37,7 @@ from taxi_shock.viz.figures import (
     f4e_placebo_distribution,
     f4f_speed_event_study,
     f4g_app_dispatch,
+    f4h_synth_control,
     f4i_leave_one_out,
     smoke_placeholder,
 )
@@ -263,18 +264,18 @@ def phase4(cfg: dict) -> None:
         "pretrend"]["p_F_hotelling"]
     stats.update({"demand_weighted": bw, "demand_weighted_mde_pct": mde_w,
                   "demand_weighted_pretrend_p_F_hotelling": p_fw})
-    share_w = pw["pre_volume_weighted"]["share_abs_ge_abs_beta"]
-    stats["demand_weighted_permutation_share"] = share_w
-    t4 = (f"Weighted DiD: CBD pickups {_pct_str(bw['coef'])} [{_pct_str(bw['ci_lo'])}, "
-          f"{_pct_str(bw['ci_hi'])}]; CI includes 0, yet beyond {(1 - share_w) * 100:.0f}% of "
-          f"placebos (MDE {mde_w * 100:.1f}%); pre-trends fail (p = {p_fw:.0e})")
+    tpd = pd.read_csv(res / "placebo_time_distribution.csv")["pre_volume_weighted"]
+    stats["demand_weighted_time_placebo_range"] = [float(tpd.min()), float(tpd.max())]
+    t4 = (f"Weighted DiD (primary): no detectable change in CBD pickups, "
+          f"{_pct_str(bw['coef'])} [{_pct_str(bw['ci_lo'])}, {_pct_str(bw['ci_hi'])}]; at fake "
+          f"pre-policy dates the same design gives {_pct_str(tpd.min())} to {_pct_str(tpd.max())}")
     f4_event_study(w_es, policy, t4,
                    "Monthly bins of log1p(weekly pickups) per zone, zones weighted by their mean "
                    "weekly pickups in the 52 pre weeks (primary since Checkpoint 4, C2; not "
                    "pre-registered); 38 CBD zones vs the donut control; zone and week FE, "
                    "weather x treated; 95% CIs clustered by zone; reference: the week before "
                    "2025-01-05. The pre-registered equal-weight path is in F4d. Source: "
-                   "results/event_study.csv.", figs / "F4_event_study", "CBD pickups (%)")
+                   "results/event_study.csv.", figs / "F4_event_study", "Effect on CBD pickups (%)")
 
     spd, dur = (sp[k]["main"]["terms"]["treated_post"] for k in ("log_mean_speed_mph",
                                                                   "log_mean_duration_min"))
@@ -292,13 +293,12 @@ def phase4(cfg: dict) -> None:
     pre_first, pre_last = (float(om.loc[om["k"] < 0, "coef"].iloc[i]) for i in (0, -1))
     stats["speed_outer"].update({"pre_first_month_coef": pre_first,
                                  "pre_last_month_coef": pre_last})
-    t4f = (f"Within-CBD taxi speed: {_pct_str(spd['coef'])} vs the Manhattan donut, "
-           f"{_pct_str(so_m['coef'])} vs Brooklyn/Queens; but the Brooklyn/Queens gap already "
-           f"fell from {_pct_str(pre_first)} to {_pct_str(pre_last)} before the policy "
-           f"(pre-trend p = {so_f:.0e}), and both comparisons fail the pre-trend test")
+    t4f = (f"Within-CBD speed {_pct_str(spd['coef'])} vs the donut, {_pct_str(so_m['coef'])} "
+           f"vs Brooklyn/Queens; that gap fell from {_pct_str(pre_first)} to "
+           f"{_pct_str(pre_last)} before the policy; both fail the pre-trend test")
     ser = {o: [("vs donut control (pre-registered)", sm[(sm["outcome"] == o)
                                                          & (sm["control"] == "donut")],
-                tint(PALETTE["cbd"], 0.45)),
+                PALETTE["non_cbd"]),
                ("vs Brooklyn/Queens (C4)", sm[(sm["outcome"] == o) & (sm["control"] == "outer")],
                 PALETTE["cbd"])] for o in ("log_mean_speed_mph", "log_mean_duration_min")}
     f4f_speed_event_study(
@@ -322,8 +322,10 @@ def phase4(cfg: dict) -> None:
     f4b_effect_map(zones, em, t4b, "Manhattan zones; log(mean weekly pickups after / in the 52 "
                    "weeks before 2025-01-05) minus the same for the donut control's total "
                    f"pickups. Hatched: < {min_pre:.0f} pickups per week before. Red outline: "
-                   "CBD. Source: results/effect_map.csv.", figs / "F4b_effect_map", min_pre)
-    f4b_effect_map_html(zones, em, t4b, figs / "F4b_effect_map.html")
+                   "CBD. Source: results/effect_map.csv.", figs / "F4b_effect_map", min_pre,
+                   float(cfg["causal"]["effect_map_colour_quantile"]))
+    f4b_effect_map_html(zones, em, t4b, figs / "F4b_effect_map.html", min_pre,
+                        float(cfg["causal"]["effect_map_colour_quantile"]))
 
     het = pd.read_csv(res / "heterogeneity.csv")
     sh = pd.read_csv(res / "speed_heterogeneity.csv")
@@ -345,12 +347,12 @@ def phase4(cfg: dict) -> None:
     dzero = int(((sub["ci_lo"] < 0) & (sub["ci_hi"] > 0)).sum())
     dn = len(sub)
     shd = sh[(sh["outcome"] == "log_mean_speed_mph") & (sh["control"] == "donut")]
-    spos = int((shd["coef"] > 0).sum())
+    szero = int(((shd["ci_lo"] < 0) & (shd["ci_hi"] > 0)).sum())
     sn = len(shd)
     stats["heterogeneity"] = {"demand_ci_includes_zero": dzero, "demand_n": dn,
-                              "speed_positive": spos, "speed_n": sn}
-    t4c = (f"Weighted demand DiD: 95% CI includes zero in {dzero} of {dn} trip subsets; "
-           f"within-CBD speed (vs the donut) positive in {spos} of {sn} subsets")
+                              "speed_ci_includes_zero": szero, "speed_n": sn}
+    t4c = (f"95% CI includes zero in {dzero} of {dn} trip subsets for weighted demand and in "
+           f"{szero} of {sn} for within-CBD speed (vs the donut)")
     f4c_heterogeneity(panels, t4c, "Static DiD (%) with 95% CIs on sub-panels; demand: "
                       "log1p(weekly pickups of the subset) per zone, CBD vs donut control, zones "
                       "weighted by their pre-period count of the subset (pass-through: "
@@ -487,6 +489,30 @@ def phase4b(cfg: dict) -> None:
                          "two-fold cross-fit out-of-sample residuals; 7-day means of the daily "
                          "log(actual / forecast). Sources: results/shock_comparison.json, "
                          "results/shock_daily.csv.", figs / "F3b_three_shocks")
+    f = res / "synth_control.json"
+    if f.exists():
+        sc = json.loads(f.read_text())
+        sp_ = sc["in_space_placebos"]
+        stats["c3"] = {"post_gap_mean_pct": sc["post_gap_mean_pct"],
+                       "pre_rmspe": sc["pre_rmspe"], "ratio": sc["post_pre_rmspe_ratio"],
+                       "rank": sp_["cbd_rank"], "n_units": sp_["n"] + 1,
+                       "p_value": sp_["p_value"], "resolves": sc["resolves"]}
+        verdict = ("the CBD's post/pre fit ratio is extreme among the donors" if sc["resolves"]
+                   else "not extreme among the donors, so the method cannot resolve it")
+        t = (f"Synthetic control: CBD pickups {sc['post_gap_mean_pct'] * 100:+.1f}% vs synthetic "
+             f"after the policy; RMSPE ratio rank {sp_['cbd_rank']} of {sp_['n'] + 1} "
+             f"(p = {sp_['p_value']:.2f}), {verdict}")
+        stats["c3"]["title"] = t
+        paths = pd.read_csv(res / "synth_control_paths.csv", parse_dates=["week_start"])
+        f4h_synth_control(paths, cfg["data"]["policy_date"], t,
+                          f"Weekly total pickups of the {sc['n_cbd_zones']} CBD zones vs a "
+                          f"weighted combination of {sc['n_donors']} donor zones "
+                          f"({sc['donor_rule']}), fitted on log pickups demeaned over "
+                          f"{sc['pre_period'][0]} to "
+                          f"{sc['pre_period'][1]} (pysyncon, equal weight per pre week); grey: "
+                          "every donor in turn as a placebo. Sources: "
+                          "results/synth_control.json, results/synth_control_paths.csv.",
+                          figs / "F4h_synth_control")
     if stats:
         (res / "figure_stats_phase4b.json").write_text(json.dumps(stats, indent=2) + "\n")
         logging.info("wrote Phase-4b figures: %s", ", ".join(stats))

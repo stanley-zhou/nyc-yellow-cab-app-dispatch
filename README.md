@@ -1,13 +1,14 @@
 # Forecasting Under a Policy Shock: NYC Yellow-Taxi Demand and Congestion Pricing
 
-**Status: Phase 4b (Amendment 3: C1, C4, C5, C2 done) under re-review; Phase 3 escalated
-(open); Phase 2 passed review.** Phase 4 effect (DoD sentence): a difference-in-differences of
-log1p(weekly pickups) per zone — 38 CBD zones vs 25 Manhattan "donut" control zones, zone and
+**Status: Phase 4b (Amendment 3: C1, C4, C5, C2 done; C3, C6 next) under re-review; Phase 3
+escalated (open); Phase 2 passed review.** Phase 4 effect (DoD sentence): a difference-in-differences
+of log1p(weekly pickups) per zone — 38 CBD zones vs 25 Manhattan "donut" control zones, zone and
 week fixed effects, zones weighted by their pre-period volume, SEs clustered by zone — gives
-−5.2% [−12.8%, +3.0%] for CBD pickups (`results/did_static.json`): no detectable change by the
-clustered CI, although the estimate lies outside all 500 permutation placebos (MDE 3.4%,
-`results/power_mde.json`) and the pre-trend test fails (`results/placebo.json`). No wording of
-findings before Checkpoint 6. This README
+−5.2% [−12.8%, +3.0%] for CBD pickups (−0.053 log points [−0.137, +0.030];
+`results/did_static.json`): no detectable change. The same design at fake pre-policy dates gives
+−3.8% to +2.8% (`results/placebo_time_distribution.csv`), the pre-trend test fails
+(`results/placebo.json`), and with the full Manhattan non-CBD control the estimate is −1.0%.
+No wording of findings before Checkpoint 6. This README
 is rewritten in Phase 7 with the summary, figures and limitations; until then it only explains how
 to run the code.
 
@@ -46,11 +47,11 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `data` | full raw download (yellow months in config, zone lookups, weather) |
 | `dbt` | build and test the full DuckDB warehouse in two stages around the CBD mapping (`scripts/03a_cbd_map.py`), then write the Phase-1 result files (`scripts/03b_data_results.py`) and the Checkpoint-1 checks: vendor series, trip-level CBD fee check, modeled zones (`scripts/03c_checks.py`) |
 | `chronos-bundle`, `chronos-import` | Phase 2: export the Chronos-2 input bundle for Colab; validate the forecasts copied back into `results/` |
-| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b; Phase 3: F3; Phase 4: F4, F4b (+ html), F4c, F4d, F4e, F4f), built from `results/` only |
+| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b; Phase 3: F3, F3b; Phase 4: F4, F4b (+ html), F4c, F4d, F4e, F4f, F4g, F4h, F4i), built from `results/` only |
 | `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, Open-Meteo offset |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
-| `causal` | Phase 4: trip speed/duration DiD and event study (Amendment 2), demand DiD, event study, placebo, leave-one-out, permutation MDE and heterogeneity, metric framework, trade-off table, forecast counterfactual, pre-trend test size simulation (`07a`–`07d`; dbt marts `fct_weekly_pair_speed`, `fct_weekly_zone_trip_stats`) |
-| `shock` | Phase 3: LightGBM frozen on data to 2024-12-31 and seasonal naive, day-ahead 2024-07 → 2026-09 without retraining (with Chronos-2 zero-shot), rolling 4-week errors by zone group, CUSUM and rolling-bias drift monitors (`06_shock.py`) |
+| `causal` | Phase 4 / 4b: trip speed/duration DiD and event study vs the donut and the Brooklyn/Queens control (`07a`), demand DiD with checks, permutation and time-only placebos, MDE, heterogeneity (`07b`), metric framework, trade-off table, counterfactual (`07c`), pre-trend test size simulation (`07d`), app-dispatch share (`07e`), synthetic control (`07f`); dbt marts `fct_weekly_pair_speed`, `fct_weekly_zone_trip_stats` |
+| `shock` | Phase 3: LightGBM frozen on data to 2024-12-31 and seasonal naive, day-ahead 2024-07 → 2026-09 without retraining (with Chronos-2 zero-shot), rolling errors, CUSUM and rolling-bias monitors (`06_shock.py`); C5: the same monitor for COVID, the 2022 fare increase and congestion pricing (`06b_three_shocks.py`) |
 | `forecast` | Phase 2: LightGBM grid on 2023 (`04a_lgbm_tune.py`), rolling-origin backtests of every trained model for 2023 and 2024 (`04_backtest.py --full`), conformal calibration and metrics (`04b_evaluate.py`); Chronos-2 runs on Colab (`chronos-bundle` / `chronos-import`) |
 | `adapt`, `report` | added in their phases; they fail with a message until then (`all` runs every target) |
 

@@ -2,8 +2,8 @@ role,area,metric,coef,ci_lo,ci_hi,pvalue,pct,n_obs,source,note
 primary,demand (quantity),"log1p CBD pickups, pre-volume weighted",-0.0534242,-0.136706,0.0298578,0.213521,-0.0520222,,did_static.json:pre_volume_weighted_not_preregistered,C2 primary (Checkpoint 4; not pre-registered): no detectable change; permutation MDE 0.0330
 pre-registered,demand (quantity),"log1p CBD pickups, equal zone weights",-0.42533,-0.648803,-0.201856,0.000416893,-0.346446,8946,did_static.json:main,pre-registered; an artifact of fast-growing small control zones; pre-trends fail
 pre-registered,demand (quantity),"CBD pickups, levels per zone-week",440.401,9.76573,871.036,0.0493987,,8946,did_static.json:levels,
-robustness,demand (quantity),"log1p CBD pickups, zone linear trends",-0.217874,-0.367314,-0.0684349,0.00580542,-0.195774,,did_static.json:zone_trends_not_preregistered,"C2, not pre-registered"
-robustness,demand (quantity),"log1p CBD pickups, pre-volume weighted, zone linear trends",0.0415414,-0.0084697,0.0915525,0.108759,0.0424163,,did_static.json:pre_volume_weighted_zone_trends_not_preregistered,"C2, not pre-registered"
+robustness,demand (quantity),"log1p CBD pickups, zone linear trends",-0.217874,-0.367314,-0.0684349,0.00580542,-0.195774,,did_static.json:zone_trends_not_preregistered,"C2, not pre-registered; trends fitted on pre and post weeks can absorb a gradual effect"
+robustness,demand (quantity),"log1p CBD pickups, pre-volume weighted, zone linear trends",0.0415414,-0.0084697,0.0915525,0.108759,0.0424163,,did_static.json:pre_volume_weighted_zone_trends_not_preregistered,"C2, not pre-registered; trends fitted on pre and post weeks can absorb a gradual effect"
 primary,service quality (speed),"log mean trip speed, within-CBD trips",0.0189546,0.002787,0.0351222,0.0251345,0.0191354,,speed_did.json,pre-registered (donut control); pre-trends fail
 robustness,service quality (speed),"log mean trip speed, within-CBD vs Brooklyn/Queens trips (C4)",-0.0404998,-0.058707,-0.0222926,2.28484e-05,-0.0396906,,speed_did_outer.json,expected +3% to +8%; pre-trends fail; placebos centred far from zero
 primary,service quality (speed),"log mean trip duration, within-CBD trips",-0.0243186,-0.0392148,-0.00942236,0.00221501,-0.0240253,,speed_did.json,pre-registered
@@ -49,4 +49,4 @@ check,heterogeneity: airports (equal_weight),"log1p pickups, outer_boroughs",-0.
 check,heterogeneity: airports (pre_volume_weighted),"log1p pickups, outer_boroughs",-0.718373,-1.04614,-0.390607,2.96561e-05,-0.512455,23572,heterogeneity.csv,CBD vs outer_boroughs
 check,heterogeneity: airports (equal_weight),"log1p pickups, outer_boroughs_with_airports",-0.748074,-0.836746,-0.659402,0,-0.526723,23856,heterogeneity.csv,CBD vs outer_boroughs_with_airports
 check,heterogeneity: airports (pre_volume_weighted),"log1p pickups, outer_boroughs_with_airports",-0.0757962,-0.318843,0.16725,0.541877,-0.0729949,23856,heterogeneity.csv,CBD vs outer_boroughs_with_airports
-guardrail,fee revenue,"weekly congestion-fee revenue on yellow trips ($), complete weeks",485098,,,,,90,fee_revenue_weekly.csv,"descriptive mean; min 350454, max 621338; CBD pickups 370971 per week"
+guardrail,fee revenue,"weekly congestion-fee revenue on yellow trips ($), complete weeks",485098,,,,,90,fee_revenue_weekly.csv,"descriptive mean; min $350454, max $621338; fee on trips picked up in the CBD $370971 per week"
