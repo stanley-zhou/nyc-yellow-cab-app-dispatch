@@ -47,6 +47,7 @@ from taxi_shock.evaluation import sort_clip_quantiles
 from taxi_shock.io import read_exog, read_modeled_panel
 from taxi_shock.models.lgbm_quantile import GlobalLGBMQuantile
 from taxi_shock.models.seasonal_naive import SeasonalNaive
+from taxi_shock.outages import outage_days
 from taxi_shock.shock import daily_table, forecast_frozen, rolling_table
 
 LOG = logging.getLogger("shock")
@@ -211,6 +212,7 @@ def monitors(cfg: dict, daily: pd.DataFrame, model: str, series: str) -> dict:
         d = daily[(daily["model"] == model) & (daily["series"] == series)
                   & (daily["zone_group"] == g)].set_index("day").sort_index()
         x = np.log(d["actual"] / d["forecast"])
+        x = x[~x.index.isin(outage_days(cfg))]    # source outages are not demand
         cal = x[(x.index >= cal_lo) & (x.index <= cal_hi)]
         run = x[(x.index >= mon) & (x.index <= end)]
         if len(cal) != (cal_hi - cal_lo).days + 1 or run.index.to_series().diff().max() > \

@@ -54,6 +54,7 @@ forecast:         ## Phase 2: LGBM grid (2023), rolling-origin backtests (2023 +
 
 shock:            ## Phase 3: frozen models 2024-07 -> 2026-09, rolling errors, drift monitors
 	$(PY) scripts/06_shock.py
+	$(PY) scripts/06b_three_shocks.py
 
 causal:           ## Phase 4: speed/duration DiD (B1-B3), demand DiD + MDE + heterogeneity, A1/A3/A5, counterfactual
 	$(PY) scripts/07a_speed.py

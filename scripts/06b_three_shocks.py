@@ -7,7 +7,8 @@ congestion pricing 2025-01-05), identically:
   - calibration: two-fold cross-fit inside the training year (a model on each half forecasts
     the other half) -> one year of out-of-sample daily residuals;
   - monitored series per group (CBD, non-CBD, all modeled zones): daily log(sum actual / sum
-    forecast), standardized with the calibration mean/sd; two-sided CUSUM (k, h rule and grid
+    forecast), source-outage days (taxi_shock.outages) left out, standardized with the
+    calibration mean/sd; two-sided CUSUM (k, h rule and grid
     of `shock.cusum`: smallest h with <= 1 alarm over the calibration year) and the rolling-bias
     rule (`shock.rolling_bias`), monitoring from the event day.
 Writes results/shock_comparison.json (per event and group: calibration, first alarm on or after
@@ -36,6 +37,7 @@ from taxi_shock.config import load_config, path
 from taxi_shock.drift import calibrate_h, cusum, rolling_bias_alarms
 from taxi_shock.io import read_exog, read_modeled_panel
 from taxi_shock.models.lgbm_quantile import GlobalLGBMQuantile
+from taxi_shock.outages import outage_days
 from taxi_shock.shock import forecast_frozen
 
 LOG = logging.getLogger("three_shocks")
@@ -114,8 +116,11 @@ def daily(fc: pd.DataFrame, groups: dict[str, list[int]]) -> pd.DataFrame:
 
 def monitor(dd: pd.DataFrame, event: pd.Timestamp, cfg: dict) -> dict:
     sh, sc = cfg["shock"], cfg["shocks"]
+    dd_all_min, dd_all_max = dd["day"].min(), dd["day"].max()
     cu, rb = sh["cusum"], sh["rolling_bias"]
     grid = np.arange(cu["h_grid"][0], cu["h_grid"][1] + 1e-9, cu["h_grid"][2])
+    gaps = outage_days(cfg)                   # source outages: not demand, left out
+    dd = dd[~dd["day"].isin(gaps)]
     cal = dd[dd["stage"] == "calibration"].set_index("day")["log_ratio"].sort_index()
     mon = dd[dd["stage"] == "monitoring"].set_index("day")["log_ratio"].sort_index()
     mu, sd = float(cal.mean()), float(cal.std(ddof=1))
@@ -137,7 +142,9 @@ def monitor(dd: pd.DataFrame, event: pd.Timestamp, cfg: dict) -> dict:
         x = mon[mon.index < event + pd.Timedelta(days=int(n))]
         level[f"first_{n}_days"] = {"mean_log_ratio": float(x.mean()),
                                     "pct": float(np.expm1(x.mean())), "n_days": len(x)}
-    return {"calibration": {"n_days": len(cal), "mean": mu, "sd": sd,
+    return {"source_outage_days_left_out": sorted(str(d.date()) for d in gaps
+                                                   if dd_all_min <= d <= dd_all_max),
+            "calibration": {"n_days": len(cal), "mean": mu, "sd": sd,
                             "period": [str(cal.index.min().date()), str(cal.index.max().date())]},
             "cusum": {"k": cu["k"], "h": h, "false_alarms_in_calibration": n_cal,
                       "first_alarm": first(alarms)},

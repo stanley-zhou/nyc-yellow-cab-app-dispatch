@@ -54,6 +54,9 @@
   - results/frozen_model.json
   - results/figure_stats_phase3.json
   - reports/figures/F3_error_over_time.png
+  - results/shock_comparison.json
+  - results/shock_daily.csv
+  - reports/figures/F3b_three_shocks.png
 4:
   - results/did_static.json
   - results/event_study.csv

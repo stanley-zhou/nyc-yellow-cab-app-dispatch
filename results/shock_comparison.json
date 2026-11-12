@@ -29,6 +29,7 @@
       },
       "groups": {
         "cbd": {
+          "source_outage_days_left_out": [],
           "calibration": {
             "n_days": 366,
             "mean": 0.008177209185455581,
@@ -72,6 +73,7 @@
           }
         },
         "non_cbd": {
+          "source_outage_days_left_out": [],
           "calibration": {
             "n_days": 366,
             "mean": 0.011451286429195797,
@@ -115,6 +117,7 @@
           }
         },
         "all": {
+          "source_outage_days_left_out": [],
           "calibration": {
             "n_days": 366,
             "mean": 0.009671690859480496,
@@ -188,10 +191,18 @@
       },
       "groups": {
         "cbd": {
+          "source_outage_days_left_out": [
+            "2022-09-17",
+            "2022-09-18",
+            "2023-09-21",
+            "2023-09-22",
+            "2023-09-23",
+            "2023-09-24"
+          ],
           "calibration": {
-            "n_days": 365,
-            "mean": 0.0953595714465179,
-            "sd": 0.22499370450710235,
+            "n_days": 363,
+            "mean": 0.10478975966585699,
+            "sd": 0.16460627109551085,
             "period": [
               "2021-12-19",
               "2022-12-18"
@@ -199,13 +210,13 @@
           },
           "cusum": {
             "k": 0.5,
-            "h": 11.75,
+            "h": 21.0,
             "false_alarms_in_calibration": 1,
             "first_alarm": {
-              "date": "2023-09-22",
+              "date": "2023-05-30",
               "side": "down",
-              "delay_days": 277,
-              "n_alarms": 2
+              "delay_days": 162,
+              "n_alarms": 1
             }
           },
           "rolling_bias": {
@@ -219,17 +230,25 @@
               "n_days": 28
             },
             "first_365_days": {
-              "mean_log_ratio": 0.005466267374473227,
-              "pct": 0.005481234673302852,
-              "n_days": 365
+              "mean_log_ratio": 0.030958965423151685,
+              "pct": 0.031443178183760155,
+              "n_days": 361
             }
           }
         },
         "non_cbd": {
+          "source_outage_days_left_out": [
+            "2022-09-17",
+            "2022-09-18",
+            "2023-09-21",
+            "2023-09-22",
+            "2023-09-23",
+            "2023-09-24"
+          ],
           "calibration": {
-            "n_days": 365,
-            "mean": 0.08702992082628634,
-            "sd": 0.22297949805329614,
+            "n_days": 363,
+            "mean": 0.09644673844525262,
+            "sd": 0.1647298995054253,
             "period": [
               "2021-12-19",
               "2022-12-18"
@@ -237,14 +256,9 @@
           },
           "cusum": {
             "k": 0.5,
-            "h": 11.55,
+            "h": 16.15,
             "false_alarms_in_calibration": 1,
-            "first_alarm": {
-              "date": "2023-09-22",
-              "side": "down",
-              "delay_days": 277,
-              "n_alarms": 2
-            }
+            "first_alarm": null
           },
           "rolling_bias": {
             "false_alarms_in_calibration": 0,
@@ -257,17 +271,25 @@
               "n_days": 28
             },
             "first_365_days": {
-              "mean_log_ratio": 0.007622718007653602,
-              "pct": 0.007651844884184985,
-              "n_days": 365
+              "mean_log_ratio": 0.032270899835928075,
+              "pct": 0.03279725201785692,
+              "n_days": 361
             }
           }
         },
         "all": {
+          "source_outage_days_left_out": [
+            "2022-09-17",
+            "2022-09-18",
+            "2023-09-21",
+            "2023-09-22",
+            "2023-09-23",
+            "2023-09-24"
+          ],
           "calibration": {
-            "n_days": 365,
-            "mean": 0.09234092389396202,
-            "sd": 0.22215050152646473,
+            "n_days": 363,
+            "mean": 0.10176258246855494,
+            "sd": 0.16185087533517986,
             "period": [
               "2021-12-19",
               "2022-12-18"
@@ -275,13 +297,13 @@
           },
           "cusum": {
             "k": 0.5,
-            "h": 10.05,
+            "h": 18.8,
             "false_alarms_in_calibration": 1,
             "first_alarm": {
-              "date": "2023-09-22",
+              "date": "2023-06-30",
               "side": "down",
-              "delay_days": 277,
-              "n_alarms": 3
+              "delay_days": 193,
+              "n_alarms": 1
             }
           },
           "rolling_bias": {
@@ -295,8 +317,155 @@
               "n_days": 28
             },
             "first_365_days": {
-              "mean_log_ratio": 0.00673108137795721,
-              "pct": 0.006753786019892199,
+              "mean_log_ratio": 0.03188927274494367,
+              "pct": 0.03240318380532811,
+              "n_days": 361
+            }
+          }
+        }
+      }
+    },
+    "congestion_pricing": {
+      "date": "2025-01-05",
+      "windows": {
+        "train": [
+          "2024-01-05",
+          "2025-01-05"
+        ],
+        "fold_a": [
+          "2024-01-05",
+          "2024-07-06"
+        ],
+        "fold_b": [
+          "2024-07-06",
+          "2025-01-05"
+        ],
+        "monitor": [
+          "2025-01-05",
+          "2026-01-05"
+        ]
+      },
+      "fit_rounds": {
+        "monitoring": {
+          "0.1": 295,
+          "0.5": 2157,
+          "0.9": 981
+        }
+      },
+      "groups": {
+        "cbd": {
+          "source_outage_days_left_out": [],
+          "calibration": {
+            "n_days": 366,
+            "mean": 0.03435847161005502,
+            "sd": 0.12914753785653912,
+            "period": [
+              "2024-01-05",
+              "2025-01-04"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 11.05,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2025-12-25",
+              "side": "down",
+              "delay_days": 354,
+              "n_alarms": 1
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": null
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": 0.0708719041211368,
+              "pct": 0.07344371334528052,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": 0.014391440577695369,
+              "pct": 0.014495495928223835,
+              "n_days": 365
+            }
+          }
+        },
+        "non_cbd": {
+          "source_outage_days_left_out": [],
+          "calibration": {
+            "n_days": 366,
+            "mean": 0.03918286945825476,
+            "sd": 0.11753273836732575,
+            "period": [
+              "2024-01-05",
+              "2025-01-04"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 10.85,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2025-12-26",
+              "side": "down",
+              "delay_days": 355,
+              "n_alarms": 1
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": null
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": 0.06666834984613722,
+              "pct": 0.06894090496511857,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": 0.031109543452386593,
+              "pct": 0.031598502558724505,
+              "n_days": 365
+            }
+          }
+        },
+        "all": {
+          "source_outage_days_left_out": [],
+          "calibration": {
+            "n_days": 366,
+            "mean": 0.03687602596146751,
+            "sd": 0.12082033010012413,
+            "period": [
+              "2024-01-05",
+              "2025-01-04"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 10.85,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2025-12-25",
+              "side": "down",
+              "delay_days": 354,
+              "n_alarms": 1
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": null
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": 0.07040664499180968,
+              "pct": 0.07294440002187591,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": 0.021830882562242575,
+              "pct": 0.022070919838468962,
               "n_days": 365
             }
           }
@@ -304,6 +473,6 @@
       }
     }
   },
-  "generated_utc": "2026-11-12T00:03:04+00:00",
+  "generated_utc": "2026-11-12T00:24:02+00:00",
   "procedure": "DECISIONS.md, Phase 4b (C5 specification)"
 }
