@@ -88,6 +88,15 @@ causal:
   placebo_week: "2024-01-07"                  # PLAN placebo in time, on 2023-2024 data only
   placebo_window: ["2023-01-01", "2024-12-31"]
   weather_controls: [mean_temp_f, total_precip_in]   # enter as x treated (week FE absorb levels)
+  trade_off:                                  # A3 / B5 (DECISIONS)
+    fee_per_trip: 0.75                        # taxi congestion fee (PLAN §1)
+    values_of_time: [20, 30, 40]              # $/h (Amendment 2, B5)
+  effect_map_min_pre_weekly: 50               # F4b: zones below this are hatched (DECISIONS)
+  pretrend_size:                              # scripts/07d_pretrend_size.py (DECISIONS)
+    reps: 200
+    ar_rho: 0.5                               # AR(1) zone-week noise
+    noise_sd: 0.05
+    designs: [[38, 23], [20, 20]]             # treated / control zones (38/23: demand design)
   permutation:                                # Amendment 1 (A2), pre-policy data only
     draws: 500
     window: ["2023-01-01", "2025-01-04"]

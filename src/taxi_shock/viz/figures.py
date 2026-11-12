@@ -339,14 +339,14 @@ def _bin_dates(k: pd.Series, policy_date: str) -> pd.Series:
 def _event_panel(ax, es: pd.DataFrame, policy_date: str, ylabel: str, color: str,
                  label_policy: bool = True, label_y: float = 1.0, shift_days: int = 0,
                  label: str | None = None) -> None:
-    """Monthly coefficients x 100 (log points ~ %) with 95% CIs; pre bins tinted. `shift_days`
-    offsets the points so two series in one panel do not overlap."""
+    """Monthly coefficients as % effects (exp(b) - 1) with 95% CIs; pre bins tinted.
+    `shift_days` offsets the points so two series in one panel do not overlap."""
     x = _bin_dates(es["k"], policy_date) + pd.Timedelta(days=shift_days)
+    pct = {c: (np.exp(es[c]) - 1) * 100 for c in ("coef", "ci_lo", "ci_hi")}
     for pre, c in ((True, tint(color)), (False, color)):
         s = (es["k"] < 0) == pre
-        ax.errorbar(x[s], es.loc[s, "coef"] * 100,
-                    yerr=[(es.loc[s, "coef"] - es.loc[s, "ci_lo"]) * 100,
-                          (es.loc[s, "ci_hi"] - es.loc[s, "coef"]) * 100],
+        ax.errorbar(x[s], pct["coef"][s],
+                    yerr=[pct["coef"][s] - pct["ci_lo"][s], pct["ci_hi"][s] - pct["coef"][s]],
                     fmt="o", ms=4, color=c, ecolor=c, elinewidth=1.0, capsize=0,
                     label=label if not pre else None)
     ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
@@ -413,7 +413,10 @@ def f4b_effect_map(zones, effects: pd.DataFrame, title: str, note: str, out_base
     gdf[ok].plot(ax=ax, column="relative_to_control_aggregate", cmap=DIVERGING_CMAP, norm=norm,
                  edgecolor="white", linewidth=0.3)
     sm = mpl.cm.ScalarMappable(norm=norm, cmap=DIVERGING_CMAP)
-    cb = fig.colorbar(sm, ax=ax, fraction=0.035, pad=0.01, shrink=0.6)
+    over, under = bool((v > lim).any()), bool((v < -lim).any())
+    ext = {(True, True): "both", (True, False): "max", (False, True): "min"}.get(
+        (over, under), "neither")
+    cb = fig.colorbar(sm, ax=ax, fraction=0.035, pad=0.01, shrink=0.6, extend=ext)
     cb.set_label("Post/pre log change minus control aggregate (log points)")
     cb.outline.set_visible(False)
     draw_boundary(ax, zones, effects.loc[effects["is_cbd"], "zone_id"].tolist())
@@ -474,8 +477,9 @@ def f4c_heterogeneity(panels: list[tuple[str, pd.DataFrame]], title: str, note: 
         ax.axvline(0, color=PALETTE["muted_text"], linewidth=0.8)
         ax.set_yticks(y)
         ax.set_yticklabels(d["label"], fontsize=8)
-        ax.set_title(textwrap.fill(name, 32), fontsize=9)
+        ax.set_title(textwrap.fill(name, 24), fontsize=9)
         ax.tick_params(axis="x", labelsize=8)
+        ax.set_xlabel("Effect (%)", fontsize=8)
         ax.grid(axis="y", visible=False)
     for ax in list(axes.flat)[n:]:
         ax.set_visible(False)
@@ -622,5 +626,32 @@ def f3b_three_shocks(daily: pd.DataFrame, events: list[tuple[str, str, dict | No
     np.atleast_1d(axes)[-1].set_xlabel("Days since the event (left of 0: calibration year)")
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f4i_leave_one_out(loo: pd.DataFrame, full: dict[str, float], title: str, note: str,
+                      out_base: Path) -> list[Path]:
+    """F4i: the static DiD re-estimated dropping each zone in turn (one strip per
+    specification, % effect), with the full-sample estimate as a vertical tick."""
+    use_style()
+    specs = list(full)
+    fig, ax = plt.subplots(figsize=SIZES["single"], layout="constrained")
+    for i, spec in enumerate(specs):
+        d = loo[loo["spec"] == spec]
+        y = np.full(len(d), i) + np.linspace(-0.15, 0.15, len(d))
+        pct = (np.exp(d["coef"]) - 1) * 100
+        ax.scatter(pct, y, s=12, color=tint(PALETTE["cbd"], 0.3), edgecolor="white",
+                   linewidth=0.3)
+        f = (np.exp(full[spec]) - 1) * 100
+        ax.plot([f, f], [i - 0.3, i + 0.3], color=PALETTE["cbd"], linewidth=2.2)
+    ax.axvline(0, color=PALETTE["muted_text"], linewidth=0.8)
+    ax.set_yticks(range(len(specs)))
+    ax.set_yticklabels([s.replace("_", " ") for s in specs])
+    ax.set_ylim(-0.6, len(specs) - 0.4)
+    ax.set_xlabel("Static DiD effect on CBD pickups, one zone dropped (%)")
+    ax.grid(axis="y", visible=False)
+    fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
     return save(fig, out_base)

@@ -12,6 +12,7 @@ Writes
                                    quarterly congestion-fee revenue collected
     results/counterfactual.csv     PLAN forecast counterfactual: CBD daily pickups vs the
                                    frozen-LightGBM forecast, implied effect by month
+    results/fee_revenue_weekly.csv weekly congestion-fee revenue recorded on yellow trips (A1)
     results/zone_growth.csv        per Manhattan zone and year: mean weekly pickups (complete
                                    weeks) and the share of CMT + Curb (vendors 1, 2) and Helix (7)
     results/effect_map.csv         F4b input: per Manhattan zone, mean weekly pickups in the 52
@@ -31,14 +32,13 @@ from datetime import UTC, datetime
 import numpy as np
 import pandas as pd
 
+from taxi_shock.causal.counterfactual import implied_effect_by_month
 from taxi_shock.causal.did import Z95, static_did
 from taxi_shock.causal.panel import control_zone_ids, demand_panel, full_weeks
 from taxi_shock.config import load_config, path
 from taxi_shock.io import connect
 
 LOG = logging.getLogger("metrics")
-FEE = 0.75          # taxi congestion fee per trip (PLAN §1)
-VOT = [20, 30, 40]  # B5: values of time, $/h
 
 
 def row(role, area, metric, term, src, note="", n=None) -> dict:
@@ -100,6 +100,26 @@ def fee_revenue(cfg: dict) -> pd.DataFrame:
     return q
 
 
+def fee_revenue_weekly(cfg: dict) -> pd.DataFrame:
+    """A1 guardrail: congestion-fee revenue recorded on valid yellow trips per panel week (all
+    pickup zones and CBD pickups), from the policy week on; `complete_week` marks 7-day weeks."""
+    zs = pd.read_csv(path("results", cfg) / "zone_summary.csv")
+    cbd = sorted(zs.loc[zs["is_cbd"], "zone_id"].astype(int))
+    with connect(path("warehouse", cfg), cfg=cfg) as con:
+        con.execute("create temp table c as select unnest(?::integer[]) as zone_id", [cbd])
+        w = con.execute("""
+            select s.week_start, max(p.n_days) as n_days, sum(s.sum_cbd_fee) as fee,
+                   sum(s.n_cbd_fee_positive) as trips_with_fee,
+                   sum(s.sum_cbd_fee) filter (where s.zone_id in (select zone_id from c))
+                       as fee_cbd_pickups
+            from fct_weekly_zone_trip_stats s
+            join fct_weekly_zone_panel p using (zone_id, week_start)
+            where s.week_start >= ? group by 1 order by 1""",
+                        [cfg["data"]["policy_date"]]).df()
+    w["complete_week"] = w["n_days"] == 7
+    return w
+
+
 def pre_cbd_stats(cfg: dict) -> dict:
     """Pre-period (52 weeks) mean fare of CBD pickups and mean duration of within-CBD trips."""
     lo, hi = cfg["data"]["pre_period"]
@@ -135,17 +155,7 @@ def counterfactual(cfg: dict) -> pd.DataFrame:
     cbd = set(zs.loc[zs["is_cbd"], "zone_id"].astype(int))
     fc = pd.read_parquet(path("forecasts", cfg) / "frozen" / "lgbm_quantile.parquet",
                          columns=["zone_id", "target_ts", "y", "point"])
-    fc = fc[fc["zone_id"].isin(cbd) & fc["y"].notna() & fc["point"].notna()]
-    day = fc.assign(day=fc["target_ts"].dt.normalize()).groupby("day")[["y", "point"]].sum()
-    day["rel"] = (day["y"] - day["point"]) / day["point"]
-    m = day.groupby(day.index.to_period("M")).agg(
-        actual=("y", "sum"), forecast=("point", "sum"), mean_daily_rel=("rel", "mean"),
-        n_days=("rel", "size")).reset_index().rename(columns={"day": "month"})
-    m["month"] = m["month"].astype(str)
-    end = pd.Timestamp(cfg["shock"]["frozen_train_end"]).to_period("M")
-    m["in_sample"] = pd.PeriodIndex(m["month"], freq="M") <= end
-    return m
-
+    return implied_effect_by_month(fc[fc["zone_id"].isin(cbd)], cfg["shock"]["frozen_train_end"])
 
 def effect_map(cfg: dict) -> pd.DataFrame:
     cc = cfg["causal"]
@@ -204,19 +214,37 @@ def main() -> None:
     res = path("results", cfg)
     ds = json.loads((res / "did_static.json").read_text())["estimates"]
     sp = json.loads((res / "speed_did.json").read_text())["outcomes"]
+    spo = json.loads((res / "speed_did_outer.json").read_text())["outcomes"]
+    mde_w = json.loads((res / "power_mde.json").read_text())["pre_volume_weighted"]["mde"]
     het = pd.read_csv(res / "heterogeneity.csv")
     g = guardrails(cfg)
     rows = [
-        row("primary", "demand (quantity)", "log1p CBD pickups", term_of(ds["main"]),
-            "did_static.json:main", "pre-registered; pre-trend test rejects",
-            ds["main"]["n_obs"]),
-        row("primary", "demand (quantity)", "CBD pickups, levels per zone-week",
-            term_of(ds["levels"]), "did_static.json:levels", "", ds["levels"]["n_obs"]),
         row("primary", "demand (quantity)", "log1p CBD pickups, pre-volume weighted",
             term_of(ds["pre_volume_weighted_not_preregistered"]),
-            "did_static.json:pre_volume_weighted_not_preregistered", "not pre-registered"),
+            "did_static.json:pre_volume_weighted_not_preregistered",
+            "C2 primary (Checkpoint 4; not pre-registered): no detectable change; permutation "
+            f"MDE {mde_w:.4f}"),
+        row("pre-registered", "demand (quantity)", "log1p CBD pickups, equal zone weights",
+            term_of(ds["main"]), "did_static.json:main",
+            "pre-registered; an artifact of fast-growing small control zones; pre-trends fail",
+            ds["main"]["n_obs"]),
+        row("pre-registered", "demand (quantity)", "CBD pickups, levels per zone-week",
+            term_of(ds["levels"]), "did_static.json:levels", "", ds["levels"]["n_obs"]),
+        row("robustness", "demand (quantity)", "log1p CBD pickups, zone linear trends",
+            term_of(ds["zone_trends_not_preregistered"]),
+            "did_static.json:zone_trends_not_preregistered", "C2, not pre-registered"),
+        row("robustness", "demand (quantity)",
+            "log1p CBD pickups, pre-volume weighted, zone linear trends",
+            term_of(ds["pre_volume_weighted_zone_trends_not_preregistered"]),
+            "did_static.json:pre_volume_weighted_zone_trends_not_preregistered",
+            "C2, not pre-registered"),
         row("primary", "service quality (speed)", "log mean trip speed, within-CBD trips",
-            term_of(sp["log_mean_speed_mph"]["main"]), "speed_did.json", "pre-registered"),
+            term_of(sp["log_mean_speed_mph"]["main"]), "speed_did.json",
+            "pre-registered (donut control); pre-trends fail"),
+        row("robustness", "service quality (speed)",
+            "log mean trip speed, within-CBD vs Brooklyn/Queens trips (C4)",
+            term_of(spo["log_mean_speed_mph"]["main"]), "speed_did_outer.json",
+            "expected +3% to +8%; pre-trends fail; placebos centred far from zero"),
         row("primary", "service quality (speed)", "log mean trip duration, within-CBD trips",
             term_of(sp["log_mean_duration_min"]["main"]), "speed_did.json", "pre-registered"),
         row("secondary", "service quality (speed)", "log fare per minute, within-CBD trips",
@@ -233,16 +261,30 @@ def main() -> None:
     for r in het.itertuples():
         role = "secondary" if r.cut in ("hour_band", "day_type", "distance_tercile",
                                         "fare_tercile", "pass_through", "dropoff") else "check"
-        rows.append(row(role, f"heterogeneity: {r.cut}", f"log1p pickups, {r.level}",
+        rows.append(row(role, f"heterogeneity: {r.cut} ({r.spec})", f"log1p pickups, {r.level}",
                         {"coef": r.coef, "ci_lo": r.ci_lo, "ci_hi": r.ci_hi,
                          "pvalue": r.pvalue}, "heterogeneity.csv", r.comparison, r.n_obs))
+    fwk = fee_revenue_weekly(cfg)
+    fwk.to_csv(res / "fee_revenue_weekly.csv", index=False, lineterminator="\n",
+               float_format="%.6g")
+    full = fwk[fwk["complete_week"]]
+    rows.append({"role": "guardrail", "area": "fee revenue",
+                 "metric": "weekly congestion-fee revenue on yellow trips ($), complete weeks",
+                 "coef": float(full["fee"].mean()), "ci_lo": np.nan, "ci_hi": np.nan,
+                 "pvalue": np.nan, "pct": np.nan, "n_obs": len(full),
+                 "source": "fee_revenue_weekly.csv",
+                 "note": f"descriptive mean; min {full['fee'].min():.0f}, max "
+                         f"{full['fee'].max():.0f}; CBD pickups "
+                         f"{full['fee_cbd_pickups'].mean():.0f} per week"})
     fw = pd.DataFrame(rows)
     fw.to_csv(res / "metric_framework.csv", index=False, lineterminator="\n",
               float_format="%.6g")
 
     # A3 / B5
     pre = pre_cbd_stats(cfg)
-    price_change = FEE / pre["mean_fare_cbd_pickups"]
+    fee, vot = cfg["causal"]["trade_off"]["fee_per_trip"], cfg["causal"]["trade_off"][
+        "values_of_time"]
+    price_change = fee / pre["mean_fare_cbd_pickups"]
     elast = {}
     for k in ("main", "pre_volume_weighted_not_preregistered"):
         t = term_of(ds[k])
@@ -269,14 +311,14 @@ def main() -> None:
         trade[name] = {
             "pre_mean_duration_min": base, "duration_effect_log": t["coef"],
             "minutes_saved_per_trip": saved, "minutes_saved_ci": [lo, hi],
-            "value_of_time_saved": {str(v): saved / 60 * v for v in VOT},
-            "net_vs_fee": {str(v): saved / 60 * v - FEE for v in VOT},
-            "break_even_value_of_time_per_hour": (FEE / (saved / 60)) if saved > 0 else None,
-            "break_even_ci": [FEE / (hi / 60) if hi > 0 else None,
-                              FEE / (lo / 60) if lo > 0 else None]}
+            "value_of_time_saved": {str(v): saved / 60 * v for v in vot},
+            "net_vs_fee": {str(v): saved / 60 * v - fee for v in vot},
+            "break_even_value_of_time_per_hour": (fee / (saved / 60)) if saved > 0 else None,
+            "break_even_ci": [fee / (hi / 60) if hi > 0 else None,
+                              fee / (lo / 60) if lo > 0 else None]}
     q = fee_revenue(cfg)
     out = {"generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
-           "fee_per_trip": FEE, "pre_period_stats": pre, "price_change_pct": price_change,
+           "fee_per_trip": fee, "pre_period_stats": pre, "price_change_pct": price_change,
            "a3_implied_elasticity": elast,
            "b5_rider_tradeoff": trade,
            "b5_note": "minutes saved per trip = pre-period mean duration x (1 - exp(beta)); "

@@ -158,8 +158,152 @@
           }
         }
       }
+    },
+    "fare_increase": {
+      "date": "2022-12-19",
+      "windows": {
+        "train": [
+          "2021-12-19",
+          "2022-12-19"
+        ],
+        "fold_a": [
+          "2021-12-19",
+          "2022-06-19"
+        ],
+        "fold_b": [
+          "2022-06-19",
+          "2022-12-19"
+        ],
+        "monitor": [
+          "2022-12-19",
+          "2023-12-19"
+        ]
+      },
+      "fit_rounds": {
+        "monitoring": {
+          "0.1": 233,
+          "0.5": 1607,
+          "0.9": 114
+        }
+      },
+      "groups": {
+        "cbd": {
+          "calibration": {
+            "n_days": 365,
+            "mean": 0.0953595714465179,
+            "sd": 0.22499370450710235,
+            "period": [
+              "2021-12-19",
+              "2022-12-18"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 11.75,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2023-09-22",
+              "side": "down",
+              "delay_days": 277,
+              "n_alarms": 2
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": null
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": 0.09245313439140378,
+              "pct": 0.09686173526295062,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": 0.005466267374473227,
+              "pct": 0.005481234673302852,
+              "n_days": 365
+            }
+          }
+        },
+        "non_cbd": {
+          "calibration": {
+            "n_days": 365,
+            "mean": 0.08702992082628634,
+            "sd": 0.22297949805329614,
+            "period": [
+              "2021-12-19",
+              "2022-12-18"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 11.55,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2023-09-22",
+              "side": "down",
+              "delay_days": 277,
+              "n_alarms": 2
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": null
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": 0.07211043082940469,
+              "pct": 0.0747740256977178,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": 0.007622718007653602,
+              "pct": 0.007651844884184985,
+              "n_days": 365
+            }
+          }
+        },
+        "all": {
+          "calibration": {
+            "n_days": 365,
+            "mean": 0.09234092389396202,
+            "sd": 0.22215050152646473,
+            "period": [
+              "2021-12-19",
+              "2022-12-18"
+            ]
+          },
+          "cusum": {
+            "k": 0.5,
+            "h": 10.05,
+            "false_alarms_in_calibration": 1,
+            "first_alarm": {
+              "date": "2023-09-22",
+              "side": "down",
+              "delay_days": 277,
+              "n_alarms": 3
+            }
+          },
+          "rolling_bias": {
+            "false_alarms_in_calibration": 0,
+            "first_alarm": null
+          },
+          "post_event_level": {
+            "first_28_days": {
+              "mean_log_ratio": 0.08444783716731334,
+              "pct": 0.08811608353440847,
+              "n_days": 28
+            },
+            "first_365_days": {
+              "mean_log_ratio": 0.00673108137795721,
+              "pct": 0.006753786019892199,
+              "n_days": 365
+            }
+          }
+        }
+      }
     }
   },
-  "generated_utc": "2026-11-11T23:52:43+00:00",
+  "generated_utc": "2026-11-12T00:03:04+00:00",
   "procedure": "DECISIONS.md, Phase 4b (C5 specification)"
 }

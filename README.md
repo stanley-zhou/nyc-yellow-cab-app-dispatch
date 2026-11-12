@@ -48,7 +48,7 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `causal` | Phase 4: trip speed/duration DiD and event study (Amendment 2), demand DiD, event study, placebo, leave-one-out, permutation MDE and heterogeneity, metric framework, trade-off table, forecast counterfactual, pre-trend test size simulation (`07a`–`07d`; dbt marts `fct_weekly_pair_speed`, `fct_weekly_zone_trip_stats`) |
 | `shock` | Phase 3: LightGBM frozen on data to 2024-12-31 and seasonal naive, day-ahead 2024-07 → 2026-09 without retraining (with Chronos-2 zero-shot), rolling 4-week errors by zone group, CUSUM and rolling-bias drift monitors (`06_shock.py`) |
 | `forecast` | Phase 2: LightGBM grid on 2023 (`04a_lgbm_tune.py`), rolling-origin backtests of every trained model for 2023 and 2024 (`04_backtest.py --full`), conformal calibration and metrics (`04b_evaluate.py`); Chronos-2 runs on Colab (`chronos-bundle` / `chronos-import`) |
-| `causal`, `adapt`, `report`, `all` | added in their phases; they fail with a message until then |
+| `adapt`, `report` | added in their phases; they fail with a message until then (`all` runs every target) |
 
 ## Chronos-2 on Colab
 
