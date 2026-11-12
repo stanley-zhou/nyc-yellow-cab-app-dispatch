@@ -1,6 +1,6 @@
 # Forecasting Under a Policy Shock: NYC Yellow-Taxi Demand and Congestion Pricing
 
-**Status: Phase 4b (Amendment 3: C1, C4, C5, C2 done; C3, C6 next); Phase 3 and Phase 4
+**Status: Phase 4b (Amendment 3: C1–C5 done; C6 next); Phase 3 and Phase 4
 formal status resolved at Checkpoint 6; Phase 2 passed review.** Yellow-taxi demand (Stanley's
 decision, 2026-11-12): the difference-in-differences design cannot identify the policy's effect
 on yellow-taxi demand: the pre-trend test rejects (p = 1.6e−17, `results/placebo.json`), the

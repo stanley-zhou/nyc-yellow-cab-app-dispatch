@@ -1,0 +1,92 @@
+{
+  "generated_utc": "2026-11-12T21:18:19+00:00",
+  "specification": "DECISIONS.md, Phase 4b (C3)",
+  "library": "pysyncon 1.7.0",
+  "n_cbd_zones": 38,
+  "donor_rule": "non-CBD zones with 2024 mean >= 1000 pickups/week, excluding [43, 140, 141, 142, 143, 237]",
+  "n_donors": 15,
+  "pre_period": [
+    "2023-01-01",
+    "2024-12-22"
+  ],
+  "n_pre_weeks": 104,
+  "post_period": [
+    "2025-01-05",
+    "2026-09-20"
+  ],
+  "n_post_weeks": 90,
+  "pre_rmspe": 0.043240536008591374,
+  "post_rmspe": 0.056492071425935785,
+  "post_pre_rmspe_ratio": 1.3064609424525055,
+  "post_gap_mean_log": -0.012378012891910695,
+  "post_gap_mean_pct": -0.012301720397923533,
+  "post_gap_by_period": {
+    "post_2025_h1": {
+      "mean_log": 0.02180731474670491,
+      "pct": 0.022046832143412094
+    },
+    "post_2025_h2": {
+      "mean_log": 0.0035084701707240396,
+      "pct": 0.003514632056350035
+    },
+    "post_2026": {
+      "mean_log": -0.04488267316354898,
+      "pct": -0.043890347426511093
+    }
+  },
+  "weights": {
+    "263": 0.5707,
+    "138": 0.2716,
+    "42": 0.0768,
+    "132": 0.0712,
+    "239": 0.006,
+    "70": 0.0038
+  },
+  "in_space_placebos": {
+    "n": 15,
+    "cbd_rank": 11,
+    "p_value": 0.6875,
+    "ratio_quantiles": {
+      "0.5": 1.4947620825328425,
+      "0.9": 2.8326486856912663,
+      "0.95": 3.7992979564568023
+    }
+  },
+  "in_time_placebo": {
+    "fake_week": "2024-01-07",
+    "pre_rmspe": 0.04838354931735276,
+    "post_rmspe": 0.061909322656608014,
+    "post_gap_mean_log": 0.04538944294683903,
+    "post_gap_mean_pct": 0.04643530741458455
+  },
+  "decision_rule": "if p_value > 0.10 the method cannot resolve the question",
+  "resolves": false,
+  "pre_fit": {
+    "cbd_pre_rmspe": 0.043240536008591374,
+    "donor_pre_rmspe_median": 0.04751877656733491,
+    "cbd_pre_rmspe_rank_among_units": 8,
+    "donor_pre_rmspe_quantiles": {
+      "0.1": 0.025831987801397432,
+      "0.5": 0.04751877656733491,
+      "0.9": 0.09786047570297825
+    },
+    "restricted_placebos": [
+      {
+        "mspe_multiple": 5.0,
+        "n": 13,
+        "cbd_rank": 10,
+        "p_value": 0.7142857142857143
+      },
+      {
+        "mspe_multiple": 2.0,
+        "n": 9,
+        "cbd_rank": 7,
+        "p_value": 0.7
+      }
+    ],
+    "gate_cbd_fit_at_most_donor_median": true,
+    "gate_in_time_mean_gap_within_cbd_pre_rmspe": false,
+    "rule": "C3 speaks only if both gates hold; otherwise the method cannot resolve the question"
+  },
+  "can_speak": false
+}

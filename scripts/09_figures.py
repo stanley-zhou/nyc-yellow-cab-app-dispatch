@@ -499,11 +499,13 @@ def phase4b(cfg: dict) -> None:
                        "pre_rmspe": sc["pre_rmspe"], "ratio": sc["post_pre_rmspe_ratio"],
                        "rank": sp_["cbd_rank"], "n_units": sp_["n"] + 1,
                        "p_value": sp_["p_value"], "resolves": sc["resolves"]}
-        verdict = ("the CBD's post/pre fit ratio is extreme among the donors" if sc["resolves"]
-                   else "not extreme among the donors, so the method cannot resolve it")
+        stats["c3"]["can_speak"] = sc["can_speak"]
+        it = sc["in_time_placebo"]["post_gap_mean_pct"] * 100
+        verdict = ("the method can speak" if sc["resolves"] and sc["can_speak"]
+                   else "the method cannot resolve the question")
         t = (f"Synthetic control: CBD pickups {sc['post_gap_mean_pct'] * 100:+.1f}% vs synthetic "
-             f"after the policy; RMSPE ratio rank {sp_['cbd_rank']} of {sp_['n'] + 1} "
-             f"(p = {sp_['p_value']:.2f}), {verdict}")
+             f"after the policy, rank {sp_['cbd_rank']} of {sp_['n'] + 1} donors "
+             f"(p = {sp_['p_value']:.2f}), and {it:+.1f}% at a fake 2024 date: {verdict}")
         stats["c3"]["title"] = t
         paths = pd.read_csv(res / "synth_control_paths.csv", parse_dates=["week_start"])
         f4h_synth_control(paths, cfg["data"]["policy_date"], t,

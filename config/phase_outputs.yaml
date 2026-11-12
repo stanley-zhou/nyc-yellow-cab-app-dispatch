@@ -93,6 +93,9 @@
   - results/app_dispatch_share.csv
   - results/app_dispatch_summary.json
   - reports/figures/F4g_app_dispatch_map.png
+  - results/synth_control.json
+  - results/synth_control_paths.csv
+  - reports/figures/F4h_synth_control.png
   - results/figure_stats_phase4b.json
 5:
   - results/adaptation.csv

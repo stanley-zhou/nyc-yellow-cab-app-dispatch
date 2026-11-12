@@ -673,10 +673,10 @@ def f4h_synth_control(paths: pd.DataFrame, policy_date: str, title: str, note: s
             linewidth=1.4)
     a1.plot(c["week_start"], (np.exp(c["synthetic"]) - 1) * 100, color=PALETTE["model"],
             linewidth=1.4, linestyle="--")
-    direct_labels(a1, c["week_start"].max(), [
+    direct_labels(a1, c["week_start"].max() + pd.Timedelta(days=7), [
         (float((np.exp(c["actual"].iloc[-1]) - 1) * 100), "CBD", PALETTE["actual"]),
         (float((np.exp(c["synthetic"].iloc[-1]) - 1) * 100), "Synthetic CBD", PALETTE["model"])])
-    a1.set_ylabel("Weekly pickups vs pre-period mean (%)")
+    a1.set_ylabel("vs pre-period mean (%)")
     for _unit, d in paths[paths["unit"] != "CBD"].groupby("unit"):
         d = d.sort_values("week_start")
         a2.plot(d["week_start"], (np.exp(d["gap"]) - 1) * 100, color=PALETTE["baseline"],
@@ -685,7 +685,7 @@ def f4h_synth_control(paths: pd.DataFrame, policy_date: str, title: str, note: s
     a2.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
     a2.set_ylabel("Actual vs synthetic (%)")
     for ax in (a1, a2):
-        ax.set_xlim(c["week_start"].min(), c["week_start"].max())
+        ax.set_xlim(c["week_start"].min(), c["week_start"].max() + pd.Timedelta(days=100))
         policy_line(ax, label=ax is a1)
     a2.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
     a2.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
