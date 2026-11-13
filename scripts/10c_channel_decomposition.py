@@ -17,7 +17,9 @@ Outputs
     results/channel_decomposition.csv growth accounting by zone group: change of mean weekly
                                       pickups 2023 -> 2025 (full years) and 2023 -> 2026 (the same
                                       Jan-Sep weeks of both years), split into app and street-hail
-                                      contributions (block separate)
+                                      contributions (block separate), and the "accounting net
+                                      ratio" = net change / app change (Amendment 5: arithmetic
+                                      on observed changes, not an incrementality estimate)
     results/channel_zone_share.csv    zone x period app share and mean weekly pickups (F6b; D2)
 """
 
@@ -61,7 +63,7 @@ def wide(w: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
 
 
 def growth(w: pd.DataFrame, base: list[pd.Timestamp], end: list[pd.Timestamp],
-           label: str) -> list[dict]:
+           label: str, min_app: float = 0.0) -> list[dict]:
     """Change of mean weekly pickups between two week sets, by zone group and series."""
     rows = []
     for g in [*GROUPS, "all"]:
@@ -82,6 +84,10 @@ def growth(w: pd.DataFrame, base: list[pd.Timestamp], end: list[pd.Timestamp],
                 row[f"{k}_base"], row[f"{k}_end"] = s[k]
                 row[f"{k}_change"] = s[k][1] - s[k][0]
                 row[f"{k}_contribution"] = (s[k][1] - s[k][0]) / d if d else None
+            # Amendment 5: accounting net ratio = net change in total pickups per app pickup
+            # added; arithmetic on observed changes, NOT an incrementality estimate
+            row["accounting_net_ratio"] = (d / row["app_change"]
+                                           if abs(row["app_change"]) >= min_app else None)
             rows.append(row)
     return rows
 
@@ -143,9 +149,10 @@ def main() -> None:
     last = weeks.max()
     same = weeks[(weeks.dt.month < last.month) | ((weeks.dt.month == last.month)
                                                   & (weeks.dt.day <= last.day))]
-    rows = (growth(w, list(weeks[yr == 2023]), list(weeks[yr == 2025]), "2023_to_2025")
+    ma = float(cfg["channel"]["net_ratio_min_app_change"])
+    rows = (growth(w, list(weeks[yr == 2023]), list(weeks[yr == 2025]), "2023_to_2025", ma)
             + growth(w, list(same[same.dt.year == 2023]), list(same[same.dt.year == 2026]),
-                     "2023_to_2026_jan_sep"))
+                     "2023_to_2026_jan_sep", ma))
     pd.DataFrame(rows).to_csv(res / "channel_decomposition.csv", index=False,
                               lineterminator="\n", float_format="%.6g")
 

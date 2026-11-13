@@ -108,3 +108,7 @@ The Builder can apply these now; they hold under any decision Stanley takes.
 ## Amendments made
 
 None. Nothing within the amendment bounds (thresholds, zone set, training window, figure details, runtime) would resolve the escalation. Changing the CUSUM k/h or the monitored series to produce a CBD detection would be tuning toward an expected result.
+
+## Closing note (2026-11-13, Stanley's ruling — PLAN Amendment 5)
+
+Phase 3 is **closed**. The ESCALATE verdict above is resolved by Stanley's ruling at Checkpoint 6: no CBD-specific break is detected, and this is reported as found. The review is not re-run. The open fix items that remain relevant (runtimes and booster sha in `frozen_model.json`, saved calibration alarm dates, the rolling-mean bias rule, the F3 title) are carried to the Phase 7 deferred-items list (DECISIONS.md).
