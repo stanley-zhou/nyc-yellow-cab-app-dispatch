@@ -39,6 +39,8 @@ from taxi_shock.viz.figures import (
     f4g_app_dispatch,
     f4h_synth_control,
     f4i_leave_one_out,
+    f6a_channel_areas,
+    f6b_app_share_maps,
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
@@ -522,6 +524,63 @@ def phase4b(cfg: dict) -> None:
         logging.info("wrote Phase-4b figures: %s", ", ".join(stats))
 
 
+def _k(v: float) -> str:
+    return f"{v / 1000:+,.1f}k"
+
+
+def phase4c(cfg: dict) -> None:
+    """Amendment 4 figures whose results exist: F6a, F6b (D1)."""
+    res, figs = path("results", cfg), path("figures", cfg)
+    stats: dict = {}
+    f = res / "channel_decomposition.csv"
+    if f.exists():
+        dec = pd.read_csv(f)
+        weekly = pd.read_csv(res / "channel_weekly.csv", parse_dates=["week_start"])
+
+        def row(g, incl, comp="2023_to_2025"):
+            return dec[(dec["comparison"] == comp) & (dec["zone_group"] == g)
+                       & (dec["with_cmt_block"] == incl)].iloc[0]
+
+        c, o = row("cbd", True), row("other", False)
+        stats["d1"] = {"cbd": c[["app_change", "street_change", "change"]].to_dict(),
+                       "other_excl_block": o[["app_change", "street_change", "change"]].to_dict()}
+        t = (f"2023 to 2025, per week: CBD app trips {_k(c['app_change'])}, street hails "
+             f"{_k(c['street_change'])}; outer boroughs (without the CMT block) app "
+             f"{_k(o['app_change'])}, street hails {_k(o['street_change'])}")
+        stats["d1"]["title_f6a"] = t
+        f6a_channel_areas(weekly, [("cbd", "CBD (38 zones)"),
+                                   ("other", "Outer boroughs (no airports)")], t,
+                          "Valid yellow pickups per complete week by channel: app = any e-hail "
+                          "app (Flex Fare before 2026-06, request_source not NULL from 2026-06; "
+                          "Amendment 4a), street = street hail; grey = VendorID 1 contracted "
+                          "trips in the outer boroughs, ended 2026-05 (DECISIONS, D1). Own y-axis "
+                          "per panel; dashed line = congestion pricing 2025-01-05. Sources: "
+                          "results/channel_weekly.csv, results/channel_decomposition.csv.",
+                          figs / "F6a_channel_areas")
+        zs = pd.read_csv(res / "channel_zone_share.csv").merge(
+            pd.read_csv(res / "zone_summary.csv")[["zone_id", "is_cbd"]], on="zone_id")
+        min_w = float(cfg["channel"]["map_min_weekly"])
+        med = {p: float(x.loc[x["mean_weekly_pickups"] >= min_w, "app_share_excl_block"].median())
+               for p, x in zs.groupby("period")}
+        stats["d1"]["zone_median_app_share"] = med
+        t2 = (f"Median zone app share of pickups: {med['2023'] * 100:.0f}% (2023), "
+              f"{med['2024'] * 100:.0f}% (2024), {med['2025'] * 100:.0f}% (2025), "
+              f"{med['2026_jan_sep'] * 100:.0f}% (Jan-Sep 2026)")
+        stats["d1"]["title_f6b"] = t2
+        zones = load_zones(path("raw_lookup", cfg) / "taxi_zones.shp")
+        f6b_app_share_maps(zones, zs, [("2023", "2023"), ("2024", "2024"), ("2025", "2025"),
+                                       ("2026_jan_sep", "Jan-Sep 2026")], min_w, t2,
+                           f"App share = app pickups / (app + street-hail pickups) per pickup "
+                           f"zone, the CMT contracted block excluded; hatched: < {min_w:.0f} "
+                           "pickups per week in that period; CBD outlined. Medians over the "
+                           "non-hatched zones. Source: results/channel_zone_share.csv.",
+                           figs / "F6b_app_share_maps")
+    if stats:
+        (res / "figure_stats_phase4c.json").write_text(json.dumps(stats, indent=2,
+                                                                  default=float) + "\n")
+        logging.info("wrote Phase-4c figures: %s", ", ".join(stats))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
@@ -540,6 +599,7 @@ def main() -> None:
     phase3(cfg)
     phase4(cfg)
     phase4b(cfg)
+    phase4c(cfg)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
--- Column projection only (plus two derived keys). VendorID is projected since Checkpoint 1 (vendor
+-- Column projection only (plus two derived keys). `request_source` exists from the 2026-06 files
+-- (Amendment 4, D1; NULL before). VendorID is projected since Checkpoint 1 (vendor
 -- checks, DECISIONS.md). `cbd_congestion_fee` exists only in 2025+
 -- files; earlier files yield NULL through union_by_name, and if no file on disk has it the column
 -- is a typed NULL. `raw_row_hash` hashes every raw column (not just the projected ones) so that
@@ -16,6 +17,7 @@ select
     try_cast(passenger_count as double)            as passenger_count,
     try_cast(payment_type as integer)              as payment_type,
     {{ column_or_null(src, 'cbd_congestion_fee', 'double') }} as cbd_congestion_fee,
+    {{ column_or_null(src, 'request_source', 'varchar') }} as request_source,
     cast(strptime(regexp_extract(filename, 'yellow_tripdata_(\d{4}-\d{2})\.parquet', 1), '%Y-%m')
          as date)                                  as source_month,
     hash(*columns(* exclude (filename)))           as raw_row_hash,

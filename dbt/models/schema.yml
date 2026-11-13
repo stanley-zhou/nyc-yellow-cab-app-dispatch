@@ -112,6 +112,30 @@ models:
               arguments:
                 expression: ">= 0"
 
+  - name: fct_daily_zone_channel
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, day, vendor_id, channel, platform, trip_type]
+    columns:
+      - name: channel
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [app, street]
+      - name: trip_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [within, into, out_of, neither]
+      - name: pickups
+        data_tests:
+          - not_null
+  - name: fct_weekly_zone_channel
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [zone_id, week_start, vendor_id, channel, platform, trip_type]
   - name: fct_weekly_zone_vendor
     data_tests:
       - dbt_utils.unique_combination_of_columns:

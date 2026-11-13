@@ -1,0 +1,402 @@
+{
+  "generated_utc": "2026-11-13T04:27:19+00:00",
+  "specification": "PLAN.md Amendment 4a (CMT outer-borough block: diagnose first)",
+  "block": "VendorID 1, pickup zone in zone group 'other', not Flex Fare",
+  "who_gained_it": {
+    "weeks_before": [
+      "2026-05-03",
+      "2026-05-10",
+      "2026-05-17",
+      "2026-05-24"
+    ],
+    "weeks_after": [
+      "2026-05-31",
+      "2026-06-07",
+      "2026-06-14",
+      "2026-06-21"
+    ],
+    "mean_weekly_pickups_before_after": {
+      "vendor_1": [
+        27413.25,
+        5632.5
+      ],
+      "vendor_2": [
+        34859.75,
+        38344.75
+      ],
+      "vendor_6": [
+        884.25,
+        952.5
+      ],
+      "vendor_7": [
+        97.0,
+        98.25
+      ]
+    },
+    "mean_weekly_street_hails_before_after": {
+      "vendor_1": [
+        23596.25,
+        1712.0
+      ],
+      "vendor_2": [
+        6878.5,
+        6825.5
+      ],
+      "vendor_6": [
+        0.0,
+        0.0
+      ],
+      "vendor_7": [
+        97.0,
+        98.25
+      ]
+    },
+    "total_before_after": [
+      63254.25,
+      45028.0
+    ]
+  },
+  "weekly_other_group_by_vendor": {
+    "2026-04-26": {
+      "pickups_vendor_1": 27631,
+      "pickups_vendor_2": 31358,
+      "pickups_vendor_6": 1127,
+      "pickups_vendor_7": 129,
+      "street_vendor_1": 24485,
+      "street_vendor_2": 6432,
+      "street_vendor_6": 0,
+      "street_vendor_7": 129
+    },
+    "2026-05-03": {
+      "pickups_vendor_1": 27181,
+      "pickups_vendor_2": 30808,
+      "pickups_vendor_6": 1156,
+      "pickups_vendor_7": 109,
+      "street_vendor_1": 24530,
+      "street_vendor_2": 6867,
+      "street_vendor_6": 0,
+      "street_vendor_7": 109
+    },
+    "2026-05-10": {
+      "pickups_vendor_1": 30156,
+      "pickups_vendor_2": 37539,
+      "pickups_vendor_6": 1098,
+      "pickups_vendor_7": 102,
+      "street_vendor_1": 24282,
+      "street_vendor_2": 7312,
+      "street_vendor_6": 0,
+      "street_vendor_7": 102
+    },
+    "2026-05-17": {
+      "pickups_vendor_1": 28572,
+      "pickups_vendor_2": 36014,
+      "pickups_vendor_6": 1156,
+      "pickups_vendor_7": 90,
+      "street_vendor_1": 25019,
+      "street_vendor_2": 6854,
+      "street_vendor_6": 0,
+      "street_vendor_7": 90
+    },
+    "2026-05-24": {
+      "pickups_vendor_1": 23744,
+      "pickups_vendor_2": 35078,
+      "pickups_vendor_6": 127,
+      "pickups_vendor_7": 87,
+      "street_vendor_1": 20554,
+      "street_vendor_2": 6481,
+      "street_vendor_6": 0,
+      "street_vendor_7": 87
+    },
+    "2026-05-31": {
+      "pickups_vendor_1": 7181,
+      "pickups_vendor_2": 39819,
+      "pickups_vendor_6": 894,
+      "pickups_vendor_7": 89,
+      "street_vendor_1": 3142,
+      "street_vendor_2": 6719,
+      "street_vendor_6": 0,
+      "street_vendor_7": 89
+    },
+    "2026-06-07": {
+      "pickups_vendor_1": 5266,
+      "pickups_vendor_2": 39334,
+      "pickups_vendor_6": 905,
+      "pickups_vendor_7": 111,
+      "street_vendor_1": 1259,
+      "street_vendor_2": 7021,
+      "street_vendor_6": 0,
+      "street_vendor_7": 111
+    },
+    "2026-06-14": {
+      "pickups_vendor_1": 5358,
+      "pickups_vendor_2": 40717,
+      "pickups_vendor_6": 1021,
+      "pickups_vendor_7": 101,
+      "street_vendor_1": 1259,
+      "street_vendor_2": 6990,
+      "street_vendor_6": 0,
+      "street_vendor_7": 101
+    },
+    "2026-06-21": {
+      "pickups_vendor_1": 4725,
+      "pickups_vendor_2": 33509,
+      "pickups_vendor_6": 990,
+      "pickups_vendor_7": 92,
+      "street_vendor_1": 1188,
+      "street_vendor_2": 6572,
+      "street_vendor_6": 0,
+      "street_vendor_7": 92
+    },
+    "2026-06-28": {
+      "pickups_vendor_1": 3924,
+      "pickups_vendor_2": 31947,
+      "pickups_vendor_6": 947,
+      "pickups_vendor_7": 83,
+      "street_vendor_1": 1088,
+      "street_vendor_2": 5936,
+      "street_vendor_6": 0,
+      "street_vendor_7": 83
+    }
+  },
+  "characteristics_months": [
+    "2026-03",
+    "2026-05"
+  ],
+  "comparison": "street hails (not Flex) of every other VendorID in the same zones/months",
+  "records": {
+    "other_vendors": 105773,
+    "cmt_block": 306332
+  },
+  "numeric": {
+    "other_vendors": {
+      "distance_q": [
+        0.94,
+        3.62,
+        8.67
+      ],
+      "fare_q": [
+        13.5,
+        34.0,
+        65.0
+      ],
+      "total_q": [
+        18.84,
+        46.7,
+        82.5
+      ],
+      "duration_min_q": [
+        5.067,
+        15.5,
+        28.067
+      ],
+      "share_tipped": 0.6566,
+      "share_same_ts": 0.0159,
+      "share_same_zone": 0.1711,
+      "share_unknown_dropoff": 0.0129
+    },
+    "cmt_block": {
+      "distance_q": [
+        3.7,
+        7.7,
+        12.3
+      ],
+      "fare_q": [
+        23.5,
+        33.1,
+        43.5
+      ],
+      "total_q": [
+        24.0,
+        34.46,
+        47.0
+      ],
+      "duration_min_q": [
+        27.033,
+        43.45,
+        64.817
+      ],
+      "share_tipped": 0.034,
+      "share_same_ts": 0.0002,
+      "share_same_zone": 0.0372,
+      "share_unknown_dropoff": 0.0015
+    }
+  },
+  "pickup_zones_top10": {
+    "cmt_block": {
+      "76 East New York": 0.0371,
+      "61 Crown Heights North": 0.0315,
+      "39 Canarsie": 0.0224,
+      "188 Prospect-Lefferts Gardens": 0.0219,
+      "89 Flatbush/Ditmas Park": 0.021,
+      "35 Brownsville": 0.0204,
+      "225 Stuyvesant Heights": 0.0178,
+      "91 Flatlands": 0.0169,
+      "145 Long Island City/Hunters Point": 0.0156,
+      "72 East Flatbush/Remsen Village": 0.0156
+    },
+    "other_vendors": {
+      "70 East Elmhurst": 0.1906,
+      "226 Sunnyside": 0.0642,
+      "145 Long Island City/Hunters Point": 0.0428,
+      "216 South Ozone Park": 0.0368,
+      "65 Downtown Brooklyn/MetroTech": 0.0352,
+      "146 Long Island City/Queens Plaza": 0.0324,
+      "7 Astoria": 0.0303,
+      "255 Williamsburg (North Side)": 0.0296,
+      "66 DUMBO/Vinegar Hill": 0.0292,
+      "129 Jackson Heights": 0.029
+    }
+  },
+  "dropoff_zones_top10": {
+    "cmt_block": {
+      "76 East New York": 0.0285,
+      "61 Crown Heights North": 0.0233,
+      "42 Central Harlem North": 0.0194,
+      "75 East Harlem South": 0.0192,
+      "140 Lenox Hill East": 0.0177,
+      "137 Kips Bay": 0.0167,
+      "188 Prospect-Lefferts Gardens": 0.0164,
+      "39 Canarsie": 0.0158,
+      "35 Brownsville": 0.0152,
+      "89 Flatbush/Ditmas Park": 0.015
+    },
+    "other_vendors": {
+      "132 JFK Airport": 0.0746,
+      "138 LaGuardia Airport": 0.052,
+      "193 Queensbridge/Ravenswood": 0.0235,
+      "230 Times Sq/Theatre District": 0.022,
+      "216 South Ozone Park": 0.0213,
+      "7 Astoria": 0.0212,
+      "226 Sunnyside": 0.0203,
+      "145 Long Island City/Hunters Point": 0.0173,
+      "161 Midtown Center": 0.0158,
+      "129 Jackson Heights": 0.0151
+    }
+  },
+  "hours": {
+    "cmt_block": {
+      "9": 0.0905,
+      "8": 0.0849,
+      "10": 0.081,
+      "11": 0.0751,
+      "7": 0.0741,
+      "12": 0.0736,
+      "13": 0.069,
+      "6": 0.0661,
+      "14": 0.0634,
+      "15": 0.0583,
+      "16": 0.0533,
+      "17": 0.0449,
+      "5": 0.0361,
+      "18": 0.0319,
+      "19": 0.0217,
+      "20": 0.0165,
+      "21": 0.015,
+      "4": 0.0131,
+      "22": 0.011,
+      "23": 0.0079,
+      "0": 0.0044,
+      "3": 0.0042,
+      "1": 0.0024,
+      "2": 0.0017
+    },
+    "other_vendors": {
+      "16": 0.0666,
+      "15": 0.062,
+      "14": 0.0593,
+      "17": 0.0571,
+      "18": 0.0546,
+      "13": 0.0514,
+      "22": 0.0509,
+      "19": 0.0496,
+      "21": 0.0495,
+      "23": 0.0481,
+      "20": 0.0476,
+      "12": 0.0473,
+      "11": 0.0442,
+      "10": 0.0409,
+      "8": 0.0391,
+      "9": 0.0388,
+      "0": 0.0372,
+      "7": 0.0316,
+      "1": 0.0258,
+      "6": 0.0226,
+      "5": 0.0202,
+      "4": 0.0189,
+      "2": 0.0186,
+      "3": 0.0181
+    }
+  },
+  "payment_type": {
+    "cmt_block": {
+      "1": 0.9696,
+      "2": 0.0213,
+      "3": 0.0062,
+      "4": 0.003
+    },
+    "other_vendors": {
+      "1": 0.7497,
+      "2": 0.2178,
+      "4": 0.0214,
+      "3": 0.011
+    }
+  },
+  "passenger_count": {
+    "cmt_block": {
+      "1": 0.9935,
+      "2": 0.0033,
+      "0": 0.0021,
+      "3": 0.0006,
+      "4": 0.0004,
+      "5": 0.0,
+      "6": 0.0
+    },
+    "other_vendors": {
+      "1": 0.7438,
+      "2": 0.1575,
+      "4": 0.0561,
+      "3": 0.0384,
+      "5": 0.0025,
+      "6": 0.0009,
+      "0": 0.0007,
+      "8": 0.0
+    }
+  },
+  "rate_code": {
+    "cmt_block": {
+      "99": 0.9322,
+      "1": 0.0585,
+      "5": 0.0059,
+      "2": 0.0026,
+      "3": 0.0005,
+      "4": 0.0002,
+      "6": 0.0
+    },
+    "other_vendors": {
+      "1": 0.689,
+      "5": 0.247,
+      "2": 0.0445,
+      "3": 0.013,
+      "4": 0.0062,
+      "99": 0.0003
+    }
+  },
+  "store_and_fwd_flag": {
+    "cmt_block": {
+      "N": 0.9995,
+      "Y": 0.0005
+    },
+    "other_vendors": {
+      "N": 0.9992,
+      "Y": 0.0008
+    }
+  },
+  "records_after_months": [
+    "2026-06",
+    "2026-08"
+  ],
+  "records_after": {
+    "other_vendors": 108261,
+    "cmt_block": 37093
+  }
+}

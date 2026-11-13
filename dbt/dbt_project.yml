@@ -37,6 +37,9 @@ vars:
   speed_tercile_period: ["2024-01-06", "2025-01-04"]
   max_speed_mph: 65
   speed_outer_boroughs: [Brooklyn, Queens]
+  request_source_from: "2026-06-01"
+  channel_window: ["2023-01-01", "2026-09-30"]
+  request_source_platforms: {HV0003: uber, HV0005: lyft, EH0004: curb_app, EH0010: arro, A: code_a, CC: code_cc}
 
 seeds:
   taxi_shock:

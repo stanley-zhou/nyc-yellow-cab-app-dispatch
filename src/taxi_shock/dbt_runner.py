@@ -51,6 +51,10 @@ def dbt_vars(cfg: dict[str, Any], yellow_glob: str | None = None) -> dict[str, A
         "speed_tercile_period": [str(d) for d in cfg["speed"]["tercile_period"]],
         "max_speed_mph": float(cfg["speed"]["max_speed_mph"]),
         "speed_outer_boroughs": [str(b) for b in cfg["speed"]["outer_boroughs"]],
+        "request_source_from": str(cfg["channel"]["request_source_from"]),
+        "channel_window": [str(d) for d in cfg["channel"]["window"]],
+        "request_source_platforms": {str(k): str(v) for k, v in
+                                     cfg["channel"]["platforms"].items()},
     }
 
 

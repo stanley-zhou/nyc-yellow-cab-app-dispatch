@@ -4,10 +4,10 @@ SHELL := /bin/bash
 PY    := .venv/bin/python
 PHASE ?= 0
 
-.PHONY: help setup smoke smoke-clean data dbt probes chronos-bundle chronos-import forecast shock causal adapt figures report all verify lint test clean-smoke
+.PHONY: help setup smoke smoke-clean data dbt probes chronos-bundle chronos-import forecast shock causal hvfhv channel fhv lyft-refresh adapt figures report all verify lint test clean-smoke
 
 help:
-	@echo "setup | smoke | smoke-clean | data | dbt | probes | forecast | shock | causal | adapt | figures | report | all | verify PHASE=N | lint | test"
+	@echo "setup | smoke | smoke-clean | data | dbt | probes | forecast | shock | causal | hvfhv | channel | fhv | lyft-refresh | adapt | figures | report | all | verify PHASE=N | lint | test"
 
 setup:            ## Python 3.12 venv via uv (system Python 3.14 is not supported)
 	uv python install 3.12
@@ -63,6 +63,28 @@ causal:           ## Phase 4: speed/duration DiD (B1-B3), demand DiD + MDE + het
 	$(PY) scripts/07d_pretrend_size.py
 	$(PY) scripts/07e_app_dispatch.py
 	$(PY) scripts/07f_synth_control.py
+
+hvfhv:            ## Amendment 4: stream HVFHV months -> aggregates (raw files deleted; manifest kept)
+	$(PY) scripts/11_hvfhv_stream.py
+
+channel:          ## Amendment 4 / 4a: D0 label, CMT block, D1 decomposition, D2 DML, D3 Lyft, D5, D5b, D4
+	$(PY) scripts/10a_channel_label.py
+	$(PY) scripts/10b_cmt_block.py
+	$(PY) scripts/10c_channel_decomposition.py
+	$(PY) scripts/12_incrementality.py
+	$(PY) scripts/13_lyft_entry.py
+	$(PY) scripts/14_did_by_channel.py
+	$(PY) scripts/15_app_share_step.py
+	$(PY) scripts/17_cross_platform.py
+
+fhv:              ## Phase 6 (C6): congestion pricing and HVFHV demand (needs `make hvfhv`)
+	$(PY) scripts/16_fhv_did.py
+
+lyft-refresh:     ## D3: re-run the Lyft entry estimate after extending data.yellow_months to new TLC months
+	$(PY) scripts/01_download.py --all
+	$(PY) scripts/03_dbt.py build --select "stg_yellow_trips+"
+	$(PY) scripts/13_lyft_entry.py
+	$(PY) scripts/09_figures.py --all
 
 adapt report:
 	@echo "make $@: not implemented yet (added in its phase, see PLAN.md §5)"; exit 1

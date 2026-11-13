@@ -1,0 +1,86 @@
+{
+  "generated_utc": "2026-11-13T04:56:17+00:00",
+  "method": "weeks assigned to the month of their week start (the method of Amendment 4's figures, from results/record_format_shares.csv)",
+  "months": {
+    "2023-01": {
+      "cbd": {
+        "reproduced_pickups": 1963754,
+        "reproduced_flex_share": 0.023278373971485227,
+        "pickups": 1963754,
+        "app_share": 0.023278373971485227,
+        "pickups_excl_cmt_block": 1963754,
+        "app_share_excl_cmt_block": 0.023278373971485227,
+        "cmt_block_pickups": 0
+      },
+      "other": {
+        "reproduced_pickups": 54622,
+        "reproduced_flex_share": 0.08450807366994983,
+        "pickups": 54622,
+        "app_share": 0.08450807366994983,
+        "pickups_excl_cmt_block": 34726,
+        "app_share_excl_cmt_block": 0.13292633761446754,
+        "cmt_block_pickups": 19896
+      }
+    },
+    "2024-04": {
+      "cbd": {
+        "reproduced_pickups": 1850578,
+        "reproduced_flex_share": 0.10332717669830724,
+        "pickups": 1850578,
+        "app_share": 0.10332717669830724,
+        "pickups_excl_cmt_block": 1850578,
+        "app_share_excl_cmt_block": 0.10332717669830724,
+        "cmt_block_pickups": 0
+      },
+      "other": {
+        "reproduced_pickups": 85861,
+        "reproduced_flex_share": 0.3180605862964559,
+        "pickups": 85861,
+        "app_share": 0.3180605862964559,
+        "pickups_excl_cmt_block": 53384,
+        "app_share_excl_cmt_block": 0.5115577701183875,
+        "cmt_block_pickups": 32477
+      }
+    },
+    "2025-01": {
+      "cbd": {
+        "reproduced_pickups": 1854871,
+        "reproduced_flex_share": 0.1778997029982139,
+        "pickups": 1854871,
+        "app_share": 0.1778997029982139,
+        "pickups_excl_cmt_block": 1854871,
+        "app_share_excl_cmt_block": 0.1778997029982139,
+        "cmt_block_pickups": 0
+      },
+      "other": {
+        "reproduced_pickups": 121934,
+        "reproduced_flex_share": 0.5988485574163072,
+        "pickups": 121934,
+        "app_share": 0.5988485574163072,
+        "pickups_excl_cmt_block": 92055,
+        "app_share_excl_cmt_block": 0.7932214437021345,
+        "cmt_block_pickups": 29879
+      }
+    },
+    "2026-01": {
+      "cbd": {
+        "reproduced_pickups": 1815527,
+        "reproduced_flex_share": 0.2957631585759947,
+        "pickups": 1815527,
+        "app_share": 0.2957631585759947,
+        "pickups_excl_cmt_block": 1815527,
+        "app_share_excl_cmt_block": 0.2957631585759947,
+        "cmt_block_pickups": 0
+      },
+      "other": {
+        "reproduced_pickups": 261242,
+        "reproduced_flex_share": 0.6510668269267575,
+        "pickups": 261242,
+        "app_share": 0.6510668269267575,
+        "pickups_excl_cmt_block": 190241,
+        "app_share_excl_cmt_block": 0.8940554349483024,
+        "cmt_block_pickups": 71001
+      }
+    }
+  }
+}

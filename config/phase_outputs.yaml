@@ -105,3 +105,18 @@
   - reports/analysis.md
   - reports/figures/F4b_effect_map.html
   - .github/workflows/ci.yml
+6:                                            # Amendment 4 / 4a (D0-D5b) and Amendment 3 C6
+  - results/hvfhv_disk_report.json
+  - results/channel_label_validation.json
+  - results/flex_share_weekly.csv
+  - results/flex_vendor_weekly.csv
+  - results/request_source_daily.csv
+  - results/cmt_block_diagnosis.json
+  - results/channel_weekly.csv
+  - results/channel_monthly.csv
+  - results/channel_restatement.json
+  - results/channel_decomposition.csv
+  - results/channel_zone_share.csv
+  - reports/figures/F6a_channel_areas.png
+  - reports/figures/F6b_app_share_maps.png
+  - results/figure_stats_phase4c.json

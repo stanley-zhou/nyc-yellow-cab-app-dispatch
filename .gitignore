@@ -1,5 +1,6 @@
 data/raw/*
 !data/raw/manifest.csv
+!data/raw/hvfhv_manifest.csv
 data/warehouse.duckdb
 data/*.duckdb
 *.duckdb.wal

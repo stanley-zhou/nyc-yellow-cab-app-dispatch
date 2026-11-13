@@ -64,6 +64,7 @@ app_dispatch:                                 # Amendment 3, C1 (mechanism check
 channel:                                      # Amendment 4 (D0-D5): app dispatch vs street hail
   label_months: ["2026-06", "2026-09"]        # files with request_source (D0 validation window)
   hv_codes: [HV0003, HV0005]                  # ride-hail apps (Uber, Lyft): the D0 "app" definition
+  hv_platform_names: {HV0003: uber, HV0005: lyft}   # HVFHV hvfhs_license_num (D4, D5b, C6)
   # request_source codes = "Origin of e-hail request" (NYC Open Data, 2025 Yellow Taxi Trip Data,
   # column description). EH codes from TLC's current e-hail licensee list
   # (nyc.gov/assets/tlc/downloads/datasets/current_e-hail_licensee.xls, retrieved 2026-11-12,
@@ -78,8 +79,50 @@ channel:                                      # Amendment 4 (D0-D5): app dispatc
     CC: "undetermined (not on any published TLC licence list)"
   gate: {min_rate: 0.85, min_group_share: 0.01}   # Amendment 4, D0
   label_start: "2023-01"                      # Flex label used from here if the gate passes
+  # Amendment 4a (D0 ruling, option c): app channel = any e-hail app; Flex Fare before the
+  # request_source files, request_source not NULL from them (cut-over by source file month)
+  request_source_from: "2026-06-01"
+  window: ["2023-01-01", "2026-09-30"]        # channel marts (= data.event_study_window)
+  platforms: {HV0003: uber, HV0005: lyft, EH0004: curb_app, EH0010: arro, A: code_a, CC: code_cc}
+  cmt_block: {vendor_id: 1, zone_group: other, channel: street}   # Amendment 4a: own series
+  map_min_weekly: 20                          # F6b: zones below this mean weekly pickups hatched
+  break_ratio: 0.5                            # test: a vendor x zone-group series may not fall
+  break_min_weekly: 1000                      #   below half its previous week (base >= this)
+  known_breaks:                               # every flagged break must be listed with a reason
+    - {zone_group: other, vendor_id: 1, week_start: "2026-05-31",
+       reason: "CMT outer-borough contracted-trip block ends (DECISIONS, D1)"}
+    - {zone_group: other, vendor_id: 6, week_start: "2026-05-24",
+       reason: "one-week dip of Myle (1,156 -> 127), back to 894 the next week; not a level change"}
   step_window_weeks: 4                        # D0 step dating: mean of 4 weeks after vs 4 before
   step_top_n: 5                               # steps listed per zone group
+incr:                                         # Amendment 4 D2: incrementality (DML)
+  min_weekly: 20                              # zones kept: 2023 mean weekly pickups >= this
+  n_folds: 5                                  # cross-fitting on contiguous time blocks of weeks
+  lgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 31, min_child_samples: 50,
+         subsample: 0.8, subsample_freq: 1, colsample_bytree: 0.8}
+  block_sensitivity_end: "2026-05-24"         # Amendment 4a: sensitivity with the CMT block
+  supply_from: "2022-01"                      # TLC monthly report: supply view 2022 ->
+lyft:                                         # Amendment 4 D3, Amendment 4a timing
+  pre_end: "2026-07-08"                       # primary clean windows: pre <= this
+  post_start: "2026-08-10"                    #   post >= this (first HV0005 day); between excluded
+  long_pre_start: "2025-06-01"                # total / app / street: long pre-period
+  uber_pre_start: "2026-06-01"                # Uber-dispatched: request_source exists from here
+  secondary_start: "2026-07-09"               # hypothesis: code-A surge = Lyft before HV0005
+  code_a_baseline: ["2026-07-01", "2026-07-08"]
+channel_did:                                  # Amendment 4 D5 / D5b
+  alpha: 0.05                                 # D5 gate: Hotelling F* pre-trend p must be >= this
+  step_window: ["2024-07-01", "2025-06-30"]   # D5b: event-study window around 2025-01-05
+  d0_step_week: "2025-01-19"                  # D0: +10.9 pp app-share step (all zones)
+hvfhv:                                        # Amendment 4: streaming aggregates (raw files not kept)
+  months: ["2023-01", "2026-09"]              # Amendment 4 (extended for D4)
+  out_dir: data/processed/hvfhv               # monthly aggregate Parquet files
+  manifest: data/raw/hvfhv_manifest.csv       # URL, bytes, sha256, rows, download date
+  disk_guard_env: TAXI_SHOCK_DISK_GUARD       # path of the Windows drive holding the WSL disk image
+  min_free_gb: 15                             # stop before a download below this (Amendment 4)
+  # distance bins (miles, upper edges): the yellow distance-tercile cuts 1.29 / 2.62
+  # (results/data_quality.json) plus a 1-mile ladder, so yellow-tercile splits are exact and
+  # FHV terciles can be approximated (DECISIONS, Amendment 4 HVFHV)
+  distance_edges: [1, 1.29, 2, 2.62, 3, 4, 5, 6, 8, 10, 15, 20]
 shocks:                                       # Amendment 3, C5: three shocks, one monitor
   events:
     covid: "2020-03-01"
@@ -244,6 +287,7 @@ sources:
   hvfhv_path: "trip-data/fhvhv_tripdata_{month}.parquet"   # Phase 6 only (optional)
   hvfhv_months: ["2024-01", "2026-09"]                     # PLAN Phase 6 restriction
   zone_lookup_path: "misc/taxi_zone_lookup.csv"
+  tlc_monthly_report_url: "https://www.nyc.gov/assets/tlc/downloads/csv/data_reports_monthly.csv"   # D2 supply view
   zone_shapefile_path: "misc/taxi_zones.zip"
   weather_url: "https://archive-api.open-meteo.com/v1/archive"
   weather_point: [40.7128, -74.006]           # one city-wide point (same as the old project)

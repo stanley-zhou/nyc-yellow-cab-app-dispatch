@@ -1,0 +1,22 @@
+{
+  "d1": {
+    "cbd": {
+      "app_change": 104958.0,
+      "street_change": -5895.7,
+      "change": 99062.6
+    },
+    "other_excl_block": {
+      "app_change": 42811.2,
+      "street_change": 714.565,
+      "change": 43525.8
+    },
+    "title_f6a": "2023 to 2025, per week: CBD app trips +105.0k, street hails -5.9k; outer boroughs (without the CMT block) app +42.8k, street hails +0.7k",
+    "zone_median_app_share": {
+      "2023": 0.22087299999999999,
+      "2024": 0.7077725,
+      "2025": 0.9082805,
+      "2026_jan_sep": 0.889424
+    },
+    "title_f6b": "Median zone app share of pickups: 22% (2023), 71% (2024), 91% (2025), 89% (Jan-Sep 2026)"
+  }
+}

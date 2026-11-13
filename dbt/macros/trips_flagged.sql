@@ -13,7 +13,7 @@
 with dedup as (
     select
         vendor_id, pickup_ts, dropoff_ts, pu_zone_id, do_zone_id, trip_distance, fare_amount, total_amount,
-        passenger_count, payment_type, cbd_congestion_fee, source_month, raw_row_hash,
+        passenger_count, payment_type, cbd_congestion_fee, request_source, source_month, raw_row_hash,
         count(*)::integer                                                 as n_copies
     from {{ ref('stg_yellow_trips') }}
     where source_file = '{{ source_file }}'

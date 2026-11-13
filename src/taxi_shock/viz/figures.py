@@ -26,6 +26,8 @@ from taxi_shock.viz.style import (
     use_style,
 )
 
+Z_95 = 1.959963984540054   # = causal.did.Z95 (viz does not import the causal package)
+
 
 def smoke_placeholder(fc: pd.DataFrame, out_base: Path) -> list[Path]:
     """Phase-0 placeholder: citywide hourly pickups vs the seasonal-naive forecast and 80% band.
@@ -689,6 +691,170 @@ def f4h_synth_control(paths: pd.DataFrame, policy_date: str, title: str, note: s
         policy_line(ax, label=ax is a1)
     a2.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
     a2.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title: str,
+                       note: str, out_base: Path) -> list[Path]:
+    """F6a (Amendment 4, D1): weekly pickups stacked by channel (app, street hail and, where
+    present, the CMT outer-borough block as its own grey layer), one panel per zone group with
+    its own y-axis in thousands per week. `panels`: (zone_group, panel title)."""
+    use_style()
+    fig, axes = plt.subplots(1, len(panels), figsize=SIZES["small_multiples"],
+                             layout="constrained")
+    layers = [("app", "App dispatch (any e-hail app)", PALETTE["app"]),
+              ("street", "Street hail", PALETTE["street"]),
+              ("block", "CMT contracted block", PALETTE["baseline"])]
+    for ax, (g, name) in zip(np.atleast_1d(axes), panels, strict=True):
+        d = weekly[weekly["zone_group"] == g].sort_values("week_start")
+        use = [(k, lab, c) for k, lab, c in layers if d[k].sum() > 0]
+        ax.stackplot(d["week_start"], *[d[k] / 1000 for k, _, _ in use],
+                     labels=[lab for _, lab, _ in use], colors=[c for _, _, c in use],
+                     edgecolor="white", linewidth=0.3)
+        ax.set_title(name, fontsize=10, loc="left")
+        ax.set_ylabel("Pickups per week (thousands)")
+        ax.set_xlim(d["week_start"].min(), d["week_start"].max())
+        ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+        policy_line(ax, label=False)
+        ax.legend(frameon=False, fontsize=8, loc="upper left")
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f6b_app_share_maps(zones, share: pd.DataFrame, periods: list[tuple[str, str]],
+                       min_weekly: float, title: str, note: str, out_base: Path) -> list[Path]:
+    """F6b (Amendment 4, D1): app share of yellow pickups by pickup zone, one map per period
+    (small multiples, one shared 0-100% sequential scale); zones below `min_weekly` mean weekly
+    pickups in that period hatched; CBD outlined. `periods`: (period key, panel title)."""
+    from taxi_shock.viz.maps import NO_DATA_COLOR, draw_boundary
+
+    use_style()
+    fig, axes = plt.subplots(1, len(periods), figsize=(SIZES["small_multiples"][0], 4.6),
+                             layout="constrained")
+    norm = mpl.colors.Normalize(vmin=0, vmax=100)
+    cbd = share.loc[share["is_cbd"], "zone_id"].unique().tolist()
+    for ax, (p, name) in zip(np.atleast_1d(axes), periods, strict=True):
+        s = share[share["period"] == p]
+        gdf = zones.merge(s, on="zone_id", how="left")
+        ok = gdf["mean_weekly_pickups"].fillna(0) >= min_weekly
+        gdf[~ok].plot(ax=ax, facecolor=NO_DATA_COLOR, edgecolor="white", hatch="////",
+                      linewidth=0.1)
+        gdf[ok].assign(v=gdf.loc[ok, "app_share_excl_block"] * 100).plot(
+            ax=ax, column="v", cmap=SEQUENTIAL_CMAP, norm=norm, edgecolor="white",
+            linewidth=0.1)
+        draw_boundary(ax, zones, cbd)
+        ax.set_title(name, fontsize=10)
+        ax.set_axis_off()
+        ax.set_aspect("equal")
+    cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=SEQUENTIAL_CMAP),
+                      ax=np.atleast_1d(axes).tolist(), fraction=0.02, pad=0.01, shrink=0.7)
+    cb.set_label("App share of pickups (%)")
+    cb.outline.set_visible(False)
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f6c_incrementality(summary: pd.DataFrame, areas: list[tuple[str, str]],
+                       estimates: list[tuple[str, str, str]], title: str, note: str,
+                       out_base: Path) -> list[Path]:
+    """F6c (Amendment 4, D2): theta (1 = fully incremental, 0 = fully displacing) with 95% CIs by
+    area (rows) for the primary DML estimate and the robustness estimates (offset markers).
+    `areas`: (area key, label); `estimates`: (estimate key, label, colour)."""
+    use_style()
+    fig, ax = plt.subplots(figsize=SIZES["single"], layout="constrained")
+    n = len(estimates)
+    for i, (a, _) in enumerate(areas):
+        for j, (k, label, color) in enumerate(estimates):
+            r = summary[(summary["area"] == a) & (summary["estimate"] == k)]
+            if r.empty:
+                continue
+            y = i + (j - (n - 1) / 2) * 0.12
+            r = r.iloc[0]
+            ax.errorbar(r["theta"], y, xerr=[[r["theta"] - r["ci_lo"]], [r["ci_hi"] - r["theta"]]],
+                        fmt="os^Dvx"[j % 6], ms=5 if j else 6, color=color, ecolor=color,
+                        elinewidth=1.0, capsize=0, label=label if i == 0 else None)
+    for v, lab in ((0, "fully displacing"), (1, "fully incremental")):
+        ax.axvline(v, color=PALETTE["muted_text"], linewidth=0.8, linestyle=":" if v else "-")
+        ax.annotate(lab, xy=(v, 1.0), xycoords=("data", "axes fraction"), xytext=(3, -3),
+                    textcoords="offset points", fontsize=8, color=PALETTE["muted_text"],
+                    va="top")
+    ax.set_yticks(range(len(areas)), [lab for _, lab in areas])
+    ax.invert_yaxis()
+    ax.set_xlabel("Change in total pickups per additional app pickup (theta)")
+    ax.legend(frameon=False, fontsize=8, loc="lower right")
+    fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f6d_lyft_entry(daily: pd.DataFrame, windows: dict, title: str, note: str,
+                   out_base: Path) -> list[Path]:
+    """F6d (Amendment 4, D3): weekly pickups of Curb (treated) and CMT (control) cabs in the CBD
+    and Manhattan non-CBD, indexed to their pre-period mean (= 100), total and app panels; the
+    excluded window shaded, Lyft trips on Curb as a line in the app panel."""
+    use_style()
+    fig, axes = plt.subplots(1, 2, figsize=SIZES["small_multiples"], layout="constrained",
+                             sharey=False)
+    d = daily.copy()
+    d["week"] = d["day"] - pd.to_timedelta((d["day"].dt.dayofweek + 1) % 7, unit="D")
+    wk = d.groupby(["week", "vendor_id"])[["total", "app", "lyft"]].sum().reset_index()
+    wk = wk[wk.groupby("week")["vendor_id"].transform("size") == 2]
+    pre_end = pd.Timestamp(windows["pre_end"])
+    for ax, y, name in ((axes[0], "total", "All pickups"), (axes[1], "app", "App pickups")):
+        for v, label, color in ((2, "Curb cabs (gain Lyft)", PALETTE["cbd"]),
+                                (1, "CMT cabs (control)", PALETTE["non_cbd"])):
+            s = wk[wk["vendor_id"] == v].set_index("week")[y]
+            base = s[(s.index <= pre_end) & (s.index >= pre_end - pd.Timedelta(weeks=8))].mean()
+            ax.plot(s.index, s / base * 100, color=color, linewidth=1.5, label=label)
+        ax.axvspan(pd.Timestamp(windows["secondary_start"]), pd.Timestamp(windows["post_start"]),
+                   color=tint(PALETTE["baseline"], 0.7), zorder=0)
+        ax.axhline(100, color=PALETTE["muted_text"], linewidth=0.8)
+        ax.set_title(name, fontsize=10, loc="left")
+        ax.set_ylabel("Weekly pickups, 8 pre weeks = 100")
+        ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    axes[0].legend(frameon=False, fontsize=8, loc="lower left")
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f6e_app_share_step(weekly: pd.DataFrame, es: pd.DataFrame, title: str, note: str,
+                       out_base: Path) -> list[Path]:
+    """F6e (Amendment 4a, D5b): left, weekly app share of yellow pickups by trip type; right,
+    event study of the app share, CBD-touching vs neither (reference: the week before the
+    policy), yellow and, if present, HVFHV log trips."""
+    use_style()
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=SIZES["small_multiples"], layout="constrained")
+    styles = {"within": (PALETTE["cbd"], "-"), "into": (PALETTE["cbd"], "--"),
+              "out_of": (PALETTE["cbd"], ":"), "neither": (PALETTE["non_cbd"], "-")}
+    for t, (c, ls) in styles.items():
+        x = weekly[weekly["trip_type"] == t].sort_values("week_start")
+        a1.plot(x["week_start"], x["app_share"] * 100, color=c, linestyle=ls, linewidth=1.4,
+                label=t.replace("_", " "))
+    a1.set_ylabel("App share of pickups (%)")
+    a1.legend(frameon=False, fontsize=8, loc="upper left", title="Trip vs CBD", title_fontsize=8)
+    a1.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
+    a1.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    policy_line(a1, label=True)
+    e = es[(es["source"] == "yellow") & (es["outcome"] == "app_share")].sort_values(
+        "event_week")
+    a2.errorbar(e["event_week"], e["coef"] * 100, yerr=Z_95 * e["se"] * 100, fmt="o", ms=3,
+                color=PALETTE["app"], ecolor=PALETTE["app"], elinewidth=0.8, capsize=0)
+    a2.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
+    a2.axvline(-0.5, color=PALETTE["text"], linestyle="--", linewidth=0.9)
+    a2.set_xlabel("Weeks since 2025-01-05")
+    a2.set_ylabel("CBD-touching minus neither, app share (pp)")
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
