@@ -99,6 +99,11 @@
   - results/figure_stats_phase4b.json
 5:
   - results/adaptation.csv
+  - results/adaptation_daily.csv
+  - results/adaptation_gaps.csv
+  - results/adaptation_refits.csv
+  - results/adaptation_summary.json
+  - results/figure_stats_phase5.json
   - reports/figures/F5_adaptation.png
 7:
   - README.md

@@ -7,7 +7,7 @@
 1. **The shift.** App dispatch, i.e. e-hail apps sending yellow cabs to riders, rose from 2.3% to 29.6% of yellow pickups in Manhattan's congestion-pricing zone (CBD) between January 2023 and January 2026 ([channel_restatement.json](../results/channel_restatement.json)). From 2023 to 2025, mean weekly CBD pickups grew by 99,063 (+23.7%). App trips added 104,958 a week while street hails fell by 5,896 ([channel_decomposition.csv](../results/channel_decomposition.csv)).
 2. **The supply fact.** The growth came with more cabs on the road, not more trips per cab. Active cabs per day went from 7,036 (2023) to 8,722.5 (2025), while trips per cab-day stayed at 14.85 → 15.02 (TLC monthly reports; [incrementality_dml.json → supply](../results/incrementality_dml.json)).
 3. **What is not identified.** The trip records cannot say how much of the app growth is additional rather than displaced street hails, nor what congestion pricing did to taxi demand. Every pre-registered design either fails its pre-trend test or disagrees with the others beyond their intervals. Each was stopped at its gate and is reported as found.
-4. **Forecasting.** <!-- PHASE5: one sentence on the adaptation result (results/adaptation_summary.json) -->
+4. **Forecasting.** From February 2025 to September 2026, refitting the forecaster monthly gave the lowest error (WAPE 0.162 against 0.164 for the frozen model, a small gap the paired bootstrap distinguishes), and adding app-share features made the under-forecast larger, not smaller (−2.9% of pickups against −2.3% frozen; [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv)).
 
 **Recommendation.** Evaluations and forecasts of NYC taxi demand in 2023–2026 must model the dispatch channel. A model or a difference-in-differences that treats yellow pickups as one homogeneous series reads a change in how trips are dispatched as a change in demand.
 
@@ -130,7 +130,22 @@ A log difference against a fast-growing small-zone average reads their growth as
 | Congestion pricing | +7.3% | day 354 |
 
 **Adaptation (Phase 5).**
-<!-- PHASE5: S0 frozen, S1 monthly retrain, S4 Chronos-2, S6 channel-aware — WAPE, bias and coverage per quarter (results/adaptation.csv, results/adaptation_summary.json, results/adaptation_gaps.csv; F5), and the recommendation (cost of retraining vs gain). -->
+Four strategies were compared on day-ahead forecasts with origins 2025-02-01 → 2026-09-30, scored with the Phase-2 metrics and a common MASE scale ([adaptation.csv](../results/adaptation.csv), [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv); F5).
+
+| Strategy | WAPE, all zones | WAPE, CBD | Bias, % of pickups | 80% coverage (rolling conformal) |
+|---|---|---|---|---|
+| S0 frozen at 2024-12-31 | 0.164 | 0.154 | −2.3% | 0.81 |
+| S1 monthly retrain, sliding 24 months | **0.162** | **0.151** | −1.7% | 0.80 |
+| S4 Chronos-2 zero-shot | 0.165 | 0.154 | −2.0% | 0.80 |
+| S6 S1 + trailing app-share features | 0.168 | 0.157 | −2.9% | 0.80 |
+
+- **S1 vs S0.** S1 is ahead by 0.23 pp of WAPE over all modeled zones and 0.29 pp in the CBD; both bootstrap intervals exclude zero. In Manhattan outside the CBD the two are not distinguishable.
+- **S4.** Chronos-2 is not distinguishable from S0 or S1 over all zones. It is the best of the four in the outer-borough zones (0.395 against 0.412 frozen) and distinguishably behind S0 and S1 in Manhattan outside the CBD (0.147 against 0.142).
+- **S6 is a negative result.** The pre-registered expectation (Amendment 4, D6) was that channel-aware features would remove most of the post-2025 bias. They did not: S6 has the largest under-forecast and the highest WAPE of the four, distinguishably worse than S0 and S1. The features are trailing app shares, so they describe the channel mix after it has moved; they do not anticipate the level of demand.
+- **Every strategy errs the same way at the same time.** All four rise together in 2026-Q1 (WAPE 0.187–0.191, [adaptation.csv](../results/adaptation.csv)); no strategy avoids it, so it is not an adaptation failure of one model.
+- **Intervals.** With rolling 12-week conformal calibration, every strategy covers 0.80–0.81 of hours with its 80% interval; raw intervals cover 0.74–0.78.
+
+**Recommendation for the forecasting system.** Retrain monthly (S1). One refit costs a median of 411 s on the 12-core local CPU (23 refits, [adaptation_summary.json → retrain_cost](../results/adaptation_summary.json)), the gain over the frozen model is small but consistent, and S1 also has the smallest bias. Chronos-2 needs no retraining but a GPU at every origin (a median of 250 s per month of daily origins on an L4) and buys no accuracy over S1 except in the outer boroughs. Channel features should not be added in their current trailing form.
 
 ## 6. Why this could not be an A/B test, and how it would be designed
 

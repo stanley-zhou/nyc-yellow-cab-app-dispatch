@@ -37,6 +37,7 @@ import logging
 import time
 from datetime import UTC, datetime
 
+import numpy as np
 import pandas as pd
 
 from taxi_shock.adapt import CHANNEL_FEATURES, channel_feature_fn, channel_table, quarter_label
@@ -156,6 +157,32 @@ def load_strategy(cfg: dict, s: str, panel: pd.DataFrame) -> pd.DataFrame:
     return fc[KEEP]
 
 
+def retrain_cost(cfg: dict) -> dict:
+    """Compute cost of each strategy: S1/S6 wall time of the monthly local refits
+    (results/adaptation_refits.csv; 12 cores, CPU); S4 has no refit, only its Colab inference
+    per month of daily origins (results/chronos_run.json, primary variant); S0 nothing."""
+    res = path("results", cfg)
+    out: dict = {"s0": {"note": "no refit, no inference beyond the frozen forecasts"}}
+    f = res / "adaptation_refits.csv"
+    if f.exists():
+        r = pd.read_csv(f)
+        out |= {s: {"n_refits": int(len(x)), "wall_seconds_total": float(x["wall_seconds"].sum()),
+                    "wall_seconds_median": float(x["wall_seconds"].median()),
+                    "hardware": "local CPU, 12 cores"}
+                for s, x in r.groupby("strategy")}
+    j = res / "chronos_run.json"
+    if j.exists():
+        run = json.loads(j.read_text())
+        v = cfg["chronos"]["primary_variant"]
+        sec = [t for k, t in run.get("chunk_seconds_this_session", {}).items()
+               if k.startswith(f"{v}_")]
+        if sec:
+            out["s4"] = {"n_months": len(sec), "inference_seconds_total": float(sum(sec)),
+                         "inference_seconds_median_per_month": float(np.median(sec)),
+                         "hardware": run.get("environment", {}).get("gpu", "")}
+    return out
+
+
 def evaluate_all(cfg: dict) -> None:
     ac = cfg["adapt"]
     zones, groups = zones_and_groups(cfg)
@@ -169,6 +196,7 @@ def evaluate_all(cfg: dict) -> None:
     eval_origins = daily_origins(*ac["eval_window"])
     w = int(cfg["models"]["conformal"]["rolling_weeks"])
     qs = list(cfg["forecast"]["quantiles"])
+    ev = cfg["forecast_eval"]
     names = ac["strategies"]
     rows, daily, boot, coverage_note = [], [], [], {}
     for s in names:
@@ -182,7 +210,8 @@ def evaluate_all(cfg: dict) -> None:
             d = d.assign(model=s, window=calib, mase_scale=d["zone_id"].map(scale))
             d = d[d["y"].notna()]
             for per, x in [("all", d), *d.groupby(quarter_label(d["origin"]))]:
-                m = evaluate(x, qs, cfg["forecast"]["horizon_buckets"], groups)
+                m = evaluate(x, qs, ev["horizon_buckets"], zone_groups=groups,
+                             interval=tuple(ev["interval"]))
                 rows.append(m.rename(columns={"model": "strategy", "window": "calibration"})
                             .assign(period=per))
         boot.append(daily_errors(raw, groups).assign(model=s))
@@ -217,6 +246,10 @@ def evaluate_all(cfg: dict) -> None:
                "calibration": prim, "mase_scale": f"per-zone seasonal-naive MAE "
                f"{cfg['data']['model_start']} -> {ac['scale_end']}, common to all strategies",
                "uncalibrated_origins": coverage_note,
+               "bias_pct_of_pickups": {f"{s}|{g}": float(r["err"] / r["y"] * 100)
+                                       for (s, g), r in dl.groupby(["strategy", "zone_group"])
+                                       [["err", "y"]].sum().iterrows()},
+               "retrain_cost": retrain_cost(cfg),
                "headline": {f"{s}|{g}": {k: float(v) for k, v in r.items()
                                         if k in ("wape", "bias", "coverage_80", "mase")}
                             for (s, g), r in head.iterrows()}}

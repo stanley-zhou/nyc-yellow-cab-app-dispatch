@@ -1,0 +1,51 @@
+{
+  "source_files": [
+    "results/adaptation_summary.json",
+    "results/adaptation_gaps.csv",
+    "results/adaptation_daily.csv"
+  ],
+  "eval_window": [
+    "2025-02-01",
+    "2026-09-30"
+  ],
+  "lowest_wape_all": "s1",
+  "wape_all": {
+    "s0": 0.164333221170013,
+    "s1": 0.16201132434111973,
+    "s4": 0.16485361157708203,
+    "s6": 0.16775282358777782
+  },
+  "bias_pct_all": {
+    "s0": -2.321254673292237,
+    "s1": -1.7215009705821678,
+    "s4": -1.9969892872937463,
+    "s6": -2.8820727368539507
+  },
+  "bias_pct_cbd": {
+    "s0": -1.9541783736153218,
+    "s1": -1.3755516041694071,
+    "s4": -1.874713933058338,
+    "s6": -2.7078639340621273
+  },
+  "gap_vs_s0_all": {
+    "s1": {
+      "gap": -0.002322,
+      "gap_ci_lo": -0.00361,
+      "gap_ci_hi": -0.000864,
+      "distinguishable": true
+    },
+    "s4": {
+      "gap": 0.00052,
+      "gap_ci_lo": -0.002214,
+      "gap_ci_hi": 0.003466,
+      "distinguishable": false
+    },
+    "s6": {
+      "gap": 0.00342,
+      "gap_ci_lo": 0.001191,
+      "gap_ci_hi": 0.006023,
+      "distinguishable": true
+    }
+  },
+  "title": "After congestion pricing, monthly retraining has the lowest error (WAPE 16.2% vs 16.4% frozen); adding app-share features does not remove the under-forecast (bias -2.9% vs -2.3% frozen, WAPE gap +0.3 pp)"
+}

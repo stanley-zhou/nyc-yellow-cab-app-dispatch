@@ -39,6 +39,7 @@ from taxi_shock.viz.figures import (
     f4g_app_dispatch,
     f4h_synth_control,
     f4i_leave_one_out,
+    f5_adaptation,
     f6_taxi_vs_fhv,
     f6a_channel_areas,
     f6b_app_share_maps,
@@ -699,6 +700,64 @@ def phase4c(cfg: dict) -> None:
         logging.info("wrote Phase-4c figures: %s", ", ".join(stats))
 
 
+STRATEGY_LABELS = {"s0": "S0 frozen", "s1": "S1 monthly retrain", "s4": "S4 Chronos-2",
+                   "s6": "S6 channel-aware"}
+
+
+def phase5(cfg: dict) -> None:
+    """F5 (Phase 5, D6) from results/adaptation_daily.csv, adaptation_summary.json and
+    adaptation_gaps.csv; title numbers saved to results/figure_stats_phase5.json."""
+    res, figs = path("results", cfg), path("figures", cfg)
+    if not (res / "adaptation_summary.json").exists():
+        logging.warning("results/adaptation_summary.json missing: F5 skipped")
+        return
+    ac = cfg["adapt"]
+    summ = json.loads((res / "adaptation_summary.json").read_text())
+    gaps = pd.read_csv(res / "adaptation_gaps.csv")
+    daily = pd.read_csv(res / "adaptation_daily.csv", parse_dates=["day"])
+    head, bias = summ["headline"], summ["bias_pct_of_pickups"]
+    names = summ["strategies"]
+    best = min(names, key=lambda k: head[f"{k}|all"]["wape"])
+
+    def gap(m: str, ref: str, g: str = "all") -> dict:
+        r = gaps[(gaps["zone_group"] == g) & (gaps["model"] == m) & (gaps["reference"] == ref)]
+        return {k: float(r.iloc[0][k]) for k in ("gap", "gap_ci_lo", "gap_ci_hi")} | {
+            "distinguishable": bool(r.iloc[0]["distinguishable"])}
+
+    stats = {"source_files": ["results/adaptation_summary.json", "results/adaptation_gaps.csv",
+                              "results/adaptation_daily.csv"],
+             "eval_window": summ["eval_window"], "lowest_wape_all": best,
+             "wape_all": {k: head[f"{k}|all"]["wape"] for k in names},
+             "bias_pct_all": {k: bias[f"{k}|all"] for k in names},
+             "bias_pct_cbd": {k: bias[f"{k}|cbd"] for k in names},
+             "gap_vs_s0_all": {k: gap(k, "s0") for k in names if k != "s0"}}
+    w, b = stats["wape_all"], stats["bias_pct_all"]
+    g6 = stats["gap_vs_s0_all"]["s6"]
+    title = (f"After congestion pricing, monthly retraining has the lowest error "
+             f"(WAPE {w[best] * 100:.1f}% vs {w['s0'] * 100:.1f}% frozen); adding app-share "
+             f"features does not remove the under-forecast (bias {b['s6']:.1f}% vs "
+             f"{b['s0']:.1f}% frozen, WAPE gap +{g6['gap'] * 100:.1f} pp)"
+             if best == "s1" and b["s6"] < b["s0"] else
+             f"Adaptation strategies after congestion pricing: lowest WAPE "
+             f"{STRATEGY_LABELS[best]} ({w[best] * 100:.1f}%)")
+    stats["title"] = title
+    series = [("s0", STRATEGY_LABELS["s0"], PALETTE["non_cbd"]),
+              ("s1", STRATEGY_LABELS["s1"], PALETTE["model"]),
+              ("s4", STRATEGY_LABELS["s4"], PALETTE["foundation"]),
+              ("s6", STRATEGY_LABELS["s6"], PALETTE["app"])]
+    series = [x for x in series if x[0] in names]
+    note = (f"Day-ahead hourly forecasts, origins {summ['eval_window'][0]} to "
+            f"{summ['eval_window'][1]}; trailing {ac['rolling_days']}-day sums of absolute "
+            "error (WAPE) and signed error (forecast minus actual; negative = under-forecast) "
+            "over actual pickups. S1/S6: LightGBM refit on the first of each month on a sliding "
+            "24-month window; S6 adds trailing app-share features; S4: Chronos-2 zero-shot, "
+            "weather_past. Sources: results/adaptation_daily.csv, results/adaptation_summary.json,"
+            " results/adaptation_gaps.csv.")
+    f5_adaptation(daily, series, int(ac["rolling_days"]), title, note, figs / "F5_adaptation")
+    (res / "figure_stats_phase5.json").write_text(json.dumps(stats, indent=2) + "\n")
+    logging.info("wrote F5 to %s", figs)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
@@ -718,6 +777,7 @@ def main() -> None:
     phase4(cfg)
     phase4b(cfg)
     phase4c(cfg)
+    phase5(cfg)
 
 
 if __name__ == "__main__":

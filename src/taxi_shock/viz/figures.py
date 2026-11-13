@@ -907,8 +907,7 @@ def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days:
                 ends.append((float(v.iloc[-1]), label, color))
             if kind == "bias":
                 ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
-            ax.set_ylabel(f"Rolling {days // 7}-week " + ("WAPE (%)" if kind == "wape"
-                                                         else "bias (% of pickups)"))
+            ax.set_ylabel(("WAPE" if kind == "wape" else "Bias") + f", {days // 7}-week (%)")
             if i == 0:
                 ax.set_title("CBD zones" if g == "cbd" else "All modeled zones", fontsize=10,
                              loc="left")
