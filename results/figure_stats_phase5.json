@@ -47,5 +47,21 @@
       "distinguishable": true
     }
   },
-  "title": "After congestion pricing, monthly retraining has the lowest error (WAPE 16.2% vs 16.4% frozen); adding app-share features does not remove the under-forecast (bias -2.9% vs -2.3% frozen, WAPE gap +0.3 pp)"
+  "wape_all_sensitivity_reference": {
+    "s1e": 0.1618893533295143,
+    "sn": 0.2369848656027566
+  },
+  "retraining_effect_s1e_vs_s0": {
+    "gap": -0.002444,
+    "gap_ci_lo": -0.003583,
+    "gap_ci_hi": -0.001426,
+    "distinguishable": true
+  },
+  "window_effect_s1_vs_s1e": {
+    "gap": 0.000122,
+    "gap_ci_lo": -0.000775,
+    "gap_ci_hi": 0.001107,
+    "distinguishable": false
+  },
+  "title": "Feb 2025\u2013Sep 2026: monthly retraining has the lowest day-ahead error (WAPE 16.2% vs 16.4% frozen); app-share features deepen the under-forecast (bias -2.9% vs -2.3% frozen)"
 }

@@ -130,7 +130,7 @@ A log difference against a fast-growing small-zone average reads their growth as
 | Congestion pricing | +7.3% | day 354 |
 
 **Adaptation (Phase 5).**
-Four strategies were compared on day-ahead forecasts with origins 2025-02-01 → 2026-09-30, scored with the Phase-2 metrics and a common MASE scale ([adaptation.csv](../results/adaptation.csv), [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv); F5).
+Four strategies were compared on day-ahead forecasts with origins 2025-02-01 → 2026-09-30, scored with the Phase-2 metrics and a common MASE scale ([adaptation.csv](../results/adaptation.csv), [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv); F5). Two further rows are not strategies: a sensitivity (S1e) and the frozen seasonal naive as the naive reference.
 
 | Strategy | WAPE, all zones | WAPE, CBD | Bias, % of pickups | 80% coverage (rolling conformal) |
 |---|---|---|---|---|
@@ -138,14 +138,18 @@ Four strategies were compared on day-ahead forecasts with origins 2025-02-01 →
 | S1 monthly retrain, sliding 24 months | **0.162** | **0.151** | −1.7% | 0.80 |
 | S4 Chronos-2 zero-shot | 0.165 | 0.154 | −2.0% | 0.80 |
 | S6 S1 + trailing app-share features | 0.168 | 0.157 | −2.9% | 0.80 |
+| *Sensitivity:* S1e monthly retrain, expanding window (as S0) | 0.162 | 0.152 | −1.8% | 0.81 |
+| *Reference:* seasonal naive, frozen | 0.237 | 0.223 | −0.1% | 0.81 |
 
-- **S1 vs S0.** S1 is ahead by 0.23 pp of WAPE over all modeled zones and 0.29 pp in the CBD; both bootstrap intervals exclude zero. In Manhattan outside the CBD the two are not distinguishable.
-- **S4.** Chronos-2 is not distinguishable from S0 or S1 over all zones. It is the best of the four in the outer-borough zones (0.395 against 0.412 frozen) and distinguishably behind S0 and S1 in Manhattan outside the CBD (0.147 against 0.142).
+Table notes. Quarters are assigned by origin date, so the first quarter, 2025-Q1, covers only 2025-02-01 → 03-31; its rolling-conformal coverage is 0.80–0.82 for the four strategies. The intervals of every row, S0 included, are recalibrated by the rolling 12-week conformal: S0's point forecasts are frozen but its intervals adapt (raw S0 coverage 0.78, calibrated 0.81). MASE over all zones is above 1 for every row (S0 1.40, seasonal naive 1.89) because the scale is the 2022–2024 in-sample seasonal-naive error and outer-borough volume has grown since; it does not mean the strategies lose to the naive forecast, which every strategy beats by about 7 pp of WAPE.
+
+- **S1 vs S0, and why.** S1 is ahead by 0.23 pp of WAPE over all modeled zones and 0.29 pp in the CBD; both bootstrap intervals exclude zero. In Manhattan outside the CBD the two are not distinguishable. S1 changes two things at once, the refit frequency and the training window, so S1e (the same monthly refits on S0's expanding window) separates them. Retraining on S0's window gains 0.24 pp over S0 (interval excludes zero); switching that retraining to the sliding window changes WAPE by 0.01 pp (interval includes zero). The gain is from retraining, not from the window.
+- **S4.** Chronos-2 is not distinguishable from S0 or S1 over all zones or in the CBD. It is the best of the four in the outer-borough zones (0.395 against 0.403 for S1 and 0.412 frozen) and at the airports (0.175 against 0.179 for S1, interval excludes zero), and distinguishably behind S0 and S1 in Manhattan outside the CBD (0.147 against 0.142).
 - **S6 is a negative result.** The pre-registered expectation (Amendment 4, D6) was that channel-aware features would remove most of the post-2025 bias. They did not: S6 has the largest under-forecast and the highest WAPE of the four, distinguishably worse than S0 and S1. The features are trailing app shares, so they describe the channel mix after it has moved; they do not anticipate the level of demand.
 - **Every strategy errs the same way at the same time.** All four rise together in 2026-Q1 (WAPE 0.187–0.191, [adaptation.csv](../results/adaptation.csv)); no strategy avoids it, so it is not an adaptation failure of one model.
 - **Intervals.** With rolling 12-week conformal calibration, every strategy covers 0.80–0.81 of hours with its 80% interval; raw intervals cover 0.74–0.78.
 
-**Recommendation for the forecasting system.** Retrain monthly (S1). One refit costs a median of 411 s on the 12-core local CPU (23 refits, [adaptation_summary.json → retrain_cost](../results/adaptation_summary.json)), the gain over the frozen model is small (0.23 pp of WAPE) but distinguishable over the whole window, though not in every quarter (S0 is ahead in 2025-Q1), and S1 also has the smallest bias. Chronos-2 needs no retraining but a GPU at every origin (a median of 250 s per month of daily origins on an L4) and buys no accuracy over S1 except in the outer boroughs. Channel features should not be added in their current trailing form.
+**Recommendation for the forecasting system.** Retrain monthly (S1). The LightGBM refit takes a median of 384 s on the 12-core local CPU, and a month of S1 (refit plus that month's daily forecasts) a median of 411 s (23 refits, [adaptation_summary.json → retrain_cost](../results/adaptation_summary.json)). The gain over the frozen model is small (0.23 pp of WAPE) but distinguishable over the whole window, though not in every quarter (S0 is ahead in 2025-Q1), and S1 also has the smallest bias of the four strategies. The sliding 24-month window is preferred to the expanding one because the two are equally accurate and the expanding refit takes about twice as long (median 720 s). Chronos-2 needs no retraining but a GPU at every origin (a median of 250 s per month of daily origins on an L4); it is not distinguishable from S1 over all zones and is ahead only in the outer boroughs and at the airports. Channel features should not be added in their current trailing form.
 
 ## 6. Why this could not be an A/B test, and how it would be designed
 

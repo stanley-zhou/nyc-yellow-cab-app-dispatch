@@ -731,6 +731,12 @@ def phase5(cfg: dict) -> None:
              "bias_pct_all": {k: bias[f"{k}|all"] for k in names},
              "bias_pct_cbd": {k: bias[f"{k}|cbd"] for k in names},
              "gap_vs_s0_all": {k: gap(k, "s0") for k in names if k != "s0"}}
+    extra = [k for k in (*summ.get("sensitivity", []), *summ.get("reference", []))
+             if f"{k}|all" in head]
+    stats["wape_all_sensitivity_reference"] = {k: head[f"{k}|all"]["wape"] for k in extra}
+    if "s1e" in extra:
+        stats["retraining_effect_s1e_vs_s0"] = gap("s1e", "s0")
+        stats["window_effect_s1_vs_s1e"] = gap("s1", "s1e")
     w, b = stats["wape_all"], stats["bias_pct_all"]
     span = "–".join(pd.Timestamp(x).strftime("%b %Y") for x in summ["eval_window"])
     if best == "s1" and b["s6"] < b["s0"]:
@@ -746,6 +752,13 @@ def phase5(cfg: dict) -> None:
               ("s4", STRATEGY_LABELS["s4"], PALETTE["foundation"]),
               ("s6", STRATEGY_LABELS["s6"], PALETTE["app"])]
     series = [x for x in series if x[0] in names]
+    nd = []
+    if "s1e" in extra:
+        nd.append(f"S1 on an expanding window (S1e), WAPE {head['s1e|all']['wape'] * 100:.2f}% "
+                  f"(S1 {w['s1'] * 100:.2f}%)")
+    if "sn" in extra:
+        nd.append(f"frozen seasonal naive, WAPE {head['sn|all']['wape'] * 100:.1f}%")
+    not_drawn = f" Not drawn: {'; '.join(nd)}." if nd else ""
     note = (f"Day-ahead hourly forecasts; metrics on origins {summ['eval_window'][0]} to "
             f"{summ['eval_window'][1]} (unshaded); each line starts at its strategy's first "
             f"origin (S1/S6 from {ac['run_start'][:7]}, S0 and S4 from "
@@ -754,7 +767,9 @@ def phase5(cfg: dict) -> None:
             "error (WAPE) and signed error (forecast minus actual; negative = under-forecast) "
             "over actual pickups. S1/S6: LightGBM refit on the first of each month on a sliding "
             "24-month window; S6 adds trailing app-share features; S4: Chronos-2 zero-shot, "
-            "weather_past. Sources: results/adaptation_daily.csv, results/adaptation_summary.json,"
+            "weather_past."
+            + not_drawn
+            + " Sources: results/adaptation_daily.csv, results/adaptation_summary.json,"
             " results/adaptation_gaps.csv.")
     f5_adaptation(daily, series, int(ac["rolling_days"]), tuple(cfg["shock"]["forecast_window"]),
                   summ["eval_window"][0], title, note, figs / "F5_adaptation")
