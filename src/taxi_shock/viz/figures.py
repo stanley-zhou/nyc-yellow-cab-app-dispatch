@@ -873,7 +873,7 @@ def f6_taxi_vs_fhv(series: list[tuple[str, pd.DataFrame, str]], policy_date: str
     fig, ax = plt.subplots(figsize=SIZES["single"], layout="constrained")
     for j, (label, es, color) in enumerate(series):
         _event_panel(ax, es, policy_date,
-                     "CBD vs control, relative to the week before 2025-01-05 (%)", color,
+                     "CBD vs control (%)", color,
                      label_policy=j == 0, label_y=0.99,
                      shift_days=(j - (len(series) - 1) / 2) * 6, label=label,
                      marker="os^"[j % 3])

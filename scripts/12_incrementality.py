@@ -190,10 +190,17 @@ def plpr(p: pd.DataFrame, x: list[str], cfg: dict) -> dict:
     m = dml.DoubleMLPLPR(data, LGBMRegressor(**ic["lgbm"], random_state=cfg["seed"],
                                              verbose=-1),
                          LGBMRegressor(**ic["lgbm"], random_state=cfg["seed"], verbose=-1),
-                         n_folds=ic["n_folds"], approach="wg_approx")
+                         n_folds=ic["n_folds"], n_rep=ic["n_rep"], approach="wg_approx")
     m.fit()
+    # repeated cross-fitting (review round 2): theta depends on the unit-based fold draw, so
+    # DoubleML's median over n_rep seeded draws is reported, with the range of the draws
+    reps = 1 + np.asarray(m.all_coef).ravel()
     return summarise(float(m.coef[0]), float(m.se[0]), len(d), int(d["zone_id"].nunique()),
-                     {"approach": "wg_approx (Clarke and Polselli 2025), DoubleML folds"})
+                     {"approach": "wg_approx (Clarke and Polselli 2025), DoubleML folds, "
+                                  f"median over {ic['n_rep']} repeated fold draws",
+                      "n_rep": int(ic["n_rep"]), "theta_draws_min": float(reps.min()),
+                      "theta_draws_max": float(reps.max()),
+                      "theta_draws": [float(v) for v in reps]})
 
 
 def area_panel(p: pd.DataFrame, area: str, min_weekly: float) -> pd.DataFrame:

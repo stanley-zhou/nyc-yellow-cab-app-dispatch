@@ -596,7 +596,7 @@ def phase4c(cfg: dict) -> None:
         stats["d2"]["title"] = t
         est = [("dml_plr", "DML, time-blocked folds (primary)", PALETTE["app"]),
                ("dml_zone_trends", "DML + zone trends", PALETTE["comparison"]),
-               ("dml_panel_plpr", "DoubleML panel (within-group)", PALETTE["model"]),
+               ("dml_panel_plpr", "DoubleML panel (median of 25 fold draws)", PALETTE["model"]),
                ("twfe", "TWFE", PALETTE["non_cbd"]),
                ("first_difference", "First differences", PALETTE["baseline"])]
         f6c_incrementality(sm, [("cbd", "CBD"), ("manhattan_non_cbd", "Manhattan non-CBD"),
