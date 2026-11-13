@@ -132,3 +132,5 @@
   - results/fhv_did.json
   - results/fhv_event_study.csv
   - reports/figures/F6_taxi_vs_fhv.png
+  - results/cross_platform.json
+  - results/cross_platform_monthly.csv

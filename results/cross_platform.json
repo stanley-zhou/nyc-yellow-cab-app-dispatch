@@ -1,0 +1,60 @@
+{
+  "generated_utc": "2026-11-13T05:15:26+00:00",
+  "specification": "PLAN.md Amendment 4 D4 (exploratory); DML form of D2",
+  "coefficient": "d FHV trips / d yellow app trips per zone-week (negative = displacement from FHV); observational",
+  "areas": {
+    "cbd": {
+      "coef_fhv_on_yellow_app": -0.16626758101968137,
+      "se": 0.17119889540737085,
+      "n_obs": 7258,
+      "n_zones": 38,
+      "se_doubleml_default": 0.040736991373446274,
+      "ci": [
+        -0.5018112502111679,
+        0.16927608817180517
+      ],
+      "mean_weekly_fhv": 31316.518600165335,
+      "mean_weekly_yellow_app": 1921.6879305593827
+    },
+    "manhattan_non_cbd": {
+      "coef_fhv_on_yellow_app": -0.3812319909660008,
+      "se": 0.1795169424974685,
+      "n_obs": 4775,
+      "n_zones": 25,
+      "se_doubleml_default": 0.0489508902997721,
+      "ci": [
+        -0.7330787328757868,
+        -0.029385249056214702
+      ],
+      "mean_weekly_fhv": 22526.687539267015,
+      "mean_weekly_yellow_app": 1531.9976963350784
+    },
+    "other": {
+      "coef_fhv_on_yellow_app": 4.387882563677721,
+      "se": 0.5369295708488473,
+      "n_obs": 9550,
+      "n_zones": 50,
+      "se_doubleml_default": 0.19040300124007106,
+      "ci": [
+        3.335519942579433,
+        5.440245184776009
+      ],
+      "mean_weekly_fhv": 25597.07884816754,
+      "mean_weekly_yellow_app": 324.87267015706806
+    },
+    "airports": {
+      "coef_fhv_on_yellow_app": 161.60935509339942,
+      "se": 1.8012123612742077,
+      "n_obs": 382,
+      "n_zones": 2,
+      "se_doubleml_default": 11.116215532289445,
+      "ci": [
+        158.0790437367936,
+        165.13966645000522
+      ],
+      "inference_note": "2 zones: clustered SEs and CIs are not meaningful; no conclusion",
+      "mean_weekly_fhv": 86161.722513089,
+      "mean_weekly_yellow_app": 115.32722513089006
+    }
+  }
+}
