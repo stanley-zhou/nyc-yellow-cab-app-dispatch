@@ -1,7 +1,7 @@
 # Forecasting Under a Policy Shock: NYC Yellow-Taxi Demand and Congestion Pricing
 
-**Status: Phase 4b (Amendment 3: C1–C5 done; C6 next); Phase 3 and Phase 4
-formal status resolved at Checkpoint 6; Phase 2 passed review.** Yellow-taxi demand (Stanley's
+**Status: Amendments 3–4a items done (C1–C6, D0–D5b); Checkpoint 6 next; Phase 3 and
+Phase 4 formal status resolved at Checkpoint 6; Phase 2 passed review.** Yellow-taxi demand (Stanley's
 decision, 2026-11-12): the difference-in-differences design cannot identify the policy's effect
 on yellow-taxi demand: the pre-trend test rejects (p = 1.6e−17, `results/placebo.json`), the
 estimate moves from −5.2% [−12.8%, +3.0%] (−0.053 log points [−0.137, +0.030]; 38 CBD zones vs
@@ -50,12 +50,16 @@ Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`.
 | `data` | full raw download (yellow months in config, zone lookups, weather) |
 | `dbt` | build and test the full DuckDB warehouse in two stages around the CBD mapping (`scripts/03a_cbd_map.py`), then write the Phase-1 result files (`scripts/03b_data_results.py`) and the Checkpoint-1 checks: vendor series, trip-level CBD fee check, modeled zones (`scripts/03c_checks.py`) |
 | `chronos-bundle`, `chronos-import` | Phase 2: export the Chronos-2 input bundle for Colab; validate the forecasts copied back into `results/` |
-| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b; Phase 3: F3, F3b; Phase 4: F4, F4b (+ html), F4c, F4d, F4e, F4f, F4g, F4h (C3), F4i), built from `results/` only |
+| `figures` | every figure whose phase is implemented (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b; Phase 3: F3, F3b; Phase 4: F4, F4b (+ html), F4c, F4d, F4e, F4f, F4g, F4h (C3), F4i; Amendment 4 / Phase 6: F6, F6a, F6b, F6c, F6d, F6e), built from `results/` only |
 | `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, Open-Meteo offset |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
 | `causal` | Phase 4 / 4b: trip speed/duration DiD and event study vs the donut and the Brooklyn/Queens control (`07a`), demand DiD with checks, permutation and time-only placebos, MDE, heterogeneity (`07b`), metric framework, trade-off table, counterfactual (`07c`), pre-trend test size simulation (`07d`), app-dispatch share (`07e`), synthetic control (`07f`); dbt marts `fct_weekly_pair_speed`, `fct_weekly_zone_trip_stats` |
 | `shock` | Phase 3: LightGBM frozen on data to 2024-12-31 and seasonal naive, day-ahead 2024-07 → 2026-09 without retraining (with Chronos-2 zero-shot), rolling errors, CUSUM and rolling-bias monitors (`06_shock.py`); C5: the same monitor for COVID, the 2022 fare increase and congestion pricing (`06b_three_shocks.py`) |
 | `forecast` | Phase 2: LightGBM grid on 2023 (`04a_lgbm_tune.py`), rolling-origin backtests of every trained model for 2023 and 2024 (`04_backtest.py --full`), conformal calibration and metrics (`04b_evaluate.py`); Chronos-2 runs on Colab (`chronos-bundle` / `chronos-import`) |
+| `hvfhv` | Amendment 4: stream the HVFHV months (download → DuckDB aggregates → verify → delete the raw file; manifest `data/raw/hvfhv_manifest.csv`; stops below `hvfhv.min_free_gb` free on the drive named by `TAXI_SHOCK_DISK_GUARD`) (`11`) |
+| `channel` | Amendment 4 / 4a: app-channel label validation D0 (`10a`), CMT contracted-block diagnosis (`10b`), channel decomposition D1 (`10c`), incrementality DML D2 (`12`), Lyft entry D3 (`13`), congestion pricing by channel D5 (`14`), app-share step by trip type D5b (`15`), cross-platform D4 (`17`); dbt marts `fct_daily_zone_channel`, `fct_weekly_zone_channel` |
+| `fhv` | Phase 6 (C6): congestion pricing and HVFHV demand, pre-trend test first (`16`) |
+| `lyft-refresh` | D3: re-download, rebuild and re-estimate once `data.yellow_months` and `channel.window` are extended to newly published TLC months |
 | `adapt`, `report` | added in their phases; they fail with a message until then (`all` runs every target) |
 
 ## Chronos-2 on Colab
