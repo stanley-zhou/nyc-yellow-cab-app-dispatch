@@ -39,6 +39,7 @@ from taxi_shock.viz.figures import (
     f4g_app_dispatch,
     f4h_synth_control,
     f4i_leave_one_out,
+    f6_taxi_vs_fhv,
     f6a_channel_areas,
     f6b_app_share_maps,
     f6c_incrementality,
@@ -628,6 +629,36 @@ def phase4c(cfg: dict) -> None:
                        "Curb code-A surge). Incrementality = DiD change in Curb total pickups / "
                        "Lyft pickups per Curb zone-day. Sources: results/lyft_entry.json, "
                        "results/lyft_entry_daily.csv.", figs / "F6d_lyft_entry")
+    f = res / "fhv_did.json"
+    if f.exists():
+        fh = json.loads(f.read_text())
+        fes = pd.read_csv(res / "fhv_event_study.csv")
+        yes = pd.read_csv(res / "event_study.csv")
+        y_w = yes[(yes["bins"] == "month")
+                  & (yes["spec"] == "pre_volume_weighted_not_preregistered")]
+        f_w = fes[(fes["series"] == "fhv_all") & (fes["weighting"] == "pre_volume_weighted")]
+        pf_ = {s: fh["series"][s]["pre_volume_weighted"]["pretrend"]["p_F_hotelling"]
+               for s in fh["series"]}
+        p_y = json.loads((res / "placebo.json").read_text())["pretrend_tests"][
+            "event_study_month_pre_volume_weighted_not_preregistered"]["pretrend"][
+            "p_F_hotelling"]
+        stats["c6"] = {"fhv_pretrend_p_hotelling_weighted": pf_, "yellow_pretrend_p": p_y,
+                       "any_estimate": any(v.get("passes") for s in fh["series"].values()
+                                           for v in s.values())}
+        t = (r"Taxi (\$0.75 fee) vs FHV (\$1.50 fee) in the CBD: both pre-trend tests "
+             f"reject (yellow p = {p_y:.1g}, Uber + Lyft p = {pf_['fhv_all']:.1g}), so no "
+             "effect is estimated")
+        stats["c6"]["title"] = t
+        f6_taxi_vs_fhv([("Yellow taxi (Phase 4 primary)", y_w, PALETTE["cbd"]),
+                        ("Uber + Lyft (HVFHV)", f_w, PALETTE["comparison"])],
+                       cfg["data"]["policy_date"], t,
+                       "Monthly event-study coefficients as exp(b) - 1, 38 CBD zones vs the donut "
+                       "control, zone and week FE, weather x treated, zones weighted by their own "
+                       "series' pre-period volume, 95% CIs clustered by zone; reference: the week "
+                       "before 2025-01-05; lighter = before the policy. Descriptive only (C6: "
+                       "pre-trend test first). Sources: results/fhv_did.json, "
+                       "results/fhv_event_study.csv, results/event_study.csv.",
+                       figs / "F6_taxi_vs_fhv")
     if stats:
         (res / "figure_stats_phase4c.json").write_text(json.dumps(stats, indent=2,
                                                                   default=float) + "\n")

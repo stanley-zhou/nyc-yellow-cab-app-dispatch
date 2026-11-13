@@ -1,0 +1,187 @@
+{
+  "generated_utc": "2026-11-13T05:13:00+00:00",
+  "specification": "Phase 4 design (07b) on HVFHV pickups; Amendment 3 C6",
+  "rule": "pre-trend test first; a series with Hotelling F* p < 0.05 gets no static estimate",
+  "series": {
+    "fhv_all": {
+      "equal_weight": {
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 637.5416481393786,
+          "p_chi2": 3.2501217966518856e-119,
+          "F": 26.564235339140776,
+          "df": [
+            24,
+            62
+          ],
+          "p_F": 3.782443917452186e-24,
+          "F_hotelling": 16.70976093913694,
+          "df_hotelling": [
+            24,
+            39
+          ],
+          "p_F_hotelling": 7.781435875032004e-14
+        },
+        "passes": false,
+        "pre_mean_weekly_treated": 31778.74190283401
+      },
+      "pre_volume_weighted": {
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 1300.6505170918276,
+          "p_chi2": 8.279555218047692e-260,
+          "F": 54.193771545492815,
+          "df": [
+            24,
+            60
+          ],
+          "p_F": 4.202045120523459e-32,
+          "F_hotelling": 33.419492453053905,
+          "df_hotelling": [
+            24,
+            37
+          ],
+          "p_F_hotelling": 2.273648526191355e-18
+        },
+        "passes": false,
+        "pre_mean_weekly_treated": 31778.74190283401
+      }
+    },
+    "fhv_uber": {
+      "equal_weight": {
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 638.3289922683242,
+          "p_chi2": 2.2223226638725475e-119,
+          "F": 26.59704134451351,
+          "df": [
+            24,
+            62
+          ],
+          "p_F": 3.657059086141493e-24,
+          "F_hotelling": 16.730396974774628,
+          "df_hotelling": [
+            24,
+            39
+          ],
+          "p_F_hotelling": 7.621257558266599e-14
+        },
+        "passes": false,
+        "pre_mean_weekly_treated": 23892.2975708502
+      },
+      "pre_volume_weighted": {
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 1839.3538534919282,
+          "p_chi2": 0.0,
+          "F": 76.639743895497,
+          "df": [
+            24,
+            60
+          ],
+          "p_F": 2.176089600846689e-36,
+          "F_hotelling": 47.26117540222315,
+          "df_hotelling": [
+            24,
+            37
+          ],
+          "p_F_hotelling": 5.439531518895837e-21
+        },
+        "passes": false,
+        "pre_mean_weekly_treated": 23892.2975708502
+      }
+    },
+    "fhv_lyft": {
+      "equal_weight": {
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 592.9416079259988,
+          "p_chi2": 7.101880411550099e-110,
+          "F": 24.70590033024995,
+          "df": [
+            24,
+            62
+          ],
+          "p_F": 2.717019333382758e-23,
+          "F_hotelling": 15.540808272254,
+          "df_hotelling": [
+            24,
+            39
+          ],
+          "p_F_hotelling": 2.6242555432064114e-13
+        },
+        "passes": false,
+        "pre_mean_weekly_treated": 7886.444331983806
+      },
+      "pre_volume_weighted": {
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 472.67478677003203,
+          "p_chi2": 7.731812031104155e-85,
+          "F": 19.69478278208467,
+          "df": [
+            24,
+            60
+          ],
+          "p_F": 3.1571255518625905e-20,
+          "F_hotelling": 12.145116048952213,
+          "df_hotelling": [
+            24,
+            37
+          ],
+          "p_F_hotelling": 3.6020755592891377e-11
+        },
+        "passes": false,
+        "pre_mean_weekly_treated": 7886.444331983806
+      }
+    },
+    "fhv_shared": {
+      "equal_weight": {
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 180.90832240426957,
+          "p_chi2": 4.913509430412695e-26,
+          "F": 7.537846766844566,
+          "df": [
+            24,
+            62
+          ],
+          "p_F": 7.810226123525872e-11,
+          "F_hotelling": 4.741548772692549,
+          "df_hotelling": [
+            24,
+            39
+          ],
+          "p_F_hotelling": 8.84676154637783e-06
+        },
+        "passes": false,
+        "pre_mean_weekly_treated": 860.9903846153846
+      },
+      "pre_volume_weighted": {
+        "pretrend": {
+          "n_restrictions": 24,
+          "wald_chi2": 385.4284414520858,
+          "p_chi2": 7.303901105804061e-67,
+          "F": 16.059518393836907,
+          "df": [
+            24,
+            60
+          ],
+          "p_F": 5.17773553575423e-18,
+          "F_hotelling": 9.903369676199427,
+          "df_hotelling": [
+            24,
+            37
+          ],
+          "p_F_hotelling": 7.601420128055298e-10
+        },
+        "passes": false,
+        "pre_mean_weekly_treated": 860.9903846153846
+      }
+    }
+  },
+  "n_zones": {
+    "treated": 38,
+    "control": 25
+  }
+}

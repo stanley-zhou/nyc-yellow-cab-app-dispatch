@@ -129,3 +129,6 @@
   - results/lyft_entry.json
   - results/lyft_entry_daily.csv
   - reports/figures/F6d_lyft_entry.png
+  - results/fhv_did.json
+  - results/fhv_event_study.csv
+  - reports/figures/F6_taxi_vs_fhv.png

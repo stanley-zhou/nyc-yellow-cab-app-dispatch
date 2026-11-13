@@ -861,3 +861,23 @@ def f6e_app_share_step(weekly: pd.DataFrame, es: pd.DataFrame, title: str, note:
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
     return save(fig, out_base)
+
+
+def f6_taxi_vs_fhv(series: list[tuple[str, pd.DataFrame, str]], policy_date: str, title: str,
+                   note: str, out_base: Path) -> list[Path]:
+    """F6 (PLAN Phase 6): monthly event-study paths (% effect, 95% CIs) of yellow-taxi and HVFHV
+    pickups on one axis (same unit), offset by a few days; pre bins tinted."""
+    use_style()
+    fig, ax = plt.subplots(figsize=SIZES["single"], layout="constrained")
+    for j, (label, es, color) in enumerate(series):
+        _event_panel(ax, es, policy_date, "Effect on CBD pickups (%)", color,
+                     label_policy=j == 0, label_y=0.99,
+                     shift_days=(j - (len(series) - 1) / 2) * 6, label=label,
+                     marker="os^"[j % 3])
+    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    ax.legend(frameon=False, fontsize=8, loc="lower left")
+    fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)

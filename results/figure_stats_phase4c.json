@@ -67,5 +67,16 @@
     ],
     "log_pretrend_p": 2.2858969042529913e-07,
     "title": "Lyft on Curb cabs (preliminary): incrementality -1.12 in levels, 0.68 [0.09, 1.23] in logs, whose pre-trend test rejects: not identified yet"
+  },
+  "c6": {
+    "fhv_pretrend_p_hotelling_weighted": {
+      "fhv_all": 2.273648526191355e-18,
+      "fhv_uber": 5.439531518895837e-21,
+      "fhv_lyft": 3.6020755592891377e-11,
+      "fhv_shared": 7.601420128055298e-10
+    },
+    "yellow_pretrend_p": 1.5741757804099792e-17,
+    "any_estimate": false,
+    "title": "Taxi (\\$0.75 fee) vs FHV (\\$1.50 fee) in the CBD: both pre-trend tests reject (yellow p = 2e-17, Uber + Lyft p = 2e-18), so no effect is estimated"
   }
 }
