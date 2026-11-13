@@ -891,7 +891,8 @@ def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days:
     """F5 (Phase 5, D6): rolling `days`-day WAPE (top) and rolling bias as % of actual pickups
     (bottom) per strategy, CBD (left) and all modeled zones (right), on the Phase-3 axes
     (`x_range`) with the policy line; the days before `eval_start` (outside the evaluation
-    window of every metric) are shaded. Direct labels at the line ends.
+    window of every metric) are shaded and explained in the note (an in-panel label would cross
+    the policy line). Direct labels at the line ends.
     `series`: (strategy key, label, colour)."""
     use_style()
     lo, hi = (pd.Timestamp(x) for x in x_range)
@@ -918,11 +919,6 @@ def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days:
                              loc="left")
             ax.set_xlim(lo, hi + pd.Timedelta(days=2))
             ax.axvspan(lo, ev, color=tint(PALETTE["baseline"], 0.75), zorder=0, linewidth=0)
-            if i == 1 and j == 0:
-                ax.annotate("before the evaluation window", xy=(lo, 0.02),
-                            xycoords=("data", "axes fraction"), xytext=(4, 0),
-                            textcoords="offset points", fontsize=8,
-                            color=PALETTE["muted_text"], va="bottom")
             policy_line(ax, label=(i == 0 and j == 0), label_y=0.99, side="right")
             direct_labels(ax, v.index.max() + pd.Timedelta(days=5), ends)
             ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))

@@ -760,14 +760,17 @@ def phase5(cfg: dict) -> None:
         nd.append(f"frozen seasonal naive, WAPE {head['sn|all']['wape'] * 100:.1f}%")
     not_drawn = f" Not drawn: {'; '.join(nd)}." if nd else ""
     note = (f"Day-ahead hourly forecasts; metrics on origins {summ['eval_window'][0]} to "
-            f"{summ['eval_window'][1]} (unshaded); each line starts at its strategy's first "
+            f"{summ['eval_window'][1]} (unshaded; grey = before that window, not scored); "
+            "each line starts at its strategy's first "
             f"origin (S1/S6 from {ac['run_start'][:7]}, S0 and S4 from "
             f"{cfg['shock']['forecast_window'][0][:7]}); trailing {ac['rolling_days']}-day sums "
             "of absolute "
             "error (WAPE) and signed error (forecast minus actual; negative = under-forecast) "
             "over actual pickups. S1/S6: LightGBM refit on the first of each month on a sliding "
             "24-month window; S6 adds trailing app-share features; S4: Chronos-2 zero-shot, "
-            "weather_past."
+            "weather_past. S0: the model frozen at "
+            f"{cfg['shock']['frozen_train_end']}; before {cfg['shock']['monitor_start']} it is "
+            "in-sample, so S0 there is the Phase-2 out-of-sample backtest (monthly refits)."
             + not_drawn
             + " Sources: results/adaptation_daily.csv, results/adaptation_summary.json,"
             " results/adaptation_gaps.csv.")

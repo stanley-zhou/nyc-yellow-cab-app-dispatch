@@ -2,7 +2,8 @@
 
 CLAUDE.md rule 1 asks that every number names its results/ file; this check makes sure the named
 files exist (a renamed or deleted result would otherwise leave a dead link in the report).
-Checked: README.md, reports/analysis.md, reports/dashboard_spec.md. Exit 1 on any dead link.
+Checked: README.md, reports/analysis.md, reports/dashboard_spec.md, reports/deferred_items.md.
+Exit 1 on any dead link.
 """
 
 from __future__ import annotations
@@ -14,7 +15,8 @@ import sys
 from taxi_shock.config import repo_root
 
 LOG = logging.getLogger("links")
-DOCS = ("README.md", "reports/analysis.md", "reports/dashboard_spec.md")
+DOCS = ("README.md", "reports/analysis.md", "reports/dashboard_spec.md",
+        "reports/deferred_items.md")
 LINK = re.compile(r"!?\[[^\]]*\]\(([^)\s]+)\)")
 
 

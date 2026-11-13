@@ -1,148 +1,140 @@
-# Phase 5 review — how the system should adapt
+# Phase 5 review, round 2 (after fix round 1): how the system should adapt
 
-Reviewer: phase-reviewer subagent (fresh context), 2026-11-13. Phase commit reviewed: aba8ccb. HEAD at review time was e23143b (a Phase-7 WIP commit on top of it). The working tree also had uncommitted Builder edits to `DECISIONS.md` and `reports/analysis.md` (Phase 7 work, made while this review ran). Where the text of `reports/analysis.md` §5 changed between aba8ccb and the working tree, both versions are noted.
+Reviewer: phase-reviewer subagent (fresh context), 2026-11-13. Reviewed HEAD 4c46b7f, working tree clean. The round-1 review (FIX) is kept as `reviews/phase_5_round1.md`.
 
 ## Verdict
 
-**FIX.** The pipeline is sound:
-- All four strategies are scored on identical evaluation sets: `n` is equal across strategies in every cell of `results/adaptation.csv`, with 1,500,298 zone-hours over all zones.
-- The S0 and S4 WAPEs reproduce exactly from the Phase-3 file `results/shock_errors.csv` (0.1643 and 0.1649).
-- Leakage tests are real and green.
-- Every Phase-5 number in the report, README, F5 title and DECISIONS traces to a results file.
+**FIX** (fix round 2 of 2).
 
-The figure and the recommendation still have defects:
-- F5 is not on the Phase-3 axes and has no policy line.
-- The recommendation paragraph contains one false claim and one mislabelled cost.
-- The S1-vs-S0 gap, on which the recommendation rests, mixes the retraining effect with the training-window effect.
-- No seasonal-naive reference is reported for 2025–26.
-- The MASE scale window is described wrongly.
+All ten round-1 fixes were applied, and the S1e sensitivity is clean:
+- S1e's 2025-01 refit reproduces the frozen model exactly: same train window, rows_boost 2,639,787, rounds {409, 4244, 1239} (`adaptation_refits.csv` vs `frozen_model.json`).
+- Its daily absolute errors for 2025-01 are identical to S0's (max difference 0.0, `adaptation_daily.csv`).
+- So S1e − S0 is a pure retraining contrast, and the "gain is from retraining, not the window" reading holds.
 
-None of these needs a human decision. The pre-registered D6 expectation failed (S6 does not remove the bias). That is a finding, reported as found with no tuning afterwards (DECISIONS line 271), so it is not an escalation.
+Two defects remain, both introduced or exposed by fix 1:
+- F5 draws S0's **in-sample** 2024-H2 forecasts as if they were forecasts.
+- S0's rolling-conformal calibration for the first eight weeks of the window uses in-sample residuals.
+
+The Phase-3 decision (DECISIONS line 193) explicitly rejects both practices. There are also smaller documentation gaps. None of this needs a human decision.
 
 ## DoD table
 
-Scope: PLAN Phase 5 as re-scoped by Amendment 4 D6 and Amendment 5 ("Go-ahead: Phase 5 (D6: S0, S1, S4, S6)"; "No S3"). Dropping S2, S3 and S5 is human-approved, not a Builder downgrade.
+Scope: PLAN Phase 5, re-scoped by Amendment 4 D6 and Amendment 5 (S0, S1, S4, S6; no S2/S3/S5). The re-scope is human-approved.
 
 | Item | Status | Evidence |
 |---|---|---|
-| Strategies S0, S1, S4, S6 (Amendment 4 D6 / Amendment 5) | MET | `config/project.yaml → adapt.strategies`; `scripts/08_adapt.py`. S0 = `data/forecasts/frozen/lgbm_quantile.parquet`, with `results/frozen_model.json` train_end 2024-12-31 23:00. S1/S6 have 23 monthly refits each, on a sliding 731/730-day window (`results/adaptation_refits.csv`). S4 = Chronos-2 `weather_past`. |
-| Evaluation window 2025-02 → 2026-09 | MET | `adaptation_summary.json → eval_window` 2025-02-01 → 2026-09-30, 607 days (`adaptation_gaps.csv n_days`) |
-| Same metrics as Phase 2 | PARTIAL | WAPE, MAE, MASE, bias, pinball q10/q50/q90, coverage_80 and width_80 are present. Each is given raw and with rolling-12w conformal calibration, by zone group, horizon bucket (h01–06…h19–24) and subset (all / y_zero / y_pos). Two gaps: (a) no SeasonalNaive reference row, although Phase 2's DoD compares every model against it; (b) the MASE scale window is not what it claims to be (see Method sanity 4). |
-| WAPE and coverage per strategy × zone group × quarter | MET | `results/adaptation.csv`, `period` ∈ 2025Q1…2026Q3 at horizon_bucket=all. Note: 2025Q1 covers Feb–Mar only and is not labelled as such. |
-| Error-recovery curve: rolling 4-week WAPE, CBD, on the Phase-3 axes | PARTIAL | F5 top-left panel shows rolling 28-day CBD WAPE. Its x-axis starts 2025-02-28, not on the Phase-3 axes (2024-07-01 → 2026-09-30). It therefore has no pre-shock reference and no policy line, so it cannot show "recovery". |
-| Output `results/adaptation.csv` | MET | 13,440 rows |
-| Output `reports/figures/F5_adaptation.png` | MET (renders), defects below | 2024×1223 px, 200 dpi, plus SVG |
-| One paragraph recommending a strategy, with retraining cost vs gain | PARTIAL | `reports/analysis.md` §5 "Recommendation for the forecasting system" recommends S1 and cites `adaptation_summary.json → retrain_cost`. Problems: (i) "Chronos-2 … buys no accuracy over S1 except in the outer boroughs" is false: at airports S4 is distinguishably ahead of S1 (0.1749 vs 0.1790, gap −0.0041 [−0.0083, −0.000008], `adaptation_gaps.csv`). (ii) "One refit costs a median of 411 s" is wrong: 411.1 s is `wall_seconds`, which is refit plus a month of daily forecasts; the refit alone (`seconds`) has a median of 384.2 s. (iii) At aba8ccb the paragraph said the gain is "consistent". It is not: S0 beats S1 in 2025Q1 over all zones (0.1623 vs 0.1639) and in the CBD (0.1550 vs 0.1568). The uncommitted working-tree text already corrects this ("not in every quarter (S0 is ahead in 2025-Q1)"); it must be committed. |
+| Strategies S0, S1, S4, S6 | MET | `config/project.yaml → adapt.strategies`; 23 refits each for S1/S6 (`adaptation_refits.csv`); S1e sensitivity and SN reference added (`adapt.sensitivity`, `adapt.reference`) |
+| Evaluation window 2025-02 → 2026-09 | MET | `adaptation_summary.json → eval_window`; 607 days (`adaptation_gaps.csv n_days`) |
+| Same metrics as Phase 2 | MET | `adaptation.csv`: wape, mae, mase, bias, pinball q10/q50/q90, coverage_80, width_80, n_missing_forecast; raw and rolling-conformal; 5 zone groups × 5 horizon buckets × 3 subsets; 3,360 rows per strategy; one `n` per cell across strategies. SN reference: present. MASE scale now 2022-01-01 → 2024-12-31 as stated. |
+| WAPE and coverage per strategy × zone group × quarter | MET | `adaptation.csv`, period 2025Q1…2026Q3. The 2025Q1 = Feb–Mar rule is in DECISIONS and in the §5 table note. |
+| Recovery curve, rolling 4-week WAPE, CBD, Phase-3 axes | PARTIAL | F5 is now on 2024-07-01 → 2026-09-30 with the policy line on every panel. However, the S0 segment 2024-07 → 2024-12 is in-sample (see Figures 1). |
+| `results/adaptation.csv`, `F5_adaptation.png` | MET | `make verify PHASE=5` outputs PASS |
+| Recommendation paragraph citing the table (cost vs gain) | MET | `reports/analysis.md` §5. Every number traces (see Number trace). Airports, the refit vs month cost, 2025-Q1 and the S0 intervals are corrected. |
 
 ## Test output
 
 - `ruff check .` → `All checks passed!`
-- `make verify PHASE=5` → exit 0, runtime 1m31s:
+- `make verify PHASE=5` → exit 0 in 1m46s:
   - ruff PASS
-  - pytest PASS (all dots; 0 skipped)
+  - pytest PASS
   - no_skips PASS
   - dbt_test PASS (`PASS=62 WARN=0 ERROR=0 SKIP=0`)
-  - outputs PASS (all 7 files in `config/phase_outputs.yaml → 5` exist and are non-empty)
-- `pytest -q tests/test_leakage.py tests/test_phase6.py::test_channel_features_use_only_previous_days` → 24 passed.
-- Warnings are pyfixest/pandas `inplace` deprecations only.
+  - outputs PASS (7 files)
+- `pytest -q tests/test_leakage.py tests/test_adapt.py` → 26 passed.
 
 ## Number trace
 
-All numbers below were checked against the files named. Report = `reports/analysis.md` §5 and the executive summary item 4; README lines 19–21 and 89; F5 title; DECISIONS lines 269–272.
+Sources: `adaptation_summary.json` (AS), `adaptation_gaps.csv` (AG), `adaptation.csv` (AC), `figure_stats_phase5.json` (FS), `adaptation_refits.csv` (AR).
 
 | Number (where) | Source | OK |
 |---|---|---|
-| WAPE all: S0 0.164, S1 0.162, S4 0.165, S6 0.168 (report table, exec. summary, README) | `adaptation_summary.json → headline.*|all.wape` (0.16433, 0.16201, 0.16485, 0.16775) | yes |
-| WAPE CBD 0.154 / 0.151 / 0.154 / 0.157 | `headline.*|cbd.wape` | yes |
-| Bias −2.3 / −1.7 / −2.0 / −2.9 % (table, exec. summary, F5 title) | `bias_pct_of_pickups.*|all` | yes |
-| Coverage 0.81 / 0.80 / 0.80 / 0.80; "0.80–0.81" | `headline.*|all.coverage_80` (0.8122, 0.8045, 0.7995, 0.8027) | yes |
-| Raw coverage "0.74–0.78" | `adaptation.csv` raw coverage_80 all/all/all: 0.7441 (S4) … 0.7821 (S0) | yes |
-| S1 vs S0: 0.23 pp all, 0.29 pp CBD, both CIs exclude 0 | `adaptation_gaps.csv` all s1/s0 −0.002322 [−0.00361, −0.000864]; cbd −0.002895 [−0.004349, −0.001379] | yes |
-| Manhattan non-CBD S1 vs S0 not distinguishable | gaps −0.000892 [−0.00229, 0.000556] | yes |
-| S4 vs S0/S1 all not distinguishable | gaps 0.00052 [−0.0022, 0.0035]; 0.00284 [−0.000066, 0.0059] | yes |
-| S4 outer boroughs 0.395 vs 0.412 | `headline.s4|other` 0.39503, `s0|other` 0.41192 | yes |
-| S4 Manhattan non-CBD 0.147 vs 0.142, distinguishable | gaps 0.004933 [0.00166, 0.00848] | yes |
-| S6 distinguishably worse than S0 and S1 (all, CBD) | gaps all 0.00342 [0.00119, 0.00602]; cbd 0.002596 [0.000216, 0.00512]; vs S1 both > 0 | yes |
-| 2026-Q1 WAPE 0.187–0.191 | `adaptation.csv` raw wape all/2026Q1: 0.1869, 0.1868, 0.1883, 0.1908 | yes |
-| F5 title 16.2% / 16.4% / −2.9% / −2.3% / +0.3 pp | `figure_stats_phase5.json` (gap_vs_s0_all.s6 0.00342) | yes |
-| Median refit 411 s, 23 refits | `retrain_cost.s1` wall_seconds_median 411.1, n_refits 23 | number yes, **label wrong** (see DoD) |
-| Chronos median 250 s per month on an L4 | `retrain_cost.s4` 249.8, hardware "NVIDIA L4" (from `chronos_run.json → environment.gpu`) | yes |
-| README "166.1 / 137.4 min" | `adaptation_refits.csv` wall_seconds sums 9964.5 / 8242.8 s (`runtimes.json → adaptation_refits`) | yes |
-| "Chronos-2 … buys no accuracy over S1 except in the outer boroughs" | contradicted by `adaptation_gaps.csv` airports s4/s1 | **NO** |
-| "the gain over the frozen model is small but consistent" (aba8ccb) | contradicted by `adaptation.csv` 2025Q1 | **NO** (fixed in working tree, uncommitted) |
-| Commit message aba8ccb | no numbers | n/a |
+| WAPE all 0.164 / 0.162 / 0.165 / 0.168; CBD 0.154 / 0.151 / 0.154 / 0.157 (§5 table, exec. summary 4, README l.19) | AS headline | yes |
+| S1e 0.162 / 0.152 / −1.8% / 0.81; SN 0.237 / 0.223 / −0.1% / 0.81 (§5 table) | AS headline s1e, sn; bias_pct s1e\|all −1.79, sn\|all −0.15 | yes |
+| Bias −2.3 / −1.7 / −2.0 / −2.9% | AS bias_pct_of_pickups | yes |
+| Coverage 0.81 / 0.80 / 0.80 / 0.80; raw 0.74–0.78; 2025-Q1 0.80–0.82; S0 raw 0.78 → 0.81 | AC (0.8122, 0.8045, 0.7995, 0.8027; raw 0.7441…0.7821; Q1 0.8006…0.8183) | yes |
+| MASE S0 1.40, SN 1.89; "beats naive by about 7 pp" | AS headline mase; AG sn gaps 6.92–7.51 pp | yes |
+| S1 vs S0 0.23 pp all, 0.29 pp CBD, CIs exclude 0; Manhattan non-CBD not distinguishable | AG | yes |
+| Retraining effect 0.24 pp [−0.36, −0.14]; window effect 0.01 pp [−0.08, +0.11] | AG all s1e/s0, s1/s1e; FS | yes |
+| S4 outer boroughs 0.395 vs S1 0.403 vs S0 0.412; airports 0.175 vs 0.179 (excludes 0); Manhattan non-CBD 0.147 vs 0.142, distinguishably behind S0 and S1 | AS, AG | yes |
+| 2026-Q1 WAPE 0.187–0.191 | AC raw 2026Q1 (0.1868…0.1908) | yes |
+| S0 ahead in 2025-Q1 | AC 0.1623 vs 0.1639 | yes |
+| Refit median 384 s, month 411 s, 23 refits; S1e 720 s, "about twice" (1.87×); Chronos 250 s/month on an L4 | AS retrain_cost | yes |
+| F5 title 16.2% / 16.4% / −2.9% / −2.3%; note 16.19% / 16.20% / 23.7% | FS | yes |
+| README l.89 "166.1 / 137.4 min" | AR wall_seconds sums 9964.5 / 8242.8 s | yes, but S1e is missing (see fix 4) |
+| DECISIONS l.276 S1e/SN results, 4,065,925 / 4,142,557 rows | AS, AG, AR rows_boost | yes |
+| Commit 4c46b7f message | no numbers | n/a |
+
+No untraceable numbers.
 
 ## Method sanity
 
-1. **Leakage.** `tests/test_leakage.py` poisons every pickup at or after the origin (1e6 and NaN) and asserts bit-identical forecasts for SeasonalNaive, ETS and LightGBM, with and without early stopping. It includes power checks and is not a placeholder. `tests/test_phase6.py::test_channel_features_use_only_previous_days` poisons the channel table from day D and checks that the S6 features for day D are unchanged. It tests the helper only. No test runs `GlobalLGBMQuantile(extra=…)` end to end through `run_backtest` with a poisoned channel table.
-2. **Short lags.** `grep lag_1|shift(1)|rolling(4)`:
-   - `src/taxi_shock/adapt.py:30–36` and `features.py:65–78` use `shift(1)` on **daily**, date-reindexed frames, i.e. 1 day = 24 h, which is ≥ min_lag for a 00:00 origin. OK.
-   - No `lag_1` or `rolling(4)` anywhere.
-3. **Identical evaluation sets.** `n` has one unique value per (group, bucket, subset, period, metric) across strategies, and `n_missing_forecast` = 0 everywhere.
-   - 1,500,298 = 607 days × 24 h × 103 zones − 2 spring-forward hours × 103. This is consistent.
-   - S0 and S4 WAPE over the window match the Phase-3 `shock_errors.csv` daily rows to 4 d.p.
-4. **MASE scale is not the stated window.**
-   - `adaptation_summary.json → mase_scale` and DECISIONS line 269 say the scale is the seasonal-naive MAE "2022-01-01 → 2024-12-31".
-   - `evaluate_all` computes it from the panel returned by `load_inputs`, which starts at `run_start − 24 months − feature_history_days` = 2022-09-27. Residuals therefore start 2022-10-04, and `res[res.hour_ts >= model_start]` is a no-op.
-   - Rankings are unaffected (the scale is common to all strategies), but the recorded claim is false.
-5. **S1 vs S0 mixes two changes.** S1 differs from S0 in refit frequency (monthly vs once) **and** in training window (sliding 24 m vs expanding from 2022-01-01).
-   - Phase 2 already measured a window effect in 2024 with both on monthly refits: LightGBM WAPE all zones sliding_24m 0.1664 vs expanding 0.1675 (`results/forecast_summary.json → wape_by_zone_group`). That is 0.11 pp, about half of the 0.23 pp S1–S0 gap.
-   - The recommendation "retrain monthly" attributes the whole gap to retraining. That is not supported until an expanding-window monthly refit is run or the confound is stated.
-6. **No naive reference.** No 2025–26 SeasonalNaive row in `adaptation.csv` or in the report table.
-   - The number exists: seasonal naive (frozen), 2025-02-01 → 2026-09-30, WAPE 0.2370 over all zones, computed by me from `results/shock_errors.csv` window_days = 1 rows. So every strategy beats it by about 7 pp.
-   - It must be reported, not left implicit. MASE > 1 over all zones (1.28–1.31) will otherwise read as "worse than naive". It is not: the MASE scale is in-sample 2022–24 and post-2025 outer-borough demand grew.
-7. **S0 intervals are not frozen.** The "frozen" S0 has rolling 12-week conformal calibration, so its intervals adapt even though its point forecasts do not. The report table header says "rolling conformal" but never states that this is an adaptation applied to S0 as well. Raw S0 coverage is 0.782; calibrated it is 0.812.
-8. **Pre-registered expectation.** The D6 expectation "S6 removes most of the post-2025 bias" failed: S6 bias −2.9% vs S0 −2.3%. This is reported as found, with no tuning afterwards. Good.
+1. **Leakage.**
+   - `tests/test_leakage.py` poisons every pickup from the origin onwards (1e6 and NaN) and asserts unchanged SN/ETS/LGBM forecasts.
+   - The new `tests/test_adapt.py` runs LightGBM with the channel features through `run_backtest` with the channel table poisoned from the origin day (1e6 and 0). The forecasts are identical. Its power check (shuffled pre-origin shares) changes them.
+   - Targets are the hours 0–23 of the origin day (`backtest.py:73–77`), so the day-keyed channel features never reach day D.
+2. **Short lags.** `grep lag_1|shift(1)|rolling(4)` finds `shift(1)` only on daily, date-reindexed frames (`adapt.py:38–45`, `features.py:65–78`), i.e. 24 h. There is no `lag_1` and no `rolling(4)`.
+3. **S1e isolates retraining.** It matches S0 exactly in January 2025 (Verdict). The window effect is not distinguishable overall. Not stated in the report: S1e is ahead of S1 by 0.5 pp in 2026-Q1 (0.1818 vs 0.1868, AC), and S1 is ahead in 2025-Q4 (0.1532 vs 0.1550). That is acceptable because the report claims only the overall result.
+4. **S0 conformal calibrated partly on in-sample residuals (new).**
+   - `08_adapt.py::evaluate_all` calls `rolling_conformal(fc, …)` on `data/forecasts/frozen/lgbm_quantile.parquet`, whose origins start 2024-07-01.
+   - For eval origins 2025-02-01 → 2025-03-25, the trailing 12-week calibration window starts between 2024-11-09 and 2024-12-31. It therefore contains frozen-model residuals on days the model was trained on: boosted on through 2024-12-03, early-stopped on 2024-12-04 → 12-31 (`frozen_model.json → fit`).
+   - DECISIONS line 193 (Phase 3) rejected exactly this ("would understate normal error"). Phase 3 used the out-of-sample `monitored` series (`data/forecasts/lgbm_quantile__expanding__test.parquet`) before 2025-01-01.
+   - Observed S0 2025-Q1 calibrated coverage is 0.8125 (AC), so the effect may be small. It is unmeasured and undocumented.
+5. **SN reference has 206 missing forecasts.**
+   - `n_missing_forecast` = 206 for `sn` (AC). These are the lag-168 targets 2025-03-16 02:00 and 2026-03-15 02:00 × 103 zones, which point at the non-existent spring-forward hour.
+   - `metrics.py` drops NaN pairs, so SN is scored on 1,500,092 hours while `n` says 1,500,298.
+   - In `adaptation_daily.csv` those rows add `y` but no error. As a result, SN WAPE recomputed from the daily file is 0.236957 vs the headline 0.236985, and SN `bias_pct_of_pickups` is diluted the same way.
+   - The size is immaterial, but the rule is unrecorded, and DECISIONS line 272 says no Phase-5 row has a missing forecast.
+6. **Pre-registered D6 expectation failed** (S6 bias −2.9% vs S0 −2.3%). It is reported as found, with no tuning. Fine.
 
 ## Figures
 
-`reports/figures/F5_adaptation.png` (10.1 × 6.1 in, small-multiples size):
-- **No policy line, and not on the Phase-3 axes.** PLAN Phase 5 asks for the recovery curve "on the Phase-3 axes" (2024-07-01 → 2026-09-30). PLAN §7 asks for `policy_line` on every time axis.
-  - `f5_adaptation` never calls `policy_line`, and the data start 2025-02-01, so the helper would skip it anyway.
-  - The forecasts needed exist: S0 from 2024-07, S4 from 2024-01, S1/S6 from 2024-11 (`adapt.run_start`). Only `adaptation_daily.csv` is cut at the evaluation window.
-- **Title.** "After congestion pricing, …" anchors the period to the policy. Under Amendment 5, Phase 5 is "forecasting through the shift" (app dispatch), and Phase 3 found no CBD-specific break. Opening with the policy invites the causal reading Amendment 5 forbids. State the date range instead. The title also wraps to three lines; shorten it.
-- **Colour.** S0 is drawn in `PALETTE["non_cbd"]` (#8A8F98) inside a panel titled "CBD zones", which reuses the non-CBD semantic colour for a strategy. Use `PALETTE["baseline"]` for the frozen reference, or record why not.
-- **Otherwise fine.**
-  - Axis labels carry units ("WAPE, 4-week (%)", "Bias, 4-week (%)").
-  - Direct labels are used, with no legend.
-  - The zero line is on the bias panels.
-  - The WAPE y-axes are not zero-based, which is acceptable for line plots of a rate.
-  - Readable at 7 in.
+`reports/figures/F5_adaptation.png` (2051×1223 px, 10.3 × 6.1 in at 200 dpi, small-multiples size):
+1. **The S0 line before 2025-01-01 is in-sample.**
+   - In the CBD WAPE panel, S0 runs at ≈12–14% in Jul–Nov 2024 against ≈14–16% for S4. That gap is training-set fit, not forecast skill. The figure reads as "the frozen model was best until the policy, then lost its edge", which is a manufactured break.
+   - The note says only "S0 … from 2024-07"; nothing marks the segment as in-sample.
+   - F3 handled the same overlap with the `monitored` series (DECISIONS line 193).
+2. **Annotation collision.** "before the evaluation window" (bottom-left panel) is struck through by the policy line, which sits inside the shaded band. Shorten the text or move it.
+3. **Otherwise OK.**
+   - The policy line is on all four panels.
+   - Phase-3 x-range.
+   - S0 is drawn in `PALETTE["baseline"]`.
+   - Units on the y-labels.
+   - Direct labels, no legend.
+   - Zero line on the bias panels.
+   - Two-line title stating a finding the results support, with no causal anchoring to the policy.
+   - Readable at 7 in.
 
 ## Decisions check
 
 | Rule in code | DECISIONS line | Status |
 |---|---|---|
-| `adapt.run_start` 2024-11-01 (12-week conformal warm-up) | 269 | OK |
-| `adapt.window` sliding_24m | 269 | OK |
-| `adapt.scale_end`, common MASE scale | 269 | **wrong start date** (see Method sanity 4) |
-| `adapt.rolling_days` 28 | PLAN ("rolling 4-week") | OK |
-| S6 windows 7 d / 28 d zone, 7 d citywide | 269 | documented, but **hard-coded** in `src/taxi_shock/adapt.py` (CLAUDE.md: no thresholds in code) |
-| S6 features NaN until the window is fully covered (`min_periods=k`); missing zone-days filled with 0 app / 0 total | none | **missing** |
-| S4 primary variant `weather_past` | 269 | OK |
-| Bias % definition, cost sources | 270 | OK |
-| Bootstrap 2,000 reps, 7-day blocks | 269 | OK |
-| Quarter assigned by origin date; 2025Q1 = Feb–Mar only | none | **missing** |
-| S0 receives rolling conformal (intervals adapt, point frozen) | none | **missing** |
-| `retrain_cost` hardware string "local CPU, 12 cores" | none | hard-coded literal; should come from `results/machine_resources.json` |
+| `adapt.windows` (s1/s6 sliding_24m, s1e expanding), `sensitivity`, `reference` | 274 | OK |
+| `channel_windows_days` [7, 28], `city_window_days` 7 (now in config) | 274 | OK |
+| MASE scale from `model_start` | 274 | OK |
+| S6 NaN rule, quarter assignment, S0 adaptive intervals | 275 (fix 8) | OK |
+| `retrain_cost` hardware from `machine_resources.json`; refit vs month seconds | 274 | OK |
+| S1e above the ~4M-row guideline, kept | 276 | OK |
+| S0 conformal calibrated on in-sample residuals for origins to 2025-03-25 | none | **missing** (and contradicts line 193) |
+| F5 S0 segment 2024-07 → 2024-12 in-sample | none | **missing** |
+| SN: 206 spring-forward lag-168 hours without a forecast, dropped pairwise; `n` counts them | none (line 272 says 0 missing) | **missing** |
 
 ## Fix list
 
-1. In `src/taxi_shock/viz/figures.py::f5_adaptation`, `scripts/09_figures.py::phase5` and `scripts/08_adapt.py::evaluate_all`, put F5 on the Phase-3 axes (2024-07-01 → 2026-09-30) with `policy_line` on every panel. Write daily errors for each strategy from its first available origin (S0 2024-07-01, S4 2024-07-01, S1/S6 2024-11-01) to a separate pre-window file or column, and shade or mark the evaluation window start (2025-02-01). Keep all metrics on the 2025-02-01 window.
-2. In `scripts/09_figures.py::phase5`, replace "After congestion pricing" in the F5 title with the date range ("Feb 2025 – Sep 2026"), shorten the title to at most two lines, and draw S0 in `PALETTE["baseline"]` (or record the colour choice in `DECISIONS.md`).
-3. In `reports/analysis.md` §5 (recommendation paragraph), correct "buys no accuracy over S1 except in the outer boroughs": S4 is also distinguishably ahead at airports (0.1749 vs 0.1790, `adaptation_gaps.csv`). Correct "One refit costs a median of 411 s" to say 411 s is a month of S1 (refit plus daily forecasts) and that the refit alone has a median of 384.2 s (`adaptation_refits.csv → seconds`). Add `seconds_median` to `retrain_cost` in `scripts/08_adapt.py` so the number has a results source. Commit the already-drafted "not in every quarter (S0 is ahead in 2025-Q1)" correction.
-4. In `scripts/08_adapt.py`, separate retraining from the window change. Preferred: run S1 with `window: expanding` as a labelled sensitivity (`s1e`, monthly refits, same run_start) and add it to `adaptation.csv` / `adaptation_gaps.csv`. If that run is not done, `reports/analysis.md` §5 must state that S1 changes both refit frequency and window, quote the Phase-2 window gap (0.1664 vs 0.1675, `forecast_summary.json`), and drop the attribution of the S1–S0 gap to retraining alone. Record the choice in `DECISIONS.md`.
-5. In `scripts/08_adapt.py::evaluate_all`, compute the MASE scale over `data.model_start` → `adapt.scale_end` as recorded: load the panel from `model_start − 7 days` for the scale. Regenerate `adaptation.csv` and `adaptation_summary.json`. Otherwise, correct the `mase_scale` string and DECISIONS line 269 to the actual 2022-10-04 → 2024-12-31 window.
-6. In `scripts/08_adapt.py`, add a SeasonalNaive reference (the frozen Phase-3 seasonal naive, or the lag-168 naive) to `adaptation.csv`, the daily file and `adaptation_gaps.csv`, with the same metrics. Add its WAPE row to the §5 table in `reports/analysis.md`.
-7. In `config/project.yaml` (`adapt.channel_windows_days`, `adapt.city_window_days`) and `src/taxi_shock/adapt.py`, move the 7/28/7-day channel windows out of code.
-8. In `DECISIONS.md`, add lines for: S6 features are NaN until the window is fully covered and missing zone-days count as 0 app / 0 total; quarters are assigned by origin date and 2025Q1 covers 2025-02-01 → 03-31 only; S0's intervals are recalibrated by the rolling 12-week conformal (point forecasts frozen, intervals adaptive), with raw S0 coverage 0.782 → calibrated 0.812 (`adaptation.csv`). State the 2025Q1 coverage in the `reports/analysis.md` §5 table note as well.
-9. In `tests/test_phase6.py` (or a new `tests/test_adapt.py`), add an end-to-end S6 leakage test: build `GlobalLGBMQuantile(..., extra=channel_feature_fn(channel_table(d)), extra_cols=CHANNEL_FEATURES)` on the synthetic panel, run `run_backtest` for one origin with the channel table clean and with it poisoned from the origin day on, and assert identical forecasts. Add a power check that poisoning earlier days changes them.
-10. In `scripts/08_adapt.py::retrain_cost`, read the hardware description from `results/machine_resources.json` instead of the literal "local CPU, 12 cores".
+1. In `scripts/08_adapt.py::load_strategy` / `evaluate_all`, take S0 forecasts before 2025-01-01 from the out-of-sample Phase-2 expanding backtest (`data/forecasts/lgbm_quantile__expanding__test.parquet`, the Phase-3 `monitored` series), so that both the rolling-conformal calibration and F5 use out-of-sample residuals, as Phase 3 does. Then rerun `--evaluate` and `scripts/09_figures.py`.
+   - If you keep the frozen in-sample rows instead, you must do two things. First, draw the S0 pre-2025 segment visibly different (lighter or dashed) in `src/taxi_shock/viz/figures.py::f5_adaptation` and label it "in-sample" in the note. Second, report S0's 2025-02-01 → 03-25 calibrated coverage under both calibrations in `DECISIONS.md`.
+2. In `src/taxi_shock/viz/figures.py::f5_adaptation`, stop the policy line striking through the "before the evaluation window" annotation (shorter text, two lines, or placed at the top of the band).
+3. In `DECISIONS.md`, add a line recording the following, with the source files:
+   - The SN reference has 206 missing forecasts (lag-168 into the spring-forward hour; targets 2025-03-16 02:00 and 2026-03-15 02:00).
+   - Metrics drop those pairs, while `n` in `adaptation.csv` counts them.
+   - The daily file therefore gives SN WAPE 0.236957 vs the headline 0.236985.
+   - Amend line 272's "no missing forecast" to "no strategy".
+   - Also exclude rows with a NaN `point` from the `adaptation_daily.csv` sums in `scripts/08_adapt.py::evaluate_all`, so the daily file and the headline agree.
+4. In `README.md`, add S1e to the `adapt` target description (l.68) and to the runtime table (l.89). Rerun `scripts/20_runtimes.py`: `results/runtimes.json` was generated 2026-11-13 12:20 UTC, before the S1e refits finished, and has no S1e entry.
 
 ## Escalation reasons
 
-None.
+None. This is fix round 2. Fixes 1–4 are inside the plan. If the same defects survive the next round, the CLAUDE.md rule converts the outcome to ESCALATE.
 
 ## Amendments made
 
-None. PLAN already specifies the Phase-3 axes for F5, and the S1 window (sliding 24 m) stays as written. Fix 4 adds a sensitivity run; it does not change S1.
+None.

@@ -65,7 +65,7 @@ uses `memory_limit = 5GB`, 10 threads.
 | `channel` | Amendment 4 / 4a: label validation D0 (`10a`), CMT contracted block (`10b`), channel decomposition D1 (`10c`), incrementality D2 (`12`), Lyft entry D3 (`13`), by-channel DiD D5 (`14`), app-share step D5b (`15`), cross-platform D4 (`17`), experiment design (`19`) |
 | `fhv` | C6: congestion pricing and FHV demand, pre-trend gate first (`16`) |
 | `lyft-refresh` | D3: re-download, rebuild and re-estimate once later TLC months are added to the config |
-| `adapt` | Phase 5: S1 / S6 monthly refits (resumable per month), then evaluation of S0, S1, S4, S6 (`08`) |
+| `adapt` | Phase 5: S1 / S6 monthly refits and the S1e sensitivity (S1 on an expanding window), resumable per month; then evaluation of S0, S1, S4, S6, S1e and the seasonal-naive reference (`08`) |
 | `figures` | every figure, from `results/` only (`09`) |
 | `tableau-extract` | E2: CSV / GeoJSON extracts for the dashboard (`18`) |
 | `report` | runtimes (`20` → `results/runtimes.json`), dashboard extracts, dead-link check of README and report (`21`) |
@@ -86,7 +86,7 @@ From [runtimes.json](results/runtimes.json) (`measured` = compute time the pipel
 | Seasonal-naive and statistical backtests (Phase 2) | 78.6 min wall |
 | Chronos-2 inference, 2024-01 → 2026-09 daily origins, two variants (Colab L4) | 269.8 min |
 | Frozen-model fit (Phase 3) | 9.3 min |
-| Phase 5 monthly refits, 23 per strategy (S1 / S6) | 166.1 / 137.4 min |
+| Phase 5 monthly refits, 23 per strategy (S1 / S6 / S1e) | 166.1 / 137.4 / 301.7 min |
 | Incrementality DML with 25 repetitions (D2) | 3.4 min wall |
 
 The raw download and the HVFHV stream ran over several resumed sessions and have no single

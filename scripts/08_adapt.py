@@ -151,6 +151,16 @@ def load_strategy(cfg: dict, s: str, panel: pd.DataFrame) -> pd.DataFrame:
     if s in ("s0", "sn"):
         name = "lgbm_quantile" if s == "s0" else "seasonal_naive"
         fc = pd.read_parquet(path("forecasts", cfg) / "frozen" / f"{name}.parquet")
+        if s == "s0":
+            # the frozen LightGBM is in-sample before shock.monitor_start (trained through
+            # shock.frozen_train_end): there S0 is the Phase-2 out-of-sample backtest, as the
+            # Phase-3 `monitored` series (DECISIONS [P3]); it feeds the S0 rolling-conformal
+            # residuals of the first evaluation weeks and the shaded part of F5
+            mon = pd.Timestamp(cfg["shock"]["monitor_start"])
+            bt = pd.read_parquet(path("forecasts", cfg) / "lgbm_quantile__expanding__test.parquet")
+            lo = pd.Timestamp(cfg["shock"]["forecast_window"][0])
+            bt = bt[(bt["origin"] >= lo) & (bt["origin"] < mon)]
+            fc = pd.concat([bt[KEEP], fc.loc[fc["origin"] >= mon, KEEP]], ignore_index=True)
     elif s == "s4":
         v = cfg["chronos"]["primary_variant"]
         res = path("results", cfg)
@@ -238,7 +248,10 @@ def evaluate_all(cfg: dict) -> None:
         boot.append(daily_errors(raw, groups).assign(model=s))
         # daily errors from the strategy's first origin on the Phase-3 axes (figure only);
         # every metric above stays on the evaluation window
-        full = fc[(fc["origin"] >= fig_lo) & (fc["origin"] <= hi) & fc["y"].notna()]
+        # rows with an actual and a forecast, as in every metric (the seasonal naive has no
+        # forecast where lag 168 h is the missing spring-forward hour)
+        full = fc[(fc["origin"] >= fig_lo) & (fc["origin"] <= hi) & fc["y"].notna()
+                  & fc["point"].notna()]
         dd = full.assign(zone_group=full["zone_id"].map(groups),
                          day=full["target_ts"].dt.normalize(),
                          abs_err=(full["y"] - full["point"]).abs(), err=full["point"] - full["y"],

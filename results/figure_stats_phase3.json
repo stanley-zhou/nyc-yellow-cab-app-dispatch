@@ -16,7 +16,8 @@
       "side": "up",
       "delay_days": 14
     },
-    "rolling_bias": null
+    "rolling_bias": null,
+    "cusum_calibration_alarms": []
   },
   "non_cbd": {
     "wape_last_pre_window": 0.2061,
@@ -29,5 +30,5 @@
     },
     "rolling_bias": null
   },
-  "title": "First four weeks of congestion pricing: CBD pickups 6.3% above the frozen forecast, non-CBD 5.3% above; CUSUM alarm for the CBD after 14 days"
+  "title": "No CBD-specific break: in the first four weeks of congestion pricing CBD pickups ran 6.3% above the frozen forecast, non-CBD 5.3% above"
 }
