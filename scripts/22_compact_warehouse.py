@@ -35,7 +35,9 @@ from taxi_shock.io import connect
 LOG = logging.getLogger("compact")
 
 
-def inventory(con: duckdb.DuckDBPyConnection, db: str = "main") -> dict[str, str]:
+def inventory(con: duckdb.DuckDBPyConnection, db: str) -> dict[str, str]:
+    """Objects of schema main in catalog `db` (a file-backed database's catalog is named after
+    the file stem, not "main")."""
     rows = con.execute("select table_name, table_type from information_schema.tables "
                        "where table_catalog = ? and table_schema = 'main'", [db]).fetchall()
     return dict(rows)
@@ -46,6 +48,37 @@ def size(con: duckdb.DuckDBPyConnection, db: str) -> dict:
                     "pragma_database_size() where database_name = ?", [db]).fetchone()
     return dict(zip(("database_size", "total_blocks", "used_blocks", "free_blocks"), r,
                     strict=True))
+
+
+def compact_into(con: duckdb.DuckDBPyConnection, db: str, nodes: set[str], new
+                 ) -> tuple[dict, dict, dict, dict, dict, bool]:
+    """Drop the objects of `db` that are not in `nodes`, copy the rest into the file `new` and
+    verify the copy: same object set, same row count in every table."""
+    before = size(con, db)
+    objs = inventory(con, db)
+    if not objs:
+        raise SystemExit(f"no objects found in catalog {db!r}; refusing")
+    stale = {k: v for k, v in objs.items() if k not in nodes}
+    for name, kind in stale.items():
+        LOG.info("dropping stale %s %s (not a dbt node)", kind, name)
+        con.execute(f'drop {"view" if kind == "VIEW" else "table"} "{db}"."{name}"')
+    con.execute(f"attach '{new}' as fresh")
+    con.execute(f'copy from database "{db}" to fresh')
+    con.execute("checkpoint fresh")
+    after = size(con, "fresh")
+    live = inventory(con, db)
+    copied = inventory(con, "fresh")
+    counts = {}
+    for name, kind in live.items():
+        if kind != "BASE TABLE":
+            continue
+        a = con.execute(f'select count(*) from "{db}"."{name}"').fetchone()[0]
+        b = con.execute(f'select count(*) from fresh."{name}"').fetchone()[0]
+        counts[name] = {"rows": int(a), "rows_copy": int(b)}
+    con.execute("detach fresh")
+    ok = (copied == live and bool(counts)
+          and all(v["rows"] == v["rows_copy"] for v in counts.values()))
+    return stale, before, after, counts, live, ok
 
 
 def main() -> None:
@@ -78,28 +111,7 @@ def main() -> None:
     if new.exists():
         new.unlink()            # a leftover partial copy of this script (regenerable)
     with connect(wh, read_only=False, cfg=cfg) as con:
-        before = size(con, wh.stem)
-        objs = inventory(con)
-        stale = {k: v for k, v in objs.items() if k not in nodes}
-        for name, kind in stale.items():
-            LOG.info("dropping stale %s %s (not a dbt node)", kind, name)
-            con.execute(f'drop {"view" if kind == "VIEW" else "table"} "{name}"')
-        con.execute(f"attach '{new}' as fresh")
-        con.execute(f'copy from database "{wh.stem}" to fresh')
-        con.execute("checkpoint fresh")
-        after = size(con, "fresh")
-        live = inventory(con)
-        copied = inventory(con, "fresh")
-        counts = {}
-        for name, kind in live.items():
-            if kind != "BASE TABLE":
-                continue
-            a = con.execute(f'select count(*) from "{wh.stem}"."{name}"').fetchone()[0]
-            b = con.execute(f'select count(*) from fresh."{name}"').fetchone()[0]
-            counts[name] = {"rows": int(a), "rows_copy": int(b)}
-        con.execute("detach fresh")
-    ok = (set(copied) == set(live)
-          and all(v["rows"] == v["rows_copy"] for v in counts.values()))
+        stale, before, after, counts, live, ok = compact_into(con, wh.stem, nodes, new)
     rec = {"generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
            "method": "drop objects that are not dbt nodes, then ATTACH + COPY FROM DATABASE "
                      "into a fresh file",

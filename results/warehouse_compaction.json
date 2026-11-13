@@ -1,0 +1,123 @@
+{
+  "generated_utc": "2026-11-13T18:31:40+00:00",
+  "method": "drop objects that are not dbt nodes, then ATTACH + COPY FROM DATABASE into a fresh file",
+  "stale_objects_dropped": {
+    "int_trips_gridded": "VIEW"
+  },
+  "before": {
+    "database_size": "17.0 GiB",
+    "total_blocks": 69686,
+    "used_blocks": 34537,
+    "free_blocks": 35149
+  },
+  "after": {
+    "database_size": "7.9 GiB",
+    "total_blocks": 32670,
+    "used_blocks": 32152,
+    "free_blocks": 518
+  },
+  "tables": {
+    "dim_zones": {
+      "rows": 263,
+      "rows_copy": 263
+    },
+    "fct_daily_zone_channel": {
+      "rows": 1744619,
+      "rows_copy": 1744619
+    },
+    "fct_daily_zone_panel": {
+      "rows": 744290,
+      "rows_copy": 744290
+    },
+    "fct_data_quality_monthly": {
+      "rows": 93,
+      "rows_copy": 93
+    },
+    "fct_hourly_zone_demand": {
+      "rows": 17860856,
+      "rows_copy": 17860856
+    },
+    "fct_weekly_pair_speed": {
+      "rows": 8173372,
+      "rows_copy": 8173372
+    },
+    "fct_weekly_zone_channel": {
+      "rows": 352748,
+      "rows_copy": 352748
+    },
+    "fct_weekly_zone_panel": {
+      "rows": 106515,
+      "rows_copy": 106515
+    },
+    "fct_weekly_zone_trip_stats": {
+      "rows": 100425,
+      "rows_copy": 100425
+    },
+    "fct_weekly_zone_vendor": {
+      "rows": 214063,
+      "rows_copy": 214063
+    },
+    "features_demand": {
+      "rows": 17860856,
+      "rows_copy": 17860856
+    },
+    "holidays_ny": {
+      "rows": 122,
+      "rows_copy": 122
+    },
+    "int_distance_terciles": {
+      "rows": 1,
+      "rows_copy": 1
+    },
+    "int_fare_terciles": {
+      "rows": 1,
+      "rows_copy": 1
+    },
+    "int_grid_misses": {
+      "rows": 34,
+      "rows_copy": 34
+    },
+    "int_hourly_dropoffs": {
+      "rows": 11358258,
+      "rows_copy": 11358258
+    },
+    "int_hourly_pickups": {
+      "rows": 7965515,
+      "rows_copy": 7965515
+    },
+    "int_hours": {
+      "rows": 67912,
+      "rows_copy": 67912
+    },
+    "int_speed_terciles": {
+      "rows": 1,
+      "rows_copy": 1
+    },
+    "int_trips_flagged": {
+      "rows": 341576874,
+      "rows_copy": 341576874
+    },
+    "int_zone_cbd_fee_share": {
+      "rows": 260,
+      "rows_copy": 260
+    },
+    "int_zone_day_trips": {
+      "rows": 638846,
+      "rows_copy": 638846
+    }
+  },
+  "views": [
+    "int_hour_grid",
+    "int_speed_trips",
+    "int_trips_valid",
+    "int_weather_overlap",
+    "int_weather_selected",
+    "stg_weather",
+    "stg_yellow_trips",
+    "stg_zones"
+  ],
+  "verified": true,
+  "swapped": true,
+  "old_file": "warehouse.duckdb.pre_compaction",
+  "old_file_deleted_utc": "2026-11-13T18:33:54+00:00"
+}
