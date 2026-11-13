@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-12T00:24:28+00:00",
+  "generated_utc": "2026-11-13T18:19:09+00:00",
   "policy_date": "2025-01-05",
   "primary": {
     "model": "lgbm_quantile",
@@ -26,6 +26,25 @@
           "h": 9.15,
           "h_rule": "smallest h on the grid [0.5, 30.0, 0.05] with <= 1 alarm(s) over the calibration period",
           "false_alarms_in_calibration": 1,
+          "calibration_alarms": [
+            {
+              "date": "2024-09-10",
+              "side": "up"
+            }
+          ],
+          "calibration_alarms_one_grid_step_below_h": {
+            "h": 9.1,
+            "alarms": [
+              {
+                "date": "2024-09-10",
+                "side": "up"
+              },
+              {
+                "date": "2024-12-01",
+                "side": "down"
+              }
+            ]
+          },
           "first_alarm_on_or_after_policy": {
             "date": "2025-01-19",
             "side": "up",
@@ -52,10 +71,37 @@
           "n_sigma": 2.0,
           "consecutive_days": 7,
           "false_alarms_in_calibration": 0,
+          "reading": "daily z (pre-registered, primary)",
           "first_alarm_on_or_after_policy": null,
           "alarms_before_policy": [],
           "n_alarms_monitoring": 0,
           "alarms": []
+        },
+        "rolling_bias_rolling_mean": {
+          "reading": "trailing 7-day mean of z, standardized by its own calibration-period sd (review fix 2; secondary)",
+          "rolling_mean_sd_calibration": 0.568935,
+          "n_sigma": 2.0,
+          "consecutive_days": 7,
+          "false_alarms_in_calibration": 1,
+          "calibration_alarms": [
+            {
+              "date": "2024-09-12",
+              "side": "up"
+            }
+          ],
+          "first_alarm_on_or_after_policy": {
+            "date": "2026-03-01",
+            "side": "down",
+            "delay_days": 420
+          },
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 1,
+          "alarms": [
+            {
+              "date": "2026-03-01",
+              "side": "down"
+            }
+          ]
         }
       },
       "non_cbd": {
@@ -78,6 +124,25 @@
           "h": 8.35,
           "h_rule": "smallest h on the grid [0.5, 30.0, 0.05] with <= 1 alarm(s) over the calibration period",
           "false_alarms_in_calibration": 1,
+          "calibration_alarms": [
+            {
+              "date": "2024-09-06",
+              "side": "up"
+            }
+          ],
+          "calibration_alarms_one_grid_step_below_h": {
+            "h": 8.3,
+            "alarms": [
+              {
+                "date": "2024-09-06",
+                "side": "up"
+              },
+              {
+                "date": "2024-12-01",
+                "side": "down"
+              }
+            ]
+          },
           "first_alarm_on_or_after_policy": {
             "date": "2026-01-25",
             "side": "down",
@@ -100,10 +165,41 @@
           "n_sigma": 2.0,
           "consecutive_days": 7,
           "false_alarms_in_calibration": 0,
+          "reading": "daily z (pre-registered, primary)",
           "first_alarm_on_or_after_policy": null,
           "alarms_before_policy": [],
           "n_alarms_monitoring": 0,
           "alarms": []
+        },
+        "rolling_bias_rolling_mean": {
+          "reading": "trailing 7-day mean of z, standardized by its own calibration-period sd (review fix 2; secondary)",
+          "rolling_mean_sd_calibration": 0.603633,
+          "n_sigma": 2.0,
+          "consecutive_days": 7,
+          "false_alarms_in_calibration": 1,
+          "calibration_alarms": [
+            {
+              "date": "2024-09-09",
+              "side": "up"
+            }
+          ],
+          "first_alarm_on_or_after_policy": {
+            "date": "2026-01-31",
+            "side": "down",
+            "delay_days": 391
+          },
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 2,
+          "alarms": [
+            {
+              "date": "2026-01-31",
+              "side": "down"
+            },
+            {
+              "date": "2026-03-01",
+              "side": "down"
+            }
+          ]
         }
       }
     }
@@ -132,6 +228,25 @@
           "h": 8.45,
           "h_rule": "smallest h on the grid [0.5, 30.0, 0.05] with <= 1 alarm(s) over the calibration period",
           "false_alarms_in_calibration": 1,
+          "calibration_alarms": [
+            {
+              "date": "2024-07-05",
+              "side": "down"
+            }
+          ],
+          "calibration_alarms_one_grid_step_below_h": {
+            "h": 8.4,
+            "alarms": [
+              {
+                "date": "2024-07-05",
+                "side": "down"
+              },
+              {
+                "date": "2024-12-25",
+                "side": "down"
+              }
+            ]
+          },
           "first_alarm_on_or_after_policy": {
             "date": "2025-12-25",
             "side": "down",
@@ -158,10 +273,37 @@
           "n_sigma": 2.0,
           "consecutive_days": 7,
           "false_alarms_in_calibration": 0,
+          "reading": "daily z (pre-registered, primary)",
           "first_alarm_on_or_after_policy": null,
           "alarms_before_policy": [],
           "n_alarms_monitoring": 0,
           "alarms": []
+        },
+        "rolling_bias_rolling_mean": {
+          "reading": "trailing 7-day mean of z, standardized by its own calibration-period sd (review fix 2; secondary)",
+          "rolling_mean_sd_calibration": 0.459215,
+          "n_sigma": 2.0,
+          "consecutive_days": 7,
+          "false_alarms_in_calibration": 1,
+          "calibration_alarms": [
+            {
+              "date": "2024-12-30",
+              "side": "down"
+            }
+          ],
+          "first_alarm_on_or_after_policy": {
+            "date": "2025-12-29",
+            "side": "down",
+            "delay_days": 358
+          },
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 1,
+          "alarms": [
+            {
+              "date": "2025-12-29",
+              "side": "down"
+            }
+          ]
         }
       },
       "non_cbd": {
@@ -184,6 +326,25 @@
           "h": 9.0,
           "h_rule": "smallest h on the grid [0.5, 30.0, 0.05] with <= 1 alarm(s) over the calibration period",
           "false_alarms_in_calibration": 1,
+          "calibration_alarms": [
+            {
+              "date": "2024-07-05",
+              "side": "down"
+            }
+          ],
+          "calibration_alarms_one_grid_step_below_h": {
+            "h": 8.95,
+            "alarms": [
+              {
+                "date": "2024-07-05",
+                "side": "down"
+              },
+              {
+                "date": "2024-11-29",
+                "side": "down"
+              }
+            ]
+          },
           "first_alarm_on_or_after_policy": {
             "date": "2025-12-25",
             "side": "down",
@@ -210,10 +371,36 @@
           "n_sigma": 2.0,
           "consecutive_days": 7,
           "false_alarms_in_calibration": 0,
+          "reading": "daily z (pre-registered, primary)",
           "first_alarm_on_or_after_policy": null,
           "alarms_before_policy": [],
           "n_alarms_monitoring": 0,
           "alarms": []
+        },
+        "rolling_bias_rolling_mean": {
+          "reading": "trailing 7-day mean of z, standardized by its own calibration-period sd (review fix 2; secondary)",
+          "rolling_mean_sd_calibration": 0.44405,
+          "n_sigma": 2.0,
+          "consecutive_days": 7,
+          "false_alarms_in_calibration": 0,
+          "calibration_alarms": [],
+          "first_alarm_on_or_after_policy": {
+            "date": "2025-12-30",
+            "side": "down",
+            "delay_days": 359
+          },
+          "alarms_before_policy": [],
+          "n_alarms_monitoring": 2,
+          "alarms": [
+            {
+              "date": "2025-12-30",
+              "side": "down"
+            },
+            {
+              "date": "2026-01-31",
+              "side": "down"
+            }
+          ]
         }
       }
     }

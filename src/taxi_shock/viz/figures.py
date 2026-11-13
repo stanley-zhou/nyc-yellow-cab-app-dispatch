@@ -319,7 +319,7 @@ def f3_error_over_time(errors: pd.DataFrame, policy_date: str,
                 ax.annotate(mlabel, xy=(x, 0.10 + 0.08 * (i % 2)),
                             xycoords=("data", "axes fraction"), xytext=(4, 0),
                             textcoords="offset points", fontsize=8, color=mcolor, va="center")
-        policy_line(ax, label=ax is axes[0], label_y=0.24)
+        policy_line(ax, label=ax is axes[0], label_y=0.34)   # above the alarm labels
     axes[0].set_ylim(bottom=0)
     axes[1].xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
     axes[1].xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))

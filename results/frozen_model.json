@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-10T00:46:20+00:00",
+  "generated_utc": "2026-11-13T18:07:26+00:00",
   "model": "lgbm_quantile",
   "window": "expanding",
   "procedure": "one fit with the Phase-2 refit procedure: tuned parameters (results/lgbm_params.json), early stopping on the last 4 weeks of the training window (not boosted on), stopped boosters used as is",
@@ -22,7 +22,7 @@
       "0.5": 4244,
       "0.9": 1239
     },
-    "seconds": 559.8
+    "seconds": 652.1
   },
   "zones": [
     4,
@@ -134,5 +134,31 @@
     "0.5": "data/models/frozen_lgbm_q50.txt",
     "0.9": "data/models/frozen_lgbm_q90.txt"
   },
-  "in_sample_note": "forecasts for target days up to the training end are in-sample (holdout weeks: used for early stopping, not boosted on)"
+  "booster_files": {
+    "0.1": {
+      "sha256": "4f8edea6f4ffb40edd41dc65731da3365a532ecead1603580d8d65c871500f2b",
+      "num_trees": 409
+    },
+    "0.5": {
+      "sha256": "fc5e26c0934360428118a1c1ef8b2a46dee517a93426caa9759092b37a1f2ff6",
+      "num_trees": 4244
+    },
+    "0.9": {
+      "sha256": "82639dbf482aa84c6418390b89cac7d0d9068ea0a4cf341254ebbd2dc5ed498f",
+      "num_trees": 1239
+    }
+  },
+  "in_sample_note": "forecasts for target days up to the training end are in-sample (holdout weeks: used for early stopping, not boosted on)",
+  "forecast_runtime": {
+    "lgbm_quantile": {
+      "origins": 822,
+      "rows": 2031778,
+      "seconds": 658.1
+    },
+    "seasonal_naive": {
+      "origins": 822,
+      "rows": 2031778,
+      "seconds": 8.2
+    }
+  }
 }

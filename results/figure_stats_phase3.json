@@ -17,7 +17,12 @@
       "delay_days": 14
     },
     "rolling_bias": null,
-    "cusum_calibration_alarms": []
+    "cusum_calibration_alarms": [
+      {
+        "date": "2024-09-10",
+        "side": "up"
+      }
+    ]
   },
   "non_cbd": {
     "wape_last_pre_window": 0.2061,
@@ -30,5 +35,5 @@
     },
     "rolling_bias": null
   },
-  "title": "No CBD-specific break: in the first four weeks of congestion pricing CBD pickups ran 6.3% above the frozen forecast, non-CBD 5.3% above"
+  "title": "No CBD-specific break: in the four weeks from 2025-01-05 CBD pickups ran 6.3% above the frozen forecast, non-CBD 5.3% above; the one CBD CUSUM alarm (day 14) is like the 2024 calibration alarm (2024-09-10)"
 }

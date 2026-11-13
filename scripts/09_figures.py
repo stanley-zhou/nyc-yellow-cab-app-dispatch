@@ -195,15 +195,15 @@ def phase3(cfg: dict) -> None:
     cal = prim["groups"]["cbd"]["cusum"].get("calibration_alarms", [])
     stats["cbd"]["cusum_calibration_alarms"] = cal
     # wording: Stanley's ruling (Checkpoint 6, Amendment 5) - no CBD-specific break detected
-    title = (f"No CBD-specific break: in the first four weeks of congestion pricing CBD pickups "
-             f"ran {gap(c['actual_vs_forecast_pct_first_post_window'])} the frozen forecast, "
-             f"non-CBD {gap(n['actual_vs_forecast_pct_first_post_window'])}")
+    title = (f"No CBD-specific break: in the four weeks from {cfg['data']['policy_date']} CBD "
+             f"pickups ran {gap(c['actual_vs_forecast_pct_first_post_window'])} the frozen "
+             f"forecast, non-CBD {gap(n['actual_vs_forecast_pct_first_post_window'])}")
     if c["cusum"] and cal:
-        title += (f"; the one CBD CUSUM alarm (day {c['cusum']['delay_days']}) matches the "
-                  f"calibration year's ({cal[0]['date']})")
+        title += (f"; the one CBD CUSUM alarm (day {c['cusum']['delay_days']}) is like the "
+                  f"2024 calibration alarm ({cal[0]['date']})")
     markers = []
     for a in cal:
-        markers.append((a["date"], "CUSUM alarm, 2024 (calibration)", PALETTE["muted_text"]))
+        markers.append((a["date"], "calibration alarm", PALETTE["muted_text"]))
     for key, name in (("cusum", "CUSUM"), ("rolling_bias", "rolling-bias rule")):
         a = c[key]
         if a:

@@ -119,7 +119,7 @@ A log difference against a fast-growing small-zone average reads their growth as
 **The policy date (Phase 3).** A LightGBM frozen at 2024-12-31 showed no CBD-specific break.
 - In the first four weeks, actual pickups ran 6.3% above forecast in the CBD and 5.3% above outside it ([figure_stats_phase3.json](../results/figure_stats_phase3.json)).
 - CBD rolling WAPE did not rise.
-- The single CBD CUSUM alarm (2025-01-19) is the kind the 2024 calibration year also produced ([drift_detection.json](../results/drift_detection.json); F3).
+- The single CBD CUSUM alarm (2025-01-19) is the kind the 2024 calibration year also produced (one alarm, 2024-09-10, up; the CUSUM threshold allows one a year) ([drift_detection.json](../results/drift_detection.json); F3).
 
 **Three shocks, one monitor (C5)**, each with a 12-month frozen model ([shock_comparison.json](../results/shock_comparison.json); F3b):
 
