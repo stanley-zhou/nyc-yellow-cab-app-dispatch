@@ -85,7 +85,7 @@ From [runtimes.json](results/runtimes.json) (`measured` = compute time the pipel
 | LightGBM rolling-origin backtests, both windows (Phase 2) | 194.3 min wall |
 | Seasonal-naive and statistical backtests (Phase 2) | 78.6 min wall |
 | Chronos-2 inference, 2024-01 → 2026-09 daily origins, two variants (Colab L4) | 269.8 min |
-| Frozen-model fit (Phase 3) | 9.3 min |
+| Frozen-model fit (Phase 3) | 10.9 min |
 | Phase 5 monthly refits, 23 per strategy (S1 / S6 / S1e) | 166.1 / 137.4 / 301.7 min |
 | Incrementality DML with 25 repetitions (D2) | 3.4 min wall |
 

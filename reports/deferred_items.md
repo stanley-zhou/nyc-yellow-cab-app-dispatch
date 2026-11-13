@@ -34,5 +34,5 @@ Builder, with the owner and the reason.
 | 19 | Repository rename, public visibility, dashboard URL, code licence | Stanley | Stanley's decisions (Amendment 5; CLAUDE.md: the repository becomes public only when Stanley says so). |
 | 20 | E3: dbt on Snowflake | Stanley | Waits for the account credentials through environment variables. |
 | 21 | `04_backtest.py --full` skips an existing forecast file by its existence, without a code fingerprint | Builder, not changed | DECISIONS [P2→P3]. Every forecast file post-dates the last model-code change; a later change needs `--force`. `04b_evaluate.py` does fingerprint its units. Kept as a documented limitation. |
-| 23 | Return the freed space to the Windows drive: compact the WSL disk image (`wsl --shutdown`, then Optimize-VHD or diskpart `compact vdisk`) | Stanley | Runs on Windows with WSL stopped; the warehouse compaction freed the space only inside the virtual disk. |
-| 22 | Booster files purged from git history (`git filter-repo`, force push, fresh-clone check) | Builder, last step | Done last, after every other commit of Phase 7 (Amendment 5, item 8). |
+| 22 | Return the freed space to the Windows drive: compact the WSL disk image (`wsl --shutdown`, then Optimize-VHD or diskpart `compact vdisk`) | Stanley | Runs on Windows with WSL stopped; the warehouse compaction freed the space only inside the virtual disk. |
+| 23 | Booster files purged from git history (`git filter-repo`, force push, fresh-clone check) | Builder, last step | Done last, after every other commit of Phase 7 (Amendment 5, item 8). |

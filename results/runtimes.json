@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-13T17:45:18+00:00",
+  "generated_utc": "2026-11-13T18:34:19+00:00",
   "hardware": {
     "local": "WSL2, 12 cores, 11.68 GiB RAM",
     "colab": "NVIDIA L4"
@@ -34,7 +34,7 @@
       "what": "Phase 2 monthly refits, sum of fit times"
     },
     "frozen_model_fit": {
-      "seconds": 559.8,
+      "seconds": 652.1,
       "source": "results/frozen_model.json",
       "what": "Phase 3 frozen LightGBM, one fit"
     },
