@@ -78,5 +78,25 @@
     "yellow_pretrend_p": 1.5741757804099792e-17,
     "any_estimate": false,
     "title": "Taxi (\\$0.75 fee) vs FHV (\\$1.50 fee) in the CBD: both pre-trend tests reject (yellow p = 2e-17, Uber + Lyft p = 2e-18), so no effect is estimated"
+  },
+  "d5b": {
+    "step_pp": {
+      "into": 11.058658954493078,
+      "neither": 10.634874935082207,
+      "out_of": 8.093628333602853,
+      "within": 11.307429769787088
+    },
+    "pooled": {
+      "coef": 0.030268541047479836,
+      "se": 0.010684152700197982,
+      "ci": [
+        0.00932798654976542,
+        0.05120909554519425
+      ],
+      "pvalue": 0.00497502847421627,
+      "n_obs": 23817,
+      "n_zones": 260
+    },
+    "title": "App-share step at 2025-01-19: +11.3 pp within the CBD, +11.1 into, +8.1 out of, +10.6 for trips touching neither end; DiD +3.0 pp [+0.9, +5.1]"
   }
 }

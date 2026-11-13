@@ -44,6 +44,7 @@ from taxi_shock.viz.figures import (
     f6b_app_share_maps,
     f6c_incrementality,
     f6d_lyft_entry,
+    f6e_app_share_step,
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
@@ -659,6 +660,29 @@ def phase4c(cfg: dict) -> None:
                        "pre-trend test first). Sources: results/fhv_did.json, "
                        "results/fhv_event_study.csv, results/event_study.csv.",
                        figs / "F6_taxi_vs_fhv")
+    f = res / "app_share_policy_step.json"
+    if f.exists():
+        st = json.loads(f.read_text())
+        bt = st["yellow"]["d0_step_by_trip_type"]["by_type"]
+        po = st["yellow"]["pooled"]["app_share"]
+        stats["d5b"] = {"step_pp": {k: v["step_pp"] for k, v in bt.items()}, "pooled": po}
+        t = (f"App-share step at 2025-01-19: {bt['within']['step_pp']:+.1f} pp within the CBD, "
+             f"{bt['into']['step_pp']:+.1f} into, {bt['out_of']['step_pp']:+.1f} out of, "
+             f"{bt['neither']['step_pp']:+.1f} for trips touching neither end; DiD "
+             f"{po['coef'] * 100:+.1f} pp [{po['ci'][0] * 100:+.1f}, {po['ci'][1] * 100:+.1f}]")
+        stats["d5b"]["title"] = t
+        f6e_app_share_step(pd.read_csv(res / "app_share_by_trip_type_weekly.csv",
+                                       parse_dates=["week_start"]),
+                           pd.read_csv(res / "app_share_step_event_study.csv"), t,
+                           "Left: weekly app share of valid yellow pickups by trip type vs the "
+                           "CBD (60th St rule), CMT contracted block excluded. Right: event study "
+                           "on pickup zone x trip type x week cells, CBD-touching (within, into, "
+                           "out of) minus neither, weighted by cell trips, cell and week FE, 95% "
+                           "CIs clustered by pickup zone; reference: the week before 2025-01-05. "
+                           "Steps: 4 weeks after vs 4 before 2025-01-19. Sources: "
+                           "results/app_share_policy_step.json, "
+                           "results/app_share_by_trip_type_weekly.csv, "
+                           "results/app_share_step_event_study.csv.", figs / "F6e_app_share_step")
     if stats:
         (res / "figure_stats_phase4c.json").write_text(json.dumps(stats, indent=2,
                                                                   default=float) + "\n")

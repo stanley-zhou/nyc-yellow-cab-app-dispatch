@@ -1,0 +1,152 @@
+{
+  "generated_utc": "2026-11-13T05:15:58+00:00",
+  "specification": "Phase 4 C2 primary (scripts/07b_demand.py design and weights) by channel; Amendment 4 D5 (exploratory, gated)",
+  "gate": "interpret only if the monthly pre-trend Hotelling F* p >= 0.05",
+  "channels": {
+    "pickups": {
+      "estimate": {
+        "terms": {
+          "treated_post": {
+            "coef": -0.0534241738572022,
+            "se": 0.04249158001996786,
+            "ci_lo": -0.13670614034254097,
+            "ci_hi": 0.02985779262813655,
+            "pvalue": 0.21352123915815313,
+            "pct": -0.05202218021984468,
+            "pct_ci_lo": -0.1277734993433971,
+            "pct_ci_hi": 0.030308006141333024
+          }
+        },
+        "n_obs": 8662,
+        "n_units": 61,
+        "n_treated_units": 38,
+        "n_clusters": {
+          "zone_id": 61
+        },
+        "formula": "log1p_pickups ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+        "vcov": "CRV1 by zone_id",
+        "weights": "w_pre",
+        "controls": {
+          "tr_mean_temp_f": 0.002527657095492838,
+          "tr_total_precip_in": -0.000819021969346038
+        }
+      },
+      "pretrend": {
+        "n_restrictions": 24,
+        "wald_chi2": 1161.9170675780242,
+        "p_chi2": 3.2036314981015975e-230,
+        "F": 48.41321114908434,
+        "df": [
+          24,
+          60
+        ],
+        "p_F": 1.0008747678920658e-30,
+        "F_hotelling": 29.854813541935346,
+        "df_hotelling": [
+          24,
+          37
+        ],
+        "p_F_hotelling": 1.574175780681583e-17
+      },
+      "interpretable": false,
+      "pre_mean_weekly_treated": 11801.048076923076,
+      "note": "all pickups: reproduces the Phase 4 primary estimate"
+    },
+    "street": {
+      "estimate": {
+        "terms": {
+          "treated_post": {
+            "coef": -0.03136409225624161,
+            "se": 0.014679568494896923,
+            "ci_lo": -0.060135517814828426,
+            "ci_hi": -0.002592666697654792,
+            "pvalue": 0.036719599764239996,
+            "pct": -0.030877341222166264,
+            "pct_ci_lo": -0.05836308364002655,
+            "pct_ci_hi": -0.002589308640087144
+          }
+        },
+        "n_obs": 8662,
+        "n_units": 61,
+        "n_treated_units": 38,
+        "n_clusters": {
+          "zone_id": 61
+        },
+        "formula": "log1p_street ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+        "vcov": "CRV1 by zone_id",
+        "weights": "w_pre",
+        "controls": {
+          "tr_mean_temp_f": 0.0033805164392360157,
+          "tr_total_precip_in": -0.0011196867626698378
+        }
+      },
+      "pretrend": {
+        "n_restrictions": 24,
+        "wald_chi2": 1195.31998070477,
+        "p_chi2": 2.4403848273561627e-237,
+        "F": 49.80499919603208,
+        "df": [
+          24,
+          60
+        ],
+        "p_F": 4.522022040096014e-31,
+        "F_hotelling": 30.713082837553117,
+        "df_hotelling": [
+          24,
+          37
+        ],
+        "p_F_hotelling": 9.695423140557339e-18
+      },
+      "interpretable": false,
+      "pre_mean_weekly_treated": 10620.035425101214
+    },
+    "app": {
+      "estimate": {
+        "terms": {
+          "treated_post": {
+            "coef": 0.11489921373509962,
+            "se": 0.062392848828964294,
+            "ci_lo": -0.007388522862522479,
+            "ci_hi": 0.23718695033272172,
+            "pvalue": 0.07048619449694282,
+            "pct": 0.12176037383620604,
+            "pct_ci_lo": -0.007361294827066438,
+            "pct_ci_hi": 0.2676780884641413
+          }
+        },
+        "n_obs": 8662,
+        "n_units": 61,
+        "n_treated_units": 38,
+        "n_clusters": {
+          "zone_id": 61
+        },
+        "formula": "log1p_app ~ treated_post + tr_mean_temp_f + tr_total_precip_in | zone_id + week_start",
+        "vcov": "CRV1 by zone_id",
+        "weights": "w_pre",
+        "controls": {
+          "tr_mean_temp_f": 0.0008341404938476815,
+          "tr_total_precip_in": 0.01502679691057832
+        }
+      },
+      "pretrend": {
+        "n_restrictions": 24,
+        "wald_chi2": 2196.494240361507,
+        "p_chi2": 0.0,
+        "F": 91.52059334839612,
+        "df": [
+          24,
+          60
+        ],
+        "p_F": 1.3079861324740274e-38,
+        "F_hotelling": 56.43769923151094,
+        "df_hotelling": [
+          24,
+          37
+        ],
+        "p_F_hotelling": 2.3687669351602613e-22
+      },
+      "interpretable": false,
+      "pre_mean_weekly_treated": 1181.0126518218624
+    }
+  }
+}

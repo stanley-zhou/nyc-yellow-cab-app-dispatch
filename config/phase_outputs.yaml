@@ -134,3 +134,9 @@
   - reports/figures/F6_taxi_vs_fhv.png
   - results/cross_platform.json
   - results/cross_platform_monthly.csv
+  - results/did_by_channel.json
+  - results/did_by_channel_event_study.csv
+  - results/app_share_policy_step.json
+  - results/app_share_by_trip_type_weekly.csv
+  - results/app_share_step_event_study.csv
+  - reports/figures/F6e_app_share_step.png
