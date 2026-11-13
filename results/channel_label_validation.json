@@ -1,0 +1,669 @@
+{
+  "generated_utc": "2026-11-13T04:03:16+00:00",
+  "specification": "PLAN.md Amendment 4, D0; DECISIONS.md",
+  "validation_months": [
+    "2026-06",
+    "2026-09"
+  ],
+  "records": "raw yellow files, valid pickup zone, pickup inside the file's month",
+  "app_definition_gate": "request_source in ['HV0003', 'HV0005']",
+  "code_meanings": {
+    "HV0003": "Uber (HVFHS licence, HVFHS data dictionary)",
+    "HV0005": "Lyft (HVFHS licence, HVFHS data dictionary)",
+    "EH0004": "Curb Mobility LLC (TLC e-hail licence; Curb's own app)",
+    "EH0010": "Arro, Inc. (TLC e-hail licence)",
+    "A": "undetermined (not on any published TLC licence list)",
+    "CC": "undetermined (not on any published TLC licence list)"
+  },
+  "codes_by_vendor": [
+    {
+      "code": "A",
+      "vendor_id": 1,
+      "n": 61662,
+      "n_flex": 61662,
+      "p_flex": 1.0
+    },
+    {
+      "code": "A",
+      "vendor_id": 2,
+      "n": 377357,
+      "n_flex": 377357,
+      "p_flex": 1.0
+    },
+    {
+      "code": "A",
+      "vendor_id": 6,
+      "n": 28009,
+      "n_flex": 28009,
+      "p_flex": 1.0
+    },
+    {
+      "code": "CC",
+      "vendor_id": 1,
+      "n": 271,
+      "n_flex": 271,
+      "p_flex": 1.0
+    },
+    {
+      "code": "CC",
+      "vendor_id": 2,
+      "n": 2162,
+      "n_flex": 2162,
+      "p_flex": 1.0
+    },
+    {
+      "code": "CC",
+      "vendor_id": 6,
+      "n": 25,
+      "n_flex": 25,
+      "p_flex": 1.0
+    },
+    {
+      "code": "EH0004",
+      "vendor_id": 1,
+      "n": 29496,
+      "n_flex": 29496,
+      "p_flex": 1.0
+    },
+    {
+      "code": "EH0010",
+      "vendor_id": 1,
+      "n": 581,
+      "n_flex": 581,
+      "p_flex": 1.0
+    },
+    {
+      "code": "HV0003",
+      "vendor_id": 1,
+      "n": 310344,
+      "n_flex": 310344,
+      "p_flex": 1.0
+    },
+    {
+      "code": "HV0003",
+      "vendor_id": 2,
+      "n": 2693869,
+      "n_flex": 2693869,
+      "p_flex": 1.0
+    },
+    {
+      "code": "HV0005",
+      "vendor_id": 2,
+      "n": 589235,
+      "n_flex": 589235,
+      "p_flex": 1.0
+    },
+    {
+      "code": "NULL",
+      "vendor_id": 1,
+      "n": 2071642,
+      "n_flex": 1279,
+      "p_flex": 0.0006173846639525555
+    },
+    {
+      "code": "NULL",
+      "vendor_id": 2,
+      "n": 8209954,
+      "n_flex": 0,
+      "p_flex": 0.0
+    },
+    {
+      "code": "NULL",
+      "vendor_id": 7,
+      "n": 180173,
+      "n_flex": 0,
+      "p_flex": 0.0
+    }
+  ],
+  "overall": {
+    "n": 14554780,
+    "n_flex": 4094290,
+    "n_hv": 3593448,
+    "n_any": 4093011,
+    "p_flex_given_hv": 1.0,
+    "p_hv_given_flex": 0.8776730519821507,
+    "p_flex_given_any": 1.0,
+    "p_any_given_flex": 0.9996876137254567,
+    "flex_share": 0.281302087699024,
+    "hv_share": 0.246891261839753
+  },
+  "by_zone_group": {
+    "airports": {
+      "trip_share": 0.06757882977276194,
+      "n": 983595,
+      "n_flex": 3744,
+      "n_hv": 74,
+      "n_any": 3568,
+      "p_flex_given_hv": 1.0,
+      "p_hv_given_flex": 0.019764957264957264,
+      "p_flex_given_any": 1.0,
+      "p_any_given_flex": 0.9529914529914529,
+      "flex_share": 0.0038064447257255274,
+      "hv_share": 7.523421733538702e-05
+    },
+    "cbd": {
+      "trip_share": 0.578998926813047,
+      "n": 8427202,
+      "n_flex": 2302164,
+      "n_hv": 2023514,
+      "n_any": 2301500,
+      "p_flex_given_hv": 1.0,
+      "p_hv_given_flex": 0.878961707332753,
+      "p_flex_given_any": 1.0,
+      "p_any_given_flex": 0.9997115757174554,
+      "flex_share": 0.27318248690371966,
+      "hv_share": 0.24011694510230086
+    },
+    "manhattan_non_cbd": {
+      "trip_share": 0.2972418683071816,
+      "n": 4326290,
+      "n_flex": 1173254,
+      "n_hv": 1029401,
+      "n_any": 1172845,
+      "p_flex_given_hv": 1.0,
+      "p_hv_given_flex": 0.8773897212368337,
+      "p_flex_given_any": 1.0,
+      "p_any_given_flex": 0.9996513968842211,
+      "flex_share": 0.2711917139165428,
+      "hv_share": 0.23794082227497462
+    },
+    "other": {
+      "trip_share": 0.05618037510700952,
+      "n": 817693,
+      "n_flex": 615128,
+      "n_hv": 540459,
+      "n_any": 615098,
+      "p_flex_given_hv": 1.0,
+      "p_hv_given_flex": 0.8786122563108817,
+      "p_flex_given_any": 1.0,
+      "p_any_given_flex": 0.9999512296627694,
+      "flex_share": 0.752272552168112,
+      "hv_share": 0.6609558844211703
+    }
+  },
+  "by_month": {
+    "2026-06": {
+      "overall": {
+        "n": 3830662,
+        "n_flex": 1013353,
+        "n_hv": 927604,
+        "n_any": 1013033,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.9153809185940142,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996842166550057,
+        "flex_share": 0.26453730451812246,
+        "hv_share": 0.24215240081218337
+      },
+      "airports": {
+        "n": 249556,
+        "n_flex": 932,
+        "n_hv": 8,
+        "n_any": 887,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.008583690987124463,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9517167381974249,
+        "flex_share": 0.0037346327076888553,
+        "hv_share": 3.205693311320906e-05
+      },
+      "cbd": {
+        "n": 2191766,
+        "n_flex": 559151,
+        "n_hv": 516634,
+        "n_any": 558984,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.9239615059259485,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9997013329136495,
+        "flex_share": 0.2551143689609201,
+        "hv_share": 0.23571585652847976
+      },
+      "manhattan_non_cbd": {
+        "n": 1194166,
+        "n_flex": 301877,
+        "n_hv": 272325,
+        "n_any": 301778,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.9021058245576841,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996720518621823,
+        "flex_share": 0.25279316275961633,
+        "hv_share": 0.22804618453380854
+      },
+      "other": {
+        "n": 195174,
+        "n_flex": 151393,
+        "n_hv": 138637,
+        "n_any": 151384,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.9157424715805883,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9999405520730813,
+        "flex_share": 0.7756822117700104,
+        "hv_share": 0.7103251457673666
+      }
+    },
+    "2026-07": {
+      "overall": {
+        "n": 3523863,
+        "n_flex": 969592,
+        "n_hv": 738967,
+        "n_any": 969284,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.7621422206453848,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996823406133714,
+        "flex_share": 0.2751503108946063,
+        "hv_share": 0.20970366895648326
+      },
+      "airports": {
+        "n": 241019,
+        "n_flex": 875,
+        "n_hv": 9,
+        "n_any": 842,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.010285714285714285,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9622857142857143,
+        "flex_share": 0.003630419178570984,
+        "hv_share": 3.734145440815869e-05
+      },
+      "cbd": {
+        "n": 2082268,
+        "n_flex": 550386,
+        "n_hv": 414793,
+        "n_any": 550211,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.7536401725334584,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996820413309931,
+        "flex_share": 0.2643204429016822,
+        "hv_share": 0.1992025041925439
+      },
+      "manhattan_non_cbd": {
+        "n": 1008164,
+        "n_flex": 274967,
+        "n_hv": 216659,
+        "n_any": 274872,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.7879454625464146,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996545039950249,
+        "flex_share": 0.2727403478005563,
+        "hv_share": 0.2149045195027793
+      },
+      "other": {
+        "n": 192412,
+        "n_flex": 143364,
+        "n_hv": 107506,
+        "n_any": 143359,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.749881420719288,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.999965123740967,
+        "flex_share": 0.7450886639086959,
+        "hv_share": 0.5587281458536889
+      }
+    },
+    "2026-08": {
+      "overall": {
+        "n": 3329513,
+        "n_flex": 921068,
+        "n_hv": 809932,
+        "n_any": 920737,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.8793400704399675,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996406345676975,
+        "flex_share": 0.27663745418624286,
+        "hv_share": 0.24325839845046407
+      },
+      "airports": {
+        "n": 240929,
+        "n_flex": 903,
+        "n_hv": 19,
+        "n_any": 857,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.021040974529346623,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9490586932447398,
+        "flex_share": 0.0037479921470640726,
+        "hv_share": 7.886140730256631e-05
+      },
+      "cbd": {
+        "n": 1952528,
+        "n_flex": 520243,
+        "n_hv": 456899,
+        "n_any": 520063,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.878241514061698,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996540078386447,
+        "flex_share": 0.26644585890701694,
+        "hv_share": 0.23400381454196817
+      },
+      "manhattan_non_cbd": {
+        "n": 942141,
+        "n_flex": 258532,
+        "n_hv": 228431,
+        "n_any": 258439,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.8835695387804992,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996402766388687,
+        "flex_share": 0.274409032193695,
+        "hv_share": 0.24245946201258622
+      },
+      "other": {
+        "n": 193915,
+        "n_flex": 141390,
+        "n_hv": 124583,
+        "n_any": 141378,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.881130207228234,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9999151283683428,
+        "flex_share": 0.7291338988732177,
+        "hv_share": 0.6424619034112885
+      }
+    },
+    "2026-09": {
+      "overall": {
+        "n": 3870742,
+        "n_flex": 1190277,
+        "n_hv": 1116945,
+        "n_any": 1189957,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.9383908115505887,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9997311550168574,
+        "flex_share": 0.3075061577340985,
+        "hv_share": 0.288560952912904
+      },
+      "airports": {
+        "n": 252091,
+        "n_flex": 1034,
+        "n_hv": 38,
+        "n_any": 982,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.0367504835589942,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9497098646034816,
+        "flex_share": 0.004101693436100456,
+        "hv_share": 0.0001507392171874442
+      },
+      "cbd": {
+        "n": 2200640,
+        "n_flex": 672384,
+        "n_hv": 635188,
+        "n_any": 672242,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.9446804207119741,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9997888111555302,
+        "flex_share": 0.30554020648538605,
+        "hv_share": 0.28863785080703797
+      },
+      "manhattan_non_cbd": {
+        "n": 1181819,
+        "n_flex": 337878,
+        "n_hv": 311986,
+        "n_any": 337756,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.9233687899182546,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9996389229248427,
+        "flex_share": 0.2858965713023737,
+        "hv_share": 0.2639879710852508
+      },
+      "other": {
+        "n": 236192,
+        "n_flex": 178981,
+        "n_hv": 169733,
+        "n_any": 178977,
+        "p_flex_given_hv": 1.0,
+        "p_hv_given_flex": 0.9483297109749079,
+        "p_flex_given_any": 1.0,
+        "p_any_given_flex": 0.9999776512590722,
+        "flex_share": 0.7577775707898659,
+        "hv_share": 0.7186229846904214
+      }
+    }
+  },
+  "by_vendor": {
+    "1": {
+      "n": 2473996,
+      "n_flex": 403633,
+      "n_hv": 310344,
+      "n_any": 402354,
+      "p_flex_given_hv": 1.0,
+      "p_hv_given_flex": 0.7688766775759167,
+      "p_flex_given_any": 1.0,
+      "p_any_given_flex": 0.9968312799003055,
+      "flex_share": 0.16315022336333607,
+      "hv_share": 0.12544240168537055
+    },
+    "2": {
+      "n": 11872577,
+      "n_flex": 3662623,
+      "n_hv": 3283104,
+      "n_any": 3662623,
+      "p_flex_given_hv": 1.0,
+      "p_hv_given_flex": 0.8963805447625923,
+      "p_flex_given_any": 1.0,
+      "p_any_given_flex": 1.0,
+      "flex_share": 0.30849435636425016,
+      "hv_share": 0.27652833921397185
+    },
+    "6": {
+      "n": 28034,
+      "n_flex": 28034,
+      "n_hv": 0,
+      "n_any": 28034,
+      "p_flex_given_hv": null,
+      "p_hv_given_flex": 0.0,
+      "p_flex_given_any": 1.0,
+      "p_any_given_flex": 1.0,
+      "flex_share": 1.0,
+      "hv_share": 0.0
+    },
+    "7": {
+      "n": 180173,
+      "n_flex": 0,
+      "n_hv": 0,
+      "n_any": 0,
+      "p_flex_given_hv": null,
+      "p_hv_given_flex": null,
+      "p_flex_given_any": null,
+      "p_any_given_flex": null,
+      "flex_share": 0.0,
+      "hv_share": 0.0
+    }
+  },
+  "gate": {
+    "min_rate": 0.85,
+    "min_group_share": 0.01,
+    "groups_checked": [
+      "airports",
+      "cbd",
+      "manhattan_non_cbd",
+      "other"
+    ],
+    "pass_by_unit": {
+      "overall": true,
+      "airports": false,
+      "cbd": true,
+      "manhattan_non_cbd": true,
+      "other": true
+    },
+    "passed": false,
+    "consequence": "channel analyses restricted to 2026-06+; the earlier Flex series is indicative only"
+  },
+  "flex_share_steps": {
+    "method": "mean of the 4 weeks from t minus the 4 weeks before t; largest local maxima",
+    "steps": {
+      "airports": [
+        {
+          "week_start": "2023-04-16",
+          "step": 0.001088016631575452,
+          "share_before": 0.0022265922297377105,
+          "share_after": 0.0033146088613131624
+        },
+        {
+          "week_start": "2023-09-17",
+          "step": 0.0012347494297340706,
+          "share_before": 0.003081494817456016,
+          "share_after": 0.0043162442471900864
+        },
+        {
+          "week_start": "2025-01-19",
+          "step": 0.0022672610152374324,
+          "share_before": 0.004950572153353449,
+          "share_after": 0.007217833168590882
+        },
+        {
+          "week_start": "2025-05-04",
+          "step": -0.003465656940870927,
+          "share_before": 0.007082934353765866,
+          "share_after": 0.0036172774128949395
+        },
+        {
+          "week_start": "2026-01-18",
+          "step": 0.0014139919008019962,
+          "share_before": 0.002918437979989221,
+          "share_after": 0.004332429880791217
+        }
+      ],
+      "all": [
+        {
+          "week_start": "2024-02-25",
+          "step": 0.05623927926308392,
+          "share_before": 0.0550540981790852,
+          "share_after": 0.11129337744216912
+        },
+        {
+          "week_start": "2024-09-01",
+          "step": 0.05443350660706514,
+          "share_before": 0.0829898114844217,
+          "share_after": 0.13742331809148683
+        },
+        {
+          "week_start": "2025-01-19",
+          "step": 0.10872026242653324,
+          "share_before": 0.11187318003808774,
+          "share_after": 0.22059344246462098
+        },
+        {
+          "week_start": "2025-05-04",
+          "step": 0.07154919363585843,
+          "share_before": 0.19963380952058107,
+          "share_after": 0.2711830031564395
+        },
+        {
+          "week_start": "2026-03-01",
+          "step": -0.059447046040396245,
+          "share_before": 0.30584814317629044,
+          "share_after": 0.2464010971358942
+        }
+      ],
+      "cbd": [
+        {
+          "week_start": "2024-02-25",
+          "step": 0.06028939376862088,
+          "share_before": 0.05511931705258028,
+          "share_after": 0.11540871082120116
+        },
+        {
+          "week_start": "2025-01-19",
+          "step": 0.10986927988450304,
+          "share_before": 0.10940751999316595,
+          "share_after": 0.219276799877669
+        },
+        {
+          "week_start": "2025-05-04",
+          "step": 0.06909496375904892,
+          "share_before": 0.1736792417842242,
+          "share_after": 0.2427742055432731
+        },
+        {
+          "week_start": "2026-01-18",
+          "step": 0.06915469664751722,
+          "share_before": 0.2598781140677994,
+          "share_after": 0.32903281071531665
+        },
+        {
+          "week_start": "2026-03-22",
+          "step": -0.055072197308807136,
+          "share_before": 0.25927976859491386,
+          "share_after": 0.20420757128610673
+        }
+      ],
+      "manhattan_non_cbd": [
+        {
+          "week_start": "2024-02-25",
+          "step": 0.05516930851482521,
+          "share_before": 0.05637776932425549,
+          "share_after": 0.1115470778390807
+        },
+        {
+          "week_start": "2024-09-01",
+          "step": 0.057424658248460575,
+          "share_before": 0.08506928999157251,
+          "share_after": 0.14249394824003309
+        },
+        {
+          "week_start": "2025-01-19",
+          "step": 0.09107558261321802,
+          "share_before": 0.09602322294631879,
+          "share_after": 0.1870988055595368
+        },
+        {
+          "week_start": "2025-05-04",
+          "step": 0.06784503070519887,
+          "share_before": 0.18051243714880053,
+          "share_after": 0.2483574678539994
+        },
+        {
+          "week_start": "2026-02-15",
+          "step": -0.04805469294569467,
+          "share_before": 0.29163663573332277,
+          "share_after": 0.2435819427876281
+        }
+      ],
+      "other": [
+        {
+          "week_start": "2024-05-12",
+          "step": 0.14505126462393225,
+          "share_before": 0.3038946828659628,
+          "share_after": 0.448945947489895
+        },
+        {
+          "week_start": "2024-09-01",
+          "step": 0.18790485012419095,
+          "share_before": 0.2877530805407256,
+          "share_after": 0.4756579306649166
+        },
+        {
+          "week_start": "2025-01-19",
+          "step": 0.1952925663914733,
+          "share_before": 0.49233610144306605,
+          "share_after": 0.6876286678345394
+        },
+        {
+          "week_start": "2026-03-22",
+          "step": -0.12520503500744362,
+          "share_before": 0.6333620089502564,
+          "share_after": 0.5081569739428128
+        },
+        {
+          "week_start": "2026-05-31",
+          "step": 0.29219120723581915,
+          "share_before": 0.5158220737270235,
+          "share_after": 0.8080132809628426
+        }
+      ]
+    },
+    "weekly_series": "results/flex_share_weekly.csv"
+  }
+}

@@ -61,6 +61,25 @@ app_dispatch:                                 # Amendment 3, C1 (mechanism check
   min_trips: 500                              # zones with fewer records in the window: no share
   growth_years: [2023, 2025]                  # growth = log(mean weekly pickups 2025 / 2023)
   min_weekly_base: 10                         # zones below this in the base year: no growth
+channel:                                      # Amendment 4 (D0-D5): app dispatch vs street hail
+  label_months: ["2026-06", "2026-09"]        # files with request_source (D0 validation window)
+  hv_codes: [HV0003, HV0005]                  # ride-hail apps (Uber, Lyft): the D0 "app" definition
+  # request_source codes = "Origin of e-hail request" (NYC Open Data, 2025 Yellow Taxi Trip Data,
+  # column description). EH codes from TLC's current e-hail licensee list
+  # (nyc.gov/assets/tlc/downloads/datasets/current_e-hail_licensee.xls, retrieved 2026-11-12,
+  # sha256 55e6c449...94e2): EH0004 Curb Mobility LLC, EH0010 Arro Inc, EH0013 Myle Technologies.
+  # 'A' and 'CC' are on no published TLC list: undetermined.
+  code_meanings:
+    HV0003: "Uber (HVFHS licence, HVFHS data dictionary)"
+    HV0005: "Lyft (HVFHS licence, HVFHS data dictionary)"
+    EH0004: "Curb Mobility LLC (TLC e-hail licence; Curb's own app)"
+    EH0010: "Arro, Inc. (TLC e-hail licence)"
+    A: "undetermined (not on any published TLC licence list)"
+    CC: "undetermined (not on any published TLC licence list)"
+  gate: {min_rate: 0.85, min_group_share: 0.01}   # Amendment 4, D0
+  label_start: "2023-01"                      # Flex label used from here if the gate passes
+  step_window_weeks: 4                        # D0 step dating: mean of 4 weeks after vs 4 before
+  step_top_n: 5                               # steps listed per zone group
 shocks:                                       # Amendment 3, C5: three shocks, one monitor
   events:
     covid: "2020-03-01"
