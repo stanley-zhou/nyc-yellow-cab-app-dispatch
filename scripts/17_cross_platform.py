@@ -57,13 +57,19 @@ def main() -> None:
     for c in ("fhv_all", "fhv_uber", "fhv_lyft", "yellow_uber", "yellow_lyft"):
         p[c] = p[c].fillna(0)
     p["month"] = p["week_start"].dt.to_period("M").astype(str)
+    rs_month = str(cfg["channel"]["request_source_from"])[:7]
+    lyft_month = str(cfg["lyft"]["post_start"])[:7]
     m = p.groupby(["month", "zone_group"])[["app", "street", "fhv_all", "fhv_uber", "fhv_lyft",
                                             "yellow_uber", "yellow_lyft"]].sum().reset_index()
+    nwk = p.groupby("month")["week_start"].nunique()
+    m["n_weeks"] = m["month"].map(nwk)
+    for c in ("app", "street", "fhv_all", "fhv_uber", "fhv_lyft"):
+        m[f"{c}_per_week"] = m[c] / m["n_weeks"]
     m["yellow_app_share_of_app_market"] = m["app"] / (m["app"] + m["fhv_all"])
     m["uber_yellow_share_of_uber"] = (m["yellow_uber"] / (m["yellow_uber"] + m["fhv_uber"])
-                                      ).where(m["month"] >= "2026-06")
+                                      ).where(m["month"] >= rs_month)
     m["lyft_yellow_share_of_lyft"] = (m["yellow_lyft"] / (m["yellow_lyft"] + m["fhv_lyft"])
-                                      ).where(m["month"] >= "2026-08")
+                                      ).where(m["month"] >= lyft_month)
     m.to_csv(res / "cross_platform_monthly.csv", index=False, lineterminator="\n",
              float_format="%.6g")
 

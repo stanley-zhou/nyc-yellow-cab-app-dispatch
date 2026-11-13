@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import logging
 import os
 import shutil
@@ -127,6 +128,39 @@ def aggregate(con: duckdb.DuckDBPyConnection, f: Path, month: str, cfg: dict,
             "verified": bool(s1 == n_keep and s2 == n_keep)}
 
 
+def summary(out: Path, res: Path) -> dict:
+    """Totals over every aggregated month (results/hvfhv_summary.json): trips by platform and
+    year, and the shared-ride flags (requested, matched, both, matched without a request)."""
+    zh = (out / "zone_hour_*.parquet").as_posix()
+    con = duckdb.connect()
+    plat = con.execute(f"""select platform, year(pu_hour) as year, sum(trips) as trips
+                           from read_parquet('{zh}') group by all order by all""").df()
+    fl = con.execute(f"""select shared_request, shared_match, sum(trips) as trips
+                         from read_parquet('{zh}') group by all""").df()
+
+    def n(req=None, match=None):
+        x = fl
+        if req is not None:
+            x = x[x["shared_request"] == req]
+        if match is not None:
+            x = x[x["shared_match"] == match]
+        return int(x["trips"].sum())
+
+    s = {"months": sorted(p.stem.split("_")[-1] for p in out.glob("zone_hour_*.parquet")),
+         "trips_total": int(plat["trips"].sum()),
+         "trips_by_platform": {k: int(v) for k, v in plat.groupby("platform")["trips"].sum()
+                               .items()},
+         "trips_by_platform_year": {f"{r.platform}_{r.year}": int(r.trips)
+                                    for r in plat.itertuples()},
+         "shared": {"requested": n(req="Y"), "matched": n(match="Y"),
+                    "requested_and_matched": n("Y", "Y"),
+                    "matched_without_request": n("N", "Y"),
+                    "requested_not_matched": n("Y", "N")}}
+    s["months"] = [s["months"][0], s["months"][-1], len(s["months"])]
+    (res / "hvfhv_summary.json").write_text(json.dumps(s, indent=2) + "\n")
+    return s
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawTextHelpFormatter)
@@ -176,6 +210,7 @@ def main() -> None:
         log.sort_values("month").to_csv(log_p, index=False, lineterminator="\n")
         LOG.info("%s: %d rows kept of %d, verified, raw deleted (%.1f GB free before)", m,
                  acc["rows_kept"], acc["rows_file"], gb)
+    summary(out, path("results", cfg))
 
 
 if __name__ == "__main__":

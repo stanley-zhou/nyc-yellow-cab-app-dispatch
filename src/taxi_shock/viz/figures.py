@@ -708,7 +708,7 @@ def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title
     layers = [("app", "App dispatch (any e-hail app)", PALETTE["app"]),
               ("street", "Street hail", PALETTE["street"]),
               ("block", "CMT contracted block", PALETTE["baseline"])]
-    for ax, (g, name) in zip(np.atleast_1d(axes), panels, strict=True):
+    for i, (ax, (g, name)) in enumerate(zip(np.atleast_1d(axes), panels, strict=True)):
         d = weekly[weekly["zone_group"] == g].sort_values("week_start")
         use = [(k, lab, c) for k, lab, c in layers if d[k].sum() > 0]
         ax.stackplot(d["week_start"], *[d[k] / 1000 for k, _, _ in use],
@@ -719,7 +719,9 @@ def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title
         ax.set_xlim(d["week_start"].min(), d["week_start"].max())
         ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
-        policy_line(ax, label=False)
+        top = float(sum(d[k] for k, _, _ in use).max()) / 1000
+        ax.set_ylim(0, top * 1.18)                      # headroom for the policy label
+        policy_line(ax, label=i == 0, label_y=0.99, side="right")
         ax.legend(frameon=False, fontsize=8, loc="upper left")
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
@@ -812,7 +814,7 @@ def f6d_lyft_entry(daily: pd.DataFrame, windows: dict, title: str, note: str,
     wk = wk[wk.groupby("week")["vendor_id"].transform("size") == 2]
     pre_end = pd.Timestamp(windows["pre_end"])
     for ax, y, name in ((axes[0], "total", "All pickups"), (axes[1], "app", "App pickups")):
-        for v, label, color in ((2, "Curb cabs (gain Lyft)", PALETTE["cbd"]),
+        for v, label, color in ((2, "Curb cabs (gain Lyft)", PALETTE["comparison"]),
                                 (1, "CMT cabs (control)", PALETTE["non_cbd"])):
             s = wk[wk["vendor_id"] == v].set_index("week")[y]
             base = s[(s.index <= pre_end) & (s.index >= pre_end - pd.Timedelta(weeks=8))].mean()
@@ -870,7 +872,8 @@ def f6_taxi_vs_fhv(series: list[tuple[str, pd.DataFrame, str]], policy_date: str
     use_style()
     fig, ax = plt.subplots(figsize=SIZES["single"], layout="constrained")
     for j, (label, es, color) in enumerate(series):
-        _event_panel(ax, es, policy_date, "Effect on CBD pickups (%)", color,
+        _event_panel(ax, es, policy_date,
+                     "CBD vs control, relative to the week before 2025-01-05 (%)", color,
                      label_policy=j == 0, label_y=0.99,
                      shift_days=(j - (len(series) - 1) / 2) * 6, label=label,
                      marker="os^"[j % 3])

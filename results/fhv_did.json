@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-13T05:13:00+00:00",
+  "generated_utc": "2026-11-13T05:57:38+00:00",
   "specification": "Phase 4 design (07b) on HVFHV pickups; Amendment 3 C6",
   "rule": "pre-trend test first; a series with Hotelling F* p < 0.05 gets no static estimate",
   "series": {
@@ -7,43 +7,97 @@
       "equal_weight": {
         "pretrend": {
           "n_restrictions": 24,
-          "wald_chi2": 637.5416481393786,
-          "p_chi2": 3.2501217966518856e-119,
-          "F": 26.564235339140776,
+          "wald_chi2": 637.5416481383669,
+          "p_chi2": 3.250121798239408e-119,
+          "F": 26.56423533909862,
           "df": [
             24,
             62
           ],
-          "p_F": 3.782443917452186e-24,
-          "F_hotelling": 16.70976093913694,
+          "p_F": 3.782443917616118e-24,
+          "F_hotelling": 16.709760939110424,
           "df_hotelling": [
             24,
             39
           ],
-          "p_F_hotelling": 7.781435875032004e-14
+          "p_F_hotelling": 7.781435875240095e-14
         },
         "passes": false,
+        "event_study_path": {
+          "pre": {
+            "min_pct": 8.5512007965168,
+            "max_pct": 26.90698260660454,
+            "mean_pct": 17.5276901208053,
+            "n_bins": 24
+          },
+          "post": {
+            "min_pct": 1.540539790576614,
+            "max_pct": 15.516038541627083,
+            "mean_pct": 8.559287137685226,
+            "n_bins": 21
+          },
+          "pre_2023": {
+            "min_pct": 11.662172484645879,
+            "max_pct": 26.90698260660454,
+            "mean_pct": 20.841488098366128,
+            "n_bins": 12
+          },
+          "pre_2024": {
+            "min_pct": 8.5512007965168,
+            "max_pct": 20.580725550824532,
+            "mean_pct": 14.213892143244472,
+            "n_bins": 12
+          },
+          "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to the week before the policy"
+        },
         "pre_mean_weekly_treated": 31778.74190283401
       },
       "pre_volume_weighted": {
         "pretrend": {
           "n_restrictions": 24,
-          "wald_chi2": 1300.6505170918276,
-          "p_chi2": 8.279555218047692e-260,
-          "F": 54.193771545492815,
+          "wald_chi2": 1300.6505170895018,
+          "p_chi2": 8.279555227513165e-260,
+          "F": 54.19377154539591,
           "df": [
             24,
             60
           ],
-          "p_F": 4.202045120523459e-32,
-          "F_hotelling": 33.419492453053905,
+          "p_F": 4.2020451207354255e-32,
+          "F_hotelling": 33.41949245299414,
           "df_hotelling": [
             24,
             37
           ],
-          "p_F_hotelling": 2.273648526191355e-18
+          "p_F_hotelling": 2.2736485262613962e-18
         },
         "passes": false,
+        "event_study_path": {
+          "pre": {
+            "min_pct": 14.923157827422035,
+            "max_pct": 28.595223862980607,
+            "mean_pct": 20.678237641653304,
+            "n_bins": 24
+          },
+          "post": {
+            "min_pct": 5.860464904368012,
+            "max_pct": 20.4342469129345,
+            "mean_pct": 13.368895024862963,
+            "n_bins": 21
+          },
+          "pre_2023": {
+            "min_pct": 15.173293851103043,
+            "max_pct": 28.595223862980607,
+            "mean_pct": 23.16374353369871,
+            "n_bins": 12
+          },
+          "pre_2024": {
+            "min_pct": 14.923157827422035,
+            "max_pct": 22.0719597116647,
+            "mean_pct": 18.192731749607898,
+            "n_bins": 12
+          },
+          "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to the week before the policy"
+        },
         "pre_mean_weekly_treated": 31778.74190283401
       }
     },
@@ -51,43 +105,97 @@
       "equal_weight": {
         "pretrend": {
           "n_restrictions": 24,
-          "wald_chi2": 638.3289922683242,
-          "p_chi2": 2.2223226638725475e-119,
-          "F": 26.59704134451351,
+          "wald_chi2": 638.328992269699,
+          "p_chi2": 2.2223226623974288e-119,
+          "F": 26.597041344570794,
           "df": [
             24,
             62
           ],
-          "p_F": 3.657059086141493e-24,
-          "F_hotelling": 16.730396974774628,
+          "p_F": 3.657059085926341e-24,
+          "F_hotelling": 16.73039697481066,
           "df_hotelling": [
             24,
             39
           ],
-          "p_F_hotelling": 7.621257558266599e-14
+          "p_F_hotelling": 7.621257557989994e-14
         },
         "passes": false,
+        "event_study_path": {
+          "pre": {
+            "min_pct": 10.60841795384761,
+            "max_pct": 34.415546214964394,
+            "mean_pct": 21.844013036821107,
+            "n_bins": 24
+          },
+          "post": {
+            "min_pct": 5.848179447967638,
+            "max_pct": 18.057260358409632,
+            "mean_pct": 11.433343476952523,
+            "n_bins": 21
+          },
+          "pre_2023": {
+            "min_pct": 14.857959479065052,
+            "max_pct": 34.415546214964394,
+            "mean_pct": 27.102437117318257,
+            "n_bins": 12
+          },
+          "pre_2024": {
+            "min_pct": 10.60841795384761,
+            "max_pct": 25.366549551718798,
+            "mean_pct": 16.585588956323956,
+            "n_bins": 12
+          },
+          "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to the week before the policy"
+        },
         "pre_mean_weekly_treated": 23892.2975708502
       },
       "pre_volume_weighted": {
         "pretrend": {
           "n_restrictions": 24,
-          "wald_chi2": 1839.3538534919282,
+          "wald_chi2": 1839.3538534903396,
           "p_chi2": 0.0,
-          "F": 76.639743895497,
+          "F": 76.63974389543081,
           "df": [
             24,
             60
           ],
-          "p_F": 2.176089600846689e-36,
-          "F_hotelling": 47.26117540222315,
+          "p_F": 2.1760896009006635e-36,
+          "F_hotelling": 47.26117540218234,
           "df_hotelling": [
             24,
             37
           ],
-          "p_F_hotelling": 5.439531518895837e-21
+          "p_F_hotelling": 5.439531518978466e-21
         },
         "passes": false,
+        "event_study_path": {
+          "pre": {
+            "min_pct": 18.76068239773057,
+            "max_pct": 38.66612345435034,
+            "mean_pct": 28.773262778254644,
+            "n_bins": 24
+          },
+          "post": {
+            "min_pct": 11.467617934863938,
+            "max_pct": 29.540333144676023,
+            "mean_pct": 20.87439511931655,
+            "n_bins": 21
+          },
+          "pre_2023": {
+            "min_pct": 25.695352177142443,
+            "max_pct": 38.66612345435034,
+            "mean_pct": 33.655456406863024,
+            "n_bins": 12
+          },
+          "pre_2024": {
+            "min_pct": 18.76068239773057,
+            "max_pct": 30.289066962525723,
+            "mean_pct": 23.89106914964627,
+            "n_bins": 12
+          },
+          "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to the week before the policy"
+        },
         "pre_mean_weekly_treated": 23892.2975708502
       }
     },
@@ -95,43 +203,97 @@
       "equal_weight": {
         "pretrend": {
           "n_restrictions": 24,
-          "wald_chi2": 592.9416079259988,
-          "p_chi2": 7.101880411550099e-110,
-          "F": 24.70590033024995,
+          "wald_chi2": 592.9416079260221,
+          "p_chi2": 7.101880411470684e-110,
+          "F": 24.705900330250923,
           "df": [
             24,
             62
           ],
-          "p_F": 2.717019333382758e-23,
-          "F_hotelling": 15.540808272254,
+          "p_F": 2.7170193333798666e-23,
+          "F_hotelling": 15.540808272254612,
           "df_hotelling": [
             24,
             39
           ],
-          "p_F_hotelling": 2.6242555432064114e-13
+          "p_F_hotelling": 2.6242555432046837e-13
         },
         "passes": false,
+        "event_study_path": {
+          "pre": {
+            "min_pct": -8.96455306147565,
+            "max_pct": 5.899742076421804,
+            "mean_pct": -2.6020888117412295,
+            "n_bins": 24
+          },
+          "post": {
+            "min_pct": -20.84420098409685,
+            "max_pct": 9.177009341778412,
+            "mean_pct": -7.2286664540635135,
+            "n_bins": 21
+          },
+          "pre_2023": {
+            "min_pct": -8.96455306147565,
+            "max_pct": 2.3878794837488693,
+            "mean_pct": -4.157508519574693,
+            "n_bins": 12
+          },
+          "pre_2024": {
+            "min_pct": -6.948248474873989,
+            "max_pct": 5.899742076421804,
+            "mean_pct": -1.0466691039077667,
+            "n_bins": 12
+          },
+          "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to the week before the policy"
+        },
         "pre_mean_weekly_treated": 7886.444331983806
       },
       "pre_volume_weighted": {
         "pretrend": {
           "n_restrictions": 24,
-          "wald_chi2": 472.67478677003203,
-          "p_chi2": 7.731812031104155e-85,
-          "F": 19.69478278208467,
+          "wald_chi2": 472.67478677149137,
+          "p_chi2": 7.731812025724227e-85,
+          "F": 19.694782782145474,
           "df": [
             24,
             60
           ],
-          "p_F": 3.1571255518625905e-20,
-          "F_hotelling": 12.145116048952213,
+          "p_F": 3.157125551614721e-20,
+          "F_hotelling": 12.14511604898971,
           "df_hotelling": [
             24,
             37
           ],
-          "p_F_hotelling": 3.6020755592891377e-11
+          "p_F_hotelling": 3.6020755591195017e-11
         },
         "passes": false,
+        "event_study_path": {
+          "pre": {
+            "min_pct": -8.101223460444126,
+            "max_pct": 11.121234902583732,
+            "mean_pct": 0.793438560583598,
+            "n_bins": 24
+          },
+          "post": {
+            "min_pct": -14.9414169412696,
+            "max_pct": 9.042672078067694,
+            "mean_pct": -4.35204219992283,
+            "n_bins": 21
+          },
+          "pre_2023": {
+            "min_pct": -8.101223460444126,
+            "max_pct": 7.262185386910525,
+            "mean_pct": -1.5301318961379875,
+            "n_bins": 12
+          },
+          "pre_2024": {
+            "min_pct": -3.3313599036968524,
+            "max_pct": 11.121234902583732,
+            "mean_pct": 3.117009017305184,
+            "n_bins": 12
+          },
+          "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to the week before the policy"
+        },
         "pre_mean_weekly_treated": 7886.444331983806
       }
     },
@@ -139,43 +301,97 @@
       "equal_weight": {
         "pretrend": {
           "n_restrictions": 24,
-          "wald_chi2": 180.90832240426957,
-          "p_chi2": 4.913509430412695e-26,
-          "F": 7.537846766844566,
+          "wald_chi2": 180.9083224042462,
+          "p_chi2": 4.9135094304631636e-26,
+          "F": 7.537846766843592,
           "df": [
             24,
             62
           ],
-          "p_F": 7.810226123525872e-11,
-          "F_hotelling": 4.741548772692549,
+          "p_F": 7.81022612354649e-11,
+          "F_hotelling": 4.741548772691937,
           "df_hotelling": [
             24,
             39
           ],
-          "p_F_hotelling": 8.84676154637783e-06
+          "p_F_hotelling": 8.84676154639139e-06
         },
         "passes": false,
+        "event_study_path": {
+          "pre": {
+            "min_pct": 6.349438864051744,
+            "max_pct": 66.69863378989372,
+            "mean_pct": 49.941478745368045,
+            "n_bins": 24
+          },
+          "post": {
+            "min_pct": -1.0896030316333005,
+            "max_pct": 40.805552836701004,
+            "mean_pct": 20.030000603963234,
+            "n_bins": 21
+          },
+          "pre_2023": {
+            "min_pct": 38.779355808842354,
+            "max_pct": 62.106976598703966,
+            "mean_pct": 51.46168454988202,
+            "n_bins": 12
+          },
+          "pre_2024": {
+            "min_pct": 6.349438864051744,
+            "max_pct": 66.69863378989372,
+            "mean_pct": 48.421272940854074,
+            "n_bins": 12
+          },
+          "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to the week before the policy"
+        },
         "pre_mean_weekly_treated": 860.9903846153846
       },
       "pre_volume_weighted": {
         "pretrend": {
           "n_restrictions": 24,
-          "wald_chi2": 385.4284414520858,
-          "p_chi2": 7.303901105804061e-67,
-          "F": 16.059518393836907,
+          "wald_chi2": 385.42844145196403,
+          "p_chi2": 7.303901106223345e-67,
+          "F": 16.059518393831834,
           "df": [
             24,
             60
           ],
-          "p_F": 5.17773553575423e-18,
-          "F_hotelling": 9.903369676199427,
+          "p_F": 5.177735535794371e-18,
+          "F_hotelling": 9.903369676196299,
           "df_hotelling": [
             24,
             37
           ],
-          "p_F_hotelling": 7.601420128055298e-10
+          "p_F_hotelling": 7.601420128090376e-10
         },
         "passes": false,
+        "event_study_path": {
+          "pre": {
+            "min_pct": 8.580413594055436,
+            "max_pct": 59.51555987271777,
+            "mean_pct": 46.04067498536201,
+            "n_bins": 24
+          },
+          "post": {
+            "min_pct": 8.748024926887439,
+            "max_pct": 65.95041043235535,
+            "mean_pct": 31.96140110864979,
+            "n_bins": 21
+          },
+          "pre_2023": {
+            "min_pct": 40.17563252328498,
+            "max_pct": 55.88816509936167,
+            "mean_pct": 49.175784980271935,
+            "n_bins": 12
+          },
+          "pre_2024": {
+            "min_pct": 8.580413594055436,
+            "max_pct": 59.51555987271777,
+            "mean_pct": 42.9055649904521,
+            "n_bins": 12
+          },
+          "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to the week before the policy"
+        },
         "pre_mean_weekly_treated": 860.9903846153846
       }
     }

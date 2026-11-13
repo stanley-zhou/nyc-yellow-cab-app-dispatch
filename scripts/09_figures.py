@@ -666,10 +666,12 @@ def phase4c(cfg: dict) -> None:
         bt = st["yellow"]["d0_step_by_trip_type"]["by_type"]
         po = st["yellow"]["pooled"]["app_share"]
         stats["d5b"] = {"step_pp": {k: v["step_pp"] for k, v in bt.items()}, "pooled": po}
+        pp = st["yellow"]["pretrend"]["app_share"]["p_F_hotelling"]
+        stats["d5b"]["pretrend_p_hotelling"] = pp
         t = (f"App-share step at 2025-01-19: {bt['within']['step_pp']:+.1f} pp within the CBD, "
              f"{bt['into']['step_pp']:+.1f} into, {bt['out_of']['step_pp']:+.1f} out of, "
-             f"{bt['neither']['step_pp']:+.1f} for trips touching neither end; DiD "
-             f"{po['coef'] * 100:+.1f} pp [{po['ci'][0] * 100:+.1f}, {po['ci'][1] * 100:+.1f}]")
+             f"{bt['neither']['step_pp']:+.1f} for trips touching neither end; the DiD "
+             f"({po['coef'] * 100:+.1f} pp) fails its pre-trend test (p = {pp:.0e})")
         stats["d5b"]["title"] = t
         f6e_app_share_step(pd.read_csv(res / "app_share_by_trip_type_weekly.csv",
                                        parse_dates=["week_start"]),

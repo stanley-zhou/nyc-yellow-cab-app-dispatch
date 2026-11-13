@@ -35,6 +35,7 @@ import pandas as pd
 import pyfixest as pf
 
 from taxi_shock.causal.did import Z95
+from taxi_shock.causal.event_study import wald
 from taxi_shock.config import load_config, path, repo_root
 from taxi_shock.io import connect
 
@@ -66,7 +67,7 @@ def prep(c: pd.DataFrame, types: list[str], policy: pd.Timestamp) -> pd.DataFram
 
 
 def event_study(d: pd.DataFrame, y: str, weights: str | None, policy: pd.Timestamp
-                ) -> pd.DataFrame:
+                ) -> tuple[pd.DataFrame, dict]:
     k = ((d["week_start"] - policy).dt.days // 7).astype(int)
     terms, x = [], d.copy()
     for e in sorted(k.unique()):
@@ -77,8 +78,9 @@ def event_study(d: pd.DataFrame, y: str, weights: str | None, policy: pd.Timesta
         terms.append((e, t))
     m = pf.feols(f"{y} ~ {' + '.join(t for _, t in terms)} | cell + week_start", data=x,
                  weights=weights, vcov={"CRV1": "zone_id"})
+    test = wald(m, [t for e, t in terms if e < 0], int(x["zone_id"].nunique()))
     return pd.DataFrame([{"event_week": e, "coef": float(m.coef()[t]), "se": float(m.se()[t])}
-                         for e, t in terms])
+                         for e, t in terms]), test
 
 
 def main() -> None:
@@ -118,19 +120,23 @@ def main() -> None:
                                "log1p_app_cell_weighted": did(d, "log1p_app", "w_cell"),
                                "log1p_street_cell_weighted": did(d, "log1p_street", "w_cell")}
         if name == "pooled":
-            for y, wgt in (("app_share", "trips"), ("log1p_app", None), ("log1p_street", None)):
-                es_rows.append(event_study(d, y, wgt, policy).assign(source="yellow",
-                                                                     outcome=y))
+            out["yellow"]["pretrend"] = {}
+            for y, wgt in (("app_share", "trips"), ("log1p_app", "w_cell"),
+                           ("log1p_street", "w_cell")):
+                es_, test = event_study(d, y, wgt, policy)
+                es_rows.append(es_.assign(source="yellow", outcome=y))
+                out["yellow"]["pretrend"][y] = test
     # pre/post mean share by type (descriptive): 4 weeks either side of the D0 step week
     step = pd.Timestamp(cfg["channel_did"]["d0_step_week"])
+    nk = int(cfg["channel_did"]["step_weeks_each_side"])
     desc = {}
     for t, x in wk.groupby("trip_type"):
-        b = x[(x["week_start"] < step) & (x["week_start"] >= step - pd.Timedelta(weeks=4))]
-        a = x[(x["week_start"] >= step) & (x["week_start"] < step + pd.Timedelta(weeks=4))]
+        b = x[(x["week_start"] < step) & (x["week_start"] >= step - pd.Timedelta(weeks=nk))]
+        a = x[(x["week_start"] >= step) & (x["week_start"] < step + pd.Timedelta(weeks=nk))]
         desc[t] = {"share_before": float(b["app"].sum() / b["trips"].sum()),
                    "share_after": float(a["app"].sum() / a["trips"].sum())}
         desc[t]["step_pp"] = (desc[t]["share_after"] - desc[t]["share_before"]) * 100
-    out["yellow"]["d0_step_by_trip_type"] = {"step_week": str(step.date()), "weeks_each_side": 4,
+    out["yellow"]["d0_step_by_trip_type"] = {"step_week": str(step.date()), "weeks_each_side": nk,
                                              "by_type": desc}
 
     agg = repo_root() / cfg["hvfhv"]["out_dir"]
@@ -152,8 +158,9 @@ def main() -> None:
             out["hvfhv"][p_name] = {"log1p_trips": did(d, "log1p_trips", None),
                                     "log1p_trips_cell_weighted": did(d, "log1p_trips", "w_cell")}
             if p_name == "uber_lyft":
-                es_rows.append(event_study(d, "log1p_trips", None, policy).assign(
-                    source="hvfhv", outcome="log1p_trips"))
+                es_, test = event_study(d, "log1p_trips", "w_cell", policy)
+                es_rows.append(es_.assign(source="hvfhv", outcome="log1p_trips"))
+                out["hvfhv"]["pretrend_uber_lyft_cell_weighted"] = test
     else:
         out["hvfhv"] = {"note": "HVFHV aggregates not present"}
     (res / "app_share_policy_step.json").write_text(json.dumps(out, indent=2) + "\n")

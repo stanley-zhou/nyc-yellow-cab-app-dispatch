@@ -36,7 +36,6 @@ from taxi_shock.io import connect
 
 LOG = logging.getLogger("channel")
 GROUPS = ["cbd", "manhattan_non_cbd", "airports", "other"]
-MOTIVATION_MONTHS = ["2023-01", "2024-04", "2025-01", "2026-01"]
 
 
 def load(cfg: dict) -> pd.DataFrame:
@@ -100,6 +99,12 @@ def main() -> None:
 
     w["month"] = w["week_start"].dt.to_period("M").astype(str)
     monthly = wide(w, ["month", "zone_group"])
+    # weeks are assigned to the month of their start, so months hold 4 or 5 weeks: per-week means
+    # make months comparable (review round 1: 2023-01 has 5 weeks, 2026-01 has 4)
+    nwk = w.groupby("month")["week_start"].nunique()
+    monthly["n_weeks"] = monthly["month"].map(nwk)
+    for c in ("app", "street", "block", "total", "total_excl_block"):
+        monthly[f"{c}_per_week"] = monthly[c] / monthly["n_weeks"]
     monthly.to_csv(res / "channel_monthly.csv", index=False, lineterminator="\n",
                    float_format="%.6g")
 
@@ -110,7 +115,7 @@ def main() -> None:
     rfm = rf.groupby(["month", "zone_group"])[["pickups", "pickups_flex"]].sum()
     mm = monthly.set_index(["month", "zone_group"])
     rest = {}
-    for m in MOTIVATION_MONTHS:
+    for m in cfg["channel"]["motivation_months"]:
         rest[m] = {}
         for g in ("cbd", "other"):
             r = rfm.loc[(m, g)]
@@ -121,11 +126,16 @@ def main() -> None:
                 "pickups": int(c["total"]), "app_share": float(c["app_share"]),
                 "pickups_excl_cmt_block": int(c["total_excl_block"]),
                 "app_share_excl_cmt_block": float(c["app_share_excl_block"]),
-                "cmt_block_pickups": int(c["block"])}
+                "cmt_block_pickups": int(c["block"]), "n_weeks": int(c["n_weeks"]),
+                "pickups_per_week": float(c["total_per_week"]),
+                "street_per_week": float(c["street_per_week"]),
+                "app_per_week": float(c["app_per_week"]),
+                "pickups_excl_cmt_block_per_week": float(c["total_excl_block_per_week"])}
     (res / "channel_restatement.json").write_text(json.dumps({
         "generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "method": "weeks assigned to the month of their week start (the method of Amendment 4's "
-                  "figures, from results/record_format_shares.csv)",
+                  "figures, from results/record_format_shares.csv); months hold 4 or 5 weeks, "
+                  "so compare the *_per_week values across months, not the monthly sums",
         "months": rest}, indent=2) + "\n")
 
     weeks = pd.Series(sorted(w["week_start"].unique()))

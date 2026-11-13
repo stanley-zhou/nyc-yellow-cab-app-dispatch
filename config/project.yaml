@@ -85,6 +85,13 @@ channel:                                      # Amendment 4 (D0-D5): app dispatc
   window: ["2023-01-01", "2026-09-30"]        # channel marts (= data.event_study_window)
   platforms: {HV0003: uber, HV0005: lyft, EH0004: curb_app, EH0010: arro, A: code_a, CC: code_cc}
   cmt_block: {vendor_id: 1, zone_group: other, channel: street}   # Amendment 4a: own series
+  cmt_block_diagnosis:                        # 10b: the break week (D0) and the windows around it
+    break_week: "2026-05-31"
+    weeks_each_side: 4
+    weekly_window: ["2026-04-26", "2026-06-28"]
+    months_before: ["2026-03", "2026-05"]
+    months_after: ["2026-06", "2026-08"]
+  motivation_months: ["2023-01", "2024-04", "2025-01", "2026-01"]   # Amendment 4's figures
   map_min_weekly: 20                          # F6b: zones below this mean weekly pickups hatched
   break_ratio: 0.5                            # test: a vendor x zone-group series may not fall
   break_min_weekly: 1000                      #   below half its previous week (base >= this)
@@ -115,6 +122,10 @@ channel_did:                                  # Amendment 4 D5 / D5b
   alpha: 0.05                                 # D5 gate: Hotelling F* pre-trend p must be >= this
   step_window: ["2024-07-01", "2025-06-30"]   # D5b: event-study window around 2025-01-05
   d0_step_week: "2025-01-19"                  # D0: +10.9 pp app-share step (all zones)
+  step_weeks_each_side: 4                     # D5b descriptive step: weeks after vs before
+  lyft_splits: {jan_2025: ["2025-01-05", "2025-01-31"], after_jan_2025: ["2025-02-01", null]}
+                                              # C6: Lyft's January 2025 (rider credit) separate;
+                                              # null = the last panel week
 hvfhv:                                        # Amendment 4: streaming aggregates (raw files not kept)
   months: ["2023-01", "2026-09"]              # Amendment 4 (extended for D4)
   out_dir: data/processed/hvfhv               # monthly aggregate Parquet files

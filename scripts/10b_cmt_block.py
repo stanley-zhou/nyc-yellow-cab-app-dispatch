@@ -27,8 +27,6 @@ import pandas as pd
 from taxi_shock.config import load_config, path
 
 LOG = logging.getLogger("cmt_block")
-BEFORE = ["2026-03", "2026-05"]          # months before the break
-AFTER = ["2026-06", "2026-08"]           # months after it
 
 
 def records(cfg: dict, months: list[str], other_zones: list[int]) -> str:
@@ -70,14 +68,16 @@ def main() -> None:
 
     # 1. who gained it (warehouse-based weekly series from 10a)
     v = pd.read_csv(res / "flex_vendor_weekly.csv", parse_dates=["week_start"])
-    v = v[(v["zone_group"] == "other") & v["week_start"].between("2026-04-26", "2026-06-28")]
+    dg = cfg["channel"]["cmt_block_diagnosis"]
+    brk, k = pd.Timestamp(dg["break_week"]), int(dg["weeks_each_side"])
+    v = v[(v["zone_group"] == "other") & v["week_start"].between(*dg["weekly_window"])]
     v = v.assign(street=v["pickups"] - v["pickups_flex"])
     wk = v.pivot_table(index="week_start", columns="vendor_id", values=["pickups", "street"],
                        aggfunc="sum").fillna(0)
     weekly = {str(d.date()): {f"{a}_vendor_{int(b)}": int(wk.loc[d, (a, b)])
                               for a, b in wk.columns} for d in wk.index}
-    pre_w = [d for d in wk.index if d < pd.Timestamp("2026-05-31")][-4:]
-    post_w = [d for d in wk.index if d >= pd.Timestamp("2026-05-31")][:4]
+    pre_w = [d for d in wk.index if d < brk][-k:]
+    post_w = [d for d in wk.index if d >= brk][:k]
 
     def mean_by(kind):
         cols = [c for c in wk.columns if c[0] == kind]
@@ -93,7 +93,7 @@ def main() -> None:
 
     # 2. what it is (raw files)
     con = duckdb.connect()
-    q = records(cfg, BEFORE, other)
+    q = records(cfg, dg["months_before"], other)
     n = con.execute(f"select grp, count(*) from ({q}) group by 1").fetchall()
     num = con.execute(f"""
         select grp,
@@ -119,7 +119,7 @@ def main() -> None:
         "specification": "PLAN.md Amendment 4a (CMT outer-borough block: diagnose first)",
         "block": "VendorID 1, pickup zone in zone group 'other', not Flex Fare",
         "who_gained_it": gain, "weekly_other_group_by_vendor": weekly,
-        "characteristics_months": BEFORE,
+        "characteristics_months": dg["months_before"],
         "comparison": "street hails (not Flex) of every other VendorID in the same zones/months",
         "records": {g: int(c) for g, c in n},
         "numeric": chars, **named,
@@ -129,8 +129,8 @@ def main() -> None:
         "rate_code": dist(con, q, "RatecodeID"),
         "store_and_fwd_flag": dist(con, q, "store_and_fwd_flag"),
     }
-    qa = records(cfg, AFTER, other)
-    out["records_after_months"] = AFTER
+    qa = records(cfg, dg["months_after"], other)
+    out["records_after_months"] = dg["months_after"]
     out["records_after"] = {g: int(c) for g, c in con.execute(
         f"select grp, count(*) from ({qa}) group by 1").fetchall()}
     (res / "cmt_block_diagnosis.json").write_text(json.dumps(out, indent=2, default=str) + "\n")

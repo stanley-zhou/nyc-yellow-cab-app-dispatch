@@ -70,10 +70,10 @@
   },
   "c6": {
     "fhv_pretrend_p_hotelling_weighted": {
-      "fhv_all": 2.273648526191355e-18,
-      "fhv_uber": 5.439531518895837e-21,
-      "fhv_lyft": 3.6020755592891377e-11,
-      "fhv_shared": 7.601420128055298e-10
+      "fhv_all": 2.2736485262613962e-18,
+      "fhv_uber": 5.439531518978466e-21,
+      "fhv_lyft": 3.6020755591195017e-11,
+      "fhv_shared": 7.601420128090376e-10
     },
     "yellow_pretrend_p": 1.5741757804099792e-17,
     "any_estimate": false,
@@ -87,16 +87,17 @@
       "within": 11.307429769787088
     },
     "pooled": {
-      "coef": 0.030268541047479836,
-      "se": 0.010684152700197982,
+      "coef": 0.030268541047479853,
+      "se": 0.010684152437627976,
       "ci": [
-        0.00932798654976542,
-        0.05120909554519425
+        0.009327987064393195,
+        0.05120909503056651
       ],
-      "pvalue": 0.00497502847421627,
+      "pvalue": 0.004975027423841372,
       "n_obs": 23817,
       "n_zones": 260
     },
-    "title": "App-share step at 2025-01-19: +11.3 pp within the CBD, +11.1 into, +8.1 out of, +10.6 for trips touching neither end; DiD +3.0 pp [+0.9, +5.1]"
+    "pretrend_p_hotelling": 3.915452856244059e-27,
+    "title": "App-share step at 2025-01-19: +11.3 pp within the CBD, +11.1 into, +8.1 out of, +10.6 for trips touching neither end; the DiD (+3.0 pp) fails its pre-trend test (p = 4e-27)"
   }
 }

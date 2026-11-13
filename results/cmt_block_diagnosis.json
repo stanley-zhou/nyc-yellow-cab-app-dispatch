@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-13T04:27:19+00:00",
+  "generated_utc": "2026-11-13T05:56:55+00:00",
   "specification": "PLAN.md Amendment 4a (CMT outer-borough block: diagnose first)",
   "block": "VendorID 1, pickup zone in zone group 'other', not Flex Fare",
   "who_gained_it": {
@@ -164,8 +164,8 @@
   ],
   "comparison": "street hails (not Flex) of every other VendorID in the same zones/months",
   "records": {
-    "other_vendors": 105773,
-    "cmt_block": 306332
+    "cmt_block": 306332,
+    "other_vendors": 105773
   },
   "numeric": {
     "other_vendors": {

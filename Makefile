@@ -89,7 +89,7 @@ lyft-refresh:     ## D3: re-run the Lyft entry estimate after extending data.yel
 adapt report:
 	@echo "make $@: not implemented yet (added in its phase, see PLAN.md §5)"; exit 1
 
-all: data dbt forecast shock causal adapt figures report
+all: data dbt forecast shock causal hvfhv channel fhv adapt figures report   ## hvfhv: a long re-stream unless the aggregates exist (verified months are skipped)
 
 verify:           ## make verify PHASE=N
 	$(PY) scripts/verify.py --phase $(PHASE)

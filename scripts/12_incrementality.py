@@ -184,6 +184,9 @@ def plpr(p: pd.DataFrame, x: list[str], cfg: dict) -> dict:
     d["t"] = (d["week_start"] - d["week_start"].min()).dt.days // 7
     data = dml.DoubleMLPanelData(d.drop(columns="week_start"), y_col="street", d_cols="app",
                                  t_col="t", id_col="zone_id", x_cols=x, static_panel=True)
+    # DoubleML draws its unit-based folds with sklearn KFold(shuffle=True) and no random_state,
+    # i.e. from numpy's global RNG: seed it so the folds (and theta) are reproducible
+    np.random.seed(cfg["seed"])  # noqa: NPY002  (DoubleML reads the legacy global RNG)
     m = dml.DoubleMLPLPR(data, LGBMRegressor(**ic["lgbm"], random_state=cfg["seed"],
                                              verbose=-1),
                          LGBMRegressor(**ic["lgbm"], random_state=cfg["seed"], verbose=-1),

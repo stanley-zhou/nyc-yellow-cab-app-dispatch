@@ -25,6 +25,7 @@ import logging
 from datetime import UTC, datetime
 
 import duckdb
+import numpy as np
 import pandas as pd
 
 from taxi_shock.causal.did import static_did
@@ -59,6 +60,41 @@ def fhv_weekly(cfg: dict) -> pd.DataFrame:
     return h
 
 
+def analyse(x: pd.DataFrame, s: str, wt: str | None, cfg: dict, p4,
+            lyft_splits: dict | None = None) -> tuple[dict, pd.DataFrame]:
+    """C6 for one series: the monthly event-study pre-trend test FIRST; the static DiD (and
+    persistence, and the Lyft January split if `lyft_splits`) only if Hotelling F* p >= alpha."""
+    cc = cfg["causal"]
+    alpha = float(cfg["channel_did"]["alpha"])
+    ctrl = [f"tr_{c}" for c in cc["weather_controls"]]
+    es, info = event_study(x, f"log1p_{s}", "zone_id", ["zone_id"], cfg["data"]["policy_date"],
+                           "month", weights=wt, controls=ctrl)
+    pt = info["pretrend"]
+    pct = np.expm1(es["coef"]) * 100
+
+    def rng(sel):
+        return {"min_pct": float(pct[sel].min()), "max_pct": float(pct[sel].max()),
+                "mean_pct": float(pct[sel].mean()), "n_bins": int(sel.sum())}
+
+    path_summary = {"pre": rng(es["k"] < 0), "post": rng(es["k"] >= 0),
+                    "pre_2023": rng(es["k"].between(-24, -13)),
+                    "pre_2024": rng(es["k"].between(-12, -1)),
+                    "unit": "monthly event-study coefficients as exp(b) - 1, %, relative to "
+                            "the week before the policy"}
+    r = {"pretrend": pt, "passes": bool(pt["p_F_hotelling"] >= alpha),
+         "event_study_path": path_summary,
+         "pre_mean_weekly_treated": float(x.loc[(x["treated"] == 1) & x["event_week"].between(
+             -cc["pre_weeks"], -1), s].mean())}
+    if r["passes"]:
+        r["estimate"] = p4.did(x, f"log1p_{s}", cfg, weights=wt)
+        r["persistence"] = p4.did(x, f"log1p_{s}", cfg, weights=wt, splits=True)
+        if lyft_splits:
+            r["lyft_january_2025_separate"] = static_did(
+                x, f"log1p_{s}", "zone_id", ["zone_id"], cc["pre_weeks"], weights=wt,
+                controls=ctrl, post_splits=lyft_splits).to_dict()
+    return r, es
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     cfg = load_config()
@@ -71,10 +107,9 @@ def main() -> None:
     w = w.merge(h, on=["zone_id", "week_start"], how="left")
     w[series] = w[series].fillna(0)
     d = p4.design(w, zs, cfg, y_cols=series)
-    ctrl = [f"tr_{c}" for c in cc["weather_controls"]]
-    policy = cfg["data"]["policy_date"]
-    lyft_splits = {"jan_2025": ["2025-01-05", "2025-01-31"],
-                   "after_jan_2025": ["2025-02-01", str(d["week_start"].max().date())]}
+
+    last = str(d["week_start"].max().date())
+    lyft_splits = {k: [a, b or last] for k, (a, b) in cfg["channel_did"]["lyft_splits"].items()}
     out = {"generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
            "specification": "Phase 4 design (07b) on HVFHV pickups; Amendment 3 C6",
            "rule": f"pre-trend test first; a series with Hotelling F* p < {alpha} gets no "
@@ -85,20 +120,9 @@ def main() -> None:
             x = (p4.add_pre_volume_weight(d, cc["pre_weeks"], col=s) if wname != "equal_weight"
                  else d)
             wt = "w_pre" if wname != "equal_weight" else None
-            es, info = event_study(x, f"log1p_{s}", "zone_id", ["zone_id"], policy, "month",
-                                   weights=wt, controls=ctrl)
+            r, es = analyse(x, s, wt, cfg, p4, lyft_splits if s == "fhv_lyft" else None)
             tables.append(es.assign(series=s, weighting=wname))
-            pt = info["pretrend"]
-            r = {"pretrend": pt, "passes": bool(pt["p_F_hotelling"] >= alpha),
-                 "pre_mean_weekly_treated": float(x.loc[(x["treated"] == 1) & x[
-                     "event_week"].between(-cc["pre_weeks"], -1), s].mean())}
-            if r["passes"]:
-                r["estimate"] = p4.did(x, f"log1p_{s}", cfg, weights=wt)
-                r["persistence"] = p4.did(x, f"log1p_{s}", cfg, weights=wt, splits=True)
-                if s == "fhv_lyft":
-                    r["lyft_january_2025_separate"] = static_did(
-                        x, f"log1p_{s}", "zone_id", ["zone_id"], cc["pre_weeks"],
-                        weights=wt, controls=ctrl, post_splits=lyft_splits).to_dict()
+            pt = r["pretrend"]
             out["series"].setdefault(s, {})[wname] = r
             LOG.info("%s %s: pre-trend F* p %.3g -> %s", s, wname, pt["p_F_hotelling"],
                      "estimate" if r["passes"] else "STOP (no estimate)")
