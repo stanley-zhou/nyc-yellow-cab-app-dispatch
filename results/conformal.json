@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-13T07:21:03+00:00",
+  "generated_utc": "2026-11-13T18:22:59+00:00",
   "method": "split-conformal CQR: score max(q_lo - y, y - q_hi) on the validation year, Q = ceil((n+1)(1-alpha))/n quantile, interval [max(q_lo - Q, 0), q_hi + Q]",
   "alpha": 0.2,
   "validation_year": [
@@ -19,8 +19,8 @@
       "n_calibration": 17516,
       "Q": 8.0,
       "coverage_validation_raw": 0.7601,
-      "coverage_test_raw": 0.7878,
-      "coverage_test_conformal": 0.8236,
+      "coverage_test_raw": 0.7879,
+      "coverage_test_conformal": 0.8237,
       "width_test_raw": 115.0343,
       "width_test_conformal": 129.0939
     },
@@ -31,8 +31,8 @@
       "n_calibration": 332804,
       "Q": 0.0,
       "coverage_validation_raw": 0.8007,
-      "coverage_test_raw": 0.7771,
-      "coverage_test_conformal": 0.7771,
+      "coverage_test_raw": 0.7772,
+      "coverage_test_conformal": 0.7772,
       "width_test_raw": 41.3037,
       "width_test_conformal": 41.3037
     },
@@ -43,8 +43,8 @@
       "n_calibration": 192676,
       "Q": 0.0,
       "coverage_validation_raw": 0.8247,
-      "coverage_test_raw": 0.7738,
-      "coverage_test_conformal": 0.7738,
+      "coverage_test_raw": 0.7739,
+      "coverage_test_conformal": 0.7739,
       "width_test_raw": 37.0851,
       "width_test_conformal": 37.0851
     },
@@ -55,8 +55,8 @@
       "n_calibration": 359078,
       "Q": 0.0,
       "coverage_validation_raw": 0.8671,
-      "coverage_test_raw": 0.7548,
-      "coverage_test_conformal": 0.7548,
+      "coverage_test_raw": 0.7549,
+      "coverage_test_conformal": 0.7549,
       "width_test_raw": 3.0989,
       "width_test_conformal": 3.0989
     },
@@ -68,7 +68,7 @@
       "Q": 8.0,
       "coverage_validation_raw": 0.7601,
       "coverage_test_raw": 0.7967,
-      "coverage_test_conformal": 0.8326,
+      "coverage_test_conformal": 0.8327,
       "width_test_raw": 118.2892,
       "width_test_conformal": 132.3194
     },
@@ -79,8 +79,8 @@
       "n_calibration": 332804,
       "Q": 0.0,
       "coverage_validation_raw": 0.8007,
-      "coverage_test_raw": 0.7829,
-      "coverage_test_conformal": 0.7829,
+      "coverage_test_raw": 0.783,
+      "coverage_test_conformal": 0.783,
       "width_test_raw": 42.2245,
       "width_test_conformal": 42.2245
     },
@@ -91,8 +91,8 @@
       "n_calibration": 192676,
       "Q": 0.0,
       "coverage_validation_raw": 0.8247,
-      "coverage_test_raw": 0.7766,
-      "coverage_test_conformal": 0.7766,
+      "coverage_test_raw": 0.7767,
+      "coverage_test_conformal": 0.7767,
       "width_test_raw": 37.6202,
       "width_test_conformal": 37.6202
     },
@@ -103,8 +103,8 @@
       "n_calibration": 359078,
       "Q": 0.0,
       "coverage_validation_raw": 0.8671,
-      "coverage_test_raw": 0.7635,
-      "coverage_test_conformal": 0.7635,
+      "coverage_test_raw": 0.7636,
+      "coverage_test_conformal": 0.7636,
       "width_test_raw": 3.1704,
       "width_test_conformal": 3.1704
     },
