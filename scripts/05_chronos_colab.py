@@ -120,9 +120,12 @@ def variant_covariates(manifest: dict, variant: str) -> tuple[list[str], list[st
 
 
 # ------------------------------------------------------------------------------------ predict
+STAGE_SECONDS: dict[str, float] = {"inputs": 0.0, "predict": 0.0, "frames": 0.0}
+
+
 def forecast_chunk(pipeline, manifest: dict, zones: np.ndarray, hours: pd.DatetimeIndex,
                    y: np.ndarray, cov: pd.DataFrame, origins: pd.DatetimeIndex,
-                   variant: str) -> pd.DataFrame:
+                   variant: str, batch_size: int | None = None) -> pd.DataFrame:
     """Forecasts for every (origin, zone, target hour) of `origins`; one model call per
     prediction length (23 on spring-forward days, else 24) so all inputs share a schema."""
     qs = list(manifest["quantiles"])
@@ -136,12 +139,15 @@ def forecast_chunk(pipeline, manifest: dict, zones: np.ndarray, hours: pd.Dateti
         by_len.setdefault(hi - lo, []).append((o, lo))
     frames = []
     for n_h, items in sorted(by_len.items()):
+        t0 = time.perf_counter()
         inputs = []
         for _, lo in items:
             inputs += make_inputs(y, cov, lo, n_h, context, past, future)
+        t1 = time.perf_counter()
         quant, _ = pipeline.predict_quantiles(
             inputs, prediction_length=n_h, quantile_levels=qs,
-            batch_size=int(manifest["batch_size"]), context_length=context)
+            batch_size=int(batch_size or manifest["batch_size"]), context_length=context)
+        t2 = time.perf_counter()
         arr = np.stack([t.detach().float().cpu().numpy()[0] for t in quant])  # (n, n_h, n_q)
         k = 0
         for o, lo in items:
@@ -157,6 +163,9 @@ def forecast_chunk(pipeline, manifest: dict, zones: np.ndarray, hours: pd.Dateti
             for j, q in enumerate(qs):
                 df[qcol(q)] = block[:, :, j].reshape(-1).astype("float32")
             frames.append(df)
+        STAGE_SECONDS["inputs"] += t1 - t0
+        STAGE_SECONDS["predict"] += t2 - t1
+        STAGE_SECONDS["frames"] += time.perf_counter() - t2
     out = pd.concat(frames, ignore_index=True)
     out.insert(0, "variant", variant)
     return out.sort_values(["origin", "zone_id", "target_ts"], kind="stable").reset_index(drop=True)
@@ -200,6 +209,13 @@ def main() -> None:
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--dry-run", action="store_true",
                     help="2 zones x 2 origins x every variant, written to <out-dir>/dry_run/")
+    ap.add_argument("--batch-size", type=int, default=None,
+                    help="series per GPU batch (default: manifest batch_size); results are "
+                         "independent of it (cross_learning=False), only the runtime changes")
+    ap.add_argument("--profile", type=int, default=0, metavar="N",
+                    help="time the first N origins of the first variant per stage (inputs, "
+                         "predict, frames) at batch sizes 256 / 1024 / 4096 and exit; writes "
+                         "<out-dir>/profile.json")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -215,6 +231,21 @@ def main() -> None:
              origins[0].date(), origins[-1].date(), variants)
 
     pipeline = load_pipeline(manifest["model_id"], args.device)
+    if args.profile:
+        prof = {}
+        for bs in (256, 1024, 4096):
+            for k in STAGE_SECONDS:
+                STAGE_SECONDS[k] = 0.0
+            t0 = time.perf_counter()
+            forecast_chunk(pipeline, manifest, zones, hours, y, cov, origins[:args.profile],
+                           variants[0], batch_size=bs)
+            prof[str(bs)] = {"total": round(time.perf_counter() - t0, 2),
+                             **{k: round(v, 2) for k, v in STAGE_SECONDS.items()}}
+            log.info("profile batch %d: %s", bs, prof[str(bs)])
+        (out_dir / "profile.json").write_text(json.dumps(
+            {"origins": args.profile, "zones": len(zones), "variant": variants[0],
+             "environment": environment(args.device), "seconds": prof}, indent=2) + "\n")
+        return
     timings = {}
     months = origins.to_period("M")
     todo = [(v, m) for v in variants for m in months.unique()]
@@ -226,7 +257,7 @@ def main() -> None:
             continue
         t0 = time.perf_counter()
         fc = forecast_chunk(pipeline, manifest, zones, hours, y, cov, origins[months == month],
-                            variant)
+                            variant, batch_size=args.batch_size)
         tmp = f.with_suffix(".tmp")
         fc.to_parquet(tmp, index=False)
         tmp.rename(f)  # atomic: a half-written chunk never looks finished

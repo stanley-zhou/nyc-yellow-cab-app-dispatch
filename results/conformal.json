@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-10T00:31:50+00:00",
+  "generated_utc": "2026-11-13T07:21:03+00:00",
   "method": "split-conformal CQR: score max(q_lo - y, y - q_hi) on the validation year, Q = ceil((n+1)(1-alpha))/n quantile, interval [max(q_lo - Q, 0), q_hi + Q]",
   "alpha": 0.2,
   "validation_year": [
@@ -312,8 +312,8 @@
       "stat_ets_profile|sliding_24m": 0,
       "lgbm_quantile|expanding": 0,
       "lgbm_quantile|sliding_24m": 0,
-      "chronos2_weather_future|zero_shot": 84,
-      "chronos2_weather_past|zero_shot": 84
+      "chronos2_weather_future|zero_shot": 0,
+      "chronos2_weather_past|zero_shot": 0
     },
     "coverage_and_width": [
       {
@@ -1041,40 +1041,40 @@
         "window": "zero_shot",
         "calibration": "conformal_rolling_12w",
         "zone_group": "airports",
-        "n": 13536,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7936,
-        "width_80": 87.4035
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8006,
+        "width_80": 87.6247
       },
       {
         "model": "chronos2_weather_future",
         "window": "zero_shot",
         "calibration": "conformal_rolling_12w",
         "zone_group": "cbd",
-        "n": 257184,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.796,
-        "width_80": 34.0197
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7983,
+        "width_80": 33.9367
       },
       {
         "model": "chronos2_weather_future",
         "window": "zero_shot",
         "calibration": "conformal_rolling_12w",
         "zone_group": "manhattan_non_cbd",
-        "n": 148896,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7959,
-        "width_80": 28.6709
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.799,
+        "width_80": 28.6875
       },
       {
         "model": "chronos2_weather_future",
         "window": "zero_shot",
         "calibration": "conformal_rolling_12w",
         "zone_group": "other",
-        "n": 277488,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7892,
-        "width_80": 4.1835
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7885,
+        "width_80": 3.9145
       },
       {
         "model": "chronos2_weather_future",
@@ -1117,84 +1117,44 @@
         "width_80": 3.7418
       },
       {
-        "model": "chronos2_weather_future",
-        "window": "zero_shot",
-        "calibration": "raw_rolling_origins",
-        "zone_group": "airports",
-        "n": 13536,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7609,
-        "width_80": 84.2712
-      },
-      {
-        "model": "chronos2_weather_future",
-        "window": "zero_shot",
-        "calibration": "raw_rolling_origins",
-        "zone_group": "cbd",
-        "n": 257184,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7345,
-        "width_80": 32.4587
-      },
-      {
-        "model": "chronos2_weather_future",
-        "window": "zero_shot",
-        "calibration": "raw_rolling_origins",
-        "zone_group": "manhattan_non_cbd",
-        "n": 148896,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7396,
-        "width_80": 28.0565
-      },
-      {
-        "model": "chronos2_weather_future",
-        "window": "zero_shot",
-        "calibration": "raw_rolling_origins",
-        "zone_group": "other",
-        "n": 277488,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.6796,
-        "width_80": 3.9963
-      },
-      {
         "model": "chronos2_weather_past",
         "window": "zero_shot",
         "calibration": "conformal_rolling_12w",
         "zone_group": "airports",
-        "n": 13536,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7956,
-        "width_80": 88.5459
+        "n": 17566,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.8006,
+        "width_80": 88.6655
       },
       {
         "model": "chronos2_weather_past",
         "window": "zero_shot",
         "calibration": "conformal_rolling_12w",
         "zone_group": "cbd",
-        "n": 257184,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7972,
-        "width_80": 34.6152
+        "n": 333754,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7989,
+        "width_80": 34.5371
       },
       {
         "model": "chronos2_weather_past",
         "window": "zero_shot",
         "calibration": "conformal_rolling_12w",
         "zone_group": "manhattan_non_cbd",
-        "n": 148896,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7971,
-        "width_80": 29.8207
+        "n": 193226,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7999,
+        "width_80": 29.8676
       },
       {
         "model": "chronos2_weather_past",
         "window": "zero_shot",
         "calibration": "conformal_rolling_12w",
         "zone_group": "other",
-        "n": 277488,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7868,
-        "width_80": 4.2196
+        "n": 360103,
+        "first_origin": "2024-01-01",
+        "coverage_80": 0.7846,
+        "width_80": 3.9465
       },
       {
         "model": "chronos2_weather_past",
@@ -1235,46 +1195,6 @@
         "first_origin": "2024-01-01",
         "coverage_80": 0.6316,
         "width_80": 3.8397
-      },
-      {
-        "model": "chronos2_weather_past",
-        "window": "zero_shot",
-        "calibration": "raw_rolling_origins",
-        "zone_group": "airports",
-        "n": 13536,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7482,
-        "width_80": 86.3183
-      },
-      {
-        "model": "chronos2_weather_past",
-        "window": "zero_shot",
-        "calibration": "raw_rolling_origins",
-        "zone_group": "cbd",
-        "n": 257184,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7323,
-        "width_80": 33.2969
-      },
-      {
-        "model": "chronos2_weather_past",
-        "window": "zero_shot",
-        "calibration": "raw_rolling_origins",
-        "zone_group": "manhattan_non_cbd",
-        "n": 148896,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.7385,
-        "width_80": 29.3344
-      },
-      {
-        "model": "chronos2_weather_past",
-        "window": "zero_shot",
-        "calibration": "raw_rolling_origins",
-        "zone_group": "other",
-        "n": 277488,
-        "first_origin": "2024-03-25",
-        "coverage_80": 0.6411,
-        "width_80": 4.1003
       }
     ]
   }

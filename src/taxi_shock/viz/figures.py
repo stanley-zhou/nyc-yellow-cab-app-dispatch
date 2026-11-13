@@ -19,6 +19,7 @@ from taxi_shock.viz.style import (
     PALETTE,
     SEQUENTIAL_CMAP,
     SIZES,
+    VENDOR_PALETTE,
     direct_labels,
     policy_line,
     save,
@@ -129,11 +130,7 @@ def f1b_citywide_weekly(weekly: pd.DataFrame, covid_date: str, title: str,
     return save(fig, out_base)
 
 
-# Fixed categorical order for VendorID (first slots of the dataviz reference palette, documented
-# there as validated for colour-vision deficiency); colour follows the vendor, never its rank.
-VENDOR_COLORS: dict[str, str] = {
-    "1": "#2a78d6", "2": "#eb6834", "6": "#1baf7a", "7": "#eda100", "null": "#e87ba4",
-}
+VENDOR_COLORS = VENDOR_PALETTE    # defined in viz/style.py with every other colour
 
 
 def f1c_vendor_weekly(series: pd.DataFrame, title: str, out_base: Path) -> list[Path]:
@@ -882,5 +879,41 @@ def f6_taxi_vs_fhv(series: list[tuple[str, pd.DataFrame, str]], policy_date: str
     ax.legend(frameon=False, fontsize=8, loc="lower left")
     fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days: int,
+                  title: str, note: str, out_base: Path) -> list[Path]:
+    """F5 (Phase 5, D6): rolling `days`-day WAPE (top) and rolling bias as % of actual pickups
+    (bottom) per strategy, CBD (left) and all modeled zones (right); direct labels at the line
+    ends. `series`: (strategy key, label, colour)."""
+    use_style()
+    fig, axes = plt.subplots(2, 2, figsize=SIZES["small_multiples"], sharex=True,
+                             layout="constrained")
+    for j, g in enumerate(("cbd", "all")):
+        for i, kind in enumerate(("wape", "bias")):
+            ax = axes[i, j]
+            ends = []
+            for key, label, color in series:
+                x = daily[(daily["strategy"] == key) & (daily["zone_group"] == g)]
+                x = x.sort_values("day").set_index("day")[["abs_err", "err", "y"]].asfreq("D")
+                r = x.rolling(days, min_periods=days).sum()
+                v = (r["abs_err"] if kind == "wape" else r["err"]) / r["y"] * 100
+                v = v.dropna()
+                ax.plot(v.index, v, color=color, linewidth=1.4)
+                ends.append((float(v.iloc[-1]), label, color))
+            if kind == "bias":
+                ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
+            ax.set_ylabel(f"Rolling {days // 7}-week " + ("WAPE (%)" if kind == "wape"
+                                                         else "bias (% of pickups)"))
+            if i == 0:
+                ax.set_title("CBD zones" if g == "cbd" else "All modeled zones", fontsize=10,
+                             loc="left")
+            direct_labels(ax, v.index.max() + pd.Timedelta(days=5), ends)
+            ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
     return save(fig, out_base)

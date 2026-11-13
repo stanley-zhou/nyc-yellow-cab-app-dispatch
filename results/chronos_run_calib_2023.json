@@ -1,0 +1,45 @@
+{
+  "generated_utc": "2026-11-10T01:43:34+00:00",
+  "dry_run": false,
+  "model_id": "amazon/chronos-2",
+  "model_revision": "29ec3766d36d6f73f0696f85560a422f50e8498c",
+  "environment": {
+    "python": "3.13.16",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.1",
+    "chronos_forecasting": "2.3.2",
+    "device": "cuda",
+    "gpu": "NVIDIA L4"
+  },
+  "manifest_sha256": "31c75a56c34bf8f3758680545cdb140f95e4b0c450a2516481a2862a876c742b",
+  "script_sha256": "17d55c27ec49ad672fbf7aec2d79ec0bc052b938414a0faa6d15995b5735fbed",
+  "input_files": {
+    "pickups.parquet": {
+      "sha256": "159d9e29fb4468349a8ac85991f26a9bc3e7a5ff29e099b51e45b762455d0672",
+      "rows": 438368
+    },
+    "covariates.parquet": {
+      "sha256": "cbb5ba6ed36c0127d831529ede9481db965c758799d1bb09ea02fac79eb467ef",
+      "rows": 4256
+    }
+  },
+  "n_zones": 103,
+  "n_origins": 92,
+  "variants": [
+    "weather_past",
+    "weather_future"
+  ],
+  "rows": {
+    "test": 454848,
+    "post": 0
+  },
+  "chunk_seconds_this_session": {
+    "weather_past_2023-10": 240.1,
+    "weather_past_2023-11": 236.7,
+    "weather_past_2023-12": 244.7,
+    "weather_future_2023-10": 244.6,
+    "weather_future_2023-11": 236.9,
+    "weather_future_2023-12": 244.7
+  },
+  "note": "chunks skipped as already present were timed in an earlier session"
+}

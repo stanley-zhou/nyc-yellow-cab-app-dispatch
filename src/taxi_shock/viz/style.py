@@ -29,6 +29,11 @@ PALETTE: dict[str, str] = {
     "app": "#1E8C7E",          # app-dispatch channel (any e-hail app; Amendment 4)
     "street": "#C2A878",       # street-hail channel
 }
+# Fixed categorical order for VendorID (first slots of the dataviz reference palette, documented
+# there as validated for colour-vision deficiency); colour follows the vendor, never its rank.
+VENDOR_PALETTE: dict[str, str] = {
+    "1": "#2a78d6", "2": "#eb6834", "6": "#1baf7a", "7": "#eda100", "null": "#e87ba4",
+}
 DIVERGING_CMAP = "RdBu_r"   # blue-white-red, centred at 0 with a TwoSlopeNorm
 SEQUENTIAL_CMAP = "Blues"   # single-hue, used on a log scale
 
