@@ -136,7 +136,15 @@ adapt:                                        # Phase 5, re-scoped by Amendment 
   strategies: [s0, s1, s4, s6]                # S0 frozen, S1 retrain, S4 Chronos-2, S6 channel-aware
   eval_window: ["2025-02-01", "2026-09-30"]   # PLAN Phase 5
   run_start: "2024-11-01"                     # S1 / S6 origins: 12 weeks (conformal) before the window
-  window: sliding_24m                         # S1 / S6 training window (PLAN: sliding 24 m)
+  windows:                                    # training window per refitted strategy
+    s1: sliding_24m                           # PLAN Phase 5: sliding 24 m
+    s6: sliding_24m
+    s1e: expanding                            # sensitivity (Phase-5 review fix 4): S1 on the S0
+                                              # window, separates retraining from the window
+  sensitivity: [s1e]                          # evaluated and reported beside the strategies
+  reference: [sn]                             # frozen Phase-3 seasonal naive (review fix 6)
+  channel_windows_days: [7, 28]               # S6: zone app share over the previous k days
+  city_window_days: 7                         # S6: citywide app share over the previous k days
   scale_end: "2024-12-31"                     # common MASE scale: seasonal-naive MAE to this day
   rolling_days: 28                            # F5 recovery curve: rolling 4-week WAPE
 tableau:                                      # Amendment 4 E2: extracts for Stanley's dashboard

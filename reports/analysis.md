@@ -92,7 +92,7 @@ Every causal design below was pre-registered with an expected direction and a ga
 - **Trip speed (B1, C4).** Within-CBD speed is +1.9% against the donut control and −4.0% against Brooklyn/Queens. Both designs fail their pre-trend tests ([speed_did.json](../results/speed_did.json), [speed_did_outer.json](../results/speed_did_outer.json); F4f).
 - **Did the fee move trips into apps? (D5, D5b).** By channel, both the street-hail and the app DiD fail the pre-trend gate ([did_by_channel.json](../results/did_by_channel.json)). The app share jumped about 11 points in the weeks after 2025-01-19, the same for trips touching the CBD (+8.1 to +11.3 points) as for trips touching neither end (+10.6). The size of the jump did not differ with exposure to the fee ([app_share_policy_step.json](../results/app_share_policy_step.json); F6e).
 
-## 4. Methods note: how a textbook DiD produced a 42% effect that was not there, and how it was caught
+## 4. Methods note: how a textbook DiD produced a −35% effect that was not there, and how it was caught
 
 **The result.** The pre-registered specification was a difference-in-differences of log(1 + weekly pickups) per zone, with zone and week fixed effects, 38 CBD zones against 25 Manhattan donut zones, and zone-clustered errors. It gave −0.425 log points, −34.6% [−47.7%, −18.3%], p = 0.0004 ([did_static.json → main](../results/did_static.json)). Leave-one-zone-out kept every estimate between −36.3% and −32.0%. It looked robust.
 

@@ -2,20 +2,28 @@
 
 S6 channel-aware: lagged app-channel features for the LightGBM forecaster. From a daily table of
 app and total pickups per zone (fct_daily_zone_channel; app = any e-hail app, Amendment 4a) the
-feature of a target on day D uses days D-k .. D-1 only (as every demand feature, >= 24 h):
+feature of a target on day D uses days D-k .. D-1 only (as every demand feature, >= 24 h); the
+windows k come from config `adapt.channel_windows_days` and `adapt.city_window_days`:
 
-  app_share_7d / app_share_28d   the zone's app pickups / all pickups over the previous 7 / 28 days
-  city_app_share_7d              the same over all zones of the table, previous 7 days
+  app_share_<k>d        the zone's app pickups / all pickups over the previous k days
+  city_app_share_<k>d   the same over all zones of the table
+A feature is NaN until its window is fully covered (min_periods = k) or when the zone had no
+pickups in it; days missing from the table count as 0 app and 0 total pickups.
 """
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import pandas as pd
 
-CHANNEL_FEATURES = ["app_share_7d", "app_share_28d", "city_app_share_7d"]
+
+def channel_features(windows: Sequence[int], city_window: int) -> list[str]:
+    """Feature names, in the order channel_table writes them."""
+    return [f"app_share_{k}d" for k in windows] + [f"city_app_share_{city_window}d"]
 
 
-def channel_table(daily: pd.DataFrame) -> pd.DataFrame:
+def channel_table(daily: pd.DataFrame, windows: Sequence[int], city_window: int) -> pd.DataFrame:
     """daily (zone_id, day, app, total) -> per (zone_id, day) the lagged channel features,
     computed only from days strictly before `day`."""
     d = daily.copy()
@@ -26,22 +34,23 @@ def channel_table(daily: pd.DataFrame) -> pd.DataFrame:
     tot = d.pivot_table(index="day", columns="zone_id", values="total", aggfunc="sum").reindex(
         days).fillna(0.0)
     parts = []
-    for k, name in ((7, "app_share_7d"), (28, "app_share_28d")):
+    for k in windows:
         a = app.rolling(k, min_periods=k).sum().shift(1)
         t = tot.rolling(k, min_periods=k).sum().shift(1)
         r = (a / t.where(t > 0)).rename_axis("day").reset_index()
-        parts.append(r.melt(id_vars="day", var_name="zone_id", value_name=name)
+        parts.append(r.melt(id_vars="day", var_name="zone_id", value_name=f"app_share_{k}d")
                      .set_index(["day", "zone_id"]))
-    ca = app.sum(axis=1).rolling(7, min_periods=7).sum().shift(1)
-    ct = tot.sum(axis=1).rolling(7, min_periods=7).sum().shift(1)
+    k = city_window
+    ca = app.sum(axis=1).rolling(k, min_periods=k).sum().shift(1)
+    ct = tot.sum(axis=1).rolling(k, min_periods=k).sum().shift(1)
     res = pd.concat(parts, axis=1).reset_index()
-    res["city_app_share_7d"] = res["day"].map(ca / ct)
+    res[f"city_app_share_{k}d"] = res["day"].map(ca / ct)
     return res
 
 
-def channel_feature_fn(table: pd.DataFrame):
-    """Function rows (zone_id, target_ts) -> CHANNEL_FEATURES for the forecaster's `extra`."""
-    t = table.set_index(["zone_id", "day"])[CHANNEL_FEATURES]
+def channel_feature_fn(table: pd.DataFrame, features: Sequence[str]):
+    """Function rows (zone_id, target_ts) -> `features` for the forecaster's `extra`."""
+    t = table.set_index(["zone_id", "day"])[list(features)]
 
     def f(rows: pd.DataFrame) -> pd.DataFrame:
         key = pd.MultiIndex.from_arrays([rows["zone_id"].to_numpy(),

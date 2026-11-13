@@ -92,6 +92,7 @@ tableau-extract:  ## E2: tidy CSV / GeoJSON extracts for the Tableau Public dash
 adapt:            ## Phase 5 (D6): S1 / S6 monthly refits (long, resumable per month), then evaluation
 	$(PY) scripts/08_adapt.py --run s1
 	$(PY) scripts/08_adapt.py --run s6
+	$(PY) scripts/08_adapt.py --run s1e
 	$(PY) scripts/08_adapt.py --evaluate
 
 report:           ## Phase 7: runtimes (results/runtimes.json), Tableau extracts, dead-link check of README / analysis.md

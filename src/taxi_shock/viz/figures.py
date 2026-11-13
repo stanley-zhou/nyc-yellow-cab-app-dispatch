@@ -886,11 +886,16 @@ def f6_taxi_vs_fhv(series: list[tuple[str, pd.DataFrame, str]], policy_date: str
 
 
 def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days: int,
-                  title: str, note: str, out_base: Path) -> list[Path]:
+                  x_range: tuple[str, str], eval_start: str, title: str, note: str,
+                  out_base: Path) -> list[Path]:
     """F5 (Phase 5, D6): rolling `days`-day WAPE (top) and rolling bias as % of actual pickups
-    (bottom) per strategy, CBD (left) and all modeled zones (right); direct labels at the line
-    ends. `series`: (strategy key, label, colour)."""
+    (bottom) per strategy, CBD (left) and all modeled zones (right), on the Phase-3 axes
+    (`x_range`) with the policy line; the days before `eval_start` (outside the evaluation
+    window of every metric) are shaded. Direct labels at the line ends.
+    `series`: (strategy key, label, colour)."""
     use_style()
+    lo, hi = (pd.Timestamp(x) for x in x_range)
+    ev = pd.Timestamp(eval_start)
     fig, axes = plt.subplots(2, 2, figsize=SIZES["small_multiples"], sharex=True,
                              layout="constrained")
     for j, g in enumerate(("cbd", "all")):
@@ -911,10 +916,18 @@ def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days:
             if i == 0:
                 ax.set_title("CBD zones" if g == "cbd" else "All modeled zones", fontsize=10,
                              loc="left")
+            ax.set_xlim(lo, hi + pd.Timedelta(days=2))
+            ax.axvspan(lo, ev, color=tint(PALETTE["baseline"], 0.75), zorder=0, linewidth=0)
+            if i == 1 and j == 0:
+                ax.annotate("before the evaluation window", xy=(lo, 0.02),
+                            xycoords=("data", "axes fraction"), xytext=(4, 0),
+                            textcoords="offset points", fontsize=8,
+                            color=PALETTE["muted_text"], va="bottom")
+            policy_line(ax, label=(i == 0 and j == 0), label_y=0.99, side="right")
             direct_labels(ax, v.index.max() + pd.Timedelta(days=5), ends)
             ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
             ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
-    fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.suptitle(textwrap.fill(title, 110), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
     return save(fig, out_base)

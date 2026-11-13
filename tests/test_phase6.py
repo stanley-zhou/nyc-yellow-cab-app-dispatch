@@ -126,10 +126,15 @@ def test_time_blocks_are_contiguous_disjoint_and_exhaustive():
         assert (all_u[i:i + len(u)] == u).all()                             # contiguous weeks
 
 
+WIN, CITY = (7, 28), 7
+
+
 def test_channel_features_use_only_previous_days():
     """Phase 5 S6: the app-share features of day D come from days D-k..D-1; changing day D and
     later leaves them unchanged (the leakage rule of every demand feature)."""
-    from taxi_shock.adapt import CHANNEL_FEATURES, channel_feature_fn, channel_table
+    from taxi_shock.adapt import channel_feature_fn, channel_features, channel_table
+
+    feats = channel_features(WIN, CITY)
 
     days = pd.date_range("2025-01-01", periods=60, freq="D")
     rng = np.random.default_rng(1)
@@ -138,14 +143,15 @@ def test_channel_features_use_only_previous_days():
     rows = pd.DataFrame({"zone_id": [1, 1, 2], "target_ts": [days[40] + pd.Timedelta(hours=8),
                                                               days[40] + pd.Timedelta(hours=20),
                                                               days[45]]})
-    base = channel_feature_fn(channel_table(d))(rows)
+    base = channel_feature_fn(channel_table(d, WIN, CITY), feats)(rows)
     poisoned = d.copy()
     poisoned.loc[poisoned["day"] >= days[40], "app"] = 1e6
-    after = channel_feature_fn(channel_table(poisoned))(rows)
+    after = channel_feature_fn(channel_table(poisoned, WIN, CITY), feats)(rows)
     pd.testing.assert_frame_equal(base.iloc[:2], after.iloc[:2])
     exp = d[(d["zone_id"] == 1) & d["day"].between(days[33], days[39])]
     assert base.loc[0, "app_share_7d"] == pytest.approx(exp["app"].sum() / exp["total"].sum())
-    assert list(base.columns) == CHANNEL_FEATURES
-    early = channel_feature_fn(channel_table(d))(pd.DataFrame({"zone_id": [1],
+    assert list(base.columns) == feats == ["app_share_7d", "app_share_28d",
+                                          "city_app_share_7d"]
+    early = channel_feature_fn(channel_table(d, WIN, CITY), feats)(pd.DataFrame({"zone_id": [1],
                                                                "target_ts": [days[3]]}))
     assert early.isna().all(axis=None)                     # window not yet covered

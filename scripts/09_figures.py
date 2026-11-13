@@ -732,28 +732,32 @@ def phase5(cfg: dict) -> None:
              "bias_pct_cbd": {k: bias[f"{k}|cbd"] for k in names},
              "gap_vs_s0_all": {k: gap(k, "s0") for k in names if k != "s0"}}
     w, b = stats["wape_all"], stats["bias_pct_all"]
-    g6 = stats["gap_vs_s0_all"]["s6"]
-    title = (f"After congestion pricing, monthly retraining has the lowest error "
-             f"(WAPE {w[best] * 100:.1f}% vs {w['s0'] * 100:.1f}% frozen); adding app-share "
-             f"features does not remove the under-forecast (bias {b['s6']:.1f}% vs "
-             f"{b['s0']:.1f}% frozen, WAPE gap +{g6['gap'] * 100:.1f} pp)"
-             if best == "s1" and b["s6"] < b["s0"] else
-             f"Adaptation strategies after congestion pricing: lowest WAPE "
-             f"{STRATEGY_LABELS[best]} ({w[best] * 100:.1f}%)")
+    span = "–".join(pd.Timestamp(x).strftime("%b %Y") for x in summ["eval_window"])
+    if best == "s1" and b["s6"] < b["s0"]:
+        title = (f"{span}: monthly retraining has the lowest day-ahead error (WAPE "
+                 f"{w['s1'] * 100:.1f}% vs {w['s0'] * 100:.1f}% frozen); app-share features "
+                 f"deepen the under-forecast (bias {b['s6']:.1f}% vs {b['s0']:.1f}% frozen)")
+    else:
+        title = (f"{span}: lowest day-ahead error {STRATEGY_LABELS[best]} "
+                 f"(WAPE {w[best] * 100:.1f}%)")
     stats["title"] = title
-    series = [("s0", STRATEGY_LABELS["s0"], PALETTE["non_cbd"]),
+    series = [("s0", STRATEGY_LABELS["s0"], PALETTE["baseline"]),
               ("s1", STRATEGY_LABELS["s1"], PALETTE["model"]),
               ("s4", STRATEGY_LABELS["s4"], PALETTE["foundation"]),
               ("s6", STRATEGY_LABELS["s6"], PALETTE["app"])]
     series = [x for x in series if x[0] in names]
-    note = (f"Day-ahead hourly forecasts, origins {summ['eval_window'][0]} to "
-            f"{summ['eval_window'][1]}; trailing {ac['rolling_days']}-day sums of absolute "
+    note = (f"Day-ahead hourly forecasts; metrics on origins {summ['eval_window'][0]} to "
+            f"{summ['eval_window'][1]} (unshaded); each line starts at its strategy's first "
+            f"origin (S1/S6 from {ac['run_start'][:7]}, S0 and S4 from "
+            f"{cfg['shock']['forecast_window'][0][:7]}); trailing {ac['rolling_days']}-day sums "
+            "of absolute "
             "error (WAPE) and signed error (forecast minus actual; negative = under-forecast) "
             "over actual pickups. S1/S6: LightGBM refit on the first of each month on a sliding "
             "24-month window; S6 adds trailing app-share features; S4: Chronos-2 zero-shot, "
             "weather_past. Sources: results/adaptation_daily.csv, results/adaptation_summary.json,"
             " results/adaptation_gaps.csv.")
-    f5_adaptation(daily, series, int(ac["rolling_days"]), title, note, figs / "F5_adaptation")
+    f5_adaptation(daily, series, int(ac["rolling_days"]), tuple(cfg["shock"]["forecast_window"]),
+                  summ["eval_window"][0], title, note, figs / "F5_adaptation")
     (res / "figure_stats_phase5.json").write_text(json.dumps(stats, indent=2) + "\n")
     logging.info("wrote F5 to %s", figs)
 

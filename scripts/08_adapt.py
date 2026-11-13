@@ -9,8 +9,12 @@ rolling 12-week conformal calibration):
   S4 chronos      Chronos-2 zero-shot, primary variant (weather as past covariate), adapting
                   only through its context window (imported Colab forecasts)
   S6 channel      S1 + lagged app-channel features (taxi_shock.adapt: the zone's app share of
-                  pickups over the previous 7 and 28 days and the citywide previous-7-day
-                  share; app = any e-hail app, Amendment 4a)
+                  pickups over the previous adapt.channel_windows_days (7, 28) days and the
+                  citywide share over the previous adapt.city_window_days (7); app = any e-hail
+                  app, Amendment 4a)
+Sensitivity S1e (Phase-5 review fix 4): S1 on the S0 training window (expanding from
+data.model_start), so S1e - S0 is the retraining effect and S1 - S1e the window effect.
+Reference: the frozen Phase-3 seasonal naive (sn).
 No S3 (Amendment 4: no level correction from the causal estimate).
 
 S1 and S6 run month by month (one refit at the first origin of each month, then daily forecasts
@@ -40,7 +44,7 @@ from datetime import UTC, datetime
 import numpy as np
 import pandas as pd
 
-from taxi_shock.adapt import CHANNEL_FEATURES, channel_feature_fn, channel_table, quarter_label
+from taxi_shock.adapt import channel_feature_fn, channel_features, channel_table, quarter_label
 from taxi_shock.backtest import BacktestSpec, daily_origins, evaluate, run_backtest
 from taxi_shock.config import load_config, path
 from taxi_shock.conformal import rolling_conformal
@@ -63,7 +67,9 @@ def zones_and_groups(cfg: dict) -> tuple[list[int], pd.Series]:
 
 def load_inputs(cfg: dict, zones: list[int]) -> tuple[pd.DataFrame, pd.DataFrame]:
     ac = cfg["adapt"]
-    first = pd.Timestamp(ac["run_start"]) - pd.DateOffset(months=24) - pd.Timedelta(
+    # from model_start: the expanding-window sensitivity (s1e) trains on all of it, and the
+    # common MASE scale is computed from model_start (sliding strategies only read their window)
+    first = pd.Timestamp(cfg["data"]["model_start"]) - pd.Timedelta(
         days=cfg["models"]["feature_history_days"])
     end = (pd.Timestamp(ac["eval_window"][1]) + pd.Timedelta(days=1)).date().isoformat()
     db = path("warehouse", cfg)
@@ -79,7 +85,9 @@ def channel_fn(cfg: dict, zones: list[int]):
                    sum(pickups) as total
             from fct_daily_zone_channel group by all""").df()
     d = d[d["zone_id"].isin(zones)].fillna({"app": 0})
-    return channel_feature_fn(channel_table(d))
+    ac = cfg["adapt"]
+    win, city = ac["channel_windows_days"], int(ac["city_window_days"])
+    return channel_feature_fn(channel_table(d, win, city), channel_features(win, city))
 
 
 def run(cfg: dict, strategy: str) -> None:
@@ -96,7 +104,9 @@ def run(cfg: dict, strategy: str) -> None:
                                seed=cfg["seed"], threads=mc["threads"],
                                predict_history_days=mc["lgbm"]["predict_history_days"],
                                early_stopping=mc["lgbm"].get("refit_early_stopping"),
-                               extra=extra, extra_cols=CHANNEL_FEATURES if extra else ())
+                               extra=extra, extra_cols=channel_features(
+                                   ac["channel_windows_days"], int(ac["city_window_days"]))
+                               if extra else ())
         fit0 = m.fit
 
         def fit(history, train_start=None):
@@ -121,7 +131,8 @@ def run(cfg: dict, strategy: str) -> None:
         n0 = len(fits)
         spec = BacktestSpec(origins=pd.DatetimeIndex(o.to_numpy()),
                             quantiles=tuple(cfg["forecast"]["quantiles"]),
-                            window=ac["window"], refit="monthly", model_start=ms, scale_start=ms)
+                            window=ac["windows"][strategy], refit="monthly", model_start=ms,
+                            scale_start=ms)
         fc = run_backtest(panel, make, spec)[KEEP]
         tmp = f.with_suffix(".tmp")
         fc.to_parquet(tmp, index=False)
@@ -137,8 +148,9 @@ def run(cfg: dict, strategy: str) -> None:
 
 
 def load_strategy(cfg: dict, s: str, panel: pd.DataFrame) -> pd.DataFrame:
-    if s == "s0":
-        fc = pd.read_parquet(path("forecasts", cfg) / "frozen" / "lgbm_quantile.parquet")
+    if s in ("s0", "sn"):
+        name = "lgbm_quantile" if s == "s0" else "seasonal_naive"
+        fc = pd.read_parquet(path("forecasts", cfg) / "frozen" / f"{name}.parquet")
     elif s == "s4":
         v = cfg["chronos"]["primary_variant"]
         res = path("results", cfg)
@@ -158,17 +170,25 @@ def load_strategy(cfg: dict, s: str, panel: pd.DataFrame) -> pd.DataFrame:
 
 
 def retrain_cost(cfg: dict) -> dict:
-    """Compute cost of each strategy: S1/S6 wall time of the monthly local refits
-    (results/adaptation_refits.csv; 12 cores, CPU); S4 has no refit, only its Colab inference
-    per month of daily origins (results/chronos_run.json, primary variant); S0 nothing."""
+    """Cost of each strategy. S1/S6/S1e: local monthly refits (results/adaptation_refits.csv):
+    `refit_seconds` = the LightGBM fit alone, `month_seconds` = one month of the strategy (refit
+    plus that month's daily forecasts, wall time). S4: no refit, only its Colab inference per
+    month of daily origins (results/chronos_run.json, primary variant). S0 / seasonal naive:
+    nothing. Hardware from results/machine_resources.json and the Colab run record."""
     res = path("results", cfg)
-    out: dict = {"s0": {"note": "no refit, no inference beyond the frozen forecasts"}}
+    mach = json.loads((res / "machine_resources.json").read_text())
+    local = f"local CPU, {mach['cpu_count']} cores ({mach['platform'].split('-')[0]})"
+    out: dict = {"s0": {"note": "no refit, no inference beyond the frozen forecasts"},
+                 "sn": {"note": "reference; no fit"}}
     f = res / "adaptation_refits.csv"
     if f.exists():
         r = pd.read_csv(f)
-        out |= {s: {"n_refits": int(len(x)), "wall_seconds_total": float(x["wall_seconds"].sum()),
-                    "wall_seconds_median": float(x["wall_seconds"].median()),
-                    "hardware": "local CPU, 12 cores"}
+        out |= {s: {"n_refits": int(len(x)),
+                    "refit_seconds_median": float(x["seconds"].median()),
+                    "refit_seconds_total": float(x["seconds"].sum()),
+                    "month_seconds_median": float(x["wall_seconds"].median()),
+                    "month_seconds_total": float(x["wall_seconds"].sum()),
+                    "hardware": local}
                 for s, x in r.groupby("strategy")}
     j = res / "chronos_run.json"
     if j.exists():
@@ -197,7 +217,8 @@ def evaluate_all(cfg: dict) -> None:
     w = int(cfg["models"]["conformal"]["rolling_weeks"])
     qs = list(cfg["forecast"]["quantiles"])
     ev = cfg["forecast_eval"]
-    names = ac["strategies"]
+    names = [*ac["strategies"], *ac.get("sensitivity", []), *ac.get("reference", [])]
+    fig_lo = pd.Timestamp(cfg["shock"]["forecast_window"][0])   # F5 on the Phase-3 axes
     rows, daily, boot, coverage_note = [], [], [], {}
     for s in names:
         fc = load_strategy(cfg, s, panel)
@@ -215,18 +236,23 @@ def evaluate_all(cfg: dict) -> None:
                 rows.append(m.rename(columns={"model": "strategy", "window": "calibration"})
                             .assign(period=per))
         boot.append(daily_errors(raw, groups).assign(model=s))
-        dd = raw.assign(zone_group=raw["zone_id"].map(groups), day=raw["target_ts"].dt.normalize(),
-                        abs_err=(raw["y"] - raw["point"]).abs(), err=raw["point"] - raw["y"])
-        daily.append(dd.groupby(["zone_group", "day"])[["abs_err", "err", "y"]].sum()
-                     .reset_index().assign(strategy=s))
+        # daily errors from the strategy's first origin on the Phase-3 axes (figure only);
+        # every metric above stays on the evaluation window
+        full = fc[(fc["origin"] >= fig_lo) & (fc["origin"] <= hi) & fc["y"].notna()]
+        dd = full.assign(zone_group=full["zone_id"].map(groups),
+                         day=full["target_ts"].dt.normalize(),
+                         abs_err=(full["y"] - full["point"]).abs(), err=full["point"] - full["y"],
+                         in_eval_window=full["origin"] >= lo)
+        daily.append(dd.groupby(["zone_group", "day", "in_eval_window"])[["abs_err", "err", "y"]]
+                     .sum().reset_index().assign(strategy=s))
         LOG.info("%s evaluated", s)
     met = pd.concat(rows, ignore_index=True)
     met = met[(met["horizon_bucket"] == "all") | (met["period"] == "all")]
     met.to_csv(path("results", cfg) / "adaptation.csv", index=False, lineterminator="\n",
                float_format="%.6g")
     dl = pd.concat(daily, ignore_index=True)
-    alld = dl.groupby(["strategy", "day"])[["abs_err", "err", "y"]].sum().reset_index().assign(
-        zone_group="all")
+    alld = dl.groupby(["strategy", "day", "in_eval_window"])[["abs_err", "err", "y"]].sum(
+        ).reset_index().assign(zone_group="all")
     dl = pd.concat([dl, alld], ignore_index=True)
     dl.to_csv(path("results", cfg) / "adaptation_daily.csv", index=False, lineterminator="\n",
               float_format="%.6g")
@@ -242,13 +268,16 @@ def evaluate_all(cfg: dict) -> None:
     head = sel[sel["period"] == "all"].pivot_table(index=["strategy", "zone_group"],
                                                    columns="metric", values="value")
     summary = {"generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
-               "eval_window": ac["eval_window"], "strategies": names,
+               "eval_window": ac["eval_window"], "strategies": ac["strategies"],
+               "sensitivity": ac.get("sensitivity", []), "reference": ac.get("reference", []),
+               "daily_file_from": str(fig_lo.date()),
                "calibration": prim, "mase_scale": f"per-zone seasonal-naive MAE "
                f"{cfg['data']['model_start']} -> {ac['scale_end']}, common to all strategies",
                "uncalibrated_origins": coverage_note,
                "bias_pct_of_pickups": {f"{s}|{g}": float(r["err"] / r["y"] * 100)
-                                       for (s, g), r in dl.groupby(["strategy", "zone_group"])
-                                       [["err", "y"]].sum().iterrows()},
+                                       for (s, g), r in dl[dl["in_eval_window"]].groupby(
+                                           ["strategy", "zone_group"])[["err", "y"]].sum()
+                                       .iterrows()},
                "retrain_cost": retrain_cost(cfg),
                "headline": {f"{s}|{g}": {k: float(v) for k, v in r.items()
                                         if k in ("wape", "bias", "coverage_80", "mase")}
@@ -261,7 +290,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawTextHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
-    g.add_argument("--run", choices=["s1", "s6"])
+    g.add_argument("--run", choices=["s1", "s6", "s1e"])
     g.add_argument("--evaluate", action="store_true")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
