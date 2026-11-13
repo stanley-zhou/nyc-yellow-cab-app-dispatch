@@ -918,6 +918,9 @@ def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days:
                 ax.set_title("CBD zones" if g == "cbd" else "All modeled zones", fontsize=10,
                              loc="left")
             ax.set_xlim(lo, hi + pd.Timedelta(days=2))
+            if i == 0 and j == 0:   # headroom so the policy-line label clears the peak
+                y0, y1 = ax.get_ylim()
+                ax.set_ylim(y0, y1 + 0.12 * (y1 - y0))
             ax.axvspan(lo, ev, color=tint(PALETTE["baseline"], 0.75), zorder=0, linewidth=0)
             policy_line(ax, label=(i == 0 and j == 0), label_y=0.99, side="right")
             direct_labels(ax, v.index.max() + pd.Timedelta(days=5), ends)

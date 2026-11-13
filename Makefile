@@ -89,7 +89,7 @@ lyft-refresh:     ## D3: re-run the Lyft entry estimate after extending data.yel
 tableau-extract:  ## E2: tidy CSV / GeoJSON extracts for the Tableau Public dashboard (reports/tableau/)
 	$(PY) scripts/18_tableau_extract.py
 
-adapt:            ## Phase 5 (D6): S1 / S6 monthly refits (long, resumable per month), then evaluation
+adapt:            ## Phase 5 (D6): S1 / S6 refits + S1e sensitivity (long, resumable per month), then evaluation
 	$(PY) scripts/08_adapt.py --run s1
 	$(PY) scripts/08_adapt.py --run s6
 	$(PY) scripts/08_adapt.py --run s1e
