@@ -33,6 +33,22 @@ def test_conformal_restores_nominal_coverage(width):
     assert all((r["Q"] < 0) == (width == 8.0) for r in rep)   # wide intervals shrink
 
 
+
+def test_conformal_report_drops_rows_without_a_forecast():
+    """Carry-forward from the Phase-2 review: the coverage in the conformal report drops rows
+    without a forecast (as evaluate() does) instead of counting them as misses."""
+    rng = np.random.default_rng(1)
+    val, test = _fc(rng, 2000, 2.0), _fc(rng, 2000, 2.0)
+    groups = pd.Series({1: "a", 2: "b"})
+    holed = test.copy()
+    holed.loc[holed.index[:300], ["q10", "q90"]] = np.nan
+    _, rep2 = conformal(val, holed, groups, 0.2, "q10", "q90")
+    kept = test.iloc[300:]
+    _, rep3 = conformal(val, kept, groups, 0.2, "q10", "q90")
+    for r2, r3 in zip(rep2, rep3, strict=True):
+        assert r2["coverage_test_raw"] == r3["coverage_test_raw"]
+        assert r2["coverage_test_conformal"] == r3["coverage_test_conformal"]
+
 def test_rolling_conformal_uses_only_the_trailing_window_and_fixes_bias():
     from taxi_shock.conformal import rolling_conformal
 

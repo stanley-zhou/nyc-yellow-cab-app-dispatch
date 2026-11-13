@@ -40,8 +40,9 @@ def conformal(val: pd.DataFrame, test: pd.DataFrame, groups: pd.Series, alpha: f
         c[lo] = np.clip(t[lo] - q, 0.0, None)
         c[hi] = t[hi] + q
         out.append(c)
-        tt = t[t["y"].notna()]
-        cc = c[c["y"].notna()]
+        # rows without a forecast are dropped, as in evaluate() and the rolling table
+        tt = t[t["y"].notna() & t[lo].notna()]
+        cc = c[c["y"].notna() & c[lo].notna()]
         report.append({
             "model": m, "window": w, "zone_group": g, "n_calibration": n, "Q": round(q, 4),
             "coverage_validation_raw": round(float(((v["y"] >= v[lo]) & (v["y"] <= v[hi]))
