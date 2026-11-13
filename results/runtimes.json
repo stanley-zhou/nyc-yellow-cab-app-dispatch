@@ -1,0 +1,105 @@
+{
+  "generated_utc": "2026-11-13T12:20:38+00:00",
+  "hardware": {
+    "local": "WSL2, 12 cores, 11.68 GiB RAM",
+    "colab": "NVIDIA L4"
+  },
+  "note": "measured = compute time recorded by the pipeline; log_span = wall time of runs that went start to finish once (resumed runs excluded)",
+  "measured": {
+    "smoke": {
+      "seconds": 47.6,
+      "source": "results/smoke/smoke_run.json",
+      "what": "make smoke: one sample month end to end"
+    },
+    "lgbm_tuning": {
+      "seconds": 1905.4,
+      "fits": 24,
+      "source": "results/lgbm_tuning.csv",
+      "what": "Phase 2 LightGBM grid, sum of fit times"
+    },
+    "lgbm_backtest_refits": {
+      "expanding_test": {
+        "seconds": 4657.900000000001,
+        "refits": 12
+      },
+      "expanding_validation": {
+        "seconds": 2706.7000000000003,
+        "refits": 12
+      },
+      "sliding_24m_test": {
+        "seconds": 3724.5000000000005,
+        "refits": 12
+      },
+      "source": "results/lgbm_refits.csv",
+      "what": "Phase 2 monthly refits, sum of fit times"
+    },
+    "frozen_model_fit": {
+      "seconds": 559.8,
+      "source": "results/frozen_model.json",
+      "what": "Phase 3 frozen LightGBM, one fit"
+    },
+    "chronos_main": {
+      "seconds": 16190.0,
+      "chunks": 66,
+      "gpu": "NVIDIA L4",
+      "source": "results/chronos_run.json",
+      "what": "Chronos-2 inference on Colab, sum of chunk times (both covariate variants)"
+    },
+    "chronos_calib_2023": {
+      "seconds": 1447.7,
+      "chunks": 6,
+      "gpu": "NVIDIA L4",
+      "source": "results/chronos_run_calib_2023.json",
+      "what": "Chronos-2 inference on Colab, sum of chunk times (both covariate variants)"
+    },
+    "adaptation_refits": {
+      "s1": {
+        "seconds": 9964.5,
+        "refits": 23
+      },
+      "s6": {
+        "seconds": 8242.8,
+        "refits": 23
+      },
+      "source": "results/adaptation_refits.csv",
+      "what": "Phase 5 monthly refits, wall time"
+    }
+  },
+  "log_span": {
+    "lgbm_tune_run2": {
+      "seconds": 1906.0,
+      "what": "Phase 2: LightGBM grid on 2023 (04a_lgbm_tune.py)",
+      "source": "logs/lgbm_tune_run2.log (local)"
+    },
+    "backtest_sn_stat": {
+      "seconds": 4716.0,
+      "what": "Phase 2: seasonal-naive and statistical backtests (04_backtest.py)",
+      "source": "logs/backtest_sn_stat.log (local)"
+    },
+    "backtest_lgbm": {
+      "seconds": 11661.0,
+      "what": "Phase 2: LightGBM rolling-origin backtests, both windows (04_backtest.py)",
+      "source": "logs/backtest_lgbm.log (local)"
+    },
+    "evaluate": {
+      "seconds": 100.0,
+      "what": "Phase 2: conformal calibration and metrics (04b_evaluate.py)",
+      "source": "logs/evaluate.log (local)"
+    },
+    "shock": {
+      "seconds": 736.0,
+      "what": "Phase 3: frozen model and monitors (06_shock.py)",
+      "source": "logs/shock.log (local)"
+    },
+    "d2_r2": {
+      "seconds": 203.0,
+      "what": "Amendment 4 D2: incrementality DML, 25 repetitions (12_incrementality.py)",
+      "source": "logs/d2_r2.log (local)"
+    },
+    "adapt_eval": {
+      "seconds": 75.0,
+      "what": "Phase 5: evaluation and bootstrap (08_adapt.py --evaluate)",
+      "source": "logs/adapt_eval.log (local)"
+    }
+  }
+}

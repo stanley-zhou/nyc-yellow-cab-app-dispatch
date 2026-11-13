@@ -94,8 +94,10 @@ adapt:            ## Phase 5 (D6): S1 / S6 monthly refits (long, resumable per m
 	$(PY) scripts/08_adapt.py --run s6
 	$(PY) scripts/08_adapt.py --evaluate
 
-report:
-	@echo "make $@: not implemented yet (added in its phase, see PLAN.md §5)"; exit 1
+report:           ## Phase 7: runtimes (results/runtimes.json), Tableau extracts, dead-link check of README / analysis.md
+	$(PY) scripts/20_runtimes.py
+	$(PY) scripts/18_tableau_extract.py
+	$(PY) scripts/21_check_links.py
 
 all: data dbt forecast shock causal hvfhv channel fhv adapt figures report   ## hvfhv: a long re-stream unless the aggregates exist (verified months are skipped)
 
