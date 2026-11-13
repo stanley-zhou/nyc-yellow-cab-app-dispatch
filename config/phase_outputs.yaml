@@ -107,6 +107,8 @@
   - .github/workflows/ci.yml
 6:                                            # Amendment 4 / 4a (D0-D5b) and Amendment 3 C6
   - results/hvfhv_disk_report.json
+  - results/hvfhv_stream_log.csv
+  - data/raw/hvfhv_manifest.csv
   - results/channel_label_validation.json
   - results/flex_share_weekly.csv
   - results/flex_vendor_weekly.csv
