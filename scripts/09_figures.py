@@ -41,6 +41,7 @@ from taxi_shock.viz.figures import (
     f4i_leave_one_out,
     f6a_channel_areas,
     f6b_app_share_maps,
+    f6c_incrementality,
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
@@ -575,6 +576,35 @@ def phase4c(cfg: dict) -> None:
                            "pickups per week in that period; CBD outlined. Medians over the "
                            "non-hatched zones. Source: results/channel_zone_share.csv.",
                            figs / "F6b_app_share_maps")
+    f = res / "incrementality_panel_summary.csv"
+    if f.exists():
+        sm = pd.read_csv(f)
+        inc = json.loads((res / "incrementality_dml.json").read_text())
+
+        def th(a):
+            return inc["areas"][a]["dml_plr"]
+
+        stats["d2"] = {a: th(a) for a in ("cbd", "manhattan_non_cbd", "other")}
+        c, o = th("cbd"), th("other")
+        t = (f"Incrementality of app trips (theta, primary DML): CBD {c['theta']:.2f} "
+             f"[{c['theta_ci'][0]:.2f}, {c['theta_ci'][1]:.2f}], outer boroughs "
+             f"{o['theta']:.2f} [{o['theta_ci'][0]:.2f}, {o['theta_ci'][1]:.2f}]; other "
+             "estimators range widely")
+        stats["d2"]["title"] = t
+        est = [("dml_plr", "DML, time-blocked folds (primary)", PALETTE["app"]),
+               ("dml_zone_trends", "DML + zone trends", PALETTE["comparison"]),
+               ("dml_panel_plpr", "DoubleML panel (within-group)", PALETTE["model"]),
+               ("twfe", "TWFE", PALETTE["non_cbd"]),
+               ("first_difference", "First differences", PALETTE["baseline"])]
+        f6c_incrementality(sm, [("cbd", "CBD"), ("manhattan_non_cbd", "Manhattan non-CBD"),
+                                ("other", "Outer boroughs")], est, t,
+                           "theta = 1 + d street hails / d app pickups per zone-week (1 = every "
+                           "app trip is additional, 0 = every app trip replaces a street hail); "
+                           "observational. Zones with >= 20 pickups/week in 2023; 2023-01 to "
+                           "2026-09; CMT contracted block excluded; 95% CIs clustered by zone. "
+                           "Airports (2 zones) not shown. Sources: results/incrementality_dml.json,"
+                           " results/incrementality_panel_summary.csv.",
+                           figs / "F6c_incrementality")
     if stats:
         (res / "figure_stats_phase4c.json").write_text(json.dumps(stats, indent=2,
                                                                   default=float) + "\n")

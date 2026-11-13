@@ -1,0 +1,466 @@
+{
+  "generated_utc": "2026-11-13T05:02:44+00:00",
+  "specification": "PLAN.md Amendment 4 D2, Amendment 4a; DECISIONS.md",
+  "estimand": "theta = 1 + d street / d app (1 = fully incremental, 0 = fully displacing); observational",
+  "library": "DoubleML 0.11.4",
+  "controls": [
+    "temp_f",
+    "precip_in",
+    "n_holidays",
+    "woy_sin",
+    "woy_cos",
+    "centroid_lon",
+    "centroid_lat",
+    "pre_volume",
+    "total_lag1",
+    "total_lag2",
+    "total_lag3",
+    "total_lag4"
+  ],
+  "n_folds_time_blocks": 5,
+  "lgbm": {
+    "n_estimators": 300,
+    "learning_rate": 0.05,
+    "num_leaves": 31,
+    "min_child_samples": 50,
+    "subsample": 0.8,
+    "subsample_freq": 1,
+    "colsample_bytree": 0.8
+  },
+  "min_weekly_2023": 20,
+  "areas": {
+    "cbd": {
+      "dml_plr": {
+        "beta_street_on_app": -0.1022203567722064,
+        "se": 0.0813995263505531,
+        "theta": 0.8977796432277936,
+        "theta_ci": [
+          0.7382395032220904,
+          1.0573197832334968
+        ],
+        "n_obs": 7258,
+        "n_zones": 38,
+        "se_doubleml_default": 0.02242888264187759
+      },
+      "twfe": {
+        "beta_street_on_app": 0.01030495369933936,
+        "se": 0.06668421898009876,
+        "theta": 1.0103049536993394,
+        "theta_ci": [
+          0.8796062861611635,
+          1.1410036212375152
+        ],
+        "n_obs": 7258,
+        "n_zones": 38,
+        "formula": "street ~ app | zone_id + week_start"
+      },
+      "first_difference": {
+        "beta_street_on_app": 1.620401984905961,
+        "se": 0.2121631036238739,
+        "theta": 2.620401984905961,
+        "theta_ci": [
+          2.2045699429549286,
+          3.0362340268569934
+        ],
+        "n_obs": 7220,
+        "n_zones": 38,
+        "formula": "d_street ~ d_app | week_start"
+      },
+      "first_difference_lead_placebo": {
+        "beta_street_on_app": 1.6084348878946537,
+        "se": 0.2022286165179227,
+        "theta": 2.6084348878946537,
+        "theta_ci": [
+          2.212074082876163,
+          3.0047956929131443
+        ],
+        "n_obs": 7182,
+        "n_zones": 38,
+        "formula": "d_street ~ d_app + d_app_lead | week_start",
+        "lead": {
+          "coef": 0.038252729067787296,
+          "se": 0.07133561787067788,
+          "pvalue": 0.5950049241947375
+        }
+      },
+      "dml_zone_trends": {
+        "beta_street_on_app": 0.41162841421624935,
+        "se": 0.09808006060622833,
+        "theta": 1.4116284142162494,
+        "theta_ci": [
+          1.2193950278265362,
+          1.6038618006059626
+        ],
+        "n_obs": 7258,
+        "n_zones": 38,
+        "se_doubleml_default": 0.028692052966463873
+      },
+      "dml_panel_plpr": {
+        "beta_street_on_app": -0.4453997447581834,
+        "se": 0.061236402052539475,
+        "theta": 0.5546002552418166,
+        "theta_ci": [
+          0.43457911267602456,
+          0.6746213978076085
+        ],
+        "n_obs": 7258,
+        "n_zones": 38,
+        "approach": "wg_approx (Clarke and Polselli 2025), DoubleML folds"
+      },
+      "d0_label_flex_throughout": {
+        "beta_street_on_app": -0.10195531161611136,
+        "se": 0.0810879819232301,
+        "theta": 0.8980446883838886,
+        "theta_ci": [
+          0.7391151642353226,
+          1.0569742125324546
+        ],
+        "n_obs": 7258,
+        "n_zones": 38,
+        "se_doubleml_default": 0.022386856408970632
+      },
+      "descriptive": {
+        "mean_weekly_app": 1921.6879305593827,
+        "mean_weekly_street": 10340.84114081014,
+        "app_share": 0.1567122018121146
+      }
+    },
+    "manhattan_non_cbd": {
+      "dml_plr": {
+        "beta_street_on_app": 0.04400075025056564,
+        "se": 0.18374953878327419,
+        "theta": 1.0440007502505657,
+        "theta_ci": [
+          0.6838582720595024,
+          1.404143228441629
+        ],
+        "n_obs": 4775,
+        "n_zones": 25,
+        "se_doubleml_default": 0.05161951393036703
+      },
+      "twfe": {
+        "beta_street_on_app": 0.5324393799779763,
+        "se": 0.2839360230699684,
+        "theta": 1.5324393799779763,
+        "theta_ci": [
+          0.9759350008473043,
+          2.0889437591086484
+        ],
+        "n_obs": 4775,
+        "n_zones": 25,
+        "formula": "street ~ app | zone_id + week_start"
+      },
+      "first_difference": {
+        "beta_street_on_app": 2.708283147657828,
+        "se": 0.537552749677953,
+        "theta": 3.708283147657828,
+        "theta_ci": [
+          2.654699118498565,
+          4.761867176817091
+        ],
+        "n_obs": 4750,
+        "n_zones": 25,
+        "formula": "d_street ~ d_app | week_start"
+      },
+      "first_difference_lead_placebo": {
+        "beta_street_on_app": 2.744013765260887,
+        "se": 0.5409908428305429,
+        "theta": 3.744013765260887,
+        "theta_ci": [
+          2.683691197347054,
+          4.80433633317472
+        ],
+        "n_obs": 4725,
+        "n_zones": 25,
+        "formula": "d_street ~ d_app + d_app_lead | week_start",
+        "lead": {
+          "coef": 0.37894412311393477,
+          "se": 0.08130287325055613,
+          "pvalue": 9.83568267871604e-05
+        }
+      },
+      "dml_zone_trends": {
+        "beta_street_on_app": 0.367534513103192,
+        "se": 0.15268760957258953,
+        "theta": 1.367534513103192,
+        "theta_ci": [
+          1.0682722974554033,
+          1.6667967287509806
+        ],
+        "n_obs": 4775,
+        "n_zones": 25,
+        "se_doubleml_default": 0.05936041810113775
+      },
+      "dml_panel_plpr": {
+        "beta_street_on_app": -0.4181829607508557,
+        "se": 0.15559652709144944,
+        "theta": 0.5818170392491443,
+        "theta_ci": [
+          0.2768534500303926,
+          0.8867806284678961
+        ],
+        "n_obs": 4775,
+        "n_zones": 25,
+        "approach": "wg_approx (Clarke and Polselli 2025), DoubleML folds"
+      },
+      "d0_label_flex_throughout": {
+        "beta_street_on_app": 0.039080382129468745,
+        "se": 0.18118223877263137,
+        "theta": 1.0390803821294687,
+        "theta_ci": [
+          0.6839697194967747,
+          1.3941910447621628
+        ],
+        "n_obs": 4775,
+        "n_zones": 25,
+        "se_doubleml_default": 0.05102976045575561
+      },
+      "descriptive": {
+        "mean_weekly_app": 1531.9976963350784,
+        "mean_weekly_street": 8158.831623036649,
+        "app_share": 0.15808736753547534
+      }
+    },
+    "other": {
+      "dml_plr": {
+        "beta_street_on_app": 0.17574943645803184,
+        "se": 0.08905678386810364,
+        "theta": 1.1757494364580319,
+        "theta_ci": [
+          1.001201347497581,
+          1.3502975254184828
+        ],
+        "n_obs": 9550,
+        "n_zones": 50,
+        "se_doubleml_default": 0.05534459690855228
+      },
+      "twfe": {
+        "beta_street_on_app": 0.13548388159265934,
+        "se": 0.07335675415125409,
+        "theta": 1.1354838815926593,
+        "theta_ci": [
+          0.9917072854334422,
+          1.2792604777518766
+        ],
+        "n_obs": 9550,
+        "n_zones": 50,
+        "formula": "street ~ app | zone_id + week_start"
+      },
+      "first_difference": {
+        "beta_street_on_app": 0.512440026380504,
+        "se": 0.36830404915487075,
+        "theta": 1.512440026380504,
+        "theta_ci": [
+          0.7905773546766877,
+          2.2343026980843206
+        ],
+        "n_obs": 9500,
+        "n_zones": 50,
+        "formula": "d_street ~ d_app | week_start"
+      },
+      "first_difference_lead_placebo": {
+        "beta_street_on_app": 0.5207220522293106,
+        "se": 0.37085860333581755,
+        "theta": 1.5207220522293106,
+        "theta_ci": [
+          0.7938525463342823,
+          2.2475915581243386
+        ],
+        "n_obs": 9450,
+        "n_zones": 50,
+        "formula": "d_street ~ d_app + d_app_lead | week_start",
+        "lead": {
+          "coef": 0.03711066515359675,
+          "se": 0.019958668205190558,
+          "pvalue": 0.06898360363870548
+        }
+      },
+      "dml_zone_trends": {
+        "beta_street_on_app": 0.13830359437037368,
+        "se": 0.09964860409506313,
+        "theta": 1.1383035943703737,
+        "theta_ci": [
+          0.9429959192343593,
+          1.333611269506388
+        ],
+        "n_obs": 9550,
+        "n_zones": 50,
+        "se_doubleml_default": 0.054953801361913496
+      },
+      "dml_panel_plpr": {
+        "beta_street_on_app": -0.1077468731460584,
+        "se": 0.33209665926312204,
+        "theta": 0.8922531268539416,
+        "theta_ci": [
+          0.24135563531215232,
+          1.5431506183957309
+        ],
+        "n_obs": 9550,
+        "n_zones": 50,
+        "approach": "wg_approx (Clarke and Polselli 2025), DoubleML folds"
+      },
+      "d0_label_flex_throughout": {
+        "beta_street_on_app": 0.17324679382608607,
+        "se": 0.08887126778464818,
+        "theta": 1.173246793826086,
+        "theta_ci": [
+          0.9990623097077608,
+          1.347431277944411
+        ],
+        "n_obs": 9550,
+        "n_zones": 50,
+        "se_doubleml_default": 0.05534325637648838
+      },
+      "cmt_block_included_to_2026_05_24": {
+        "beta_street_on_app": 0.014867571872010583,
+        "se": 0.11832226695465967,
+        "theta": 1.0148675718720106,
+        "theta_ci": [
+          0.7829601900717439,
+          1.2467749536722774
+        ],
+        "n_obs": 18096,
+        "n_zones": 104,
+        "se_doubleml_default": 0.06572306570766455
+      },
+      "descriptive": {
+        "mean_weekly_app": 324.87267015706806,
+        "mean_weekly_street": 122.31120418848168,
+        "app_share": 0.7264856556657299
+      }
+    },
+    "airports": {
+      "dml_plr": {
+        "beta_street_on_app": 7.592027668533669,
+        "se": 2.720248721582564,
+        "theta": 8.59202766853367,
+        "theta_ci": [
+          3.2604381452407187,
+          13.923617191826619
+        ],
+        "n_obs": 382,
+        "n_zones": 2,
+        "se_doubleml_default": 2.6693966292238254
+      },
+      "twfe": {
+        "beta_street_on_app": 12.496767595236955,
+        "se": 4.413517684124994e-15,
+        "theta": 13.496767595236955,
+        "theta_ci": [
+          13.496767595236946,
+          13.496767595236964
+        ],
+        "n_obs": 382,
+        "n_zones": 2,
+        "formula": "street ~ app | zone_id + week_start"
+      },
+      "first_difference": {
+        "beta_street_on_app": 36.538576154219065,
+        "se": 7.34548132018276e-16,
+        "theta": 37.538576154219065,
+        "theta_ci": [
+          37.538576154219065,
+          37.538576154219065
+        ],
+        "n_obs": 380,
+        "n_zones": 2,
+        "formula": "d_street ~ d_app | week_start"
+      },
+      "first_difference_lead_placebo": {
+        "beta_street_on_app": 36.01907385671036,
+        "se": 1.170044486251824e-14,
+        "theta": 37.01907385671036,
+        "theta_ci": [
+          37.019073856710335,
+          37.01907385671038
+        ],
+        "n_obs": 378,
+        "n_zones": 2,
+        "formula": "d_street ~ d_app + d_app_lead | week_start",
+        "lead": {
+          "coef": -3.5932290527398187,
+          "se": 3.1084014575207197e-15,
+          "pvalue": 4.440892098500626e-16
+        }
+      },
+      "dml_zone_trends": {
+        "beta_street_on_app": 16.57923056487867,
+        "se": 0.798380509637343,
+        "theta": 17.57923056487867,
+        "theta_ci": [
+          16.014433520030746,
+          19.144027609726596
+        ],
+        "n_obs": 382,
+        "n_zones": 2,
+        "se_doubleml_default": 3.6325434001665564
+      },
+      "d0_label_flex_throughout": {
+        "beta_street_on_app": 7.524033202382751,
+        "se": 2.797389776666328,
+        "theta": 8.52403320238275,
+        "theta_ci": [
+          3.041249989396202,
+          14.006816415369297
+        ],
+        "n_obs": 382,
+        "n_zones": 2,
+        "se_doubleml_default": 2.642791739778666
+      },
+      "inference_note": "2 zones: clustered SEs and CIs are not meaningful; no app-channel conclusion (Amendment 4a)",
+      "descriptive": {
+        "mean_weekly_app": 115.32722513089006,
+        "mean_weekly_street": 29239.38219895288,
+        "app_share": 0.003928746950438931
+      }
+    }
+  },
+  "supply": {
+    "source": "https://www.nyc.gov/assets/tlc/downloads/csv/data_reports_monthly.csv",
+    "file": "results/supply_monthly.csv",
+    "first_month": "2022-01",
+    "last_month": "2026-07",
+    "yearly_means_of_monthly_values": {
+      "2022": {
+        "trips_per_day": 108378.16666666667,
+        "vehicles_per_day": 5930.0,
+        "unique_vehicles": 7215.5,
+        "trips_per_vehicle_day": 18.25568903630011,
+        "hours_per_vehicle_day": 9.033333333333333,
+        "avg_minutes_per_trip": 15.616666666666667
+      },
+      "2023": {
+        "trips_per_day": 104422.16666666667,
+        "vehicles_per_day": 7035.833333333333,
+        "unique_vehicles": 8334.25,
+        "trips_per_vehicle_day": 14.845827834781984,
+        "hours_per_vehicle_day": 8.275,
+        "avg_minutes_per_trip": 16.425
+      },
+      "2024": {
+        "trips_per_day": 111256.83333333333,
+        "vehicles_per_day": 7924.0,
+        "unique_vehicles": 9137.5,
+        "trips_per_vehicle_day": 14.024311922465737,
+        "hours_per_vehicle_day": 8.166666666666666,
+        "avg_minutes_per_trip": 16.375
+      },
+      "2025": {
+        "trips_per_day": 131133.41666666666,
+        "vehicles_per_day": 8722.5,
+        "unique_vehicles": 9924.916666666666,
+        "trips_per_vehicle_day": 15.023132789647336,
+        "hours_per_vehicle_day": 8.608333333333333,
+        "avg_minutes_per_trip": 16.541666666666668
+      },
+      "2026": {
+        "trips_per_day": 121264.57142857143,
+        "vehicles_per_day": 8658.42857142857,
+        "unique_vehicles": 10208.42857142857,
+        "trips_per_vehicle_day": 14.004710530523436,
+        "hours_per_vehicle_day": 8.3,
+        "avg_minutes_per_trip": 16.785714285714285
+      }
+    }
+  }
+}

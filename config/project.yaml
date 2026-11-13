@@ -98,6 +98,7 @@ channel:                                      # Amendment 4 (D0-D5): app dispatc
 incr:                                         # Amendment 4 D2: incrementality (DML)
   min_weekly: 20                              # zones kept: 2023 mean weekly pickups >= this
   n_folds: 5                                  # cross-fitting on contiguous time blocks of weeks
+  min_zones_inference: 10                     # fewer clusters: estimates reported without inference
   lgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 31, min_child_samples: 50,
          subsample: 0.8, subsample_freq: 1, colsample_bytree: 0.8}
   block_sensitivity_end: "2026-05-24"         # Amendment 4a: sensitivity with the CMT block

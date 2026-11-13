@@ -18,5 +18,44 @@
       "2026_jan_sep": 0.889424
     },
     "title_f6b": "Median zone app share of pickups: 22% (2023), 71% (2024), 91% (2025), 89% (Jan-Sep 2026)"
+  },
+  "d2": {
+    "cbd": {
+      "beta_street_on_app": -0.1022203567722064,
+      "se": 0.0813995263505531,
+      "theta": 0.8977796432277936,
+      "theta_ci": [
+        0.7382395032220904,
+        1.0573197832334968
+      ],
+      "n_obs": 7258,
+      "n_zones": 38,
+      "se_doubleml_default": 0.02242888264187759
+    },
+    "manhattan_non_cbd": {
+      "beta_street_on_app": 0.04400075025056564,
+      "se": 0.18374953878327419,
+      "theta": 1.0440007502505657,
+      "theta_ci": [
+        0.6838582720595024,
+        1.404143228441629
+      ],
+      "n_obs": 4775,
+      "n_zones": 25,
+      "se_doubleml_default": 0.05161951393036703
+    },
+    "other": {
+      "beta_street_on_app": 0.17574943645803184,
+      "se": 0.08905678386810364,
+      "theta": 1.1757494364580319,
+      "theta_ci": [
+        1.001201347497581,
+        1.3502975254184828
+      ],
+      "n_obs": 9550,
+      "n_zones": 50,
+      "se_doubleml_default": 0.05534459690855228
+    },
+    "title": "Incrementality of app trips (theta, primary DML): CBD 0.90 [0.74, 1.06], outer boroughs 1.18 [1.00, 1.35]; other estimators range widely"
   }
 }

@@ -1,4 +1,5 @@
 file,bytes,download_date
+data/raw/lookup/data_reports_monthly.csv,79774,2026-11-13
 data/raw/lookup/osm_60th_street.json,23569,2026-11-07
 data/raw/lookup/taxi_zone_lookup.csv,12331,2026-11-07
 data/raw/lookup/taxi_zones.zip,1022574,2026-11-07

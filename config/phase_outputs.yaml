@@ -120,3 +120,7 @@
   - reports/figures/F6a_channel_areas.png
   - reports/figures/F6b_app_share_maps.png
   - results/figure_stats_phase4c.json
+  - results/incrementality_dml.json
+  - results/incrementality_panel_summary.csv
+  - results/supply_monthly.csv
+  - reports/figures/F6c_incrementality.png
