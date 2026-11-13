@@ -75,5 +75,29 @@
     "3_external_drive": {
       "how": "data/raw/tlc/hvfhv symlinked to an external drive"
     }
+  },
+  "investigation_2026_11_12": {
+    "c_free_gib_now": 34,
+    "finding": "the 12 GiB drop was transient and not inside WSL: Linux root usage was 55 GiB at both df readings (before and after the drop), C: free recovered to 34 GiB without any deletion, and a 2-second probe of the DuckDB spill directories (data/warehouse.duckdb.tmp, data/duckdb_tmp), C: free and Linux usage during a full `make verify PHASE=4` (pytest + dbt test) showed no spill (<= 2 MB) and a C: change of 0.2 GiB (logs/spill_probe.log). The WSL virtual disk can only grow (no sparse mode in .wslconfig), so a recovery of C: space must come from the Windows side; the cause is not identifiable from inside WSL.",
+    "wsl_vhdx_gb": 80.0,
+    "linux_used_gib": 55,
+    "vhdx_slack_note": "the virtual disk (ext4.vhdx, 80.0 GB on C:) holds ~24 GB more than Linux uses; fstrim (needs sudo) plus enabling sparse mode or compacting the vhdx from Windows would return it to C:",
+    "fstrim": "not run: `sudo fstrim -v /` needs Stanley's password (sudo -n fails)",
+    "regenerable_caches_gib_listed_not_deleted": {
+      "~/.cache/uv": 7.3,
+      "~/.cache/puccinialin": 2.2,
+      "~/.cache/pypoetry": 1.0,
+      "~/.cache/huggingface": 0.47,
+      "~/.cache/pre-commit": 0.15,
+      "data/smoke.duckdb": 0.21
+    },
+    "cache_note": "deleting them frees space inside the vhdx only; C: gains nothing without fstrim + sparse/compaction, so nothing was deleted",
+    "data_dirs_gib": {
+      "data/warehouse.duckdb": 17,
+      "data/raw": 5.1,
+      "data/forecasts": 0.48,
+      "logs": 0.001
+    },
+    "streaming_guard": "the HVFHV streaming script checks C: free space before each month and stops below 15 GB (Amendment 4)"
   }
 }
