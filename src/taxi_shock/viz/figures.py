@@ -279,22 +279,24 @@ F3_GROUPS: dict[str, tuple[str, str]] = {"cbd": ("CBD", PALETTE["cbd"]),
                                          "non_cbd": ("Non-CBD", PALETTE["non_cbd"])}
 
 
-def f3_error_over_time(errors: pd.DataFrame, policy_date: str, markers: list[tuple[str, str]],
-                       title: str, note: str, out_base: Path) -> list[Path]:
+def f3_error_over_time(errors: pd.DataFrame, policy_date: str,
+                       markers: list[tuple[str, str, str]], title: str, note: str,
+                       out_base: Path) -> list[Path]:
     """F3: rolling 4-week WAPE (top) and actual vs forecast in % (bottom), CBD vs non-CBD.
 
     `errors`: rows of results/shock_errors.csv for one model/series and the rolling window
     (both panels are rolling 4-week values),
     columns date, zone_group, wape, log_actual_over_forecast. Pre-policy segments are drawn in
-    a lighter tint of the series colour. `markers`: (date, label) of monitor alarms, drawn as
-    dotted vertical lines. Two panels with their own y-axis (small multiples, not a dual axis).
+    a lighter tint of the series colour. `markers`: (date, label, colour) of monitor alarms,
+    drawn as dotted vertical lines. Two panels with their own y-axis (small multiples, not a
+    dual axis).
     """
     use_style()
     fig, axes = plt.subplots(2, 1, figsize=SIZES["small_multiples"], sharex=True,
                              layout="constrained")
     p = pd.Timestamp(policy_date)
     panels = [("wape", "Rolling 4-week WAPE"),
-              ("log_actual_over_forecast", "Actual vs forecast (%)")]
+              ("log_actual_over_forecast", "Actual vs forecast (%; + = above)")]
     for ax, (col, ylabel) in zip(axes, panels, strict=True):
         ends = []
         for g, (label, color) in F3_GROUPS.items():
@@ -310,13 +312,13 @@ def f3_error_over_time(errors: pd.DataFrame, policy_date: str, markers: list[tup
         ax.set_ylabel(ylabel)
         ax.set_xlim(errors["date"].min(), errors["date"].max())
         direct_labels(ax, errors["date"].max(), ends)
-        for date, mlabel in markers:
+        for i, (date, mlabel, mcolor) in enumerate(markers):
             x = mdates.date2num(pd.Timestamp(date))
-            ax.axvline(x, color=PALETTE["cbd"], linestyle=":", linewidth=1.1, zorder=3)
+            ax.axvline(x, color=mcolor, linestyle=":", linewidth=1.1, zorder=3)
             if ax is axes[0]:   # labels in the empty band above zero, clear of the lines
-                ax.annotate(mlabel, xy=(x, 0.10), xycoords=("data", "axes fraction"),
-                            xytext=(4, 0), textcoords="offset points", fontsize=8,
-                            color=PALETTE["cbd"], va="center")
+                ax.annotate(mlabel, xy=(x, 0.10 + 0.08 * (i % 2)),
+                            xycoords=("data", "axes fraction"), xytext=(4, 0),
+                            textcoords="offset points", fontsize=8, color=mcolor, va="center")
         policy_line(ax, label=ax is axes[0], label_y=0.24)
     axes[0].set_ylim(bottom=0)
     axes[1].xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))

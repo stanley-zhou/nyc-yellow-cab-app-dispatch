@@ -18,7 +18,7 @@ at zero; `point` = q50.
 from __future__ import annotations
 
 import time
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 
 import lightgbm as lgb
 import numpy as np
@@ -27,13 +27,18 @@ import pandas as pd
 from taxi_shock.features import WEATHER_FEATURES, build_features, feature_columns
 from taxi_shock.models.base import BaseForecaster, quantile_col
 
+ExtraFeatures = Callable[[pd.DataFrame], pd.DataFrame]
+
 
 def training_frame(history: pd.DataFrame, exog: pd.DataFrame, train_start: pd.Timestamp | None,
-                   weather: Sequence[str] = WEATHER_FEATURES) -> tuple[pd.DataFrame, np.ndarray]:
+                   weather: Sequence[str] = WEATHER_FEATURES, extra: ExtraFeatures | None = None
+                   ) -> tuple[pd.DataFrame, np.ndarray]:
     """Feature rows for every history row with hour_ts >= train_start, and their targets."""
     tr = history if train_start is None else history[history["hour_ts"] >= train_start]
     rows = tr[["zone_id", "hour_ts"]].rename(columns={"hour_ts": "target_ts"})
     feats = build_features(history, rows.reset_index(drop=True), exog, weather)
+    if extra is not None:
+        feats = pd.concat([feats, extra(feats).set_index(feats.index)], axis=1)
     return feats, tr["pickups"].to_numpy("float32")
 
 
@@ -43,10 +48,14 @@ class GlobalLGBMQuantile(BaseForecaster):
     def __init__(self, exog: pd.DataFrame, quantiles: Sequence[float],
                  params: Mapping[str, object], rounds: Mapping[float, int], seed: int, *,
                  predict_history_days: int, weather: Sequence[str] = WEATHER_FEATURES,
-                 threads: int = 0, early_stopping: Mapping[str, float] | None = None) -> None:
+                 threads: int = 0, early_stopping: Mapping[str, float] | None = None,
+                 extra: ExtraFeatures | None = None,
+                 extra_cols: Sequence[str] = ()) -> None:
         """`predict_history_days` (models.lgbm.predict_history_days): days of history before
         the target day handed to the feature builder at predict time; must cover the longest
-        look-back (28-day rolling mean + 1 day) or the features would differ from training."""
+        look-back (28-day rolling mean + 1 day) or the features would differ from training.
+        `extra` (Phase 5, S6): a function of the feature rows (zone_id, target_ts) returning
+        additional columns `extra_cols`, which must use only days before each target day."""
         self.exog = exog
         self.predict_history_days = int(predict_history_days)
         self.quantiles = sorted(quantiles)
@@ -57,7 +66,8 @@ class GlobalLGBMQuantile(BaseForecaster):
         self.threads = threads
         self.early_stopping = dict(early_stopping) if early_stopping else None
         self.fit_info_: dict[str, object] = {}
-        self.cols = feature_columns(self.weather)
+        self.extra = extra
+        self.cols = [*feature_columns(self.weather), *extra_cols]
         self.boosters_: dict[float, lgb.Booster] = {}
         self.zones_: list[int] = []
 
@@ -74,7 +84,7 @@ class GlobalLGBMQuantile(BaseForecaster):
     def fit(self, history: pd.DataFrame, train_start: pd.Timestamp | None = None
             ) -> GlobalLGBMQuantile:
         t0 = time.perf_counter()
-        feats, y = training_frame(history, self.exog, train_start, self.weather)
+        feats, y = training_frame(history, self.exog, train_start, self.weather, self.extra)
         self.zones_ = sorted(int(z) for z in feats["zone_id"].unique())
         mat = self._matrix(feats)
         info: dict[str, object] = {"train_start": str(feats["target_ts"].min()),
@@ -114,6 +124,8 @@ class GlobalLGBMQuantile(BaseForecaster):
         first = targets["target_ts"].min().normalize()
         hist = history[history["hour_ts"] >= first - pd.Timedelta(days=self.predict_history_days)]
         feats = build_features(hist, targets[["zone_id", "target_ts"]], self.exog, self.weather)
+        if self.extra is not None:
+            feats = pd.concat([feats, self.extra(feats).set_index(feats.index)], axis=1)
         mat = self._matrix(feats)
         qs = sorted(quantiles)
         pred = np.column_stack([self.boosters_[q].predict(mat) for q in qs])  # best iteration

@@ -29,6 +29,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import os
@@ -42,7 +43,13 @@ import pandas as pd
 
 from taxi_shock.chronos_runs import MAIN, with_run
 from taxi_shock.config import load_config, path, repo_root
-from taxi_shock.drift import calibrate_h, cusum, rolling_bias_alarms, standardize
+from taxi_shock.drift import (
+    calibrate_h,
+    cusum,
+    rolling_bias_alarms,
+    rolling_mean_z,
+    standardize,
+)
 from taxi_shock.evaluation import sort_clip_quantiles
 from taxi_shock.io import read_exog, read_modeled_panel
 from taxi_shock.models.lgbm_quantile import GlobalLGBMQuantile
@@ -52,8 +59,17 @@ from taxi_shock.shock import daily_table, forecast_frozen, rolling_table
 
 LOG = logging.getLogger("shock")
 QCOLS = ["q10", "q50", "q90"]
+CAL_ROWS: list[pd.DataFrame] = []         # calibration-period daily series (drift monitors)
 FC_COLS = ["model", "series", "zone_id", "origin", "target_ts", "horizon", "y", "point",
            *QCOLS]
+
+
+def sha256_file(f: Path) -> str:
+    h = hashlib.sha256()
+    with f.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def _atomic_parquet(df: pd.DataFrame, f: Path) -> None:
@@ -80,6 +96,14 @@ def frozen_lgbm(cfg: dict, panel: pd.DataFrame, exog: pd.DataFrame, force: bool
     if not force and record.exists() and all(f.exists() for f in files.values()):
         rec = json.loads(record.read_text())
         model.boosters_ = {q: lgb.Booster(model_file=str(f)) for q, f in files.items()}
+        if "booster_files" not in rec:
+            raise RuntimeError("results/frozen_model.json has no booster hashes (recorded from "
+                               "the review-fix version on); refit with --force")
+        for q, f in files.items():          # refuse boosters that are not the recorded ones
+            b = rec["booster_files"][str(q)]
+            if sha256_file(f) != b["sha256"] or model.boosters_[q].num_trees() != b["num_trees"]:
+                raise RuntimeError(f"{f.name} does not match results/frozen_model.json "
+                                   "(sha256 / num_trees); refit with --force")
         model.zones_ = rec["zones"]
         LOG.info("frozen LightGBM loaded (%s), rounds %s", record.name, rec["fit"]["rounds"])
         return model
@@ -100,6 +124,9 @@ def frozen_lgbm(cfg: dict, panel: pd.DataFrame, exog: pd.DataFrame, force: bool
                         "training window (not boosted on), stopped boosters used as is",
            "params": tuned["params"], "fit": model.fit_info_, "zones": model.zones_,
            "boosters": {str(q): str(f.relative_to(repo_root())) for q, f in files.items()},
+           "booster_files": {str(q): {"sha256": sha256_file(f),
+                                      "num_trees": model.boosters_[q].num_trees()}
+                             for q, f in files.items()},
            "in_sample_note": "forecasts for target days up to the training end are in-sample "
                              "(holdout weeks: used for early stopping, not boosted on)"}
     record.write_text(json.dumps(rec, indent=2) + "\n")
@@ -137,8 +164,15 @@ def frozen_forecasts(cfg: dict, force: bool) -> dict[str, pd.DataFrame]:
             model = SeasonalNaive().fit(panel[panel["hour_ts"] < train_end],
                                         train_start=pd.Timestamp(cfg["data"]["model_start"]))
         t0 = time.perf_counter()
-        fc = forecast_frozen(model, panel, origins, qs)
-        LOG.info("%s frozen: %d rows in %.0f s", m, len(fc), time.perf_counter() - t0)
+        fc = forecast_frozen(model, panel, origins, qs,
+                             history_days=int(cfg["shock"]["forecast_history_days"]))
+        secs = time.perf_counter() - t0
+        LOG.info("%s frozen: %d rows in %.0f s", m, len(fc), secs)
+        rec_f = path("results", cfg) / "frozen_model.json"
+        rec = json.loads(rec_f.read_text())
+        rec.setdefault("forecast_runtime", {})[m] = {"origins": len(origins), "rows": len(fc),
+                                                    "seconds": round(secs, 1)}
+        rec_f.write_text(json.dumps(rec, indent=2) + "\n")
         _atomic_parquet(fc, f)
         out[m] = fc
     return out
@@ -224,6 +258,22 @@ def monitors(cfg: dict, daily: pd.DataFrame, model: str, series: str) -> dict:
         _, _, al = cusum(z_run.to_numpy(), cu["k"], h)
         rb_cal = rolling_bias_alarms(z_cal.to_numpy(), rb["n_sigma"], rb["consecutive_days"])
         rb_run = rolling_bias_alarms(z_run.to_numpy(), rb["n_sigma"], rb["consecutive_days"])
+        # calibration-period alarms, saved (Phase 3 review, fix 1): at h and one grid step below
+        _, _, al_cal = cusum(z_cal.to_numpy(), cu["k"], h)
+        _, _, al_cal_lo = cusum(z_cal.to_numpy(), cu["k"], h - cu["h_grid"][2])
+        # rolling reading of the bias rule (fix 2): trailing-window mean of z, own 2024 sd
+        rm_cal, rm_run, rm_sd = rolling_mean_z(z_cal.to_numpy(), z_run.to_numpy(),
+                                               rb["rolling_window_days"])
+        rm_cal_al = rolling_bias_alarms(np.nan_to_num(rm_cal), rb["n_sigma"],
+                                        rb["consecutive_days"])
+        rm_run_al = rolling_bias_alarms(np.nan_to_num(rm_run), rb["n_sigma"],
+                                        rb["consecutive_days"])
+        CAL_ROWS.append(pd.DataFrame({"model": model, "series": series, "zone_group": g,
+                                      "day": z_cal.index, "log_actual_over_forecast":
+                                      cal.to_numpy(), "z": z_cal.to_numpy()}))
+
+        def cal_dates(alarms, z=z_cal):
+            return [{"date": str(z.index[a.position].date()), "side": a.side} for a in alarms]
 
         def summary(alarms, z=z_run):
             dates = [(z.index[a.position], a.side) for a in alarms]
@@ -245,10 +295,21 @@ def monitors(cfg: dict, daily: pd.DataFrame, model: str, series: str) -> dict:
             "cusum": {"k": cu["k"], "h": h, "h_rule": f"smallest h on the grid "
                       f"{cu['h_grid']} with <= {cu['max_false_alarms']} alarm(s) over the "
                       "calibration period", "false_alarms_in_calibration": n_cal,
+                      "calibration_alarms": cal_dates(al_cal),
+                      "calibration_alarms_one_grid_step_below_h": {
+                          "h": round(h - cu["h_grid"][2], 6), "alarms": cal_dates(al_cal_lo)},
                       **summary(al)},
             "rolling_bias": {"n_sigma": rb["n_sigma"],
                              "consecutive_days": rb["consecutive_days"],
-                             "false_alarms_in_calibration": len(rb_cal), **summary(rb_run)},
+                             "false_alarms_in_calibration": len(rb_cal),
+                             "reading": "daily z (pre-registered, primary)", **summary(rb_run)},
+            "rolling_bias_rolling_mean": {
+                "reading": f"trailing {rb['rolling_window_days']}-day mean of z, standardized "
+                           "by its own calibration-period sd (review fix 2; secondary)",
+                "rolling_mean_sd_calibration": round(rm_sd, 6), "n_sigma": rb["n_sigma"],
+                "consecutive_days": rb["consecutive_days"],
+                "false_alarms_in_calibration": len(rm_cal_al),
+                "calibration_alarms": cal_dates(rm_cal_al), **summary(rm_run_al)},
         }
     return out
 
@@ -280,6 +341,9 @@ def main() -> None:
                "groups": monitors(cfg, daily, f"chronos2_{cfg['chronos']['primary_variant']}",
                                   "zero_shot")}}
     (res / "drift_detection.json").write_text(json.dumps(det, indent=2) + "\n")
+    pd.concat(CAL_ROWS, ignore_index=True).to_csv(
+        res / "drift_calibration_series.csv", index=False, lineterminator="\n",
+        float_format="%.6g")
     for g, r in det["primary"]["groups"].items():
         LOG.info("%s: CUSUM h=%.2f first alarm %s; rolling bias %s", g, r["cusum"]["h"],
                  r["cusum"]["first_alarm_on_or_after_policy"],

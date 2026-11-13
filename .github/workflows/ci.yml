@@ -1,0 +1,26 @@
+# Continuous integration (PLAN Phase 7): lint, the one-month smoke pipeline, the test suite.
+# The full warehouse is not built in CI: tests that need it skip here (tests/conftest.py) and are
+# enforced locally by `make verify PHASE>=1`; tests that need the smoke warehouse run after
+# `make smoke` builds it.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Set up the environment (Python 3.12 via uv)
+        run: make setup
+      - name: Lint
+        run: .venv/bin/ruff check .
+      - name: Smoke pipeline (one month, end to end)
+        run: make smoke
+      - name: Tests
+        run: .venv/bin/python -m pytest -q

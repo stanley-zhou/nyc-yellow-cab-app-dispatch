@@ -47,3 +47,20 @@ def test_standardize_uses_calibration_moments():
     assert mu == 2.0 and sd == 1.0 and list(z) == [0.0, 2.0]
     with pytest.raises(ValueError):
         standardize(pd.Series([1.0]), pd.Series([1.0, 1.0]))
+
+
+def test_rolling_mean_z_standardizes_by_its_own_calibration_sd():
+    """Phase 3 review fix 2: the rolling reading divides the trailing mean by the sd of the same
+    rolling mean over the calibration period, and a sustained shift is flagged."""
+    from taxi_shock.drift import rolling_bias_alarms, rolling_mean_z
+
+    rng = np.random.default_rng(0)
+    cal = rng.normal(0, 1, 366)
+    run = np.r_[rng.normal(0, 1, 60), rng.normal(1.5, 1, 60)]
+    rc, rr, sd = rolling_mean_z(cal, run, 7)
+    assert np.isnan(rc[:6]).all() and np.isnan(rr[:6]).all()
+    m = pd.Series(cal).rolling(7).mean()
+    assert sd == pytest.approx(float(m.std(ddof=1)))
+    assert np.nanstd(rc, ddof=1) == pytest.approx(1.0)
+    al = rolling_bias_alarms(np.nan_to_num(rr), 2.0, 7)
+    assert al and al[0].side == "up" and al[0].position >= 60

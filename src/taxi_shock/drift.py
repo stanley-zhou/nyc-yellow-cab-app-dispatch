@@ -63,6 +63,20 @@ def calibrate_h(z: np.ndarray, k: float, max_alarms: int, grid: np.ndarray
     raise ValueError(f"no h on the grid gives <= {max_alarms} alarms")
 
 
+def rolling_mean_z(z_cal: np.ndarray, z_run: np.ndarray, window: int
+                   ) -> tuple[np.ndarray, np.ndarray, float]:
+    """Rolling reading of the bias rule (Phase 3 review, fix 2): the trailing `window`-day mean
+    of z, standardized by the sd of the same rolling mean over the calibration period (so the
+    autocorrelation of daily errors is accounted for). Returns (calibration, run, sd); the first
+    window - 1 days of each are NaN."""
+    def roll(z):
+        return pd.Series(np.asarray(z, dtype=float)).rolling(window, min_periods=window).mean()
+
+    rc, rr = roll(z_cal), roll(z_run)
+    sd = float(rc.std(ddof=1))
+    return (rc / sd).to_numpy(), (rr / sd).to_numpy(), sd
+
+
 def rolling_bias_alarms(z: np.ndarray, n_sigma: float, consecutive: int) -> list[Alarm]:
     """Alarm when `consecutive` days in a row have z > n_sigma (up) or z < -n_sigma (down)."""
     alarms: list[Alarm] = []

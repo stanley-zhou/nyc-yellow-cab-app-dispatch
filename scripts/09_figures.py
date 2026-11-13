@@ -191,18 +191,23 @@ def phase3(cfg: dict) -> None:
     def gap(v: float) -> str:
         return f"{abs(v):.1f}% {'below' if v < 0 else 'above'}"
 
-    title = (f"First four weeks of congestion pricing: CBD pickups "
-             f"{gap(c['actual_vs_forecast_pct_first_post_window'])} the frozen forecast, "
+    cal = prim["groups"]["cbd"]["cusum"].get("calibration_alarms", [])
+    stats["cbd"]["cusum_calibration_alarms"] = cal
+    # wording: Stanley's ruling (Checkpoint 6, Amendment 5) - no CBD-specific break detected
+    title = (f"No CBD-specific break: in the first four weeks of congestion pricing CBD pickups "
+             f"ran {gap(c['actual_vs_forecast_pct_first_post_window'])} the frozen forecast, "
              f"non-CBD {gap(n['actual_vs_forecast_pct_first_post_window'])}")
-    if c["cusum"]:
-        title += f"; CUSUM alarm for the CBD after {c['cusum']['delay_days']} days"
-    else:
-        title += "; no CUSUM alarm for the CBD"
+    if c["cusum"] and cal:
+        title += (f"; the one CBD CUSUM alarm (day {c['cusum']['delay_days']}) matches the "
+                  f"calibration year's ({cal[0]['date']})")
     markers = []
+    for a in cal:
+        markers.append((a["date"], "CUSUM alarm, 2024 (calibration)", PALETTE["muted_text"]))
     for key, name in (("cusum", "CUSUM"), ("rolling_bias", "rolling-bias rule")):
         a = c[key]
         if a:
-            markers.append((a["date"], f"{name} alarm (CBD), day {a['delay_days']}"))
+            markers.append((a["date"], f"{name} alarm (CBD), day {a['delay_days']}",
+                            PALETTE["cbd"]))
     note = (f"LightGBM day-ahead forecasts: Phase-2 out-of-sample backtest (monthly refits) "
             f"before {sh['monitor_start']}, then the model frozen on data to "
             f"{sh['frozen_train_end']}. Trailing {sh['rolling_days']}-day windows; pre-policy "
@@ -589,10 +594,13 @@ def phase4c(cfg: dict) -> None:
 
         stats["d2"] = {a: th(a) for a in ("cbd", "manhattan_non_cbd", "other")}
         c, o = th("cbd"), th("other")
-        t = (f"Incrementality of app trips (theta, primary DML): CBD {c['theta']:.2f} "
-             f"[{c['theta_ci'][0]:.2f}, {c['theta_ci'][1]:.2f}], outer boroughs "
-             f"{o['theta']:.2f} [{o['theta_ci'][0]:.2f}, {o['theta_ci'][1]:.2f}]; other "
-             "estimators range widely")
+        cb = sm[sm["area"] == "cbd"]
+        stats["d2"]["cbd_range"] = [float(cb["theta"].min()), float(cb["theta"].max())]
+        # wording: Amendment 5 (D2)
+        t = (f"Share of app trips that are additional: CBD estimates range from "
+             f"{cb['theta'].min():.2f} to {cb['theta'].max():.2f} across estimators (primary DML "
+             f"{c['theta']:.2f} [{c['theta_ci'][0]:.2f}, {c['theta_ci'][1]:.2f}]); they disagree "
+             "beyond their intervals: not identified")
         stats["d2"]["title"] = t
         est = [("dml_plr", "DML, time-blocked folds (primary)", PALETTE["app"]),
                ("dml_zone_trends", "DML + zone trends", PALETTE["comparison"]),
