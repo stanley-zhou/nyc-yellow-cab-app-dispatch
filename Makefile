@@ -4,7 +4,7 @@ SHELL := /bin/bash
 PY    := .venv/bin/python
 PHASE ?= 0
 
-.PHONY: help setup smoke smoke-clean data dbt probes chronos-bundle chronos-import forecast shock causal hvfhv channel fhv lyft-refresh adapt figures report all verify lint test clean-smoke
+.PHONY: help setup smoke smoke-clean data dbt probes chronos-bundle chronos-import forecast shock causal hvfhv channel fhv lyft-refresh tableau-extract adapt figures report all verify lint test clean-smoke
 
 help:
 	@echo "setup | smoke | smoke-clean | data | dbt | probes | forecast | shock | causal | hvfhv | channel | fhv | lyft-refresh | adapt | figures | report | all | verify PHASE=N | lint | test"
@@ -86,7 +86,15 @@ lyft-refresh:     ## D3: re-run the Lyft entry estimate after extending data.yel
 	$(PY) scripts/13_lyft_entry.py
 	$(PY) scripts/09_figures.py --all
 
-adapt report:
+tableau-extract:  ## E2: tidy CSV / GeoJSON extracts for the Tableau Public dashboard (reports/tableau/)
+	$(PY) scripts/18_tableau_extract.py
+
+adapt:            ## Phase 5 (D6): S1 / S6 monthly refits (long, resumable per month), then evaluation
+	$(PY) scripts/08_adapt.py --run s1
+	$(PY) scripts/08_adapt.py --run s6
+	$(PY) scripts/08_adapt.py --evaluate
+
+report:
 	@echo "make $@: not implemented yet (added in its phase, see PLAN.md §5)"; exit 1
 
 all: data dbt forecast shock causal hvfhv channel fhv adapt figures report   ## hvfhv: a long re-stream unless the aggregates exist (verified months are skipped)

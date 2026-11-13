@@ -129,6 +129,16 @@ channel_did:                                  # Amendment 4 D5 / D5b
   lyft_splits: {jan_2025: ["2025-01-05", "2025-01-31"], after_jan_2025: ["2025-02-01", null]}
                                               # C6: Lyft's January 2025 (rider credit) separate;
                                               # null = the last panel week
+adapt:                                        # Phase 5, re-scoped by Amendment 4 D6
+  strategies: [s0, s1, s4, s6]                # S0 frozen, S1 retrain, S4 Chronos-2, S6 channel-aware
+  eval_window: ["2025-02-01", "2026-09-30"]   # PLAN Phase 5
+  run_start: "2024-11-01"                     # S1 / S6 origins: 12 weeks (conformal) before the window
+  window: sliding_24m                         # S1 / S6 training window (PLAN: sliding 24 m)
+  scale_end: "2024-12-31"                     # common MASE scale: seasonal-naive MAE to this day
+  rolling_days: 28                            # F5 recovery curve: rolling 4-week WAPE
+tableau:                                      # Amendment 4 E2: extracts for Stanley's dashboard
+  out_dir: reports/tableau
+  simplify_feet: 30                           # zone polygons simplified (EPSG:2263 feet) before WGS84
 hvfhv:                                        # Amendment 4: streaming aggregates (raw files not kept)
   months: ["2023-01", "2026-09"]              # Amendment 4 (extended for D4)
   out_dir: data/processed/hvfhv               # monthly aggregate Parquet files
