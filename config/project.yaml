@@ -110,6 +110,7 @@ lyft:                                         # Amendment 4 D3, Amendment 4a tim
   uber_pre_start: "2026-06-01"                # Uber-dispatched: request_source exists from here
   secondary_start: "2026-07-09"               # hypothesis: code-A surge = Lyft before HV0005
   code_a_baseline: ["2026-07-01", "2026-07-08"]
+  post_hoc_pre_end: "2026-05-30"              # post hoc: last day before the request_source files
 channel_did:                                  # Amendment 4 D5 / D5b
   alpha: 0.05                                 # D5 gate: Hotelling F* pre-trend p must be >= this
   step_window: ["2024-07-01", "2025-06-30"]   # D5b: event-study window around 2025-01-05

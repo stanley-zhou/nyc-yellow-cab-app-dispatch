@@ -124,3 +124,6 @@
   - results/incrementality_panel_summary.csv
   - results/supply_monthly.csv
   - reports/figures/F6c_incrementality.png
+  - results/lyft_entry.json
+  - results/lyft_entry_daily.csv
+  - reports/figures/F6d_lyft_entry.png

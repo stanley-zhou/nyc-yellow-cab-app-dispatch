@@ -42,6 +42,7 @@ from taxi_shock.viz.figures import (
     f6a_channel_areas,
     f6b_app_share_maps,
     f6c_incrementality,
+    f6d_lyft_entry,
     smoke_placeholder,
 )
 from taxi_shock.viz.maps import load_zones
@@ -605,6 +606,28 @@ def phase4c(cfg: dict) -> None:
                            "Airports (2 zones) not shown. Sources: results/incrementality_dml.json,"
                            " results/incrementality_panel_summary.csv.",
                            figs / "F6c_incrementality")
+    f = res / "lyft_entry.json"
+    if f.exists():
+        ly = json.loads(f.read_text())
+        pr, lg = ly["primary_clean_windows"], ly["log_specification"]["clean_windows"]
+        stats["d3"] = {"levels_incrementality": pr["incrementality"],
+                       "log_incrementality": lg["incrementality"],
+                       "log_incrementality_ci": lg["incrementality_ci"],
+                       "log_pretrend_p": lg["pretrend"]["total"]["p_F_hotelling"]}
+        t = (f"Lyft on Curb cabs (preliminary): incrementality {pr['incrementality']:.2f} in "
+             f"levels, {lg['incrementality']:.2f} [{lg['incrementality_ci'][0]:.2f}, "
+             f"{lg['incrementality_ci'][1]:.2f}] in logs, whose pre-trend test rejects: not "
+             "identified yet")
+        stats["d3"]["title"] = t
+        daily = pd.read_csv(res / "lyft_entry_daily.csv", parse_dates=["day"])
+        f6d_lyft_entry(daily, ly["windows"], t,
+                       "Weekly pickups of Curb (VendorID 2) and CMT (VendorID 1) cabs in the CBD "
+                       "and Manhattan non-CBD, each indexed to its mean over the 8 weeks to "
+                       f"{ly['windows']['pre_end']}; grey band = {ly['windows']['secondary_start']}"
+                       f" to {ly['windows']['post_start']} (excluded from the primary windows; "
+                       "Curb code-A surge). Incrementality = DiD change in Curb total pickups / "
+                       "Lyft pickups per Curb zone-day. Sources: results/lyft_entry.json, "
+                       "results/lyft_entry_daily.csv.", figs / "F6d_lyft_entry")
     if stats:
         (res / "figure_stats_phase4c.json").write_text(json.dumps(stats, indent=2,
                                                                   default=float) + "\n")

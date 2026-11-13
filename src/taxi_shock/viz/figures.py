@@ -805,7 +805,9 @@ def f6d_lyft_entry(daily: pd.DataFrame, windows: dict, title: str, note: str,
     fig, axes = plt.subplots(1, 2, figsize=SIZES["small_multiples"], layout="constrained",
                              sharey=False)
     d = daily.copy()
-    d["week"] = d["day"] - pd.to_timedelta((d["day"].dt.dayofweek + 1) % 7, unit="D")
+    d["week"] = d["day"] - pd.to_timedelta((d["day"].dt.day_of_week + 1) % 7, unit="D")
+    full = d.groupby("week")["day"].nunique()
+    d = d[d["week"].isin(full[full == 7].index)]          # complete weeks only
     wk = d.groupby(["week", "vendor_id"])[["total", "app", "lyft"]].sum().reset_index()
     wk = wk[wk.groupby("week")["vendor_id"].transform("size") == 2]
     pre_end = pd.Timestamp(windows["pre_end"])

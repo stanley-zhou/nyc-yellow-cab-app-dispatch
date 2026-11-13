@@ -57,5 +57,15 @@
       "se_doubleml_default": 0.05534459690855228
     },
     "title": "Incrementality of app trips (theta, primary DML): CBD 0.90 [0.74, 1.06], outer boroughs 1.18 [1.00, 1.35]; other estimators range widely"
+  },
+  "d3": {
+    "levels_incrementality": -1.1228279517034667,
+    "log_incrementality": 0.6806717835876376,
+    "log_incrementality_ci": [
+      0.08925838799919406,
+      1.2315490798200888
+    ],
+    "log_pretrend_p": 2.2858969042529913e-07,
+    "title": "Lyft on Curb cabs (preliminary): incrementality -1.12 in levels, 0.68 [0.09, 1.23] in logs, whose pre-trend test rejects: not identified yet"
   }
 }
