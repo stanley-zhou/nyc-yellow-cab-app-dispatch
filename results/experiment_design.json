@@ -1,0 +1,53 @@
+{
+  "generated_utc": "2026-11-13T07:23:42+00:00",
+  "specification": "PLAN Amendment 1 A4 and Amendment 5; design only, no new data",
+  "estimand": "theta = (total_on - total_off) / app_on",
+  "switchback": {
+    "units": "pickup zone x 2-hour block, CBD + Manhattan non-CBD",
+    "variance_period": [
+      "2026-03-01",
+      "2026-05-30"
+    ],
+    "n_zones": 67,
+    "residual_sd_block_total": 33.08319552808165,
+    "lag1_autocorrelation_residuals": 0.5769991300700086,
+    "mean_app_trips_per_block": 30.2502596905582,
+    "mean_total_trips_per_block": 136.77016018807063,
+    "mde_multiplier": 2.8015852181129683,
+    "size": 0.05,
+    "power": 0.8,
+    "targets": {
+      "0.2": {
+        "no_design_effect": {
+          "zone_blocks": 939,
+          "days_over_all_design_zones": 1.1679104477611941
+        },
+        "design_effect_1_plus_rho": {
+          "zone_blocks": 1481,
+          "days_over_all_design_zones": 1.842039800995025
+        }
+      },
+      "0.1": {
+        "no_design_effect": {
+          "zone_blocks": 3756,
+          "days_over_all_design_zones": 4.6716417910447765
+        },
+        "design_effect_1_plus_rho": {
+          "zone_blocks": 5922,
+          "days_over_all_design_zones": 7.365671641791045
+        }
+      }
+    }
+  },
+  "staggered_vendor_rollout": {
+    "observed_analogue": "D3, Lyft on Curb vs CMT cabs (log specification, clean windows)",
+    "post_days": 52,
+    "theta_se": 0.29140604134339665,
+    "theta_mde": 0.8163988578964766,
+    "post_days_needed": {
+      "0.2": 867,
+      "0.1": 3466
+    },
+    "assumption": "SE falls with 1/sqrt(post days); the pre-trend failure of the observational version is what randomisation of the rollout removes"
+  }
+}

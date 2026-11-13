@@ -31,6 +31,8 @@ shock:                                        # PLAN Phase 3: where the forecast
   monitor_start: "2025-01-01"                 # frozen model deployed; monitors start here
   calibration_period: ["2024-01-01", "2024-12-31"]  # out-of-sample Phase-2 backtest residuals
   rolling_days: 28                            # rolling 4-week WAPE and bias
+  forecast_history_days: 35                   # history handed to the frozen models per origin
+                                              # (>= models.lgbm.predict_history_days = 30)
   groups: [cbd, non_cbd, manhattan_non_cbd, airports, other, all]   # non_cbd = every modeled
                                                                     # zone outside the CBD
   monitored_groups: [cbd, non_cbd]            # drift monitors: CBD (PLAN) and its contrast
@@ -41,6 +43,7 @@ shock:                                        # PLAN Phase 3: where the forecast
   rolling_bias:
     n_sigma: 2.0                              # PLAN: bias beyond 2 sigma ...
     consecutive_days: 7                       # ... for 7 consecutive days, same sign
+    rolling_window_days: 7                    # Phase 3 review fix 2: rolling reading (secondary)
 speed:                                        # Amendment 2 (B1-B3): trip duration and speed
   window: ["2023-01-01", "2026-09-30"]        # = data.event_study_window
   max_speed_mph: 65                           # fixed before any speed data were examined:
@@ -139,6 +142,13 @@ adapt:                                        # Phase 5, re-scoped by Amendment 
 tableau:                                      # Amendment 4 E2: extracts for Stanley's dashboard
   out_dir: reports/tableau
   simplify_feet: 30                           # zone polygons simplified (EPSG:2263 feet) before WGS84
+experiment:                                   # A4 / Amendment 5: experiment design (no new data)
+  size: 0.05
+  power: 0.8
+  block_hours: 2                              # switchback block length
+  period: ["2026-03-01", "2026-05-30"]        # variance period: last months before the June-2026
+                                              # files (request_source, CMT break) and Lyft's entry
+  target_theta_mde: [0.2, 0.1]                # MDEs of theta to plan for
 hvfhv:                                        # Amendment 4: streaming aggregates (raw files not kept)
   months: ["2023-01", "2026-09"]              # Amendment 4 (extended for D4)
   out_dir: data/processed/hvfhv               # monthly aggregate Parquet files
