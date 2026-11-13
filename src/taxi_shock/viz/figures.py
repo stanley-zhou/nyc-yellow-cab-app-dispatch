@@ -790,7 +790,7 @@ def f6c_incrementality(summary: pd.DataFrame, areas: list[tuple[str, str]],
     ax.set_yticks(range(len(areas)), [lab for _, lab in areas])
     ax.set_ylim(len(areas) - 0.5, -0.85)        # inverted; headroom for the reference labels
     ax.set_xlabel("Change in total pickups per additional app pickup (theta)")
-    ax.legend(frameon=False, fontsize=8, loc="lower right")
+    ax.legend(frameon=False, fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=3)
     fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
