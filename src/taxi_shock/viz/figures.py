@@ -484,7 +484,7 @@ def f4c_heterogeneity(panels: list[tuple[str, pd.DataFrame]], title: str, note: 
         ax.set_yticklabels(d["label"], fontsize=8)
         ax.set_title(textwrap.fill(name, 24), fontsize=9)
         ax.tick_params(axis="x", labelsize=8)
-        ax.set_xlabel("Effect (%)", fontsize=8)
+        ax.set_xlabel("DiD estimate (%)", fontsize=8)
         ax.grid(axis="y", visible=False)
     for ax in list(axes.flat)[n:]:
         ax.set_visible(False)
@@ -515,7 +515,7 @@ def f4d_counterfactual_vs_did(cf: pd.DataFrame, paths: list[tuple[str, pd.DataFr
         ax.plot(ex, ey, color=color, linewidth=1.4, marker="s", ms=3)
         ends.append((float(ey.iloc[-1]), label, color))
     ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
-    ax.set_ylabel("Effect on CBD pickups (%)")
+    ax.set_ylabel("CBD pickups vs counterfactual or control (%)")
     ax.set_xlim(x.min() - pd.Timedelta(days=20), x.max() + pd.Timedelta(days=20))
     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
@@ -631,9 +631,9 @@ def f3b_three_shocks(daily: pd.DataFrame, events: list[tuple[str, str, dict | No
                         xytext=(4, 0), textcoords="offset points", fontsize=8,
                         color=PALETTE["cbd"])
         ax.set_title(name, fontsize=10, loc="left")
-        ax.set_ylabel("Actual vs forecast (%)")
         direct_labels(ax, float(x.max()), ends)
     np.atleast_1d(axes)[-1].set_xlabel("Days since the event (left of 0: calibration year)")
+    fig.supylabel("Actual vs forecast, 7-day mean (%)", fontsize=10)
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
@@ -661,7 +661,7 @@ def f4i_leave_one_out(loo: pd.DataFrame, full: dict[str, float], title: str, not
              "pre_volume_weighted": "zones weighted\nby volume"}
     ax.set_yticklabels([names.get(s, s.replace("_", " ")) for s in specs])
     ax.set_ylim(-0.6, len(specs) - 0.4)
-    ax.set_xlabel("Static DiD effect on CBD pickups, one zone dropped (%)")
+    ax.set_xlabel("Static DiD estimate, CBD pickups vs control, one zone dropped (%)")
     ax.grid(axis="y", visible=False)
     fig.suptitle(textwrap.fill(title, 80), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 115), fontsize=8, color=PALETTE["muted_text"], x=0.01,
@@ -694,7 +694,7 @@ def f4h_synth_control(paths: pd.DataFrame, policy_date: str, title: str, note: s
     a2.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
     a2.set_ylabel("Actual vs synthetic (%)")
     for ax in (a1, a2):
-        ax.set_xlim(c["week_start"].min(), c["week_start"].max() + pd.Timedelta(days=100))
+        ax.set_xlim(c["week_start"].min(), c["week_start"].max() + pd.Timedelta(days=7))
         policy_line(ax, label=ax is a1)
     a2.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
     a2.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))

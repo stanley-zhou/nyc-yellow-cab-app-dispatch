@@ -17,11 +17,13 @@ Builder, with the owner and the reason.
 | 7 | Chronos script profiling and batch options | Amendment 5, item 8 | `scripts/05_chronos_colab.py --profile N`, `--batch-size` (0263994). The measurement itself is open (item 16). |
 | 8 | No hex literals in figure code (vendor colours) | reviews/phase_4.md | `viz/style.py → VENDOR_PALETTE` (0263994). |
 | 9 | Fee-recording variation by vendor in the limitations | PLAN amendment [phase 7]; DECISIONS [CP1→P7] | `reports/analysis.md` §7. |
-| 10 | Experiment-design section (A4), methods note (C8), executive summary (Amendment 5) | Amendments 1, 3, 5 | `reports/analysis.md` §6, §4 and the executive summary. The C8 heading names the effect in the reported file (−35%, `results/did_static.json`), not the "42%" of the amendment text (DECISIONS [P7]). |
+| 10 | Experiment-design section (A4), methods note (C8), executive summary (Amendment 5; restructured by Amendment 6) | Amendments 1, 3, 5, 6 | `reports/analysis.md` §6 (experiment), §3 (methods case) and the summary; details in `reports/appendix.md` A6 and A8. The methods-case heading names the effect in the reported file (−35%, `results/did_static.json`), not the "42%" of the Amendment 5 text (DECISIONS [P7]). |
 | 11 | Every figure regenerated under one style, titles stating findings the results support | Amendment 5, item 7 | `make figures` (`scripts/09_figures.py`); title numbers in `results/figure_stats_*.json`. |
 | 12 | README: figure row, make targets, hardware, runtimes, limitations | PLAN Phase 7; Amendment 5 | `README.md`; runtimes from `results/runtimes.json`. |
 | 13 | CI workflow (ruff, pytest, `make smoke`) | PLAN Phase 7 DoD | `.github/workflows/ci.yml`. Whether it runs is item 15. |
-| 14 | D5b event-study range to be quoted exactly if it enters the report | reviews/phase_6.md | Not quoted: `reports/analysis.md` §3 reports the step sizes only, from `results/app_share_policy_step.json`. |
+| 14 | D5b event-study range to be quoted exactly if it enters the report | reviews/phase_6.md | Not quoted: `reports/analysis.md` §2 and §4 and `reports/appendix.md` A5 report the step sizes by trip type only, from `results/app_share_policy_step.json`. |
+| 24 | Third prior study (formerly open item 18) in the references | PLAN Phase 7; Checkpoint 7 question 3 | Closed by Amendment 6 A8: four references (Pandey, Guler & Gayah 2026; Li et al. 2026 added), titles and authors checked on the publishers' pages (DECISIONS [P7] 2026-11-14). |
+| 25 | Checkpoint 7 advisor review, sections A, B, C | Amendment 6 | Applied in three commits (5771b84, 649d8fc, 270ce55) and the Phase-7 review round-1 fixes; DECISIONS [P7] 2026-11-14. |
 
 ## Open
 
@@ -30,9 +32,9 @@ Builder, with the owner and the reason.
 | 15 | CI runs end in `startup_failure` in 0 s on every push (GitHub reports a workflow-file issue; the workflow is plain `checkout` / `setup-uv` / `make`, and Actions is enabled with all actions allowed) | Stanley | Most likely an account-level limit for private repositories (Actions minutes or billing), which the Builder cannot inspect. To recheck once the repository is public or the account limit is cleared. |
 | 16 | Colab profiling run (`--profile N`) to choose the batch size | Stanley | Needs a Colab GPU session. |
 | 17 | `notebooks/colab_chronos.ipynb` (thin Colab wrapper around `scripts/05_chronos_colab.py`) | Stanley | Stanley supplies it (Amendment 5, item 8); `notebooks/` holds only `.gitkeep`. Not part of the pipeline (CLAUDE.md rule 4). |
-| 18 | Third prior study in the references | Stanley | PLAN cites three studies; only two could be identified (`reports/analysis.md`, References). |
 | 19 | Repository rename, public visibility, dashboard URL, code licence | Stanley | Stanley's decisions (Amendment 5; CLAUDE.md: the repository becomes public only when Stanley says so). |
 | 20 | E3: dbt on Snowflake | Stanley | Waits for the account credentials through environment variables. |
 | 21 | `04_backtest.py --full` skips an existing forecast file by its existence, without a code fingerprint | Builder, not changed | DECISIONS [P2→P3]. Every forecast file post-dates the last model-code change; a later change needs `--force`. `04b_evaluate.py` does fingerprint its units. Kept as a documented limitation. |
 | 22 | Return the freed space to the Windows drive: compact the WSL disk image (`wsl --shutdown`, then Optimize-VHD or diskpart `compact vdisk`) | Stanley | Runs on Windows with WSL stopped; the warehouse compaction freed the space only inside the virtual disk. |
-| 23 | Booster files purged from git history (`git filter-repo`, force push, fresh-clone check) | Builder, last step | Done last, after every other commit of Phase 7 (Amendment 5, item 8). |
+| 23 | Booster files purged from git history (`git filter-repo`, force push, fresh-clone check) | Builder, last step | Done last, after every other commit of Phase 7 (Amendment 5, item 8); Amendment 6 holds it until Stanley says to go ahead. |
+| 26 | README section "How this project was built" | Stanley | Placeholder in `README.md`; Stanley writes it (Amendment 6). |

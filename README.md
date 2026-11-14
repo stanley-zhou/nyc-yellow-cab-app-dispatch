@@ -44,10 +44,11 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
 - Whether app trips are additional: estimates range from 0.52 to 2.62 across estimators in the CBD,
   and the lead placebo fails in Manhattan outside the CBD
   ([incrementality_dml.json](results/incrementality_dml.json)).
-- What congestion pricing did to yellow demand, Uber and Lyft demand, or trip speed: every design
-  fails its pre-trend test.
-- All 11 pre-registered designs stopped at their pass/fail check
-  ([presentation_numbers.json](results/presentation_numbers.json); report
+- What congestion pricing did to yellow demand, Uber and Lyft demand, or trip speed: every
+  difference-in-differences fails its pre-trend test, and the synthetic control fails its
+  fake-date check.
+- Eight of ten pre-registered designs stopped at their pass/fail check; the two that passed do not
+  identify an effect ([presentation_numbers.json](results/presentation_numbers.json); report
   [section 4](reports/analysis.md#4-what-the-data-could-not-identify)).
 
 ## Methods and stack
@@ -67,9 +68,9 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
 
 - Expected directions and pass/fail checks were written in [`PLAN.md`](PLAN.md) before each
   analysis.
-- An independent review of every phase is in [`reviews/`](reviews/) (19 review files: phases 0–6
-  with their fix rounds, and the Checkpoint 7 advisor review).
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (215 entries).
+- An independent review of every phase, with its fix rounds, is in [`reviews/`](reviews/), with
+  the Checkpoint 7 advisor review.
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (232 entries).
 - 135 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 
@@ -176,8 +177,8 @@ dashboard specification and extracts) · `reviews/` (independent phase reviews).
 - **Channel label.** Before 2026-06 "app" rests on the Flex Fare flag; platform-level results
   exist only from 2026-06; two `request_source` codes (A, CC) are undetermined.
 - **Supply.** No driver- or vehicle-level data; the supply view uses TLC monthly aggregates.
-- **Causal claims.** Every observational design stopped at its pre-registered
-  pass/fail check; nothing here
+- **Causal claims.** No design identified an effect (eight of ten pre-registered designs stopped at
+  their pass/fail check, and the two that passed do not measure one); nothing here
   states a causal effect of app dispatch or of congestion pricing.
 
 ## Data and licences

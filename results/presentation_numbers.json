@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-14T21:01:28+00:00",
+  "generated_utc": "2026-11-14T21:21:48+00:00",
   "citywide_accounting": {
     "source": "results/channel_decomposition.csv (with_cmt_block = False)",
     "comparison": "2023_to_2025",
@@ -369,96 +369,201 @@
   "preregistered_checks": {
     "rows": [
       {
-        "design": "Yellow demand, DiD, equal zone weights",
-        "check": "pre-trend test",
-        "p_value": 2.701998942054845e-10,
+        "question": "Congestion pricing and yellow demand",
+        "design": "DiD, equal zone weights",
+        "preregistered": true,
+        "estimate": "-34.6%",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/placebo.json"
+        "gate_values": {
+          "p_value": 2.701998942054845e-10
+        },
+        "file": "results/placebo.json",
+        "note": ""
       },
       {
-        "design": "Yellow demand, DiD, zones weighted by volume",
-        "check": "pre-trend test",
-        "p_value": 1.5741757804099792e-17,
+        "question": "Congestion pricing and yellow demand",
+        "design": "DiD, zones weighted by volume",
+        "preregistered": false,
+        "estimate": "-5.2%",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/placebo.json"
+        "gate_values": {
+          "p_value": 1.5741757804099792e-17
+        },
+        "file": "results/placebo.json",
+        "note": "added after the equal-weight result (PLAN Amendment 3, C2)"
       },
       {
-        "design": "Yellow demand, synthetic control",
-        "check": "fake-date gap within pre-period fit",
-        "p_value": 0.0,
+        "question": "Congestion pricing and yellow demand",
+        "design": "Synthetic control",
+        "preregistered": true,
+        "estimate": "-1.2% (rank 11 of 16 units)",
+        "gate": "fake-date (2024) mean gap within the CBD's pre-period fit (RMSPE)",
         "passed": false,
-        "file": "results/synth_control.json"
+        "gate_values": {
+          "fake_date_mean_gap_log": 0.04538944294683903,
+          "cbd_pre_rmspe": 0.043240536008591374,
+          "p_value": null
+        },
+        "file": "results/synth_control.json",
+        "note": ""
       },
       {
-        "design": "Trip speed, DiD against Manhattan outside the CBD",
-        "check": "pre-trend test",
-        "p_value": 1.1232101316328742e-18,
+        "question": "Congestion pricing and trip speed",
+        "design": "DiD against Manhattan outside the CBD",
+        "preregistered": true,
+        "estimate": "+1.9%",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/speed_did.json"
+        "gate_values": {
+          "p_value": 1.1232101316328742e-18
+        },
+        "file": "results/speed_did.json",
+        "note": ""
       },
       {
-        "design": "Trip speed, DiD against Brooklyn and Queens",
-        "check": "pre-trend test",
-        "p_value": 5.932989059304112e-46,
+        "question": "Congestion pricing and trip speed",
+        "design": "DiD against Brooklyn and Queens",
+        "preregistered": true,
+        "estimate": "-4.0%",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/speed_did_outer.json"
+        "gate_values": {
+          "p_value": 5.932989059304112e-46
+        },
+        "file": "results/speed_did_outer.json",
+        "note": ""
       },
       {
-        "design": "Uber + Lyft demand, DiD",
-        "check": "pre-trend test",
-        "p_value": 2.2736485262613962e-18,
+        "question": "Congestion pricing and Uber + Lyft demand",
+        "design": "DiD",
+        "preregistered": true,
+        "estimate": "not estimated",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/fhv_did.json"
+        "gate_values": {
+          "p_value": 2.2736485262613962e-18
+        },
+        "file": "results/fhv_did.json",
+        "note": ""
       },
       {
-        "design": "Street hails, DiD",
-        "check": "pre-trend test",
-        "p_value": 9.695423140557339e-18,
+        "question": "Congestion pricing by channel",
+        "design": "DiD, street hails",
+        "preregistered": true,
+        "estimate": "-3.1%",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/did_by_channel.json"
+        "gate_values": {
+          "p_value": 9.695423140557339e-18
+        },
+        "file": "results/did_by_channel.json",
+        "note": ""
       },
       {
-        "design": "App trips, DiD",
-        "check": "pre-trend test",
-        "p_value": 2.3687669351602613e-22,
+        "question": "Congestion pricing by channel",
+        "design": "DiD, app trips",
+        "preregistered": true,
+        "estimate": "+12.2%",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/did_by_channel.json"
+        "gate_values": {
+          "p_value": 2.3687669351602613e-22
+        },
+        "file": "results/did_by_channel.json",
+        "note": ""
       },
       {
-        "design": "App share, DiD at the policy date",
-        "check": "pre-trend test",
-        "p_value": 3.915452856244059e-27,
-        "passed": false,
-        "file": "results/app_share_policy_step.json"
+        "question": "Did the fee move trips into apps?",
+        "design": "App-share step by trip type",
+        "preregistered": true,
+        "estimate": "+8.1 to +11.3 points (touching the CBD) vs +10.6 (touching neither end)",
+        "gate": "pre-specified comparison of the step across trip types (no parallel-trend assumption)",
+        "passed": true,
+        "gate_values": {
+          "p_value": null
+        },
+        "file": "results/app_share_policy_step.json",
+        "note": "answered: the step is as large for trips that never touch the zone"
       },
       {
-        "design": "Lyft entry on Curb cabs, DiD (log)",
-        "check": "pre-trend test",
-        "p_value": 2.2858969042529913e-07,
+        "question": "Did the fee move trips into apps?",
+        "design": "DiD, app share (secondary)",
+        "preregistered": false,
+        "estimate": "+3.0 points",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/lyft_entry.json"
+        "gate_values": {
+          "p_value": 3.915452856244059e-27
+        },
+        "file": "results/app_share_policy_step.json",
+        "note": "secondary reading, not the pre-specified one"
       },
       {
-        "design": "Incrementality of app trips (DML)",
-        "check": "lead placebo in every area",
-        "p_value": 9.83568267871604e-05,
+        "question": "Lyft's entry on Curb cabs (preliminary)",
+        "design": "DiD by vendor, levels",
+        "preregistered": true,
+        "estimate": "-1.12 [-1.37, -0.87]",
+        "gate": "pre-trend tests p >= 0.05 on total, app and street pickups",
+        "passed": true,
+        "gate_values": {
+          "p_value_by_outcome": {
+            "total": 0.26350588896506993,
+            "app": 0.2744564885127037,
+            "street": 0.22171688416939678,
+            "uber": 1.942957248172802e-13
+          }
+        },
+        "file": "results/lyft_entry.json",
+        "note": "passes, but not credible: levels are misspecified in scale (Curb cabs carry 4.3 times CMT's volume); the Uber outcome fails its pre-trend test"
+      },
+      {
+        "question": "Lyft's entry on Curb cabs (preliminary)",
+        "design": "DiD by vendor, logs (alternative)",
+        "preregistered": false,
+        "estimate": "0.68 [0.09, 1.23]",
+        "gate": "pre-trend test p >= 0.05",
         "passed": false,
-        "file": "results/incrementality_dml.json"
+        "gate_values": {
+          "p_value": 2.2858969042529913e-07
+        },
+        "file": "results/lyft_entry.json",
+        "note": "labelled alternative added after the levels result"
+      },
+      {
+        "question": "Are app trips additional?",
+        "design": "Double machine learning (DML)",
+        "preregistered": true,
+        "estimate": "0.90 [0.74, 1.06] (CBD)",
+        "gate": "lead placebo p >= 0.05 in every area",
+        "passed": false,
+        "gate_values": {
+          "lead_placebo_p": {
+            "cbd": 0.5950049241947375,
+            "manhattan_non_cbd": 9.83568267871604e-05,
+            "other": 0.06898360363870548
+          }
+        },
+        "file": "results/incrementality_dml.json",
+        "note": "the lead placebo fails in Manhattan outside the CBD"
       }
     ],
-    "n_designs": 11,
-    "n_passed": 0,
-    "n_stopped": 11,
+    "gate_alpha": 0.05,
+    "n_preregistered": 10,
+    "n_preregistered_stopped": 8,
+    "n_preregistered_passed": 2,
+    "n_not_preregistered": 3,
+    "n_not_preregistered_stopped": 3,
     "incrementality_lead_placebo_p": {
       "cbd": 0.5950049241947375,
       "manhattan_non_cbd": 9.83568267871604e-05,
       "other": 0.06898360363870548
-    },
-    "note": "synthetic control: p_value 0.0 stands for the failed boolean gate gate_in_time_mean_gap_within_cbd_pre_rmspe; check = p >= 0.05"
+    }
   },
   "repository": {
-    "decisions_entries": 215,
-    "review_files": 19,
+    "decisions_entries": 232,
+    "review_files": 20,
     "phases_reviewed": [
       "0",
       "1",
@@ -466,7 +571,8 @@
       "3",
       "4",
       "5",
-      "6"
+      "6",
+      "7"
     ],
     "tests_collected": 135
   },

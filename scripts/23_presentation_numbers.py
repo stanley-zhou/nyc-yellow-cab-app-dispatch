@@ -1,6 +1,8 @@
 """Amendment 6 (Checkpoint 7 review): descriptive numbers the report and README quote.
 
-Every number here is read or derived from an existing results file or the warehouse; nothing is
+Every number here is read or derived from existing files under results/ (daily weather from
+results/weather_daily.csv, written by scripts/06c_weather_daily.py in `make shock`); the
+repository counts read DECISIONS.md, reviews/ and the pytest collection. Nothing is
 re-estimated. Writes
   results/presentation_numbers.json   citywide growth accounting (A1), the January-2025 app step
                                       by area (A2), the 2026 alarm / weather check (A3), supply
@@ -22,7 +24,6 @@ from datetime import UTC, datetime
 import pandas as pd
 
 from taxi_shock.config import load_config, path, repo_root
-from taxi_shock.io import connect
 
 AREAS = {"cbd": "congestion zone (CBD)", "manhattan_non_cbd": "Manhattan outside the CBD",
          "other": "outer boroughs", "airports": "airports", "all": "all zones"}
@@ -76,14 +77,8 @@ def january_step(cfg: dict) -> dict:
 def alarm_check(cfg: dict) -> tuple[dict, pd.DataFrame]:
     ac = cfg["presentation"]["alarm_check"]
     lo, hi = ac["first_day"], ac["last_day"]
-    with connect(path("warehouse", cfg), cfg=cfg) as con:
-        wx = con.execute(
-            "select cast(timezone(?, to_timestamp(unix_time)) as date) as day, "
-            # rounded: DuckDB's parallel float sums differ in the last bits between runs
-            "round(sum(snowfall), 3) as snowfall_in, round(sum(precipitation), 3) as precip_in, "
-            "min(temperature_2m) as temp_min_f, max(temperature_2m) as temp_max_f, "
-            "count(*) as n_hours from int_weather_selected group by 1 "
-            "having day between ? and ? order by 1", [cfg["timezone"], lo, hi]).df()
+    wx = pd.read_csv(path("results", cfg) / "weather_daily.csv")   # scripts/06c_weather_daily.py
+    wx = wx[(wx["day"] >= lo) & (wx["day"] <= hi)].copy()
     wx["day"] = pd.to_datetime(wx["day"])
     daily = pd.read_csv(path("results", cfg) / "adaptation_daily.csv", parse_dates=["day"])
     daily = daily[(daily["day"] >= lo) & (daily["day"] <= hi)]
@@ -188,55 +183,116 @@ def _p(x: dict) -> float:
     return float(x["p_F_hotelling"])
 
 
-def checks() -> dict:
-    """The pre-registered designs with an expected direction and a pass/fail check (B2)."""
+def _pct(x: float) -> str:
+    return f"{x * 100:+.1f}%"
+
+
+def checks(cfg: dict) -> dict:
+    """The causal designs and their pass/fail checks (B2; review round 1, fix 1).
+
+    `preregistered`: True = expected direction and gate fixed before the run (PLAN and its
+    amendments, written before the design was estimated); False = added after seeing an earlier
+    result (labelled alternatives). `passed`: the gate's outcome (pre-trend tests at
+    `presentation.gate_alpha`, or the design's own gate as named in `gate`)."""
+    alpha = float(cfg["presentation"]["gate_alpha"])
     pl, sp, so = _json("placebo.json"), _json("speed_did.json"), _json("speed_did_outer.json")
     ch, fh, ly = _json("did_by_channel.json"), _json("fhv_did.json"), _json("lyft_entry.json")
     st, sc, inc = _json("app_share_policy_step.json"), _json("synth_control.json"), \
         _json("incrementality_dml.json")
+    ds = _json("did_static.json")["estimates"]
     lead = {a: inc["areas"][a]["first_difference_lead_placebo"]["lead"]["pvalue"]
             for a in ("cbd", "manhattan_non_cbd", "other")}
-    rows = [
-        ("Yellow demand, DiD, equal zone weights", "pre-trend test",
-         _p(pl["pretrend_tests"]["event_study_month"]["pretrend"]), "placebo.json"),
-        ("Yellow demand, DiD, zones weighted by volume", "pre-trend test",
-         _p(pl["pretrend_tests"]["event_study_month_pre_volume_weighted_not_preregistered"]
-            ["pretrend"]), "placebo.json"),
-        ("Yellow demand, synthetic control", "fake-date gap within pre-period fit",
-         None if sc["pre_fit"]["gate_in_time_mean_gap_within_cbd_pre_rmspe"] else 0.0,
-         "synth_control.json"),
-        ("Trip speed, DiD against Manhattan outside the CBD", "pre-trend test",
-         _p(sp["outcomes"]["log_mean_speed_mph"]["event_study_month"]["pretrend"]),
-         "speed_did.json"),
-        ("Trip speed, DiD against Brooklyn and Queens", "pre-trend test",
-         _p(so["outcomes"]["log_mean_speed_mph"]["event_study_month"]["pretrend"]),
-         "speed_did_outer.json"),
-        ("Uber + Lyft demand, DiD", "pre-trend test",
-         _p(fh["series"]["fhv_all"]["pre_volume_weighted"]["pretrend"]), "fhv_did.json"),
-        ("Street hails, DiD", "pre-trend test", _p(ch["channels"]["street"]["pretrend"]),
-         "did_by_channel.json"),
-        ("App trips, DiD", "pre-trend test", _p(ch["channels"]["app"]["pretrend"]),
-         "did_by_channel.json"),
-        ("App share, DiD at the policy date", "pre-trend test",
-         _p(st["yellow"]["pretrend"]["app_share"]), "app_share_policy_step.json"),
-        ("Lyft entry on Curb cabs, DiD (log)", "pre-trend test",
-         _p(ly["log_specification"]["clean_windows"]["pretrend"]["total"]), "lyft_entry.json"),
-        ("Incrementality of app trips (DML)", "lead placebo in every area",
-         min(lead.values()), "incrementality_dml.json"),
-    ]
-    out = [{"design": d, "check": c, "p_value": p, "passed": (p is None or p >= 0.05),
-            "file": f"results/{f}"} for d, c, p, f in rows]
-    return {"rows": out, "n_designs": len(out), "n_passed": sum(r["passed"] for r in out),
-            "n_stopped": sum(not r["passed"] for r in out),
-            "incrementality_lead_placebo_p": lead,
-            "note": "synthetic control: p_value 0.0 stands for the failed boolean gate "
-                    "gate_in_time_mean_gap_within_cbd_pre_rmspe; check = p >= 0.05"}
+    rows = []
+
+    def add(question, design, pre, estimate, gate, passed, values, f, note=""):
+        rows.append({"question": question, "design": design, "preregistered": pre,
+                     "estimate": estimate, "gate": gate, "passed": passed,
+                     "gate_values": values, "file": f"results/{f}", "note": note})
+
+    def pretrend(question, design, pre, estimate, p, f, note=""):
+        add(question, design, pre, estimate, f"pre-trend test p >= {alpha:g}", p >= alpha,
+            {"p_value": p}, f, note)
+
+    q = "Congestion pricing and yellow demand"
+    pretrend(q, "DiD, equal zone weights", True,
+             _pct(ds["main"]["terms"]["treated_post"]["pct"]),
+             _p(pl["pretrend_tests"]["event_study_month"]["pretrend"]), "placebo.json")
+    pretrend(q, "DiD, zones weighted by volume", False,
+             _pct(ds["pre_volume_weighted_not_preregistered"]["terms"]["treated_post"]["pct"]),
+             _p(pl["pretrend_tests"]["event_study_month_pre_volume_weighted_not_preregistered"]
+                ["pretrend"]), "placebo.json",
+             "added after the equal-weight result (PLAN Amendment 3, C2)")
+    it = sc["in_time_placebo"]
+    add(q, "Synthetic control", True,
+        f"{_pct(sc['post_gap_mean_pct'])} (rank {sc['in_space_placebos']['cbd_rank']} of "
+        f"{sc['in_space_placebos']['n'] + 1} units)",
+        "fake-date (2024) mean gap within the CBD's pre-period fit (RMSPE)",
+        bool(sc["pre_fit"]["gate_in_time_mean_gap_within_cbd_pre_rmspe"]),
+        {"fake_date_mean_gap_log": it["post_gap_mean_log"], "cbd_pre_rmspe": sc["pre_rmspe"],
+         "p_value": None}, "synth_control.json")
+    q = "Congestion pricing and trip speed"
+    pretrend(q, "DiD against Manhattan outside the CBD", True,
+             _pct(sp["outcomes"]["log_mean_speed_mph"]["main"]["terms"]["treated_post"]["pct"]),
+             _p(sp["outcomes"]["log_mean_speed_mph"]["event_study_month"]["pretrend"]),
+             "speed_did.json")
+    pretrend(q, "DiD against Brooklyn and Queens", True,
+             _pct(so["outcomes"]["log_mean_speed_mph"]["main"]["terms"]["treated_post"]["pct"]),
+             _p(so["outcomes"]["log_mean_speed_mph"]["event_study_month"]["pretrend"]),
+             "speed_did_outer.json")
+    pretrend("Congestion pricing and Uber + Lyft demand", "DiD", True, "not estimated",
+             _p(fh["series"]["fhv_all"]["pre_volume_weighted"]["pretrend"]), "fhv_did.json")
+    q = "Congestion pricing by channel"
+    for c, name in (("street", "DiD, street hails"), ("app", "DiD, app trips")):
+        pretrend(q, name, True, _pct(ch["channels"][c]["estimate"]["terms"]["treated_post"]
+                                     ["pct"]), _p(ch["channels"][c]["pretrend"]),
+                 "did_by_channel.json")
+    bt = st["yellow"]["d0_step_by_trip_type"]["by_type"]
+    touch = [bt[k]["step_pp"] for k in ("within", "into", "out_of")]
+    add("Did the fee move trips into apps?", "App-share step by trip type", True,
+        f"{min(touch):+.1f} to {max(touch):+.1f} points (touching the CBD) vs "
+        f"{bt['neither']['step_pp']:+.1f} (touching neither end)",
+        "pre-specified comparison of the step across trip types (no parallel-trend "
+        "assumption)", True, {"p_value": None}, "app_share_policy_step.json",
+        "answered: the step is as large for trips that never touch the zone")
+    pretrend("Did the fee move trips into apps?", "DiD, app share (secondary)", False,
+             f"{st['yellow']['pooled']['app_share']['coef'] * 100:+.1f} points",
+             _p(st["yellow"]["pretrend"]["app_share"]), "app_share_policy_step.json",
+             "secondary reading, not the pre-specified one")
+    pr, lg = ly["primary_clean_windows"], ly["log_specification"]["clean_windows"]
+    ptr = {k: _p(v) for k, v in pr["pretrend"].items()}
+    add("Lyft's entry on Curb cabs (preliminary)", "DiD by vendor, levels", True,
+        f"{pr['incrementality']:.2f} [{pr['incrementality_ci'][0]:.2f}, "
+        f"{pr['incrementality_ci'][1]:.2f}]",
+        f"pre-trend tests p >= {alpha:g} on total, app and street pickups",
+        all(ptr[k] >= alpha for k in ("total", "app", "street")),
+        {"p_value_by_outcome": ptr}, "lyft_entry.json",
+        "passes, but not credible: levels are misspecified in scale (Curb cabs carry 4.3 "
+        "times CMT's volume); the Uber outcome fails its pre-trend test")
+    pretrend("Lyft's entry on Curb cabs (preliminary)", "DiD by vendor, logs (alternative)",
+             False, f"{lg['incrementality']:.2f} [{lg['incrementality_ci'][0]:.2f}, "
+             f"{lg['incrementality_ci'][1]:.2f}]", _p(lg["pretrend"]["total"]),
+             "lyft_entry.json", "labelled alternative added after the levels result")
+    d = inc["areas"]["cbd"]["dml_plr"]
+    add("Are app trips additional?", "Double machine learning (DML)", True,
+        f"{d['theta']:.2f} [{d['theta_ci'][0]:.2f}, {d['theta_ci'][1]:.2f}] (CBD)",
+        f"lead placebo p >= {alpha:g} in every area", min(lead.values()) >= alpha,
+        {"lead_placebo_p": lead}, "incrementality_dml.json",
+        "the lead placebo fails in Manhattan outside the CBD")
+    pre = [r for r in rows if r["preregistered"]]
+    return {"rows": rows, "gate_alpha": alpha,
+            "n_preregistered": len(pre),
+            "n_preregistered_stopped": sum(not r["passed"] for r in pre),
+            "n_preregistered_passed": sum(r["passed"] for r in pre),
+            "n_not_preregistered": len(rows) - len(pre),
+            "n_not_preregistered_stopped": sum(not r["passed"] for r in rows
+                                               if not r["preregistered"]),
+            "incrementality_lead_placebo_p": lead}
 
 
 def repo_counts() -> dict:
     root = repo_root()
     decisions = sum(1 for line in (root / "DECISIONS.md").read_text().splitlines()
-                    if re.match(r"^- \[\d{4}-\d{2}-\d{2}\]", line))
+                    if re.match(r"^- \[\d{4}-\d{2}-\d{2}[\] ]", line))
     reviews = sorted(p.name for p in (root / "reviews").glob("*.md"))
     phases = sorted({m.group(1) for n in reviews if (m := re.match(r"phase_(\d+)", n))})
     col = subprocess.run([sys.executable, "-m", "pytest", "--collect-only", "-q"], cwd=root,
@@ -288,7 +344,7 @@ def main() -> None:
         "bias_pct_by_area": {k: v for k, v in
                              _json("adaptation_summary.json")["bias_pct_of_pickups"].items()},
         "cbd_ride_market": ride_market(cfg),
-        "preregistered_checks": checks(),
+        "preregistered_checks": checks(cfg),
         "repository": repo_counts(),
         "external_app_share_2024": external_app_share(cfg),
     }

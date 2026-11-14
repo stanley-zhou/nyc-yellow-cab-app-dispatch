@@ -46,11 +46,11 @@ It ended at the end of May 2026, and no other vendor picked it up. Without it, t
 
 (D3, preliminary, not identified; [lyft_entry.json](../results/lyft_entry.json); [F6d](figures/F6d_lyft_entry.png))
 
-Lyft trips appear only on Curb-equipped cabs, from 2026-08-10 ([request_source_daily.csv](../results/request_source_daily.csv)). The pre-registered vendor-level DiD in levels gives an implausible −1.12 Lyft-trip incrementality: Curb cabs carry 4.3 times CMT's volume, so common percentage swings appear as level changes. The log specification gives 0.68 [0.09, 1.23] but fails its pre-trend test. `make lyft-refresh` re-estimates once the TLC publishes later months.
+Lyft trips appear only on Curb-equipped cabs, from 2026-08-10 ([request_source_daily.csv](../results/request_source_daily.csv)). The pre-registered vendor-level DiD in levels passes its pre-trend tests on total, app and street pickups (p = 0.26, 0.27, 0.22; the Uber outcome fails, p = 1.9e−13) but gives an implausible −1.12 [−1.37, −0.87] Lyft-trip incrementality: Curb cabs carry 4.3 times CMT's volume, so common percentage swings appear as level changes. The log specification, a labelled alternative added after the levels result, gives 0.68 [0.09, 1.23] but fails its pre-trend test. `make lyft-refresh` re-estimates once the TLC publishes later months.
 
 ## A5. Congestion pricing: the designs in detail
 
-- **Yellow demand, zones weighted by volume.** CBD vs the 25 Manhattan control zones: −5.2% [−12.8%, +3.0%] ([did_static.json](../results/did_static.json); [F4](figures/F4_event_study.png)).
+- **Yellow demand, zones weighted by volume** (not pre-registered; added after the equal-weight result). CBD vs the Manhattan control zones, of which 23 carry weight (zones without pre-period pickups carry none; 61 units): −5.2% [−12.8%, +3.0%] ([did_static.json](../results/did_static.json); [F4](figures/F4_event_study.png)).
   - The pre-trend test rejects (Hotelling F* p = 1.6e−17; [placebo.json](../results/placebo.json)).
   - With every Manhattan zone outside the CBD as control, the estimate moves to −1.0%.
   - The estimate lies outside all 500 random-zone and all 54 fake-date placebos ([power_mde.json](../results/power_mde.json); [F4e](figures/F4e_placebo_distribution.png)), as the diverging app-dispatch trend would produce.
@@ -59,11 +59,11 @@ Lyft trips appear only on Curb-equipped cabs, from 2026-08-10 ([request_source_d
 - **High-volume FHV** (C6). Every Uber, Lyft and shared-ride series fails the pre-trend test (Uber + Lyft, volume-weighted, p = 2.3e−18), so no effect is estimated ([fhv_did.json](../results/fhv_did.json); [F6](figures/F6_taxi_vs_fhv.png)).
 - **Trip speed** (B1, C4). Within-CBD speed is +1.9% against Manhattan outside the CBD and −4.0% against Brooklyn and Queens. Both designs fail their pre-trend tests ([speed_did.json](../results/speed_did.json), [speed_did_outer.json](../results/speed_did_outer.json); [F4f](figures/F4f_speed_event_study.png)).
 - **By channel** (D5). Both the street-hail and the app DiD fail the pre-trend gate ([did_by_channel.json](../results/did_by_channel.json)).
-- **Did the fee move trips into apps?** (D5b). The app share jumped about 11 points in the weeks after 2025-01-19, the same for trips touching the CBD (+8.1 to +11.3 points) as for trips touching neither end (+10.6). The size of the jump did not differ with exposure to the fee. This comparison of steps does not need parallel trends; the DiD of the app share (+3.0 points) does, and fails its pre-trend test ([app_share_policy_step.json](../results/app_share_policy_step.json); [F6e](figures/F6e_app_share_step.png)).
+- **Did the fee move trips into apps?** (D5b). The pre-specified test compares the step across trip types. The app share jumped about 11 points in the weeks after 2025-01-19, the same for trips touching the CBD (+8.1 to +11.3 points) as for trips touching neither end (+10.6): the size of the jump did not differ with exposure to the fee. This comparison does not need parallel trends. The DiD of the app share (+3.0 points), a secondary reading, does, and fails its pre-trend test ([app_share_policy_step.json](../results/app_share_policy_step.json); [F6e](figures/F6e_app_share_step.png)).
 
 ## A6. The methods case: test size and the forecast check
 
-- **Pre-trend test size.** With 24 monthly pre-policy coefficients and 63 zone clusters, the pre-registered F test rejects 56% of the time at a 5% level on data without a pre-trend. The Hotelling-corrected test has about the right size, 9.5% ([pretrend_test_size.json](../results/pretrend_test_size.json)). The real p-values are far below either.
+- **Pre-trend test size.** With 24 monthly pre-policy coefficients and 63 zone clusters, the pre-registered F test rejects 56% of 200 simulated data sets without a pre-trend at a 5% level. The Hotelling-corrected test rejects 9.5%: still above the nominal 5% (about three Monte Carlo standard errors), but far below 56% ([pretrend_test_size.json](../results/pretrend_test_size.json)). The real p-values are far below either.
 - **Event-study means.** The headline numbers are the static DiD estimates (−34.6%, −5.2%). The mean of the monthly event-study coefficients after the policy is −40.5% with equal zone weights and −11.3% with zones weighted by volume; the frozen forecast's mean is +2.0% ([figure_stats_phase4.json](../results/figure_stats_phase4.json); [F4d](figures/F4d_counterfactual_vs_did.png)).
 - **Equal-weight leave-one-out.** −36.3% to −32.0% ([did_static.json](../results/did_static.json)).
 

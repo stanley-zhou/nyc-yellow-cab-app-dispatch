@@ -309,10 +309,12 @@ def phase4(cfg: dict) -> None:
     f4_event_study(w_es, policy, t4,
                    "Monthly bins of log1p(weekly pickups) per zone, zones weighted by their mean "
                    "weekly pickups in the 52 pre weeks (not pre-registered); 38 CBD zones vs "
-                   "the 25 Manhattan control zones outside it; zone and week FE, "
+                   "the Manhattan control zones outside it (23 with pre-period pickups carry "
+                   "weight); zone and week FE, "
                    "weather x treated; 95% CIs clustered by zone; reference: the week before "
                    "2025-01-05. The pre-registered equal-weight path is in F4d. Source: "
-                   "results/event_study.csv.", figs / "F4_event_study", "Effect on CBD pickups (%)")
+                   "results/event_study.csv.", figs / "F4_event_study",
+                   "DiD estimate, CBD pickups vs control (%)")
 
     spd, dur = (sp[k]["main"]["terms"]["treated_post"] for k in ("log_mean_speed_mph",
                                                                   "log_mean_duration_min"))
@@ -533,8 +535,9 @@ def phase4b(cfg: dict) -> None:
         zones = load_zones(path("raw_lookup", cfg) / "taxi_zones.shp")
         f4g_app_dispatch(zones, share, t,
                          f"request_source of yellow records {sm['months'][0]} to "
-                         f"{sm['months'][1]} (HV0003 Uber, HV0005 Lyft from 2026-08; other codes "
-                         f"undocumented, not counted); hatched: < {sm['min_trips']} records. "
+                         f"{sm['months'][1]} (HV0003 Uber, HV0005 Lyft from 2026-08; EH0004 "
+                         "Curb's and EH0010 Arro's own apps and the undetermined codes A and CC "
+                         f"are not counted as Uber + Lyft); hatched: < {sm['min_trips']} records. "
                          "Growth: log of 2025 / 2023 mean weekly pickups (zones with >= "
                          f"{sm['min_weekly_base']} in 2023). Sources: "
                          "results/app_dispatch_share.csv, results/app_dispatch_summary.json.",
@@ -589,7 +592,8 @@ def phase4b(cfg: dict) -> None:
         verdict = ("the method can speak" if sc["resolves"] and sc["can_speak"]
                    else "the method cannot resolve the question")
         t = (f"Synthetic control: CBD pickups {sc['post_gap_mean_pct'] * 100:+.1f}% vs synthetic "
-             f"after the policy, rank {sp_['cbd_rank']} of {sp_['n'] + 1} donors "
+             f"after the policy, rank {sp_['cbd_rank']} of {sp_['n'] + 1} units (CBD and "
+             f"{sp_['n']} donors) "
              f"(p = {sp_['p_value']:.2f}), and {it:+.1f}% at a fake 2024 date: {verdict}")
         stats["c3"]["title"] = t
         paths = pd.read_csv(res / "synth_control_paths.csv", parse_dates=["week_start"])
@@ -711,7 +715,7 @@ def phase4c(cfg: dict) -> None:
              "beyond their intervals and the lead placebo fails in Manhattan outside the CBD "
              f"(p = {lp['pvalue']:.1g}): not identified")
         stats["d2"]["title"] = t
-        est = [("dml_plr", "Double ML, time-blocked folds (primary)", PALETTE["app"]),
+        est = [("dml_plr", "Double ML, time-blocked folds (primary)", PALETTE["actual"]),
                ("dml_zone_trends", "Double ML + zone trends", PALETTE["comparison"]),
                ("dml_panel_plpr", "DoubleML panel (median of 25 fold draws)", PALETTE["model"]),
                ("twfe", "Two-way fixed effects", PALETTE["non_cbd"]),

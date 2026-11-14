@@ -71,9 +71,16 @@ def test_presentation_numbers_are_consistent_with_their_sources() -> None:
         assert r["app_before"] == w.loc[(b, g), "app"] and r["app_after"] == w.loc[(a, g), "app"]
         assert r["street_after"] == w.loc[(a, g), "street"]
     ch = pn["preregistered_checks"]
-    assert ch["n_passed"] + ch["n_stopped"] == ch["n_designs"] == len(ch["rows"])
+    pre = [r for r in ch["rows"] if r["preregistered"]]
+    assert ch["n_preregistered"] == len(pre)
+    assert ch["n_preregistered_passed"] + ch["n_preregistered_stopped"] == len(pre)
+    assert ch["n_preregistered"] + ch["n_not_preregistered"] == len(ch["rows"])
     for row in ch["rows"]:
         assert (ROOT / row["file"]).exists()
+        assert isinstance(row["passed"], bool)
+        p = row["gate_values"].get("p_value")
+        if p is not None and "pre-trend test p" in row["gate"]:
+            assert row["passed"] == (p >= ch["gate_alpha"])
     storm = set(pn["alarm_weather_check"]["storm_days"])
     for al in pn["alarm_weather_check"]["alarms_2026"]:
         assert set(al["storm_days_in_window"]) <= storm
