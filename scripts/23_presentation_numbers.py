@@ -79,7 +79,8 @@ def alarm_check(cfg: dict) -> tuple[dict, pd.DataFrame]:
     with connect(path("warehouse", cfg), cfg=cfg) as con:
         wx = con.execute(
             "select cast(timezone(?, to_timestamp(unix_time)) as date) as day, "
-            "sum(snowfall) as snowfall_in, sum(precipitation) as precip_in, "
+            # rounded: DuckDB's parallel float sums differ in the last bits between runs
+            "round(sum(snowfall), 3) as snowfall_in, round(sum(precipitation), 3) as precip_in, "
             "min(temperature_2m) as temp_min_f, max(temperature_2m) as temp_max_f, "
             "count(*) as n_hours from int_weather_selected group by 1 "
             "having day between ? and ? order by 1", [cfg["timezone"], lo, hi]).df()
@@ -259,6 +260,8 @@ def external_app_share(cfg: dict) -> dict:
             "monthly_app_share_all_yellow": share.to_dict(),
             "min": float(share.min()), "max": float(share.max()),
             "months_inside_range": len(inside), "months": len(share),
+            "months_above_range": int((share > hi).sum()),
+            "months_below_range": int((share < lo).sum()),
             "agree": bool(len(inside) == len(share))}
 
 

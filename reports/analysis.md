@@ -129,13 +129,13 @@ The forecaster stayed accurate through the shift, and monthly retraining recover
 
 ## 6. How to measure it properly: a switchback experiment
 
-Neither congestion pricing nor app dispatch was randomized, and geography cannot be randomized for a cordon toll. App dispatch can be ([experiment_design.json](../results/experiment_design.json)). In a switchback, a platform or the TLC switches dispatch eligibility on or off at random by pickup zone and 2-hour block, across the 67 zones of the CBD and Manhattan outside it. The additional share is θ = (total pickups when on − when off) / app pickups when on. With the noise of March–May 2026, estimating θ to ±0.1 at 5% size and 80% power needs 3,756–5,922 zone-blocks, about 5–7 days. Clusters of neighbouring zones and wash-out periods handle spillover and carry-over.
+Geography cannot be randomized for a cordon toll, but app dispatch can be ([experiment_design.json](../results/experiment_design.json)). In a switchback, a platform or the TLC switches dispatch eligibility on or off at random by pickup zone and 2-hour block, across the 67 zones of the CBD and Manhattan outside it. The additional share is θ = (total pickups when on − when off) / app pickups when on. With the noise of March–May 2026, estimating θ to ±0.1 at 5% size and 80% power needs 3,756–5,922 zone-blocks, about 5–7 days. Clusters of neighbouring zones and wash-out periods handle spillover and carry-over.
 
 ## 7. Limitations
 
 - **Yellow taxis only for demand.** FHV trips enter only as aggregates.
 - **Weather.** One city-wide point, with observed weather used as if known in advance.
-- **Channel label.** Before June 2026 "app" rests on the Flex Fare flag; platform-level results exist only from June 2026; two `request_source` codes are undetermined; fee recording differs by vendor ([cbd_validation_trips.json](../results/cbd_validation_trips.json)).
+- **Channel label.** Before June 2026 "app" rests on the Flex Fare flag, whose 2024 share exceeds a TLC statement of 5–10% in most months ([appendix A1](appendix.md#a1-data)); two `request_source` codes are undetermined; fee recording differs by vendor ([cbd_validation_trips.json](../results/cbd_validation_trips.json)).
 - **Data gaps.** Two TLC source outages (2022-09-17/18 and 2023-09-21/24) are excluded from the monitors.
 - **Supply.** No driver- or vehicle-level data; the supply view uses TLC monthly aggregates.
 - **Causal claims.** Every observational design stopped at its gate. Nothing here states a causal effect of app dispatch or of congestion pricing.

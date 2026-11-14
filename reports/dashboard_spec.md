@@ -1,6 +1,6 @@
 # Dashboard specification: *Where the Growth Came From: App Dispatch and NYC Yellow Cabs, 2023–2026*
 
-A Tableau Public dashboard in four views: the app share over time by area, a zone map of app share and growth, incrementality estimates with their intervals, and Lyft's entry on Curb cabs. Its data are the extracts made by `make tableau-extract` (`reports/tableau/`; field definitions in `reports/tableau/README.txt`), and every number shown comes from the results file named in the view's caption.
+A Tableau Public dashboard in five views: the headline in three number tiles, the app share over time by area, a zone map of app share and growth, incrementality estimates with their intervals, and Lyft's entry on Curb cabs. Its data are the extracts made by `make tableau-extract` (`reports/tableau/`; field definitions in `reports/tableau/README.txt`), and every number shown comes from the results file named in the view's caption.
 
 ## Rules for every view
 
@@ -28,6 +28,16 @@ A Tableau Public dashboard in four views: the app share over time by area, a zon
 - congestion pricing begins, 2025-01-05;
 - `request_source` reported, 2026-06;
 - first Lyft (HV0005) trip, 2026-08-10.
+
+## View 0: The headline in three tiles
+
+| | |
+|---|---|
+| **Source** | `results/presentation_numbers.json → citywide_accounting.by_area.all` (copied, not recomputed in Tableau) |
+| **Tile 1** | "+27.3%": yellow-taxi pickups, mean per week, 2025 vs 2023 (703,268 → 895,177) |
+| **Tile 2** | "+199,068 a week": app-dispatched trips, 2025 vs 2023 |
+| **Tile 3** | "−7,159 a week (−1.1%)": street hails, 2025 vs 2023 |
+| **Caption** | The contracted trip programme is left out. Source: `results/channel_decomposition.csv` (rows `2023_to_2025`, `all`, without the programme). |
 
 ## View 1: App share over time by area
 

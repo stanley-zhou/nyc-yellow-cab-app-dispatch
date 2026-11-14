@@ -15,9 +15,9 @@ import numpy as np
 import pandas as pd
 
 from taxi_shock.viz.style import (
+    APP_CMAP,
     DIVERGING_CMAP,
     PALETTE,
-    SEQUENTIAL_CMAP,
     SIZES,
     VENDOR_PALETTE,
     direct_labels,
@@ -570,9 +570,9 @@ def f4g_app_dispatch(zones, share: pd.DataFrame, title: str, note: str,
     norm = mpl.colors.Normalize(vmin=0, vmax=1)
     gdf[~ok].plot(ax=ax, facecolor=NO_DATA_COLOR, edgecolor="white", hatch="////",
                   linewidth=0.2)
-    gdf[ok].plot(ax=ax, column="share_app", cmap=SEQUENTIAL_CMAP, norm=norm, edgecolor="white",
+    gdf[ok].plot(ax=ax, column="share_app", cmap=APP_CMAP, norm=norm, edgecolor="white",
                  linewidth=0.2)
-    cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=SEQUENTIAL_CMAP), ax=ax,
+    cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=APP_CMAP), ax=ax,
                       fraction=0.04, pad=0.01, shrink=0.6)
     cb.set_label("Uber + Lyft share")
     cb.outline.set_visible(False)
@@ -766,13 +766,13 @@ def f6b_app_share_maps(zones, share: pd.DataFrame, periods: list[tuple[str, str]
         gdf[~ok].plot(ax=ax, facecolor=NO_DATA_COLOR, edgecolor="white", hatch="////",
                       linewidth=0.1)
         gdf[ok].assign(v=gdf.loc[ok, "app_share_excl_block"] * 100).plot(
-            ax=ax, column="v", cmap=SEQUENTIAL_CMAP, norm=norm, edgecolor="white",
+            ax=ax, column="v", cmap=APP_CMAP, norm=norm, edgecolor="white",
             linewidth=0.1)
         draw_boundary(ax, zones, cbd)
         ax.set_title(name, fontsize=10)
         ax.set_axis_off()
         ax.set_aspect("equal")
-    cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=SEQUENTIAL_CMAP),
+    cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=APP_CMAP),
                       ax=np.atleast_1d(axes).tolist(), fraction=0.02, pad=0.01, shrink=0.7)
     cb.set_label("App share of pickups (%)")
     cb.outline.set_visible(False)

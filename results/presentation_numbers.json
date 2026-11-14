@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-14T20:58:03+00:00",
+  "generated_utc": "2026-11-14T21:01:28+00:00",
   "citywide_accounting": {
     "source": "results/channel_decomposition.csv (with_cmt_block = False)",
     "comparison": "2023_to_2025",
@@ -182,7 +182,7 @@
         "group": "cbd",
         "date": "2026-02-23",
         "side": "down",
-        "max_snowfall_in_window": 5.483999999999999,
+        "max_snowfall_in_window": 5.484,
         "snowiest_day": "2026-02-23",
         "storm_days_in_window": [
           "2026-02-22",
@@ -207,7 +207,7 @@
         "group": "non_cbd",
         "date": "2026-02-23",
         "side": "down",
-        "max_snowfall_in_window": 5.483999999999999,
+        "max_snowfall_in_window": 5.484,
         "snowiest_day": "2026-02-23",
         "storm_days_in_window": [
           "2026-02-22",
@@ -457,7 +457,7 @@
     "note": "synthetic control: p_value 0.0 stands for the failed boolean gate gate_in_time_mean_gap_within_cbd_pre_rmspe; check = p >= 0.05"
   },
   "repository": {
-    "decisions_entries": 214,
+    "decisions_entries": 215,
     "review_files": 19,
     "phases_reviewed": [
       "0",
@@ -494,6 +494,8 @@
     "max": 0.1306,
     "months_inside_range": 3,
     "months": 12,
+    "months_above_range": 8,
+    "months_below_range": 1,
     "agree": false
   }
 }

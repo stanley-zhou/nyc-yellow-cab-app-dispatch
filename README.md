@@ -69,7 +69,7 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   analysis.
 - An independent review of every phase is in [`reviews/`](reviews/) (19 review files: phases 0–6
   with their fix rounds, and the Checkpoint 7 advisor review).
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (214 entries).
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (215 entries).
 - 135 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 

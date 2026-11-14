@@ -36,6 +36,10 @@ VENDOR_PALETTE: dict[str, str] = {
 }
 DIVERGING_CMAP = "RdBu_r"   # blue-white-red, centred at 0 with a TwoSlopeNorm
 SEQUENTIAL_CMAP = "Blues"   # single-hue, used on a log scale
+# Amendment 6 (C): app shares in one teal family, so teal means "app" in every figure;
+# single hue from near-white to a darker shade of the app colour
+APP_CMAP = mpl.colors.LinearSegmentedColormap.from_list(
+    "app_share", ["#F2F8F7", PALETTE["app"], "#0B3D37"])
 
 SIZES: dict[str, tuple[float, float]] = {
     "single": (7.0, 4.2),
