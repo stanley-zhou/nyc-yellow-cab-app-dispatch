@@ -22,6 +22,7 @@ import pandas as pd
 from taxi_shock.config import load_config, path
 from taxi_shock.evaluation import tied_with_best
 from taxi_shock.viz.figures import (
+    f0_citywide_channels,
     f1_demand_map,
     f1b_citywide_weekly,
     f1c_vendor_weekly,
@@ -308,7 +309,7 @@ def phase4(cfg: dict) -> None:
     f4_event_study(w_es, policy, t4,
                    "Monthly bins of log1p(weekly pickups) per zone, zones weighted by their mean "
                    "weekly pickups in the 52 pre weeks (not pre-registered); 38 CBD zones vs "
-                   "the 25 Manhattan zones outside it; zone and week FE, "
+                   "the 25 Manhattan control zones outside it; zone and week FE, "
                    "weather x treated; 95% CIs clustered by zone; reference: the week before "
                    "2025-01-05. The pre-registered equal-weight path is in F4d. Source: "
                    "results/event_study.csv.", figs / "F4_event_study", "Effect on CBD pickups (%)")
@@ -354,8 +355,25 @@ def phase4(cfg: dict) -> None:
                      "relative_to_control_aggregate"]
     stats["effect_map"] = {"cbd_median_relative": float(cbd_rel.median()),
                            "min_pre_weekly": min_pre}
-    t4b = (f"CBD zones: median post/pre change in weekly pickups "
-           f"{_pct_str(float(cbd_rel.median()))} relative to the control group's aggregate change")
+    # Amendment 6 (B4): the title states what the map shows, the reason the control group fails
+    ctl = em[em["is_control"] & (em["pre_mean_weekly"] >= min_pre)].nlargest(2, "log_change")
+    cbd_ch = float(em.loc[em["is_cbd"] & (em["pre_mean_weekly"] >= min_pre),
+                          "log_change"].median())
+    stats["effect_map"].update({
+        "fastest_control_zones": {r["zone_name"]: float(np.exp(r["log_change"]) - 1)
+                                  for _, r in ctl.iterrows()},
+        "cbd_median_zone_change": float(np.exp(cbd_ch) - 1),
+        "control_equal_weight_mean_change": float(np.exp(em["control_mean_log_change"].iloc[0])
+                                                  - 1),
+        "control_total_change": float(np.exp(em["control_aggregate_log_change"].iloc[0]) - 1)})
+    ef = stats["effect_map"]
+    fz = ef["fastest_control_zones"]
+    t4b = (f"After the policy, uptown control zones grew most ({' and '.join(fz)} at least "
+           f"{min(fz.values()) * 100:+.0f}%), while the median CBD "
+           f"zone grew {ef['cbd_median_zone_change'] * 100:+.1f}%; averaged in logs with equal "
+           f"weights the control zones rose {ef['control_equal_weight_mean_change'] * 100:+.0f}%, "
+           f"their total "
+           f"{ef['control_total_change'] * 100:+.1f}%")
     zones = load_zones(path("raw_lookup", cfg) / "taxi_zones.shp")
     f4b_effect_map(zones, em, t4b, "Manhattan zones; log(mean weekly pickups after / in the 52 "
                    "weeks before 2025-01-05) minus the same for the total pickups of the "
@@ -503,11 +521,14 @@ def phase4b(cfg: dict) -> None:
                                                            float(fast["share_app"].max())],
                        "r_manhattan": c["manhattan"]["pearson_r"], "r_all": c["all_zones"][
                            "pearson_r"]}
-        t = (f"The fastest-growing control zones (Manhattan outside the CBD) are "
+        # Amendment 6 (B4): the plain statement first
+        t = (f"Zones where Uber and Lyft dispatch is common are the zones where yellow pickups "
+             f"grew most (r = {c['manhattan']['pearson_r']:.2f} across "
+             f"{c['manhattan']['n']} Manhattan zones, {c['all_zones']['pearson_r']:.2f} across "
+             f"all {c['all_zones']['n']}). The fastest-growing control zones are "
              f"{fast['share_app'].min() * 100:.0f}-{fast['share_app'].max() * 100:.0f}% "
-             f"Uber/Lyft-dispatched vs a CBD median of "
-             f"{g['cbd']['share_app_median_zone'] * 100:.0f}%; growth vs app share "
-             f"r = {c['manhattan']['pearson_r']:.2f} in Manhattan")
+             f"Uber/Lyft-dispatched, the median CBD zone "
+             f"{g['cbd']['share_app_median_zone'] * 100:.0f}%")
         stats["c1"]["title"] = t
         zones = load_zones(path("raw_lookup", cfg) / "taxi_zones.shp")
         f4g_app_dispatch(zones, share, t,
@@ -586,6 +607,11 @@ def phase4b(cfg: dict) -> None:
         logging.info("wrote Phase-4b figures: %s", ", ".join(stats))
 
 
+def _cbd_share(restatement: dict, month: str) -> float | None:
+    """CBD app share of one month from results/channel_restatement.json (None if absent)."""
+    return restatement["months"].get(month, {}).get("cbd", {}).get("app_share")
+
+
 def _k(v: float) -> str:
     return f"{v / 1000:+,.1f}k"
 
@@ -610,8 +636,16 @@ def phase4c(cfg: dict) -> None:
              f"{_k(c['street_change'])}; outer boroughs (contracted programme excluded) app "
              f"{_k(o['app_change'])}, street hails {_k(o['street_change'])}")
         stats["d1"]["title_f6a"] = t
-        f6a_channel_areas(weekly, [("cbd", "CBD (38 zones)"),
-                                   ("other", "Outer boroughs (no airports)")], t,
+        pn = json.loads((res / "presentation_numbers.json").read_text())["january_2025_step"]
+        ratios = [r["app_ratio"] for r in pn["by_area"].values()]
+        stats["d1"]["january_2025_app_ratio_range"] = [min(ratios), max(ratios)]
+        sc = [r["street_change_pct"] * 100 for r in pn["by_area"].values()]
+        step_txt = (f"Week of {pn['weeks'][1]}:\napp pickups x{min(ratios):.1f} to "
+                    f"x{max(ratios):.1f}\nwithin two weeks in every area,\nstreet hails "
+                    f"{min(sc):+.0f}% to {max(sc):+.0f}%;\nthe share step is as large\nfor "
+                    "trips that never touch\nthe congestion zone")
+        f6a_channel_areas(weekly, [("cbd", "Congestion zone (CBD), 38 zones; own scale"),
+                                   ("other", "Outer boroughs (no airports); own scale")], t,
                           "Valid yellow pickups per complete week by channel: app dispatch = an "
                           "e-hail app (Uber, Lyft, Curb, Arro) sends the cab (Flex Fare flag "
                           "before 2026-06, request_source from 2026-06); street = street hail; "
@@ -619,24 +653,41 @@ def phase4c(cfg: dict) -> None:
                           "boroughs, ended 2026-05. Own y-axis per panel; dashed line = "
                           "congestion pricing 2025-01-05. Sources: "
                           "results/channel_weekly.csv, results/channel_decomposition.csv.",
-                          figs / "F6a_channel_areas")
+                          figs / "F6a_channel_areas", step=(pn["weeks"][1], step_txt))
         zs = pd.read_csv(res / "channel_zone_share.csv").merge(
             pd.read_csv(res / "zone_summary.csv")[["zone_id", "is_cbd"]], on="zone_id")
         min_w = float(cfg["channel"]["map_min_weekly"])
         med = {p: float(x.loc[x["mean_weekly_pickups"] >= min_w, "app_share_excl_block"].median())
                for p, x in zs.groupby("period")}
         stats["d1"]["zone_median_app_share"] = med
-        t2 = (f"Median zone app share of pickups: {med['2023'] * 100:.0f}% (2023), "
-              f"{med['2024'] * 100:.0f}% (2024), {med['2025'] * 100:.0f}% (2025), "
-              f"{med['2026_jan_sep'] * 100:.0f}% (Jan-Sep 2026)")
+        cm = pd.read_csv(res / "channel_monthly.csv")
+        cm = cm[(cm["zone_group"] == "cbd") & cm["month"].str.startswith("2025")]
+        cbd25 = float(cm["app"].sum() / cm["total_excl_block"].sum())
+        rs = json.loads((res / "channel_restatement.json").read_text())
+        stats["d1"]["cbd_app_share_2025"] = cbd25
+        # Amendment 6 (B4): both numbers in the title - the median zone (mostly outside
+        # Manhattan's core) and the CBD, the report's headline share
+        t2 = (f"By 2025 the median zone's yellow pickups were {med['2025'] * 100:.0f}% "
+              f"app-dispatched (2023: {med['2023'] * 100:.0f}%); most such zones lie outside "
+              f"Manhattan's core. In the congestion zone (CBD) the share was "
+              f"{cbd25 * 100:.1f}% in 2025")
+        r26 = _cbd_share(rs, "2026-01")
+        if r26 is not None:
+            t2 += f" and {r26 * 100:.1f}% in January 2026"
         stats["d1"]["title_f6b"] = t2
+        zs_info = pd.read_csv(res / "zone_summary.csv")
+        drop = set(zs_info.loc[zs_info["borough"].isin(["Staten Island", "EWR"]), "zone_id"])
         zones = load_zones(path("raw_lookup", cfg) / "taxi_zones.shp")
+        zones = zones[~zones["zone_id"].isin(drop)]
         f6b_app_share_maps(zones, zs, [("2023", "2023"), ("2024", "2024"), ("2025", "2025"),
                                        ("2026_jan_sep", "Jan-Sep 2026")], min_w, t2,
                            f"App share = app pickups / (app + street-hail pickups) per pickup "
                            f"zone, the contracted trip programme excluded; hatched: < {min_w:.0f} "
-                           "pickups per week in that period; CBD outlined. Medians over the "
-                           "non-hatched zones. Source: results/channel_zone_share.csv.",
+                           "pickups per week in that period; CBD outlined; Staten Island and "
+                           "Newark Airport (too few pickups in every period) not drawn. Medians "
+                           "over zones with enough pickups. CBD share: app / (app + street hail) "
+                           "pickups of the CBD zones. Sources: results/channel_zone_share.csv, "
+                           "results/channel_monthly.csv, results/channel_restatement.json.",
                            figs / "F6b_app_share_maps")
     f = res / "incrementality_panel_summary.csv"
     if f.exists():
@@ -722,8 +773,8 @@ def phase4c(cfg: dict) -> None:
                         ("Uber + Lyft (HVFHV)", f_w, PALETTE["comparison"])],
                        cfg["data"]["policy_date"], t,
                        "Monthly event-study coefficients as exp(b) - 1, 38 CBD zones vs the 25 "
-                       "Manhattan zones outside it, zone and week FE, weather x treated, zones "
-                       "weighted by their own "
+                       "Manhattan control zones outside it, zone and week FE, weather x treated, "
+                       "zones weighted by their own "
                        "series' pre-period volume, 95% CIs clustered by zone; reference: the week "
                        "before 2025-01-05; lighter = before the policy. Descriptive only (the "
                        "pre-trend test comes first). Sources: results/fhv_did.json, "
@@ -861,6 +912,44 @@ def phase5(cfg: dict) -> None:
     logging.info("wrote F5 to %s", figs)
 
 
+def phase7(cfg: dict) -> None:
+    """Hero figure (Amendment 6, B4) from results/channel_weekly.csv; its title is the
+    citywide growth accounting of results/presentation_numbers.json."""
+    res, figs = path("results", cfg), path("figures", cfg)
+    f = res / "presentation_numbers.json"
+    if not f.exists():
+        logging.warning("results/presentation_numbers.json missing: hero figure skipped")
+        return
+    pn = json.loads(f.read_text())
+    a = pn["citywide_accounting"]["by_area"]["all"]
+    step = pn["january_2025_step"]
+    big = max(step["steps_all_zones"], key=lambda r: r["step"])
+    t = (f"From 2023 to 2025, NYC yellow-taxi pickups grew {a['change_pct'] * 100:.1f}% "
+         f"({a['base_mean_weekly']:,.0f} → {a['end_mean_weekly']:,.0f} a week). App-dispatched "
+         f"trips account for all of that growth ({a['app_change']:+,.0f} a week); street hails "
+         f"changed by {a['street_change']:+,.0f} ({a['street_change_pct'] * 100:+.1f}%)")
+    weekly = pd.read_csv(res / "channel_weekly.csv", parse_dates=["week_start"])
+    weekly = weekly[weekly["zone_group"] == "all"]
+    pc = cfg["presentation"]
+    events = [(pc["uber_auto_dispatch"], "Uber starts sending UberX\nrequests to yellow cabs",
+               0.97),
+              (big["week_start"], f"App share {big['share_before'] * 100:.0f}% → "
+               f"{big['share_after'] * 100:.0f}%\nwithin two weeks", 0.97)]
+    note = ("Valid yellow-taxi pickups per complete week (Sunday to Saturday), all TLC zones. App "
+            "dispatch = an e-hail app (Uber, Lyft, Curb, Arro) sends the cab: Flex Fare flag "
+            "before 2026-06, request_source from 2026-06. The contracted trip programme on "
+            "CMT-metered cabs in the outer boroughs (ended 2026-05) is left out of both series. "
+            "Growth: mean weekly pickups, 2025 vs 2023. App share step: 4-week means after vs "
+            f"before the week of {big['week_start']}. Uber date: amNY, {pc['uber_auto_dispatch']}."
+            " Sources: results/channel_weekly.csv, results/channel_decomposition.csv, "
+            "results/presentation_numbers.json, results/channel_label_validation.json.")
+    f0_citywide_channels(weekly, events, t, note, figs / "F0_citywide_channels")
+    stats = {"source_files": ["results/presentation_numbers.json", "results/channel_weekly.csv"],
+             "title": t, "step": big}
+    (res / "figure_stats_phase7.json").write_text(json.dumps(stats, indent=2) + "\n")
+    logging.info("wrote F0 to %s", figs)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
@@ -881,6 +970,7 @@ def main() -> None:
     phase4b(cfg)
     phase4c(cfg)
     phase5(cfg)
+    phase7(cfg)
 
 
 if __name__ == "__main__":

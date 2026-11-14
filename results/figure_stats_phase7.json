@@ -1,0 +1,13 @@
+{
+  "source_files": [
+    "results/presentation_numbers.json",
+    "results/channel_weekly.csv"
+  ],
+  "title": "From 2023 to 2025, NYC yellow-taxi pickups grew 27.3% (703,268 \u2192 895,177 a week). App-dispatched trips account for all of that growth (+199,068 a week); street hails changed by -7,159 (-1.1%)",
+  "step": {
+    "week_start": "2025-01-19",
+    "step": 0.10872026242653324,
+    "share_before": 0.11187318003808774,
+    "share_after": 0.22059344246462098
+  }
+}

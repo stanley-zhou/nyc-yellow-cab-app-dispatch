@@ -11,13 +11,18 @@
       "change": 43525.8
     },
     "title_f6a": "2023 to 2025, per week: CBD app trips +105.0k, street hails -5.9k; outer boroughs (contracted programme excluded) app +42.8k, street hails +0.7k",
+    "january_2025_app_ratio_range": [
+      2.0635830324909747,
+      2.7291057250313413
+    ],
     "zone_median_app_share": {
       "2023": 0.22087299999999999,
       "2024": 0.7077725,
       "2025": 0.9082805,
       "2026_jan_sep": 0.889424
     },
-    "title_f6b": "Median zone app share of pickups: 22% (2023), 71% (2024), 91% (2025), 89% (Jan-Sep 2026)"
+    "cbd_app_share_2025": 0.22934862364529568,
+    "title_f6b": "By 2025 the median zone's yellow pickups were 91% app-dispatched (2023: 22%); most such zones lie outside Manhattan's core. In the congestion zone (CBD) the share was 22.9% in 2025 and 29.6% in January 2026"
   },
   "d2": {
     "cbd": {

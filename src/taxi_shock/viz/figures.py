@@ -589,7 +589,11 @@ def f4g_app_dispatch(zones, share: pd.DataFrame, title: str, note: str,
                    label=label, edgecolor="white", linewidth=0.4)
     sx.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
     sx.set_xlabel("Uber + Lyft share of yellow trips, Jun-Sep 2026 (%)")
-    sx.set_ylabel("Growth of mean weekly pickups 2023 to 2025 (log)")
+    sx.set_ylabel("Mean weekly pickups, 2025 / 2023 (log scale)")
+    lo_, hi_ = float(d["growth_log"].min()), float(d["growth_log"].max())
+    mult = [m for m in (0.25, 0.5, 1, 2, 4, 8, 12, 16, 32)
+            if np.log(m) >= lo_ - 0.3 and np.log(m) <= hi_ + 0.3]
+    sx.set_yticks([np.log(m) for m in mult], [f"×{m:g}" for m in mult])
     sx.legend(frameon=False, fontsize=8, loc="upper left")
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
@@ -701,7 +705,8 @@ def f4h_synth_control(paths: pd.DataFrame, policy_date: str, title: str, note: s
 
 
 def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title: str,
-                       note: str, out_base: Path) -> list[Path]:
+                       note: str, out_base: Path,
+                       step: tuple[str, str] | None = None) -> list[Path]:
     """F6a (Amendment 4, D1): weekly pickups stacked by channel (app, street hail and, where
     present, the CMT outer-borough block as its own grey layer), one panel per zone group with
     its own y-axis in thousands per week. `panels`: (zone_group, panel title)."""
@@ -726,6 +731,17 @@ def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title
         ax.set_ylim(0, top * 1.18)                      # headroom for the policy label
         policy_line(ax, label=i == 0, label_y=0.99, side="right")
         ax.legend(frameon=False, fontsize=8, loc="upper left")
+        if step:   # Amendment 6 (B4): the step is annotated where the reader first sees it
+            xs = mdates.date2num(pd.Timestamp(step[0]))
+            ax.axvline(xs, color=PALETTE["text"], linestyle=":", linewidth=1.0, zorder=3)
+            if i == len(panels) - 1:
+                yv = float(d.set_index("week_start")[[k for k, _, _ in use]].sum(axis=1)
+                            .loc[pd.Timestamp(step[0])]) / 1000
+                ax.annotate(step[1], xy=(xs, yv), xytext=(0.03, 0.52),
+                            textcoords="axes fraction", fontsize=8.5, color=PALETTE["text"],
+                            ha="left", va="center",
+                            arrowprops={"arrowstyle": "->", "color": PALETTE["text"],
+                                        "linewidth": 0.8})
     fig.suptitle(textwrap.fill(title, 95), fontsize=11, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
@@ -740,8 +756,7 @@ def f6b_app_share_maps(zones, share: pd.DataFrame, periods: list[tuple[str, str]
     from taxi_shock.viz.maps import NO_DATA_COLOR, draw_boundary
 
     use_style()
-    fig, axes = plt.subplots(1, len(periods), figsize=(SIZES["small_multiples"][0], 4.6),
-                             layout="constrained")
+    fig, axes = plt.subplots(1, len(periods), figsize=(12.0, 4.4), layout="constrained")
     norm = mpl.colors.Normalize(vmin=0, vmax=100)
     cbd = share.loc[share["is_cbd"], "zone_id"].unique().tolist()
     for ax, (p, name) in zip(np.atleast_1d(axes), periods, strict=True):
@@ -964,6 +979,39 @@ def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days:
     gx.legend(*axes[0, 0].get_legend_handles_labels(), loc="lower center", ncol=1,
               frameon=False, fontsize=8.5, title="Strategy", title_fontsize=8.5)
     fig.suptitle(textwrap.fill(title, 120), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 170), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+                  ha="left")
+    return save(fig, out_base)
+
+
+def f0_citywide_channels(weekly: pd.DataFrame, events: list[tuple[str, str, float]],
+                         title: str, note: str, out_base: Path) -> list[Path]:
+    """Hero figure (Amendment 6, B4): citywide weekly yellow pickups, street hail (bottom) and
+    app dispatch (top) stacked, the contracted trip programme excluded; `events` = (date,
+    label, label height as axes fraction) drawn as dotted lines; the policy line labelled
+    small. `weekly` = rows of results/channel_weekly.csv for zone_group 'all'."""
+    use_style()
+    d = weekly.sort_values("week_start")
+    fig, ax = plt.subplots(figsize=(12.0, 5.2), layout="constrained")
+    ax.stackplot(d["week_start"], d["street"] / 1000, d["app"] / 1000,
+                 labels=["Street hail", "App dispatch"],
+                 colors=[PALETTE["street"], PALETTE["app"]], edgecolor="white", linewidth=0.3)
+    top = float((d["street"] + d["app"]).max()) / 1000
+    ax.set_ylim(0, top * 1.22)
+    ax.set_xlim(d["week_start"].min(), d["week_start"].max())
+    ax.set_ylabel("Yellow-taxi pickups per week (thousands)")
+    for date, label, y in events:
+        x = mdates.date2num(pd.Timestamp(date))
+        ax.axvline(x, color=PALETTE["text"], linestyle=":", linewidth=1.0, zorder=3)
+        ax.annotate(label, xy=(x, y), xycoords=("data", "axes fraction"), xytext=(4, 0),
+                    textcoords="offset points", ha="left", va="top", fontsize=9,
+                    color=PALETTE["text"])
+    policy_line(ax, label=True, label_y=0.07, side="right")
+    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+    h, lab = ax.get_legend_handles_labels()
+    ax.legend(h[::-1], lab[::-1], frameon=False, fontsize=9, loc="upper left")
+    fig.suptitle(textwrap.fill(title, 110), fontsize=12, fontweight="bold", x=0.01, ha="left")
     fig.supxlabel(textwrap.fill(note, 170), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
     return save(fig, out_base)

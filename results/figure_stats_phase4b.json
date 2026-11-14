@@ -9,7 +9,7 @@
     ],
     "r_manhattan": 0.9190677862394994,
     "r_all": 0.8997752147207099,
-    "title": "The fastest-growing control zones (Manhattan outside the CBD) are 71-83% Uber/Lyft-dispatched vs a CBD median of 27%; growth vs app share r = 0.92 in Manhattan"
+    "title": "Zones where Uber and Lyft dispatch is common are the zones where yellow pickups grew most (r = 0.92 across 63 Manhattan zones, 0.90 across all 200). The fastest-growing control zones are 71-83% Uber/Lyft-dispatched, the median CBD zone 27%"
   },
   "c5": {
     "covid": {

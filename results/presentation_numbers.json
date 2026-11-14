@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-14T20:38:24+00:00",
+  "generated_utc": "2026-11-14T20:58:03+00:00",
   "citywide_accounting": {
     "source": "results/channel_decomposition.csv (with_cmt_block = False)",
     "comparison": "2023_to_2025",
@@ -457,7 +457,7 @@
     "note": "synthetic control: p_value 0.0 stands for the failed boolean gate gate_in_time_mean_gap_within_cbd_pre_rmspe; check = p >= 0.05"
   },
   "repository": {
-    "decisions_entries": 212,
+    "decisions_entries": 214,
     "review_files": 19,
     "phases_reviewed": [
       "0",
@@ -468,7 +468,7 @@
       "5",
       "6"
     ],
-    "tests_collected": 134
+    "tests_collected": 135
   },
   "external_app_share_2024": {
     "source": "https://citymeetings.nyc/city-council/2025-02-10-1000-am-committee-on-transportation-and-infrastructure/chapter/update-on-the-e-hail-program-for-yellow-and-green-taxis",

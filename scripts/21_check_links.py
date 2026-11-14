@@ -15,7 +15,7 @@ import sys
 from taxi_shock.config import repo_root
 
 LOG = logging.getLogger("links")
-DOCS = ("README.md", "reports/analysis.md", "reports/dashboard_spec.md",
+DOCS = ("README.md", "reports/analysis.md", "reports/appendix.md", "reports/dashboard_spec.md",
         "reports/deferred_items.md")
 LINK = re.compile(r"!?\[[^\]]*\]\(([^)\s]+)\)")
 
