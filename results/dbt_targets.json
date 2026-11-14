@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-14T22:57:29+00:00",
+  "generated_utc": "2026-11-14T23:00:22+00:00",
   "targets": {
     "duckdb": {
       "adapter": "dbt-duckdb",
@@ -259,6 +259,7 @@
         },
         "seeds": {},
         "generated_at": "2026-11-14T22:50:30.072475Z",
+        "elapsed_seconds": 59.6,
         "n_tests": 62,
         "tests_pass": 62,
         "tests_not_pass": {}
@@ -633,6 +634,7 @@
           }
         },
         "generated_at": "2026-11-14T22:55:05.429597Z",
+        "elapsed_seconds": 62.4,
         "n_tests": 62,
         "tests_pass": 62,
         "tests_not_pass": {}
@@ -867,9 +869,9 @@
     "all_identical": true
   },
   "snowflake_credits_last_7_days": {
-    "total": 0.418625555,
-    "compute": 0.415798611,
-    "cloud_services": 0.002826944,
+    "total": 0.463763056,
+    "compute": 0.452916667,
+    "cloud_services": 0.010846389,
     "since": "2026-11-14"
   }
 }

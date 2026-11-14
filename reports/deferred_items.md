@@ -23,6 +23,7 @@ Builder, with the owner and the reason.
 | 13 | CI workflow (ruff, pytest, `make smoke`) | PLAN Phase 7 DoD | `.github/workflows/ci.yml`. Whether it runs is item 15. |
 | 14 | D5b event-study range to be quoted exactly if it enters the report | reviews/phase_6.md | Not quoted: `reports/analysis.md` §2 and §4 and `reports/appendix.md` A5 report the step sizes by trip type only, from `results/app_share_policy_step.json`. |
 | 24 | Third prior study (formerly open item 18) in the references | PLAN Phase 7; Checkpoint 7 question 3 | Closed by Amendment 6 A8: four references (Pandey, Guler & Gayah 2026; Li et al. 2026 added), titles and authors checked on the publishers' pages (DECISIONS [P7] 2026-11-14). |
+| 27 | E3: dbt on Snowflake (formerly open item 20) | PLAN Amendment 4 | Done: load (`results/snowflake_load.json`), `dbt build` 89/89 and parity with DuckDB (`results/dbt_targets.json`); DECISIONS [E3] 2026-11-14. |
 | 25 | Checkpoint 7 advisor review, sections A, B, C | Amendment 6 | Applied in three commits (5771b84, 649d8fc, 270ce55) and the Phase-7 review round-1 fixes; DECISIONS [P7] 2026-11-14. |
 
 ## Open
@@ -33,7 +34,6 @@ Builder, with the owner and the reason.
 | 16 | Colab profiling run (`--profile N`) to choose the batch size | Stanley | Needs a Colab GPU session. |
 | 17 | `notebooks/colab_chronos.ipynb` (thin Colab wrapper around `scripts/05_chronos_colab.py`) | Stanley | Stanley supplies it (Amendment 5, item 8); `notebooks/` holds only `.gitkeep`. Not part of the pipeline (CLAUDE.md rule 4). |
 | 19 | Repository rename, public visibility, dashboard URL, code licence | Stanley | Stanley's decisions (Amendment 5; CLAUDE.md: the repository becomes public only when Stanley says so). |
-| 20 | E3: dbt on Snowflake | Stanley | Waits for the account credentials through environment variables. |
 | 21 | `04_backtest.py --full` skips an existing forecast file by its existence, without a code fingerprint | Builder, not changed | DECISIONS [P2→P3]. Every forecast file post-dates the last model-code change; a later change needs `--force`. `04b_evaluate.py` does fingerprint its units. Kept as a documented limitation. |
 | 22 | Return the freed space to the Windows drive: compact the WSL disk image (`wsl --shutdown`, then Optimize-VHD or diskpart `compact vdisk`) | Stanley | Runs on Windows with WSL stopped; the warehouse compaction freed the space only inside the virtual disk. |
 | 23 | Booster files purged from git history (`git filter-repo`, force push, fresh-clone check), then the final phase-reviewer run | Builder, last step | After E3, the dashboard link and Stanley's README section are in; waits for Stanley's go-ahead. |

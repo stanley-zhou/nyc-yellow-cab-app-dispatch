@@ -85,3 +85,22 @@ def test_presentation_numbers_are_consistent_with_their_sources() -> None:
     storm = set(pn["alarm_weather_check"]["storm_days"])
     for al in pn["alarm_weather_check"]["alarms_2026"]:
         assert set(al["storm_days_in_window"]) <= storm
+
+
+def test_dbt_targets_parity_compare_flags_value_and_key_differences() -> None:
+    """E3: the DuckDB-vs-Snowflake parity check catches a changed value, a missing key and a
+    float difference above the tolerance, and ignores column-name case and float noise."""
+    import pandas as pd
+
+    compare = _load("25_dbt_targets").compare
+    a = pd.DataFrame({"zone_id": [1, 2, 3], "week_start": ["2024-01-07"] * 3,
+                      "pickups": [10, 20, 30], "s": [1.0, 2.0, 3.0]})
+    same = a.rename(columns=str.upper).assign(S=[1.0 + 1e-15, 2.0, 3.0])
+    assert compare(a, same, ["zone_id", "week_start"])["identical"]
+    changed = same.copy()
+    changed.loc[1, "PICKUPS"] = 21
+    changed.loc[2, "S"] = 3.0 * (1 + 1e-6)
+    r = compare(a, changed.iloc[:3], ["zone_id", "week_start"])
+    assert not r["identical"] and r["cells_differing"] == 2
+    r = compare(a, same.iloc[:2], ["zone_id", "week_start"])
+    assert r["keys_only_duckdb"] == 1 and not r["identical"]

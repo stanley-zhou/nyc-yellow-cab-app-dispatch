@@ -43,7 +43,8 @@ REL_TOL = 1e-9
 def run_results(target_path: str) -> dict:
     f = repo_root() / "dbt" / target_path / "run_results.json"
     rr = json.loads(f.read_text())
-    out = {"models": {}, "tests": {}, "seeds": {}, "generated_at": rr["metadata"]["generated_at"]}
+    out = {"models": {}, "tests": {}, "seeds": {}, "generated_at": rr["metadata"]["generated_at"],
+           "elapsed_seconds": round(float(rr["elapsed_time"]), 1)}
     for r in rr["results"]:
         kind, name = r["unique_id"].split(".")[0], r["unique_id"].split(".")[-1]
         if kind == "test":

@@ -55,6 +55,10 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
 
 - **SQL:** dbt on DuckDB, window functions; the panels, the channel split and every
   heterogeneity cut are SQL models, not pandas.
+- **Snowflake:** the same dbt models run on Snowflake (dbt-snowflake, dialect macros) over the
+  cleaned trips loaded with PUT / `COPY INTO`; 89/89 build steps and tests pass, and the weekly
+  marts match DuckDB exactly over 2023-01-08 → 2026-09-20
+  ([dbt_targets.json](results/dbt_targets.json)).
 - **Python 3.12**, managed with uv.
 - **Forecasting:** LightGBM quantile regression, Chronos-2 (zero-shot, on a Colab GPU), conformal
   prediction intervals.
@@ -70,8 +74,8 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   analysis.
 - An independent review of every phase, with its fix rounds, is in [`reviews/`](reviews/), with
   the Checkpoint 7 advisor review.
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (234 entries).
-- 135 tests (pytest), dbt data tests and ruff run before every review (counts:
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (235 entries).
+- 136 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 
 ## Dashboard
@@ -119,6 +123,7 @@ uses `memory_limit = 5GB`, 10 threads.
 | `adapt` | Phase 5: S1 / S6 monthly refits and the S1e sensitivity (S1 on an expanding window), resumable per month; then evaluation of S0, S1, S4, S6, S1e and the seasonal-naive reference (`08`) |
 | `figures` | descriptive report numbers from `results/` plus repository counts (`23` → `results/presentation_numbers.json`), then every figure from `results/`; the maps also read the TLC zone shapefile, a lookup (`09`) |
 | `tableau-extract` | E2: CSV / GeoJSON extracts for the dashboard (`18`) |
+| `snowflake` | E3: load the cleaned trips and HVFHV aggregates to Snowflake (`24`), `dbt build --target snowflake`, DuckDB tests, per-target row counts / tests / parity (`25`); needs `source ~/.snowflake/taxi.env` (outside the repository) and `uv pip install -e ".[snowflake]"` |
 | `report` | runtimes (`20` → `results/runtimes.json`), dashboard extracts, dead-link check of README and report (`21`) |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
 
@@ -139,6 +144,8 @@ From [runtimes.json](results/runtimes.json) (`measured` = compute time the pipel
 | Frozen-model fit | 10.9 min |
 | Monthly refits, 23 per strategy (monthly retrain / with app-share features / expanding window) | 166.1 / 137.4 / 301.7 min |
 | Incrementality, double machine learning with 25 repetitions | 3.4 min wall |
+| Snowflake load: export, PUT, `COPY INTO` ([snowflake_load.json](results/snowflake_load.json)) | 16.0 min |
+| `dbt build` on Snowflake, X-Small ([dbt_targets.json](results/dbt_targets.json)) | 62.4 s |
 
 The raw download and the HVFHV stream ran over several resumed sessions and have no single
 runtime.
