@@ -17,9 +17,9 @@ select
     avg(rain)                 as rain_in,
     avg(snowfall)             as snowfall_in,
     max(weathercode)          as weather_code,
-    avg(cloudcover)           as cloud_cover_pct,
+    {{ avg_double('cloudcover') }}           as cloud_cover_pct,
     avg(windspeed_10m)        as wind_mph,
-    avg(relativehumidity_2m)  as rel_humidity_pct,
+    {{ avg_double('relativehumidity_2m') }}  as rel_humidity_pct,
     count(*)                  as n_source_hours
 from local
 group by hour_ts

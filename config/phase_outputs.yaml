@@ -113,6 +113,7 @@
   - results/alarm_weather_check.csv
   - results/snowflake_load.json                 # E3
   - results/dbt_targets.json                    # E3
+  - results/e3_duckdb_sql_check.json            # E3
   - reports/figures/F4b_effect_map.html
   - .github/workflows/ci.yml
 6:                                            # Amendment 4 / 4a (D0-D5b) and Amendment 3 C6

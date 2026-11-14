@@ -24,7 +24,7 @@ with base as (
 ),
 first_day as (select min(date) as d0 from base),
 daily as (
-    select zone_id, date, avg(pickups) as mean_day
+    select zone_id, date, {{ avg_double('pickups') }} as mean_day
     from base
     group by all
 ),
@@ -47,9 +47,9 @@ lags as (
             {{ days_back(7, 7) }})   as lag_168,
         max(pickups) over (partition by zone_id, hour order by date
             {{ days_back(14, 14) }}) as lag_336,
-        avg(pickups) over (partition by zone_id, hour order by date
+        {{ avg_double('pickups') }} over (partition by zone_id, hour order by date
             {{ days_back(7, 1) }})   as m7,
-        avg(pickups) over (partition by zone_id, hour order by date
+        {{ avg_double('pickups') }} over (partition by zone_id, hour order by date
             {{ days_back(28, 1) }})  as m28
     from base as b
 )

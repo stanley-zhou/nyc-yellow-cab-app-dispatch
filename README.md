@@ -55,9 +55,9 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
 
 - **SQL:** dbt on DuckDB, window functions; the panels, the channel split and every
   heterogeneity cut are SQL models, not pandas.
-- **Snowflake:** the same dbt models run on Snowflake (dbt-snowflake, dialect macros) over the
-  cleaned trips loaded with PUT / `COPY INTO`; 89/89 build steps and tests pass, and the weekly
-  marts match DuckDB exactly over 2023-01-08 → 2026-09-20
+- **Snowflake:** the dbt models downstream of the cleaning run on Snowflake (dbt-snowflake,
+  dialect macros) over the cleaned trips loaded with PUT / `COPY INTO`; 89/89 build steps and
+  tests pass, and nine weekly, daily and hourly marts match DuckDB exactly on the days both cover
   ([dbt_targets.json](results/dbt_targets.json)).
 - **Python 3.12**, managed with uv.
 - **Forecasting:** LightGBM quantile regression, Chronos-2 (zero-shot, on a Colab GPU), conformal
@@ -74,7 +74,7 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   analysis.
 - An independent review of every phase, with its fix rounds, is in [`reviews/`](reviews/), with
   the Checkpoint 7 advisor review.
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (235 entries).
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (236 entries).
 - 136 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 
@@ -145,7 +145,7 @@ From [runtimes.json](results/runtimes.json) (`measured` = compute time the pipel
 | Monthly refits, 23 per strategy (monthly retrain / with app-share features / expanding window) | 166.1 / 137.4 / 301.7 min |
 | Incrementality, double machine learning with 25 repetitions | 3.4 min wall |
 | Snowflake load: export, PUT, `COPY INTO` ([snowflake_load.json](results/snowflake_load.json)) | 16.0 min |
-| `dbt build` on Snowflake, X-Small ([dbt_targets.json](results/dbt_targets.json)) | 62.4 s |
+| `dbt build` on Snowflake, X-Small ([dbt_targets.json](results/dbt_targets.json)) | 63.3 s |
 
 The raw download and the HVFHV stream ran over several resumed sessions and have no single
 runtime.

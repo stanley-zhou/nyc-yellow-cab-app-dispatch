@@ -12,6 +12,12 @@
 {% macro default__agg_if(fn, expr, cond) %}{{ fn }}({{ expr }}) filter (where {{ cond }}){% endmacro %}
 {% macro snowflake__agg_if(fn, expr, cond) %}{{ fn }}(iff({{ cond }}, {{ expr }}, null)){% endmacro %}
 
+{#- mean of an integer column: Snowflake's avg() of an integer returns a fixed-point NUMBER (3
+    decimals in a window), DuckDB a double -#}
+{% macro avg_double(expr) %}{{ return(adapter.dispatch('avg_double')(expr)) }}{% endmacro %}
+{% macro default__avg_double(expr) %}avg({{ expr }}){% endmacro %}
+{% macro snowflake__avg_double(expr) %}avg(cast({{ expr }} as double)){% endmacro %}
+
 {#- continuous quantile at num / den (linear interpolation in both engines); Snowflake needs a
     constant, so the fraction is written as a 17-digit literal there -#}
 {% macro quantile_cont(col, num, den) %}{{ return(adapter.dispatch('quantile_cont')(col, num, den)) }}{% endmacro %}

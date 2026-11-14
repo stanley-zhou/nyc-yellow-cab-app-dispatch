@@ -367,6 +367,9 @@ snowflake:                                    # E3 (Amendment 4): dbt on Snowfla
   raw_schema: RAW                             # loaded tables (dbt sources on Snowflake)
   stage: LOAD                                 # internal stage in RAW
   warehouse_size: X-Small                     # checked, never changed (Stanley's rule)
+  parity:                                     # scripts/25_dbt_targets.py
+    relative_tolerance: 1.0e-9                # |a - b| / max(1, |a|, |b|) per cell
+    warmup_days: 28                           # features_demand's longest look-back (28 days)
 
 paths:                                        # relative to the repo root
   raw_yellow: data/raw/tlc/yellow

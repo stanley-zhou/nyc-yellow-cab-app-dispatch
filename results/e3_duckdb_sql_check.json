@@ -1,0 +1,22 @@
+{
+  "generated_utc": "2026-11-14T23:29:11+00:00",
+  "base_commit": "a3bc032",
+  "target": "duckdb",
+  "nodes_old": 91,
+  "nodes_new": 91,
+  "only_old": [],
+  "only_new": [],
+  "nodes_differing": [
+    "models/intermediate/int_weather_selected.sql",
+    "tests/assert_channel_matches_weekly.sql"
+  ],
+  "model_row_checks": {
+    "models/intermediate/int_weather_selected.sql": {
+      "old_except_new": 0,
+      "new_except_old": 0,
+      "rows": 67968,
+      "same_rows": true
+    }
+  },
+  "duckdb_unchanged": true
+}

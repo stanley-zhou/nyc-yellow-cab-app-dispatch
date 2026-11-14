@@ -104,3 +104,11 @@ def test_dbt_targets_parity_compare_flags_value_and_key_differences() -> None:
     assert not r["identical"] and r["cells_differing"] == 2
     r = compare(a, same.iloc[:2], ["zone_id", "week_start"])
     assert r["keys_only_duckdb"] == 1 and not r["identical"]
+    # a date value read as datetime64 on one side and as a date object on the other is equal;
+    # a changed string is caught
+    import datetime as dt
+    c = a.assign(d=pd.to_datetime(["2024-01-07"] * 3), t=["x", "y", "z"])
+    e = same.assign(D=[dt.date(2024, 1, 7)] * 3, T=["x", "y", "z"])
+    assert compare(c, e, ["zone_id", "week_start"])["identical"]
+    e.loc[0, "T"] = "w"
+    assert compare(c, e, ["zone_id", "week_start"])["cells_differing"] == 1
