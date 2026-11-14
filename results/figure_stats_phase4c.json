@@ -10,7 +10,7 @@
       "street_change": 714.565,
       "change": 43525.8
     },
-    "title_f6a": "2023 to 2025, per week: CBD app trips +105.0k, street hails -5.9k; outer boroughs (without the CMT block) app +42.8k, street hails +0.7k",
+    "title_f6a": "2023 to 2025, per week: CBD app trips +105.0k, street hails -5.9k; outer boroughs (contracted programme excluded) app +42.8k, street hails +0.7k",
     "zone_median_app_share": {
       "2023": 0.22087299999999999,
       "2024": 0.7077725,
@@ -60,7 +60,12 @@
       0.521762,
       2.6204
     ],
-    "title": "Share of app trips that are additional: CBD estimates range from 0.52 to 2.62 across estimators (primary DML 0.90 [0.74, 1.06]); they disagree beyond their intervals: not identified"
+    "lead_placebo_p": {
+      "cbd": 0.5950049241947375,
+      "manhattan_non_cbd": 9.83568267871604e-05,
+      "other": 0.06898360363870548
+    },
+    "title": "Share of app trips that are additional: CBD estimates range from 0.52 to 2.62 across estimators (primary DML 0.90 [0.74, 1.06]); they disagree beyond their intervals and the lead placebo fails in Manhattan outside the CBD (p = 0.0001): not identified"
   },
   "d3": {
     "levels_incrementality": -1.1228279517034667,

@@ -44,7 +44,8 @@ chronos-bundle:   ## Phase 2: export a Chronos-2 input bundle for Colab (RUN=cal
 chronos-import:   ## Phase 2: validate Chronos-2 outputs in results/ (RUN=calib_2023: merge its inbox first)
 	$(PY) scripts/05b_chronos_import.py $(if $(RUN),--run $(RUN))
 
-figures:          ## every figure whose phase is implemented, from results/ only
+figures:          ## descriptive report numbers (23 -> results/presentation_numbers.json), then every figure, from results/ only
+	$(PY) scripts/23_presentation_numbers.py
 	$(PY) scripts/09_figures.py --all
 
 forecast:         ## Phase 2: LGBM grid (2023), rolling-origin backtests (2023 + 2024), evaluation

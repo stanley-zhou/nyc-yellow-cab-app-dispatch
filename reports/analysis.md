@@ -4,8 +4,8 @@
 
 ## Executive summary
 
-1. **The shift.** App dispatch, i.e. e-hail apps sending yellow cabs to riders, rose from 2.3% to 29.6% of yellow pickups in Manhattan's congestion-pricing zone (CBD) between January 2023 and January 2026 ([channel_restatement.json](../results/channel_restatement.json)), and from 2023 to 2025 mean weekly CBD pickups grew by 99,063 (+23.7%), with app trips up 104,958 a week and street hails down 5,896 ([channel_decomposition.csv](../results/channel_decomposition.csv)).
-2. **The supply fact.** The growth came with more cabs on the road, not more trips per cab: active cabs per day rose from 7,036 (2023) to 8,722.5 (2025) while trips per cab-day stayed at 14.85 → 15.02 (TLC monthly reports; [incrementality_dml.json → supply](../results/incrementality_dml.json)).
+1. **The shift.** From 2023 to 2025, NYC yellow-taxi pickups grew 27.3% (703,268 → 895,177 a week). App-dispatched trips account for all of that growth (+199,068 a week); street hails changed by −7,159 (−1.1%) ([channel_decomposition.csv](../results/channel_decomposition.csv), [presentation_numbers.json](../results/presentation_numbers.json)). In the congestion zone (CBD), app dispatch rose from 2.3% to 29.6% of yellow pickups between January 2023 and January 2026 ([channel_restatement.json](../results/channel_restatement.json)).
+2. **The supply fact.** The growth came with more cabs on the road, not more trips per cab. From 2023 to 2025, trips per day rose 25.6% and active cabs per day 24.0% (about 7,040 → 8,720), while trips per cab-day stayed between 14.0 and 15.0 in 2023–2026 (TLC monthly reports; [incrementality_dml.json → supply](../results/incrementality_dml.json), [presentation_numbers.json](../results/presentation_numbers.json)).
 3. **What is not identified.** How much of the app growth is additional rather than displaced street hails, and what congestion pricing did to taxi demand, cannot be identified from the trip records: every pre-registered design either failed its pre-trend test or disagreed with the others beyond their intervals, and each is reported as found at its gate.
 4. **Forecasting.** From February 2025 to September 2026, refitting the forecaster monthly gave the lowest error (WAPE 0.162 against 0.164 for the frozen model, a small gap the paired bootstrap distinguishes), and adding app-share features made the under-forecast larger, not smaller (−2.9% of pickups against −2.3% frozen; [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv)).
 
@@ -34,15 +34,28 @@
 
 **Share of CBD pickups.** App dispatch rose from 2.3% (2023-01) to 10.3% (2024-04), 17.8% (2025-01) and 29.6% (2026-01) ([channel_restatement.json](../results/channel_restatement.json)). Per week, CBD yellow pickups rose 15.6% between those Januaries (392,751 → 453,882), and CBD street hails fell 16.7% (383,608 → 319,640).
 
-> **Correction.** Two earlier claims rested on monthly sums: that CBD pickups *declined*, and that street hails fell "by about a third". Both compared a five-week January 2023 with a four-week January 2026 (review, [phase_6_round1](../reviews/phase_6_round1.md)).
+All comparisons use mean weekly pickups, because calendar months hold four or five panel weeks.
+
+**The app share rose in steps.** Across all zones, the 4-week app share jumped by 5.6 points at the week of 2024-02-25, 5.4 at 2024-09-01, 10.9 at 2025-01-19 and 7.2 at 2025-05-04; it fell by 5.9 points at 2026-03-01 ([channel_label_validation.json → flex_share_steps](../results/channel_label_validation.json)). The largest step comes two weeks after congestion pricing began, so it needs a closer look ([presentation_numbers.json → january_2025_step](../results/presentation_numbers.json)):
+
+| Area, weeks of 2025-01-05 → 2025-01-19 | App pickups | Street hails |
+|---|---|---|
+| CBD | 45,477 → 110,403 | 353,851 → 381,403 |
+| Manhattan outside the CBD | 22,160 → 45,729 | 207,590 → 207,913 |
+| Outer boroughs | 9,572 → 26,123 | 4,785 → 4,654 |
+
+- Within two weeks, app pickups about doubled or more in every area, while street hails did not fall. The step adds recorded trips; it does not relabel street hails.
+- The step is the same size for trips that never touch the congestion zone (+10.6 points) as for trips that do (+8.1 to +11.3; [app_share_policy_step.json](../results/app_share_policy_step.json); F6e). The fee difference between taxis and ride-hail cars does not explain it.
+- What caused the step is not known from public sources.
 
 **Growth accounting, 2023 → 2025, mean weekly pickups** ([channel_decomposition.csv](../results/channel_decomposition.csv)):
 
 | Area | Change in total | From app trips | From street hails |
 |---|---|---|---|
-| CBD | +99,063 | +104,958 | −5,896 |
-| Manhattan outside the CBD | +50,537 | +51,230 | −692 |
-| Outer boroughs (contracted block excluded) | 8,277 → 51,803 | +42,811 | +715 |
+| All zones (contracted programme excluded) | +191,909 (703,268 → 895,177) | +199,068 | −7,159 |
+| CBD | +99,063 (418,560 → 517,623) | +104,958 | −5,896 |
+| Manhattan outside the CBD | +50,537 (215,677 → 266,214) | +51,230 | −692 |
+| Outer boroughs (contracted programme excluded) | +43,526 (8,277 → 51,803, about six-fold) | +42,811 | +715 |
 
 Over January–September 2026 against the same weeks of 2023:
 - CBD street hails are 12.0% lower (−48,303 a week);
@@ -50,7 +63,7 @@ Over January–September 2026 against the same weeks of 2023:
 
 The **accounting net ratio** is the net change in pickups per app pickup added. It is arithmetic on observed changes, **not** an incrementality estimate. It is 0.944 in the CBD for 2023 → 2025 and 0.574 for Jan–Sep 2023 → 2026.
 
-**A contracted programme that ended.** One block of outer-borough "street hails" is in fact a centrally paid trip programme on CMT-equipped cabs ([cmt_block_diagnosis.json](../results/cmt_block_diagnosis.json)):
+**A contracted trip programme that ended.** One block of outer-borough "street hails" is in fact a centrally paid trip programme on cabs with CMT meters ([cmt_block_diagnosis.json](../results/cmt_block_diagnosis.json)):
 - 93% carry a non-standard rate code (99);
 - 99% have a single rider;
 - 3% are tipped;
@@ -62,11 +75,9 @@ It ended at the end of May 2026, and no other vendor picked it up. It is reporte
 - Across Manhattan zones, 2023 → 2025 growth correlates with the June–September 2026 Uber/Lyft share at r = 0.92 ([app_dispatch_summary.json](../results/app_dispatch_summary.json)). This is a correlation, not an effect.
 - Yellow app trips grew from 0.75% to 10.86% of all app-dispatched CBD trips, yellow plus Uber/Lyft FHV (January 2023 → January 2026; [cross_platform_monthly.csv](../results/cross_platform_monthly.csv)).
 
-**Supply** ([supply_monthly.csv](../results/supply_monthly.csv)). The TLC's monthly reports show the yellow fleet supplying more cab-days at a constant intensity:
-- 104,422 yellow trips per day in 2023 and 131,133 in 2025;
-- active cabs per day 7,036 → 8,722.5;
-- trips per cab-day 14.85 → 15.02;
-- hours per cab-day 8.28 → 8.61.
+**Supply** ([supply_monthly.csv](../results/supply_monthly.csv), [presentation_numbers.json → supply](../results/presentation_numbers.json)). The TLC's monthly reports show the yellow fleet supplying more cab-days at a steady intensity:
+- from 2023 to 2025, trips per day rose 25.6% (104,422 → 131,133) and active cabs per day 24.0% (about 7,040 → 8,720);
+- trips per cab-day stayed between 14.0 and 15.0 in 2023–2026 (14.85, 14.02, 15.02, and 14.00 for January–July 2026).
 
 The trip records alone cannot say whether app dispatch brought the extra cabs back or the returning cabs took app trips.
 
@@ -74,7 +85,7 @@ The trip records alone cannot say whether app dispatch brought the extra cabs ba
 
 Every causal design below was pre-registered with an expected direction and a gate before it was run. It was stopped where the gate failed and is reported as found.
 
-**Incrementality of app trips (D2).** Estimates of the share of app trips that are additional range from 0.52 to 2.62 across estimators in the CBD. The primary DML gives 0.90 [0.74, 1.06]. The estimators disagree beyond their intervals, and one lead placebo fails, so incrementality is not identified from these data ([incrementality_dml.json](../results/incrementality_dml.json); F6c).
+**Incrementality of app trips (D2).** Estimates of the share of app trips that are additional range from 0.52 to 2.62 across estimators in the CBD. The primary DML gives 0.90 [0.74, 1.06]. The estimators disagree beyond their intervals, and the lead placebo fails in Manhattan outside the CBD, so incrementality is not identified from these data ([incrementality_dml.json](../results/incrementality_dml.json); F6c).
 - The primary estimator is double machine learning with LightGBM nuisances, time-blocked cross-fitting and zone-clustered errors.
 - Values above 1 in several estimators mean street hails and app trips rise and fall together within a zone-week: shared local demand shocks, not displacement.
 - The DoubleML panel estimator is the median of 25 fold draws (0.52, range 0.49–0.56).
@@ -104,7 +115,7 @@ A log difference against a fast-growing small-zone average reads their growth as
 
 **How it was caught.**
 1. The pre-trend test failed (p = 2.7e−10). A size simulation showed the pre-registered F test rejects 56% of the time at 5% in this design, whereas the Hotelling-corrected test has about the right size, 9.5% ([pretrend_test_size.json](../results/pretrend_test_size.json)). The real p-values are far below either, so the failure is real.
-2. The frozen forecaster, which knows nothing about control zones, put CBD pickups at +2.0% against its forecast after the policy, while the pre-registered event-study path averaged −40.5% (F4d; [figure_stats_phase4.json](../results/figure_stats_phase4.json)).
+2. The frozen forecaster, which knows nothing about control zones, put CBD pickups at +2.0% against its forecast after the policy, while the mean of the monthly event-study coefficients of the pre-registered specification was −40.5% (F4d; [figure_stats_phase4.json](../results/figure_stats_phase4.json)).
 3. The control group's growth was traced to the dispatch channel (C1).
 
 **The lesson.** A DiD on counts needs its weighting and its control group's composition examined before its p-value is.
@@ -119,15 +130,18 @@ A log difference against a fast-growing small-zone average reads their growth as
 **The policy date (Phase 3).** A LightGBM frozen at 2024-12-31 showed no CBD-specific break.
 - In the first four weeks, actual pickups ran 6.3% above forecast in the CBD and 5.3% above outside it ([figure_stats_phase3.json](../results/figure_stats_phase3.json)).
 - CBD rolling WAPE did not rise.
-- The single CBD CUSUM alarm (2025-01-19) is the kind the 2024 calibration year also produced (one alarm, 2024-09-10, up; the CUSUM threshold allows one a year) ([drift_detection.json](../results/drift_detection.json); F3).
+- The first CBD CUSUM alarm (2025-01-19), the only one in the first twelve months, is the kind the 2024 calibration year also produced (one alarm, 2024-09-10, up; the CUSUM threshold allows one a year) ([drift_detection.json](../results/drift_detection.json); F3).
+- Two further CBD alarms, both downward, came on 2026-01-26 and 2026-02-23. Both follow snowstorms: 7.5 inches of snow fell on 2026-01-25 and 5.5 inches on 2026-02-23 (3.6 the day before). On those days CBD pickups ran 50.6% and 72.7% below the frozen forecast ([presentation_numbers.json → alarm_weather_check](../results/presentation_numbers.json), [alarm_weather_check.csv](../results/alarm_weather_check.csv)). The monitor flagged two storms within a day.
 
 **Three shocks, one monitor (C5)**, each with a 12-month frozen model ([shock_comparison.json](../results/shock_comparison.json); F3b):
 
-| Shock | CBD vs forecast, first 28 days | First CBD alarm |
+| Shock | CBD vs forecast, first 28 days | First CBD alarm after the event |
 |---|---|---|
 | COVID-19 | −56.0% | day 13 |
-| Metered-fare increase (Dec 2022) | +9.7% | day 162 |
-| Congestion pricing | +7.3% | day 354 |
+| Metered-fare increase (Dec 2022) | +9.7% | day 162 (2023-05-30) |
+| Congestion pricing | +7.3% | day 354 (2025-12-25) |
+
+COVID-19 was flagged on day 13. The fare increase and congestion pricing produced no alarm for five and eleven months; the later alarms fall on the dates given and are not detections of either event. The +7.3% differs from the +6.3% above because this comparison uses a model trained on the 12 months before each event, while the main monitor uses the model trained on 2022–2024.
 
 **Adaptation (Phase 5).**
 Four strategies were compared on day-ahead forecasts with origins 2025-02-01 → 2026-09-30, scored with the Phase-2 metrics and a common MASE scale ([adaptation.csv](../results/adaptation.csv), [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv); F5). Two further rows are not strategies: a sensitivity (S1e) and the frozen seasonal naive as the naive reference.
@@ -146,7 +160,7 @@ Table notes. Quarters are assigned by origin date, so the first quarter, 2025-Q1
 - **S1 vs S0, and why.** S1 is ahead by 0.23 pp of WAPE over all modeled zones and 0.29 pp in the CBD; both bootstrap intervals exclude zero. In Manhattan outside the CBD the two are not distinguishable. S1 changes two things at once, the refit frequency and the training window, so S1e (the same monthly refits on S0's expanding window) separates them. Retraining on S0's window gains 0.24 pp over S0 (interval excludes zero); switching that retraining to the sliding window changes WAPE by 0.01 pp (interval includes zero). The gain is from retraining, not from the window.
 - **S4.** Chronos-2 is not distinguishable from S0 or S1 over all zones or in the CBD. It is the best of the four in the outer-borough zones (0.395 against 0.403 for S1 and 0.412 frozen) and at the airports (0.175 against 0.179 for S1, interval excludes zero), and distinguishably behind S0 and S1 in Manhattan outside the CBD (0.147 against 0.142).
 - **S6 is a negative result.** The pre-registered expectation (Amendment 4, D6) was that channel-aware features would remove most of the post-2025 bias. They did not: S6 has the largest under-forecast and the highest WAPE of the four, distinguishably worse than S0 and S1. The features are trailing app shares, so they describe the channel mix after it has moved; they do not anticipate the level of demand.
-- **Every strategy errs the same way at the same time.** All four rise together in 2026-Q1 (WAPE 0.187–0.191, [adaptation.csv](../results/adaptation.csv)); no strategy avoids it, so it is not an adaptation failure of one model.
+- **Every strategy errs the same way at the same time.** All four rise together in 2026-Q1 (WAPE 18.7–19.1%, against 16.2–16.4% in 2025-Q1; [adaptation.csv](../results/adaptation.csv)); no strategy avoids it, so it is not an adaptation failure of one model. Part of the rise is the two snowstorms: the four days with at least 2 inches of snow carry 9–11% of the quarter's absolute error, and without them the quarter's WAPE is 17.0–17.6% ([presentation_numbers.json → alarm_weather_check](../results/presentation_numbers.json)). The cause of the remainder is not determined.
 - **Intervals.** With rolling 12-week conformal calibration, every strategy covers 0.80–0.81 of hours with its 80% interval; raw intervals cover 0.74–0.78.
 
 **Recommendation for the forecasting system.** Retrain monthly (S1). The LightGBM refit takes a median of 384 s on the 12-core local CPU, and a month of S1 (refit plus that month's daily forecasts) a median of 411 s (23 refits, [adaptation_summary.json → retrain_cost](../results/adaptation_summary.json)). The gain over the frozen model is small (0.23 pp of WAPE) but distinguishable over the whole window, though not in every quarter (S0 is ahead in 2025-Q1), and S1 also has the smallest bias of the four strategies. The sliding 24-month window is preferred to the expanding one because the two are equally accurate and the expanding refit takes about twice as long (median 720 s). Chronos-2 needs no retraining but a GPU at every origin (a median of 250 s per month of daily origins on an L4); it is not distinguishable from S1 over all zones and is ahead only in the outer boroughs and at the airports. Channel features should not be added in their current trailing form.
@@ -191,10 +205,11 @@ The incrementality of app dispatch, however, could be measured with a designed e
 
 - Cook, C., et al. (2025, rev. 2026). *The Network-Wide Effects of Congestion Pricing: Evidence from New York City.* NBER Working Paper 33584. https://www.nber.org/papers/w33584. Road speeds from Google Maps data.
 - Zhang, Y., Sang, Y., & Wu, M. *Congestion Pricing in New York City: Effects on Ride-Hailing, Transit, and Welfare.* SSRN 5549128; also listed as "Congestion pricing in New York city: Effects on ride-hailing and transit" on ScienceDirect (S0965856426001072). Uber and Lyft trips and subway ridership.
-- <!-- THIRD STUDY: to be confirmed with Stanley (PLAN cites three; only two identified) -->
+- Pandey, A., Guler, I., & Gayah, V. (2026). *The Effect of the New York City Congestion Toll on Trips Served by Transportation Network Companies.* Findings. https://doi.org/10.32866/001c.155761. High-volume FHV trips, first 14 weeks of 2024 and 2025, difference-in-differences of log(1 + trips), CBD zones against Manhattan zones outside it.
+- Li, D., Zhuang, D., Li, Y., Shen, C., Cao, N., Zheng, Y., Wang, S., & Zhao, J. (2026). *Public transit gains and spatially uneven travel demand changes after NYC congestion pricing.* arXiv:2606.17530. https://arxiv.org/abs/2606.17530. Counterfactual demand forecasts from time-series foundation models.
 
 **What overlaps and what is new.**
-- **Overlap.** Those studies estimate congestion-pricing effects on road speeds and on ride-hailing and transit over the first months.
+- **Overlap.** Those studies estimate congestion-pricing effects on road speeds and on ride-hailing and transit over the first months. The CBD-versus-rest-of-Manhattan design is standard in this literature. With 24 pre-policy months, the same design fails its pre-trend test here, for yellow taxis and for high-volume FHV.
 - **New here:**
   - yellow taxis over 20 post-policy months;
   - the dispatch-channel decomposition;

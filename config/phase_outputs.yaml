@@ -108,6 +108,9 @@
 7:
   - README.md
   - reports/analysis.md
+  - reports/appendix.md
+  - results/presentation_numbers.json
+  - results/alarm_weather_check.csv
   - reports/figures/F4b_effect_map.html
   - .github/workflows/ci.yml
 6:                                            # Amendment 4 / 4a (D0-D5b) and Amendment 3 C6

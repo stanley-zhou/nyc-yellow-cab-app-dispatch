@@ -157,6 +157,23 @@ experiment:                                   # A4 / Amendment 5: experiment des
   period: ["2026-03-01", "2026-05-30"]        # variance period: last months before the June-2026
                                               # files (request_source, CMT break) and Lyft's entry
   target_theta_mde: [0.2, 0.1]                # MDEs of theta to plan for
+presentation:                                 # Amendment 6: descriptive numbers for the report
+  accounting_comparison: 2023_to_2025         # channel_decomposition.csv row of the headline
+  step_weeks: ["2025-01-05", "2025-01-19"]    # A2: the January-2025 app step, week before / after
+  step_areas: [cbd, manhattan_non_cbd, other]
+  ride_market_years: ["2023", "2025"]         # B3g: CBD yellow vs Uber + Lyft, yearly weekly means
+  ride_market_platform_months: ["2026-06", "2026-09"]
+  supply_years: ["2023", "2025"]              # A11: year-on-year supply comparison
+  alarm_check:                                # A3: weather around the 2026 CUSUM alarms
+    first_day: "2026-01-01"                   # 2026-Q1 (the quarter of the error rise)
+    last_day: "2026-03-31"
+    days_before_alarm: 3                      # alarm day and the days before it
+    storm_snowfall_in: 2.0                    # a "storm day": daily snowfall >= this (inches)
+  uber_auto_dispatch: "2023-08-29"            # hero figure: amNY, 2023-08-29 (PLAN Amendment 4)
+  external_app_share:                         # C: TLC Commissioner, City Council, 2025-02-10
+    year: "2024"
+    range: [0.05, 0.10]
+    source: "https://citymeetings.nyc/city-council/2025-02-10-1000-am-committee-on-transportation-and-infrastructure/chapter/update-on-the-e-hail-program-for-yellow-and-green-taxis"
 hvfhv:                                        # Amendment 4: streaming aggregates (raw files not kept)
   months: ["2023-01", "2026-09"]              # Amendment 4 (extended for D4)
   out_dir: data/processed/hvfhv               # monthly aggregate Parquet files

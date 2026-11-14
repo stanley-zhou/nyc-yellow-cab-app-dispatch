@@ -18,6 +18,10 @@
   "not_distinguishable_from_lowest_all_zones": [
     "lgbm_quantile"
   ],
+  "title_lead_model": "chronos2_weather_past",
+  "lead_vs_lgbm_not_distinguishable": true,
+  "lead_error_reduction_vs_naive_pct": 31.488932253888315,
+  "title": "2024 day-ahead error over all modeled zones: Chronos-2 with past weather 16.5% WAPE and LightGBM 16.7% (not distinguishable), about 31% below the seasonal naive (24.1%). Sensitivity: Chronos-2 also given the target day's observed weather, 16.5%",
   "f2b_zone_id": 161,
   "f2b_hours": 168,
   "f2b_hours_inside_raw_80": 131

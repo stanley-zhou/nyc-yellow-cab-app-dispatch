@@ -22,6 +22,33 @@
         "date": "2024-09-10",
         "side": "up"
       }
+    ],
+    "cusum_alarms_2026": [
+      {
+        "group": "cbd",
+        "date": "2026-01-26",
+        "side": "down",
+        "max_snowfall_in_window": 7.496,
+        "snowiest_day": "2026-01-25",
+        "storm_days_in_window": [
+          "2026-01-25"
+        ],
+        "min_actual_vs_forecast_pct": -50.59017700674091,
+        "day_of_min": "2026-01-25"
+      },
+      {
+        "group": "cbd",
+        "date": "2026-02-23",
+        "side": "down",
+        "max_snowfall_in_window": 5.483999999999999,
+        "snowiest_day": "2026-02-23",
+        "storm_days_in_window": [
+          "2026-02-22",
+          "2026-02-23"
+        ],
+        "min_actual_vs_forecast_pct": -72.71711135855567,
+        "day_of_min": "2026-02-23"
+      }
     ]
   },
   "non_cbd": {
@@ -35,5 +62,5 @@
     },
     "rolling_bias": null
   },
-  "title": "No CBD-specific break: in the four weeks from 2025-01-05 CBD pickups ran 6.3% above the frozen forecast, non-CBD 5.3% above; the one CBD CUSUM alarm (day 14) is like the 2024 calibration alarm (2024-09-10)"
+  "title": "No CBD-specific break: in the four weeks from 2025-01-05 CBD pickups ran 6.3% above the frozen forecast, the rest of the city 5.3% above. The first CBD alarm (day 14) is like the 2024 calibration alarm (2024-09-10); the two alarms of 2026 follow snowstorms (25 Jan 2026 and 23 Feb 2026)"
 }

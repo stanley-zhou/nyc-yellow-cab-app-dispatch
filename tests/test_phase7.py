@@ -51,3 +51,29 @@ def test_compact_into_drops_stale_objects_and_verifies_the_copy(tmp_path: Path) 
     chk = duckdb.connect(str(tmp_path / "fresh.duckdb"), read_only=True)
     assert chk.execute("select count(*) from stg_b").fetchone()[0] == 500
     chk.close()
+
+
+def test_presentation_numbers_are_consistent_with_their_sources() -> None:
+    """Amendment 6: the derived report numbers add up and match the files they come from."""
+    import json
+
+    import pandas as pd
+
+    res = ROOT / "results"
+    pn = json.loads((res / "presentation_numbers.json").read_text())
+    for g, r in pn["citywide_accounting"]["by_area"].items():
+        assert abs(r["app_change"] + r["street_change"] - r["change"]) < 1.0, g
+        assert abs(r["end_mean_weekly"] / r["base_mean_weekly"] - 1 - r["change_pct"]) < 1e-5
+    w = pd.read_csv(res / "channel_weekly.csv").set_index(["week_start", "zone_group"])
+    step = pn["january_2025_step"]
+    b, a = step["weeks"]
+    for g, r in step["by_area"].items():
+        assert r["app_before"] == w.loc[(b, g), "app"] and r["app_after"] == w.loc[(a, g), "app"]
+        assert r["street_after"] == w.loc[(a, g), "street"]
+    ch = pn["preregistered_checks"]
+    assert ch["n_passed"] + ch["n_stopped"] == ch["n_designs"] == len(ch["rows"])
+    for row in ch["rows"]:
+        assert (ROOT / row["file"]).exists()
+    storm = set(pn["alarm_weather_check"]["storm_days"])
+    for al in pn["alarm_weather_check"]["alarms_2026"]:
+        assert set(al["storm_days_in_window"]) <= storm

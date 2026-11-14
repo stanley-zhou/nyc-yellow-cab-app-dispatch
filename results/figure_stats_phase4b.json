@@ -9,7 +9,7 @@
     ],
     "r_manhattan": 0.9190677862394994,
     "r_all": 0.8997752147207099,
-    "title": "The fastest-growing donut-control zones are 71-83% Uber/Lyft-dispatched vs a CBD median of 27%; growth vs app share r = 0.92 in Manhattan"
+    "title": "The fastest-growing control zones (Manhattan outside the CBD) are 71-83% Uber/Lyft-dispatched vs a CBD median of 27%; growth vs app share r = 0.92 in Manhattan"
   },
   "c5": {
     "covid": {
@@ -28,7 +28,8 @@
         "delay_days": 162,
         "n_alarms": 1
       },
-      "first_28_days_pct": 0.09686173526295062
+      "first_28_days_pct": 0.09686173526295062,
+      "months_without_alarm": 5
     },
     "congestion_pricing": {
       "cusum_first_alarm": {
@@ -37,9 +38,10 @@
         "delay_days": 354,
         "n_alarms": 1
       },
-      "first_28_days_pct": 0.07344371334528052
+      "first_28_days_pct": 0.07344371334528052,
+      "months_without_alarm": 11
     },
-    "title": "One CUSUM monitor, three shocks (CBD): COVID-19 day 13; Metered-fare increase (+23%) day 162; Congestion pricing day 354"
+    "title": "One CUSUM monitor, three shocks (CBD): COVID-19 was flagged on day 13; the metered-fare increase and congestion pricing produced no alarm for five and eleven months (later alarms: 2023-05-30, 2025-12-25)"
   },
   "c3": {
     "post_gap_mean_pct": -0.012301720397923533,

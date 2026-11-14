@@ -63,5 +63,13 @@
     "gap_ci_hi": 0.001107,
     "distinguishable": false
   },
-  "title": "Feb 2025\u2013Sep 2026: monthly retraining has the lowest day-ahead error (WAPE 16.2% vs 16.4% frozen); app-share features deepen the under-forecast (bias -2.9% vs -2.3% frozen)"
+  "q1_2026_wape_range": [
+    0.18681110260890751,
+    0.19078081636382324
+  ],
+  "storm_days": [
+    "2026-01-25",
+    "2026-02-23"
+  ],
+  "title": "Feb 2025\u2013Sep 2026: every strategy's error rises and falls at the same times, most in early 2026, when two snowstorms hit (left). Monthly retraining has the lowest WAPE, 16.2% against 16.4% for the frozen model, a gap of 0.2 points whose 95% interval excludes zero (right)"
 }

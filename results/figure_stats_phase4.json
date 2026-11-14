@@ -95,7 +95,9 @@
   "counterfactual": {
     "mean_post_monthly_rel": 0.019826465095238093,
     "did_main_post_mean": -0.5183644333333333,
-    "did_weighted_post_mean": -0.11957829352380953
+    "did_weighted_post_mean": -0.11957829352380953,
+    "did_static_equal_weight_pct": -0.3464456293682041,
+    "did_static_weighted_pct": -0.05202218021984467
   },
   "permutation": {
     "demand_weighted": {
@@ -137,9 +139,9 @@
   },
   "title_t4": "Weighted DiD, CBD pickups -5.2% [-12.8%, +3.0%]: inconclusive. Pre-trends fail; outside every fake-date placebo (-3.5% to +0.8%)",
   "title_t4b": "CBD zones: median post/pre change in weekly pickups -5.6% relative to the control group's aggregate change",
-  "title_t4c": "95% CI includes zero in 10 of 15 trip subsets for weighted demand and in 4 of 8 for within-CBD speed (vs the donut)",
-  "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the event-study paths say -40.5% (pre-registered) and -11.3% (volume-weighted)",
-  "title_t4e": "Permutation placebos: weighted demand -0.053 (0% of placebos as large, MDE 0.033); speed vs donut +0.019 (6%, MDE 0.028); vs Brooklyn/Queens the placebos themselves centre on -0.086",
-  "title_t4f": "Within-CBD speed +1.9% vs the donut, -4.0% vs Brooklyn/Queens; that gap fell from +15.4% to -2.6% before the policy; both fail the pre-trend test",
-  "title_t4i": "Leave one zone out: weighted -8.6% to -4.3%; equal-weight (pre-registered) -36.3% to -32.0%"
+  "title_t4c": "95% CI includes zero in 10 of 15 trip subsets for weighted demand and in 4 of 8 for within-CBD speed",
+  "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the difference-in-differences estimates were -34.6% with equal zone weights, as pre-registered, and -5.2% with zones weighted by volume",
+  "title_t4e": "Permutation placebos: weighted demand -0.053 (0% of placebos as large, MDE 0.033); speed vs rest of Manhattan +0.019 (6%, MDE 0.028); vs Brooklyn/Queens the placebos themselves centre on -0.086",
+  "title_t4f": "Within-CBD speed +1.9% vs Manhattan outside the CBD, -4.0% vs Brooklyn/Queens; that gap fell from +15.4% to -2.6% before the policy; both fail the pre-trend test",
+  "title_t4i": "Leave one zone out: zones weighted by volume -8.6% to -4.3%; equal zone weights (as pre-registered) -36.3% to -32.0%"
 }

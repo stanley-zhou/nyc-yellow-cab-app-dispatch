@@ -204,9 +204,9 @@ MODEL_STYLE: dict[str, tuple[str, str]] = {
     "chronos2_weather_future": ("Chronos-2 zero-shot (weather also over target day)",
                                 tint(PALETTE["foundation"], 0.45)),
 }
-GROUP_LABELS: dict[str, str] = {"all": "All modeled\nzones", "cbd": "CBD",
-                                "manhattan_non_cbd": "Manhattan\nnon-CBD",
-                                "airports": "Airports", "other": "Other\nzones"}
+GROUP_LABELS: dict[str, str] = {"all": "All modeled\nzones", "cbd": "Congestion\nzone (CBD)",
+                                "manhattan_non_cbd": "Manhattan\noutside the CBD",
+                                "airports": "Airports", "other": "Outer\nboroughs"}
 
 
 def f2_model_comparison(wape: pd.DataFrame, title: str, note: str, out_base: Path) -> list[Path]:
@@ -222,19 +222,20 @@ def f2_model_comparison(wape: pd.DataFrame, title: str, note: str, out_base: Pat
                              layout="constrained")
     for ax, g in zip(axes, groups, strict=True):
         d = wape[wape["zone_group"] == g].set_index("model")["value"]
-        vmax = float(d.max()) * 1.45   # each panel compares models within one zone group
+        vmax = float(d.max()) * 100 * 1.45   # each panel compares models within one group
         ys = range(len(models))[::-1]
         for y, m in zip(ys, models, strict=True):
             if m not in d:
                 continue
-            ax.barh(y, d[m], color=MODEL_STYLE[m][1], height=0.7, edgecolor="white",
+            ax.barh(y, d[m] * 100, color=MODEL_STYLE[m][1], height=0.7, edgecolor="white",
                     linewidth=2)
-            ax.annotate(f"{d[m]:.4f}", xy=(d[m], y), xytext=(3, 0), textcoords="offset points",
+            ax.annotate(f"{d[m] * 100:.1f}%", xy=(d[m] * 100, y), xytext=(3, 0),
+                        textcoords="offset points",
                         va="center", fontsize=8, color=PALETTE["text"])
         ax.set_title(GROUP_LABELS[g], fontsize=10)
         ax.set_xlim(0, vmax)
         ax.grid(axis="y", visible=False)
-        ax.set_xlabel("WAPE")
+        ax.set_xlabel("WAPE (%)")
     axes[0].set_yticks(list(range(len(models)))[::-1])
     axes[0].set_yticklabels([MODEL_STYLE[m][0] for m in models], fontsize=8.5)
     # wrapped so the title never widens the canvas beyond the panels (tight bounding box);
@@ -276,7 +277,7 @@ def f2b_fan_chart(fan: pd.DataFrame, zone_name: str, title: str, out_base: Path)
 
 
 F3_GROUPS: dict[str, tuple[str, str]] = {"cbd": ("CBD", PALETTE["cbd"]),
-                                         "non_cbd": ("Non-CBD", PALETTE["non_cbd"])}
+                                         "non_cbd": ("Rest of the city", PALETTE["non_cbd"])}
 
 
 def f3_error_over_time(errors: pd.DataFrame, policy_date: str,
@@ -295,13 +296,13 @@ def f3_error_over_time(errors: pd.DataFrame, policy_date: str,
     fig, axes = plt.subplots(2, 1, figsize=SIZES["small_multiples"], sharex=True,
                              layout="constrained")
     p = pd.Timestamp(policy_date)
-    panels = [("wape", "Rolling 4-week WAPE"),
+    panels = [("wape", "Rolling 4-week WAPE (%)"),
               ("log_actual_over_forecast", "Actual vs forecast (%; + = above)")]
     for ax, (col, ylabel) in zip(axes, panels, strict=True):
         ends = []
         for g, (label, color) in F3_GROUPS.items():
             d = errors[errors["zone_group"] == g].sort_values("date")
-            y = d[col] if col == "wape" else (np.exp(d[col]) - 1) * 100
+            y = d[col] * 100 if col == "wape" else (np.exp(d[col]) - 1) * 100
             post = (d["date"] >= p).to_numpy()
             pre = ~post | (d["date"] == d["date"][post].min()).to_numpy()   # joins the segments
             ax.plot(d["date"][pre], y[pre], color=tint(color), linewidth=1.4)
@@ -315,7 +316,7 @@ def f3_error_over_time(errors: pd.DataFrame, policy_date: str,
         for i, (date, mlabel, mcolor) in enumerate(markers):
             x = mdates.date2num(pd.Timestamp(date))
             ax.axvline(x, color=mcolor, linestyle=":", linewidth=1.1, zorder=3)
-            if ax is axes[0]:   # labels in the empty band above zero, clear of the lines
+            if ax is axes[0] and mlabel:   # labels in the empty band above zero
                 ax.annotate(mlabel, xy=(x, 0.10 + 0.08 * (i % 2)),
                             xycoords=("data", "axes fraction"), xytext=(4, 0),
                             textcoords="offset points", fontsize=8, color=mcolor, va="center")
@@ -505,7 +506,7 @@ def f4d_counterfactual_vs_did(cf: pd.DataFrame, paths: list[tuple[str, pd.DataFr
     ins = cf["in_sample"].to_numpy()
     ax.plot(x[ins], y[ins], color=tint(PALETTE["model"]), linewidth=1.4, marker="o", ms=3)
     ax.plot(x[~ins], y[~ins], color=PALETTE["model"], linewidth=1.6, marker="o", ms=3)
-    ends = [(float(y.iloc[-1]), "Forecast counterfactual", PALETTE["model"])]
+    ends = [(float(y.iloc[-1]), "Forecast counterfactual\n(frozen model)", PALETTE["model"])]
     for label, es, color in paths:
         es = es[es["k"] >= int((x.min().to_period("M") - pd.Timestamp(policy_date)
                                 .to_period("M")).n)]
@@ -579,8 +580,9 @@ def f4g_app_dispatch(zones, share: pd.DataFrame, title: str, note: str,
     ax.set_axis_off()
     ax.set_aspect("equal")
     d = share.dropna(subset=["share_app", "growth_log"])
-    groups = [(~d["is_cbd"] & ~d["is_donut_control"], "Other zones", tint(PALETTE["non_cbd"], 0.6)),
-              (d["is_donut_control"], "Donut control", PALETTE["non_cbd"]),
+    groups = [(~d["is_cbd"] & ~d["is_donut_control"], "Outer boroughs and airports",
+               tint(PALETTE["non_cbd"], 0.6)),
+              (d["is_donut_control"], "Manhattan outside the CBD (control)", PALETTE["non_cbd"]),
               (d["is_cbd"], "CBD", PALETTE["cbd"])]
     for sel, label, color in groups:
         sx.scatter(d.loc[sel, "share_app"] * 100, d.loc[sel, "growth_log"], s=18, color=color,
@@ -620,7 +622,7 @@ def f3b_three_shocks(daily: pd.DataFrame, events: list[tuple[str, str, dict | No
         ax.axvline(0, color=PALETTE["text"], linestyle="--", linewidth=1.0)
         if alarm:
             ax.axvline(alarm["delay_days"], color=PALETTE["cbd"], linestyle=":", linewidth=1.2)
-            ax.annotate(f"CUSUM alarm (CBD), day {alarm['delay_days']}",
+            ax.annotate(f"first CBD alarm after the event, day {alarm['delay_days']}",
                         xy=(alarm["delay_days"], 0.08), xycoords=("data", "axes fraction"),
                         xytext=(4, 0), textcoords="offset points", fontsize=8,
                         color=PALETTE["cbd"])
@@ -651,7 +653,9 @@ def f4i_leave_one_out(loo: pd.DataFrame, full: dict[str, float], title: str, not
         ax.plot([f, f], [i - 0.3, i + 0.3], color=PALETTE["cbd"], linewidth=2.2)
     ax.axvline(0, color=PALETTE["muted_text"], linewidth=0.8)
     ax.set_yticks(range(len(specs)))
-    ax.set_yticklabels([s.replace("_", " ") for s in specs])
+    names = {"equal_weight": "equal zone weights\n(as pre-registered)",
+             "pre_volume_weighted": "zones weighted\nby volume"}
+    ax.set_yticklabels([names.get(s, s.replace("_", " ")) for s in specs])
     ax.set_ylim(-0.6, len(specs) - 0.4)
     ax.set_xlabel("Static DiD effect on CBD pickups, one zone dropped (%)")
     ax.grid(axis="y", visible=False)
@@ -706,7 +710,7 @@ def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title
                              layout="constrained")
     layers = [("app", "App dispatch (any e-hail app)", PALETTE["app"]),
               ("street", "Street hail", PALETTE["street"]),
-              ("block", "CMT contracted block", PALETTE["baseline"])]
+              ("block", "Contracted trip programme", PALETTE["baseline"])]
     for i, (ax, (g, name)) in enumerate(zip(np.atleast_1d(axes), panels, strict=True)):
         d = weekly[weekly["zone_group"] == g].sort_values("week_start")
         use = [(k, lab, c) for k, lab, c in layers if d[k].sum() > 0]
@@ -714,7 +718,7 @@ def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title
                      labels=[lab for _, lab, _ in use], colors=[c for _, _, c in use],
                      edgecolor="white", linewidth=0.3)
         ax.set_title(name, fontsize=10, loc="left")
-        ax.set_ylabel("Pickups per week (thousands)")
+        ax.set_ylabel("Pickups per week (thousands; own axis per panel)")
         ax.set_xlim(d["week_start"].min(), d["week_start"].max())
         ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
@@ -846,7 +850,8 @@ def f6e_app_share_step(weekly: pd.DataFrame, es: pd.DataFrame, title: str, note:
         a1.plot(x["week_start"], x["app_share"] * 100, color=c, linestyle=ls, linewidth=1.4,
                 label=t.replace("_", " "))
     a1.set_ylabel("App share of pickups (%)")
-    a1.legend(frameon=False, fontsize=8, loc="upper left", title="Trip vs CBD", title_fontsize=8)
+    a1.legend(frameon=False, fontsize=8, loc="upper left", title="Trip vs the congestion zone",
+              title_fontsize=8)
     a1.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
     a1.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
     policy_line(a1, label=True)
@@ -886,47 +891,79 @@ def f6_taxi_vs_fhv(series: list[tuple[str, pd.DataFrame, str]], policy_date: str
 
 
 def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days: int,
-                  x_range: tuple[str, str], eval_start: str, title: str, note: str,
-                  out_base: Path) -> list[Path]:
-    """F5 (Phase 5, D6): rolling `days`-day WAPE (top) and rolling bias as % of actual pickups
-    (bottom) per strategy, CBD (left) and all modeled zones (right), on the Phase-3 axes
-    (`x_range`) with the policy line; the days before `eval_start` (outside the evaluation
-    window of every metric) are shaded and explained in the note (an in-panel label would cross
-    the policy line). Direct labels at the line ends.
-    `series`: (strategy key, label, colour)."""
+                  x_range: tuple[str, str], eval_start: str, gaps: pd.DataFrame,
+                  areas: list[tuple[str, str]], events: list[tuple[str, str]], title: str,
+                  note: str, out_base: Path) -> list[Path]:
+    """F5 (Phase 5): left, rolling `days`-day WAPE (top) and bias as % of actual pickups
+    (bottom) per strategy, CBD and all modeled zones, on the Phase-3 axes (`x_range`), days
+    before `eval_start` (not scored) shaded, `events` (date, label) as dotted lines; right, the
+    WAPE gap of each strategy to the first one in `series` (the frozen model) with its paired
+    bootstrap 95% interval, by area (dots with whiskers, one axis in percentage points).
+    `series`: (strategy key, label, colour); `areas`: (zone group, label)."""
     use_style()
     lo, hi = (pd.Timestamp(x) for x in x_range)
     ev = pd.Timestamp(eval_start)
-    fig, axes = plt.subplots(2, 2, figsize=SIZES["small_multiples"], sharex=True,
-                             layout="constrained")
+    fig = plt.figure(figsize=(12.5, 6.6), layout="constrained")
+    gs = fig.add_gridspec(2, 3, width_ratios=[1.0, 1.0, 0.95])
+    axes = np.array([[fig.add_subplot(gs[i, j]) for j in range(2)] for i in range(2)])
+    for ax in axes[0]:
+        ax.sharex(axes[1, 0])
+    gx = fig.add_subplot(gs[:, 2])
     for j, g in enumerate(("cbd", "all")):
         for i, kind in enumerate(("wape", "bias")):
             ax = axes[i, j]
-            ends = []
             for key, label, color in series:
                 x = daily[(daily["strategy"] == key) & (daily["zone_group"] == g)]
                 x = x.sort_values("day").set_index("day")[["abs_err", "err", "y"]].asfreq("D")
                 r = x.rolling(days, min_periods=days).sum()
-                v = (r["abs_err"] if kind == "wape" else r["err"]) / r["y"] * 100
-                v = v.dropna()
-                ax.plot(v.index, v, color=color, linewidth=1.4)
-                ends.append((float(v.iloc[-1]), label, color))
+                v = ((r["abs_err"] if kind == "wape" else r["err"]) / r["y"] * 100).dropna()
+                ax.plot(v.index, v, color=color, linewidth=1.3,
+                        label=label if (i, j) == (0, 0) else None)
             if kind == "bias":
                 ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
             ax.set_ylabel(("WAPE" if kind == "wape" else "Bias") + f", {days // 7}-week (%)")
             if i == 0:
-                ax.set_title("CBD zones" if g == "cbd" else "All modeled zones", fontsize=10,
-                             loc="left")
+                ax.set_title("Congestion zone (CBD)" if g == "cbd" else "All modeled zones",
+                             fontsize=10, loc="left")
             ax.set_xlim(lo, hi + pd.Timedelta(days=2))
-            if i == 0 and j == 0:   # headroom so the policy-line label clears the peak
+            if i == 0:   # headroom for the policy and event labels
                 y0, y1 = ax.get_ylim()
-                ax.set_ylim(y0, y1 + 0.12 * (y1 - y0))
+                ax.set_ylim(y0, y1 + 0.18 * (y1 - y0))
             ax.axvspan(lo, ev, color=tint(PALETTE["baseline"], 0.75), zorder=0, linewidth=0)
             policy_line(ax, label=(i == 0 and j == 0), label_y=0.99, side="right")
-            direct_labels(ax, v.index.max() + pd.Timedelta(days=5), ends)
-            ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
+            for k, (d, lab) in enumerate(events):
+                xd = mdates.date2num(pd.Timestamp(d))
+                ax.axvline(xd, color=PALETTE["muted_text"], linestyle=":", linewidth=1.0)
+                if i == 0 and j == 1 and lab and k == 0:
+                    ax.annotate(lab, xy=(xd, 0.99), xycoords=("data", "axes fraction"),
+                                xytext=(-4, -4), textcoords="offset points", ha="right",
+                                va="top", fontsize=8, color=PALETTE["muted_text"])
+            ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
             ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
-    fig.suptitle(textwrap.fill(title, 110), fontsize=11, fontweight="bold", x=0.01, ha="left")
-    fig.supxlabel(textwrap.fill(note, 150), fontsize=8, color=PALETTE["muted_text"], x=0.01,
+    ref = series[0][0]
+    others = [s_ for s_ in series if s_[0] != ref]
+    n = len(others)
+    for i, (g, _) in enumerate(areas):
+        for k, (key, _label, color) in enumerate(others):
+            r = gaps[(gaps["zone_group"] == g) & (gaps["model"] == key)
+                     & (gaps["reference"] == ref)]
+            if r.empty:
+                continue
+            r = r.iloc[0]
+            y = i + (k - (n - 1) / 2) * 0.2
+            gx.errorbar(r["gap"] * 100, y, xerr=[[(r["gap"] - r["gap_ci_lo"]) * 100],
+                                                 [(r["gap_ci_hi"] - r["gap"]) * 100]],
+                        fmt="o", ms=5, color=color, ecolor=color, elinewidth=1.2, capsize=0)
+    gx.axvline(0, color=PALETTE["muted_text"], linewidth=0.8)
+    gx.set_yticks(range(len(areas)), [lab for _, lab in areas])
+    gx.set_ylim(len(areas) + 1.1, -0.5)          # room below the rows for the legend
+    gx.grid(axis="y", visible=False)
+    gx.set_xlabel(f"WAPE gap to the {series[0][1].lower()} (percentage points;\n"
+                  "left of 0 = lower error), 95% interval")
+    gx.set_title("Gap to the frozen model, by area", fontsize=10, loc="left")
+    gx.legend(*axes[0, 0].get_legend_handles_labels(), loc="lower center", ncol=1,
+              frameon=False, fontsize=8.5, title="Strategy", title_fontsize=8.5)
+    fig.suptitle(textwrap.fill(title, 120), fontsize=11, fontweight="bold", x=0.01, ha="left")
+    fig.supxlabel(textwrap.fill(note, 170), fontsize=8, color=PALETTE["muted_text"], x=0.01,
                   ha="left")
     return save(fig, out_base)

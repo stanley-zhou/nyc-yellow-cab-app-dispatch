@@ -117,19 +117,28 @@ def phase2(cfg: dict) -> None:
              "lgbm_wape_change_vs_seasonal_naive": round(lg / base - 1, 4),
              "lowest_wape_model": best,
              "not_distinguishable_from_lowest_all_zones": tied}
-    names = {"seasonal_naive": "seasonal naive", "stat_ets_profile": "AutoETS baseline",
-             "lgbm_quantile": "LightGBM", "chronos2_weather_past": "Chronos-2 (past weather)",
-             "chronos2_weather_future": "Chronos-2 (future weather)"}
-    # the title names the lowest point WAPE and every model whose bootstrap gap to it is not
-    # distinguishable from 0; it implies nothing about the other pairs (all pairs are in
-    # results/wape_gap_bootstrap.csv)
-    title = (f"2024 day-ahead WAPE over all modeled zones: {names[best]} lowest at "
-             f"{allz[best]:.4f}")
-    if tied:
-        listed = " and ".join(f"{names[m]} ({allz[m]:.4f})" for m in tied)
-        title += f"; {listed} not distinguishable from it"
-    title += f"; seasonal naive {base:.4f}"
-    note = (f"Raw forecasts (calibration does not change point forecasts); trained models: "
+    # Amendment 6 (A7): the title leads with the Chronos-2 variant that uses only information
+    # available at forecast time (weather as a past covariate, the primary variant); the
+    # variant that also sees the target day's observed weather is named as a sensitivity
+    lead = f"chronos2_{cfg['chronos']['primary_variant']}"
+    sens = next(m for m in allz.index if m.startswith("chronos2_") and m != lead)
+    g_all = gaps[gaps["zone_group"] == "all"]
+
+    def tied_pair(a: str, b: str) -> bool:
+        r = g_all[(g_all["model"] == a) & (g_all["reference"] == b)]
+        return not bool(r["distinguishable"].iloc[0])
+
+    red = 100 * (1 - allz[lead] / base)
+    stats.update({"title_lead_model": lead, "lead_vs_lgbm_not_distinguishable":
+                  tied_pair("lgbm_quantile", lead), "lead_error_reduction_vs_naive_pct": red})
+    rel = "not distinguishable" if tied_pair("lgbm_quantile", lead) else "distinguishable"
+    title = (f"2024 day-ahead error over all modeled zones: Chronos-2 with past weather "
+             f"{allz[lead] * 100:.1f}% WAPE and LightGBM {lg * 100:.1f}% ({rel}), about "
+             f"{red:.0f}% below the seasonal naive ({base * 100:.1f}%). Sensitivity: Chronos-2 "
+             f"also given the target day's observed weather, {allz[sens] * 100:.1f}%")
+    stats["title"] = title
+    note = (f"WAPE = sum of absolute errors / sum of actual pickups, in %. Raw forecasts "
+            f"(calibration does not change point forecasts); trained models: "
             f"{primary} training window, monthly refit; Chronos-2 zero-shot, "
             f"{cfg['chronos']['context_hours']} h context. "
             "Each panel has its own scale. Not distinguishable: the 95% interval of the WAPE gap "
@@ -194,27 +203,41 @@ def phase3(cfg: dict) -> None:
 
     cal = prim["groups"]["cbd"]["cusum"].get("calibration_alarms", [])
     stats["cbd"]["cusum_calibration_alarms"] = cal
+    storms = json.loads((res / "presentation_numbers.json").read_text())["alarm_weather_check"]
+    later = [a for a in storms["alarms_2026"] if a["group"] == "cbd"]
+    stats["cbd"]["cusum_alarms_2026"] = later
     # wording: Stanley's ruling (Checkpoint 6, Amendment 5) - no CBD-specific break detected
     title = (f"No CBD-specific break: in the four weeks from {cfg['data']['policy_date']} CBD "
              f"pickups ran {gap(c['actual_vs_forecast_pct_first_post_window'])} the frozen "
-             f"forecast, non-CBD {gap(n['actual_vs_forecast_pct_first_post_window'])}")
+             f"forecast, the rest of the city "
+             f"{gap(n['actual_vs_forecast_pct_first_post_window'])}")
     if c["cusum"] and cal:
-        title += (f"; the one CBD CUSUM alarm (day {c['cusum']['delay_days']}) is like the "
+        title += (f". The first CBD alarm (day {c['cusum']['delay_days']}) is like the "
                   f"2024 calibration alarm ({cal[0]['date']})")
+    if later and all(a["storm_days_in_window"] for a in later):
+        n_word = {1: "one", 2: "two", 3: "three"}.get(len(later), str(len(later)))
+        title += (f"; the {n_word} alarms of 2026 follow snowstorms ("
+                  + " and ".join(pd.Timestamp(a["snowiest_day"]).strftime("%-d %b %Y")
+                                 for a in later) + ")")
     markers = []
     for a in cal:
         markers.append((a["date"], "calibration alarm", PALETTE["muted_text"]))
     for key, name in (("cusum", "CUSUM"), ("rolling_bias", "rolling-bias rule")):
         a = c[key]
         if a:
-            markers.append((a["date"], f"{name} alarm (CBD), day {a['delay_days']}",
+            markers.append((a["date"], f"first {name} alarm (CBD), day {a['delay_days']}",
                             PALETTE["cbd"]))
-    note = (f"LightGBM day-ahead forecasts: Phase-2 out-of-sample backtest (monthly refits) "
+    for i, a in enumerate(later):
+        markers.append((a["date"], "snowstorm alarms" if i == 0 else "", PALETTE["cbd"]))
+    note = (f"LightGBM day-ahead forecasts: out-of-sample backtest (monthly refits) "
             f"before {sh['monitor_start']}, then the model frozen on data to "
             f"{sh['frozen_train_end']}. Trailing {sh['rolling_days']}-day windows; pre-policy "
-            "segments lighter. Non-CBD = every modeled zone outside the CBD. Monitors: daily "
-            "log(actual/forecast) standardized on 2024. Sources: results/shock_errors.csv, "
-            "results/drift_detection.json.")
+            "segments lighter. Rest of the city = every modeled zone outside the CBD. CUSUM = "
+            "cumulative-sum monitor of the daily log(actual/forecast), standardized on 2024; "
+            "snowstorm = daily snowfall of at least "
+            f"{cfg['presentation']['alarm_check']['storm_snowfall_in']:g} inches. Sources: "
+            "results/shock_errors.csv, results/drift_detection.json, "
+            "results/alarm_weather_check.csv.")
     stats["title"] = title
     f3_error_over_time(sel, cfg["data"]["policy_date"], markers, title, note,
                        figs / "F3_error_over_time")
@@ -284,8 +307,8 @@ def phase4(cfg: dict) -> None:
           f"placebo ({_pct_str(tpd.min())} to {_pct_str(tpd.max())})")
     f4_event_study(w_es, policy, t4,
                    "Monthly bins of log1p(weekly pickups) per zone, zones weighted by their mean "
-                   "weekly pickups in the 52 pre weeks (primary since Checkpoint 4, C2; not "
-                   "pre-registered); 38 CBD zones vs the donut control; zone and week FE, "
+                   "weekly pickups in the 52 pre weeks (not pre-registered); 38 CBD zones vs "
+                   "the 25 Manhattan zones outside it; zone and week FE, "
                    "weather x treated; 95% CIs clustered by zone; reference: the week before "
                    "2025-01-05. The pre-registered equal-weight path is in F4d. Source: "
                    "results/event_study.csv.", figs / "F4_event_study", "Effect on CBD pickups (%)")
@@ -306,19 +329,21 @@ def phase4(cfg: dict) -> None:
     pre_first, pre_last = (float(om.loc[om["k"] < 0, "coef"].iloc[i]) for i in (0, -1))
     stats["speed_outer"].update({"pre_first_month_coef": pre_first,
                                  "pre_last_month_coef": pre_last})
-    t4f = (f"Within-CBD speed {_pct_str(spd['coef'])} vs the donut, {_pct_str(so_m['coef'])} "
+    t4f = (f"Within-CBD speed {_pct_str(spd['coef'])} vs Manhattan outside the CBD, "
+           f"{_pct_str(so_m['coef'])} "
            f"vs Brooklyn/Queens; that gap fell from {_pct_str(pre_first)} to "
            f"{_pct_str(pre_last)} before the policy; both fail the pre-trend test")
-    ser = {o: [("vs donut control (pre-registered)", sm[(sm["outcome"] == o)
+    ser = {o: [("vs Manhattan outside the CBD (pre-registered)", sm[(sm["outcome"] == o)
                                                          & (sm["control"] == "donut")],
                 PALETTE["cbd"]),
-               ("vs Brooklyn/Queens (C4)", sm[(sm["outcome"] == o) & (sm["control"] == "outer")],
+               ("vs Brooklyn and Queens", sm[(sm["outcome"] == o) & (sm["control"] == "outer")],
                 PALETTE["comparison"])] for o in ("log_mean_speed_mph", "log_mean_duration_min")}
     f4f_speed_event_study(
         [("Speed (%)", ser["log_mean_speed_mph"]),
          ("Duration (%)", ser["log_mean_duration_min"])],
         policy, t4f, "Pair-week means of trips with pickup and dropoff in the CBD vs pairs within "
-        "the donut control or with both ends in Brooklyn/Queens (no airports); pair and week FE, "
+        "Manhattan outside the CBD or with both ends in Brooklyn/Queens (no airports); pair and "
+        "week FE, "
         "weather x treated, weighted by trips; 95% CIs two-way clustered by pickup and dropoff "
         "zone; lighter points = before the policy. Sources: results/speed_event_study.csv, "
         "results/speed_did_outer.json.", figs / "F4f_speed_event_study")
@@ -333,8 +358,9 @@ def phase4(cfg: dict) -> None:
            f"{_pct_str(float(cbd_rel.median()))} relative to the control group's aggregate change")
     zones = load_zones(path("raw_lookup", cfg) / "taxi_zones.shp")
     f4b_effect_map(zones, em, t4b, "Manhattan zones; log(mean weekly pickups after / in the 52 "
-                   "weeks before 2025-01-05) minus the same for the donut control's total "
-                   f"pickups. Hatched: < {min_pre:.0f} pickups per week before. Red outline: "
+                   "weeks before 2025-01-05) minus the same for the total pickups of the "
+                   "Manhattan zones outside the CBD (control group). "
+                   f"Hatched: < {min_pre:.0f} pickups per week before. Red outline: "
                    "CBD. Source: results/effect_map.csv.", figs / "F4b_effect_map", min_pre,
                    float(cfg["causal"]["effect_map_colour_quantile"]))
     f4b_effect_map_html(zones, em, t4b, figs / "F4b_effect_map.html", min_pre,
@@ -346,7 +372,7 @@ def phase4(cfg: dict) -> None:
     names = {"hour_band": "Demand: hour band", "day_type": "Demand: weekday / weekend",
              "dropoff": "Demand: CBD pickups by dropoff", "distance_tercile":
              "Demand: distance tercile", "fare_tercile": "Demand: fare tercile",
-             "pass_through": "Demand: pass-through (A1)"}
+             "pass_through": "Demand: pass-through"}
     hw = het[het["spec"] == "pre_volume_weighted"]
     for cut, name in names.items():
         d = hw[hw["cut"] == cut].assign(label=lambda x: x["level"].map(_label))
@@ -365,12 +391,14 @@ def phase4(cfg: dict) -> None:
     stats["heterogeneity"] = {"demand_ci_includes_zero": dzero, "demand_n": dn,
                               "speed_ci_includes_zero": szero, "speed_n": sn}
     t4c = (f"95% CI includes zero in {dzero} of {dn} trip subsets for weighted demand and in "
-           f"{szero} of {sn} for within-CBD speed (vs the donut)")
+           f"{szero} of {sn} for within-CBD speed")
     f4c_heterogeneity(panels, t4c, "Static DiD (%) with 95% CIs on sub-panels; demand: "
-                      "log1p(weekly pickups of the subset) per zone, CBD vs donut control, zones "
+                      "log1p(weekly pickups of the subset) per zone, CBD vs Manhattan outside "
+                      "it, zones "
                       "weighted by their pre-period count of the subset (pass-through: "
                       "control-zone trips ending in the CBD vs ending outside it); speed: log "
-                      "mean trip speed of within-CBD vs within-donut pairs (pre-registered). "
+                      "mean trip speed of within-CBD pairs vs pairs within Manhattan outside "
+                      "the CBD (pre-registered). "
                       "Sources: results/heterogeneity.csv (spec pre_volume_weighted), "
                       "results/speed_heterogeneity.csv.", figs / "F4c_heterogeneity")
 
@@ -381,16 +409,26 @@ def phase4(cfg: dict) -> None:
                                "did_main_post_mean": yr["post"],
                                "did_weighted_post_mean": float(
                                    w_es.loc[w_es["k"] >= 0, "coef"].mean())}
+    # Amendment 6 (A4): the static estimates in percent are the headline everywhere; the
+    # means of the monthly event-study coefficients are labelled as such
+    st_eq = ds["main"]["terms"]["treated_post"]
+    stats["counterfactual"].update({"did_static_equal_weight_pct": float(st_eq["pct"]),
+                                    "did_static_weighted_pct": float(bw["pct"])})
     t4d = (f"After the policy, CBD pickups averaged {cf_mean * 100:+.1f}% against the frozen "
-           f"forecast, while the event-study paths say {_pct_str(yr['post'])} (pre-registered) and "
-           f"{_pct_str(stats['counterfactual']['did_weighted_post_mean'])} (volume-weighted)")
+           f"forecast, while the difference-in-differences estimates were "
+           f"{st_eq['pct'] * 100:+.1f}% with equal zone weights, as pre-registered, and "
+           f"{bw['pct'] * 100:+.1f}% with zones weighted by volume")
     f4d_counterfactual_vs_did(
-        cf, [("DiD, volume-weighted (primary)", w_es, PALETTE["cbd"]),
-             ("DiD, pre-registered", main_es, PALETTE["comparison"])], policy, t4d,
+        cf, [("DiD, zones weighted by volume", w_es, PALETTE["cbd"]),
+             ("DiD, equal zone weights\n(as pre-registered)", main_es, PALETTE["comparison"])],
+        policy, t4d,
         "Counterfactual: mean over days of (actual - forecast) / forecast of CBD daily pickups, "
-        "frozen LightGBM (trained to 2024-12-31; 2024 months in-sample, lighter). DiD: monthly "
-        "event-study coefficients as exp(b) - 1; the volume-weighted path is not "
-        "pre-registered. Sources: results/counterfactual.csv, results/event_study.csv.",
+        "frozen LightGBM (trained to 2024-12-31; 2024 months in-sample, lighter). DiD paths: "
+        "monthly event-study coefficients as exp(b) - 1; the mean of the monthly event-study "
+        f"coefficients after the policy is {_pct_str(yr['post'])} (equal zone weights) and "
+        f"{_pct_str(stats['counterfactual']['did_weighted_post_mean'])} (weighted by volume). "
+        "Title: the static DiD estimates. Sources: results/counterfactual.csv, "
+        "results/event_study.csv, results/did_static.json.",
         figs / "F4d_counterfactual_vs_did")
 
     dpl = pd.read_csv(res / "demand_placebo_draws.csv")
@@ -405,7 +443,7 @@ def phase4(cfg: dict) -> None:
                                          ("speed_outer", so_))}
     t4e = (f"Permutation placebos: weighted demand {pww['real_beta']:+.3f} ("
            f"{pww['share_abs_ge_abs_beta'] * 100:.0f}% of placebos as large, MDE "
-           f"{pww['mde']:.3f}); speed vs donut {sd_['real_beta']:+.3f} ("
+           f"{pww['mde']:.3f}); speed vs rest of Manhattan {sd_['real_beta']:+.3f} ("
            f"{sd_['share_abs_ge_abs_beta'] * 100:.0f}%, MDE {sd_['mde']:.3f}); vs Brooklyn/Queens "
            f"the placebos themselves centre on {so_['mean']:+.3f}")
 
@@ -413,10 +451,10 @@ def phase4(cfg: dict) -> None:
         return spl[(spl["control"] == c) & (spl["outcome"] == "log_mean_speed_mph")]["coef"]
 
     f4e_placebo_distribution(
-        [("Demand, volume-weighted (primary)", dp, pww["real_beta"], pww["mde"]),
-         ("Speed vs donut (pre-registered)", draws("donut"), sd_["real_beta"], sd_["mde"]),
-         ("Speed vs Brooklyn/Queens (C4)", draws("outer"), so_["real_beta"], so_["mde"])], t4e,
-        "Amendment 1 (A2): 500 draws on pre-policy weeks 2023-01 to 2025-01-04, each with a "
+        [("Demand, zones weighted by volume", dp, pww["real_beta"], pww["mde"]),
+         ("Speed vs Manhattan outside the CBD", draws("donut"), sd_["real_beta"], sd_["mde"]),
+         ("Speed vs Brooklyn and Queens", draws("outer"), so_["real_beta"], so_["mde"])], t4e,
+        "500 draws on pre-policy weeks 2023-01 to 2025-01-04, each with a "
         "random fake policy week and 38 random Manhattan zones as fake CBD (speed: pairs within "
         "the fake set vs the other Manhattan zones' pairs, or vs the fixed Brooklyn/Queens "
         "pairs); demand placebos with weather x treated, as the real estimate; grey band = +- MDE "
@@ -427,12 +465,14 @@ def phase4(cfg: dict) -> None:
     loo = pd.read_csv(res / "leave_one_out.csv")
     lw = ds["leave_one_zone_out_pre_volume_weighted"]
     stats["leave_one_out"] = {"equal_weight": ds["leave_one_zone_out"], "pre_volume_weighted": lw}
-    t4i = (f"Leave one zone out: weighted {_pct_str(lw['min'])} to {_pct_str(lw['max'])}; "
-           f"equal-weight (pre-registered) {_pct_str(ds['leave_one_zone_out']['min'])} to "
+    t4i = (f"Leave one zone out: zones weighted by volume {_pct_str(lw['min'])} to "
+           f"{_pct_str(lw['max'])}; equal zone weights (as pre-registered) "
+           f"{_pct_str(ds['leave_one_zone_out']['min'])} to "
            f"{_pct_str(ds['leave_one_zone_out']['max'])}")
     f4i_leave_one_out(loo, {"equal_weight": ds["main"]["terms"]["treated_post"]["coef"],
                             "pre_volume_weighted": bw["coef"]}, t4i,
-                      "Static DiD of log1p(weekly pickups), CBD vs donut control, re-estimated "
+                      "Static DiD of log1p(weekly pickups), CBD vs Manhattan outside it, "
+                      "re-estimated "
                       f"without each zone (dots: {ds['leave_one_zone_out']['n']} equal-weight, "
                       f"{lw['n']} weighted — zones without pre-period pickups carry no weight) "
                       "and on all zones (bar). Source: "
@@ -463,7 +503,7 @@ def phase4b(cfg: dict) -> None:
                                                            float(fast["share_app"].max())],
                        "r_manhattan": c["manhattan"]["pearson_r"], "r_all": c["all_zones"][
                            "pearson_r"]}
-        t = (f"The fastest-growing donut-control zones are "
+        t = (f"The fastest-growing control zones (Manhattan outside the CBD) are "
              f"{fast['share_app'].min() * 100:.0f}-{fast['share_app'].max() * 100:.0f}% "
              f"Uber/Lyft-dispatched vs a CBD median of "
              f"{g['cbd']['share_app_median_zone'] * 100:.0f}%; growth vs app share "
@@ -484,7 +524,9 @@ def phase4b(cfg: dict) -> None:
         names = {"covid": "COVID-19, 2020-03-01", "fare_increase":
                  "Metered-fare increase (+23%), 2022-12-19", "congestion_pricing":
                  "Congestion pricing, 2025-01-05"}
-        evs, parts, c5 = [], [], {}
+        evs, c5 = [], {}
+        month_days = 365.25 / 12
+        quiet, flagged = [], []
         for key, ev in sc.items():
             g = ev["groups"]["cbd"]
             alarm = g["cusum"]["first_alarm"]
@@ -492,10 +534,20 @@ def phase4b(cfg: dict) -> None:
             c5[key] = {"cusum_first_alarm": alarm, "first_28_days_pct": lvl}
             evs.append((key, f"{names.get(key, key)}: CBD {lvl * 100:+.0f}% vs forecast in the "
                         "first 4 weeks", alarm))
-            when = (f"day {alarm['delay_days']}" if alarm else "no alarm")
-            parts.append(f"{names.get(key, key).split(',')[0]} {when}")
+            short = names.get(key, key).split(",")[0].split(" (")[0]
+            # Amendment 6 (A3): a first alarm months after the event is not a detection of it
+            if alarm and alarm["delay_days"] <= cfg["shock"]["rolling_days"]:
+                flagged.append(f"{short} was flagged on day {alarm['delay_days']}")
+            else:
+                months = int(alarm["delay_days"] // month_days) if alarm else None
+                c5[key]["months_without_alarm"] = months
+                quiet.append((short[0].lower() + short[1:], months, alarm))
         stats["c5"] = c5
-        t = "One CUSUM monitor, three shocks (CBD): " + "; ".join(parts)
+        nums = {5: "five", 11: "eleven"}
+        t = ("One CUSUM monitor, three shocks (CBD): " + "; ".join(flagged)
+             + "; the " + " and ".join(q[0] for q in quiet) + " produced no alarm for "
+             + " and ".join(nums.get(q[1], str(q[1])) for q in quiet) + " months"
+             + " (later alarms: " + ", ".join(q[2]["date"] for q in quiet if q[2]) + ")")
         stats["c5"]["title"] = t
         daily = pd.read_csv(res / "shock_daily.csv", parse_dates=["day"])
         f3b_three_shocks(daily, evs, t, "Frozen LightGBM trained on the 12 months before each "
@@ -555,16 +607,17 @@ def phase4c(cfg: dict) -> None:
         stats["d1"] = {"cbd": c[["app_change", "street_change", "change"]].to_dict(),
                        "other_excl_block": o[["app_change", "street_change", "change"]].to_dict()}
         t = (f"2023 to 2025, per week: CBD app trips {_k(c['app_change'])}, street hails "
-             f"{_k(c['street_change'])}; outer boroughs (without the CMT block) app "
+             f"{_k(c['street_change'])}; outer boroughs (contracted programme excluded) app "
              f"{_k(o['app_change'])}, street hails {_k(o['street_change'])}")
         stats["d1"]["title_f6a"] = t
         f6a_channel_areas(weekly, [("cbd", "CBD (38 zones)"),
                                    ("other", "Outer boroughs (no airports)")], t,
-                          "Valid yellow pickups per complete week by channel: app = any e-hail "
-                          "app (Flex Fare before 2026-06, request_source not NULL from 2026-06; "
-                          "Amendment 4a), street = street hail; grey = VendorID 1 contracted "
-                          "trips in the outer boroughs, ended 2026-05 (DECISIONS, D1). Own y-axis "
-                          "per panel; dashed line = congestion pricing 2025-01-05. Sources: "
+                          "Valid yellow pickups per complete week by channel: app dispatch = an "
+                          "e-hail app (Uber, Lyft, Curb, Arro) sends the cab (Flex Fare flag "
+                          "before 2026-06, request_source from 2026-06); street = street hail; "
+                          "grey = the contracted trip programme on CMT cabs in the outer "
+                          "boroughs, ended 2026-05. Own y-axis per panel; dashed line = "
+                          "congestion pricing 2025-01-05. Sources: "
                           "results/channel_weekly.csv, results/channel_decomposition.csv.",
                           figs / "F6a_channel_areas")
         zs = pd.read_csv(res / "channel_zone_share.csv").merge(
@@ -581,7 +634,7 @@ def phase4c(cfg: dict) -> None:
         f6b_app_share_maps(zones, zs, [("2023", "2023"), ("2024", "2024"), ("2025", "2025"),
                                        ("2026_jan_sep", "Jan-Sep 2026")], min_w, t2,
                            f"App share = app pickups / (app + street-hail pickups) per pickup "
-                           f"zone, the CMT contracted block excluded; hatched: < {min_w:.0f} "
+                           f"zone, the contracted trip programme excluded; hatched: < {min_w:.0f} "
                            "pickups per week in that period; CBD outlined. Medians over the "
                            "non-hatched zones. Source: results/channel_zone_share.csv.",
                            figs / "F6b_app_share_maps")
@@ -598,22 +651,28 @@ def phase4c(cfg: dict) -> None:
         cb = sm[sm["area"] == "cbd"]
         stats["d2"]["cbd_range"] = [float(cb["theta"].min()), float(cb["theta"].max())]
         # wording: Amendment 5 (D2)
+        lp = inc["areas"]["manhattan_non_cbd"]["first_difference_lead_placebo"]["lead"]
+        stats["d2"]["lead_placebo_p"] = {a: inc["areas"][a]["first_difference_lead_placebo"][
+            "lead"]["pvalue"] for a in ("cbd", "manhattan_non_cbd", "other")}
         t = (f"Share of app trips that are additional: CBD estimates range from "
              f"{cb['theta'].min():.2f} to {cb['theta'].max():.2f} across estimators (primary DML "
              f"{c['theta']:.2f} [{c['theta_ci'][0]:.2f}, {c['theta_ci'][1]:.2f}]); they disagree "
-             "beyond their intervals: not identified")
+             "beyond their intervals and the lead placebo fails in Manhattan outside the CBD "
+             f"(p = {lp['pvalue']:.1g}): not identified")
         stats["d2"]["title"] = t
-        est = [("dml_plr", "DML, time-blocked folds (primary)", PALETTE["app"]),
-               ("dml_zone_trends", "DML + zone trends", PALETTE["comparison"]),
+        est = [("dml_plr", "Double ML, time-blocked folds (primary)", PALETTE["app"]),
+               ("dml_zone_trends", "Double ML + zone trends", PALETTE["comparison"]),
                ("dml_panel_plpr", "DoubleML panel (median of 25 fold draws)", PALETTE["model"]),
-               ("twfe", "TWFE", PALETTE["non_cbd"]),
+               ("twfe", "Two-way fixed effects", PALETTE["non_cbd"]),
                ("first_difference", "First differences", PALETTE["baseline"])]
-        f6c_incrementality(sm, [("cbd", "CBD"), ("manhattan_non_cbd", "Manhattan non-CBD"),
+        f6c_incrementality(sm, [("cbd", "CBD"),
+                                ("manhattan_non_cbd", "Manhattan\noutside the CBD"),
                                 ("other", "Outer boroughs")], est, t,
                            "theta = 1 + d street hails / d app pickups per zone-week (1 = every "
                            "app trip is additional, 0 = every app trip replaces a street hail); "
                            "observational. Zones with >= 20 pickups/week in 2023; 2023-01 to "
-                           "2026-09; CMT contracted block excluded; 95% CIs clustered by zone. "
+                           "2026-09; contracted trip programme excluded; 95% CIs clustered by "
+                           "zone. "
                            "Airports (2 zones) not shown. Sources: results/incrementality_dml.json,"
                            " results/incrementality_panel_summary.csv.",
                            figs / "F6c_incrementality")
@@ -633,7 +692,7 @@ def phase4c(cfg: dict) -> None:
         daily = pd.read_csv(res / "lyft_entry_daily.csv", parse_dates=["day"])
         f6d_lyft_entry(daily, ly["windows"], t,
                        "Weekly pickups of Curb (VendorID 2) and CMT (VendorID 1) cabs in the CBD "
-                       "and Manhattan non-CBD, each indexed to its mean over the 8 weeks to "
+                       "and Manhattan outside it, each indexed to its mean over the 8 weeks to "
                        f"{ly['windows']['pre_end']}; grey band = {ly['windows']['secondary_start']}"
                        f" to {ly['windows']['post_start']} (excluded from the primary windows; "
                        "Curb code-A surge). Incrementality = DiD change in Curb total pickups / "
@@ -659,14 +718,15 @@ def phase4c(cfg: dict) -> None:
              f"reject (yellow p = {p_y:.1g}, Uber + Lyft p = {pf_['fhv_all']:.1g}), so no "
              "effect is estimated")
         stats["c6"]["title"] = t
-        f6_taxi_vs_fhv([("Yellow taxi (Phase 4 primary)", y_w, PALETTE["cbd"]),
+        f6_taxi_vs_fhv([("Yellow taxi", y_w, PALETTE["cbd"]),
                         ("Uber + Lyft (HVFHV)", f_w, PALETTE["comparison"])],
                        cfg["data"]["policy_date"], t,
-                       "Monthly event-study coefficients as exp(b) - 1, 38 CBD zones vs the donut "
-                       "control, zone and week FE, weather x treated, zones weighted by their own "
+                       "Monthly event-study coefficients as exp(b) - 1, 38 CBD zones vs the 25 "
+                       "Manhattan zones outside it, zone and week FE, weather x treated, zones "
+                       "weighted by their own "
                        "series' pre-period volume, 95% CIs clustered by zone; reference: the week "
-                       "before 2025-01-05; lighter = before the policy. Descriptive only (C6: "
-                       "pre-trend test first). Sources: results/fhv_did.json, "
+                       "before 2025-01-05; lighter = before the policy. Descriptive only (the "
+                       "pre-trend test comes first). Sources: results/fhv_did.json, "
                        "results/fhv_event_study.csv, results/event_study.csv.",
                        figs / "F6_taxi_vs_fhv")
     f = res / "app_share_policy_step.json"
@@ -686,7 +746,8 @@ def phase4c(cfg: dict) -> None:
                                        parse_dates=["week_start"]),
                            pd.read_csv(res / "app_share_step_event_study.csv"), t,
                            "Left: weekly app share of valid yellow pickups by trip type vs the "
-                           "CBD (60th St rule), CMT contracted block excluded. Right: event study "
+                           "CBD (60th St rule), contracted trip programme excluded. Right: event "
+                           "study "
                            "on pickup zone x trip type x week cells, CBD-touching (within, into, "
                            "out of) minus neither, weighted by cell trips, cell and week FE, 95% "
                            "CIs clustered by pickup zone; reference: the week before 2025-01-05. "
@@ -700,8 +761,9 @@ def phase4c(cfg: dict) -> None:
         logging.info("wrote Phase-4c figures: %s", ", ".join(stats))
 
 
-STRATEGY_LABELS = {"s0": "S0 frozen", "s1": "S1 monthly retrain", "s4": "S4 Chronos-2",
-                   "s6": "S6 channel-aware"}
+STRATEGY_LABELS = {"s0": "Frozen model", "s1": "Monthly retrain", "s4": "Chronos-2 zero-shot",
+                   "s6": "Monthly retrain + app-share features",
+                   "s1e": "Monthly retrain, expanding window", "sn": "Seasonal naive, frozen"}
 
 
 def phase5(cfg: dict) -> None:
@@ -737,12 +799,23 @@ def phase5(cfg: dict) -> None:
     if "s1e" in extra:
         stats["retraining_effect_s1e_vs_s0"] = gap("s1e", "s0")
         stats["window_effect_s1_vs_s1e"] = gap("s1", "s1e")
-    w, b = stats["wape_all"], stats["bias_pct_all"]
+    w = stats["wape_all"]
     span = "–".join(pd.Timestamp(x).strftime("%b %Y") for x in summ["eval_window"])
-    if best == "s1" and b["s6"] < b["s0"]:
-        title = (f"{span}: monthly retraining has the lowest day-ahead error (WAPE "
-                 f"{w['s1'] * 100:.1f}% vs {w['s0'] * 100:.1f}% frozen); app-share features "
-                 f"deepen the under-forecast (bias {b['s6']:.1f}% vs {b['s0']:.1f}% frozen)")
+    storms = json.loads((res / "presentation_numbers.json").read_text())["alarm_weather_check"]
+    storm_days = sorted({a["snowiest_day"] for a in storms["alarms_2026"]})
+    q1 = storms["wape_by_strategy_all_zones"]
+    stats["q1_2026_wape_range"] = [min(q1[k]["wape_quarter"] for k in names),
+                                   max(q1[k]["wape_quarter"] for k in names)]
+    stats["storm_days"] = storm_days
+    # Amendment 6 (B4): the line panels show that the strategies err together; the gap panel
+    # carries the comparison
+    g10 = stats["gap_vs_s0_all"].get("s1", {})
+    if best == "s1" and g10.get("distinguishable"):
+        title = (f"{span}: every strategy's error rises and falls at the same times, most in "
+                 f"early 2026, when two snowstorms hit (left). Monthly retraining has the lowest "
+                 f"WAPE, {w['s1'] * 100:.1f}% against {w['s0'] * 100:.1f}% for the frozen model, "
+                 f"a gap of {abs(g10['gap']) * 100:.1f} points whose 95% interval excludes "
+                 "zero (right)")
     else:
         title = (f"{span}: lowest day-ahead error {STRATEGY_LABELS[best]} "
                  f"(WAPE {w[best] * 100:.1f}%)")
@@ -754,28 +827,36 @@ def phase5(cfg: dict) -> None:
     series = [x for x in series if x[0] in names]
     nd = []
     if "s1e" in extra:
-        nd.append(f"S1 on an expanding window (S1e), WAPE {head['s1e|all']['wape'] * 100:.2f}% "
-                  f"(S1 {w['s1'] * 100:.2f}%)")
+        nd.append(f"monthly retrain on an expanding window, WAPE "
+                  f"{head['s1e|all']['wape'] * 100:.1f}% (sliding window "
+                  f"{w['s1'] * 100:.1f}%)")
     if "sn" in extra:
         nd.append(f"frozen seasonal naive, WAPE {head['sn|all']['wape'] * 100:.1f}%")
     not_drawn = f" Not drawn: {'; '.join(nd)}." if nd else ""
     note = (f"Day-ahead hourly forecasts; metrics on origins {summ['eval_window'][0]} to "
             f"{summ['eval_window'][1]} (unshaded; grey = before that window, not scored); "
             "each line starts at its strategy's first "
-            f"origin (S1/S6 from {ac['run_start'][:7]}, S0 and S4 from "
-            f"{cfg['shock']['forecast_window'][0][:7]}); trailing {ac['rolling_days']}-day sums "
-            "of absolute "
-            "error (WAPE) and signed error (forecast minus actual; negative = under-forecast) "
-            "over actual pickups. S1/S6: LightGBM refit on the first of each month on a sliding "
-            "24-month window; S6 adds trailing app-share features; S4: Chronos-2 zero-shot, "
-            "weather_past. S0: the model frozen at "
-            f"{cfg['shock']['frozen_train_end']}; before {cfg['shock']['monitor_start']} it is "
-            "in-sample, so S0 there is the Phase-2 out-of-sample backtest (monthly refits)."
+            f"origin (retrained models from {ac['run_start'][:7]}, the frozen model and "
+            f"Chronos-2 from {cfg['shock']['forecast_window'][0][:7]}); trailing "
+            f"{ac['rolling_days']}-day sums of absolute error (WAPE) and signed error (forecast "
+            "minus actual; negative = under-forecast) over actual pickups. Monthly retrain: "
+            "LightGBM refit on the first of each month on a sliding 24-month window; the "
+            "app-share variant adds trailing app shares as features; Chronos-2 zero-shot with "
+            "weather as a past covariate. Frozen model: trained to "
+            f"{cfg['shock']['frozen_train_end']}; before {cfg['shock']['monitor_start']} the "
+            "line is its out-of-sample backtest (monthly refits). Dotted lines: snowstorm days "
+            f"({', '.join(storm_days)}; daily snowfall of at least "
+            f"{cfg['presentation']['alarm_check']['storm_snowfall_in']:g} inches). Right: paired "
+            "block bootstrap over origin days."
             + not_drawn
             + " Sources: results/adaptation_daily.csv, results/adaptation_summary.json,"
-            " results/adaptation_gaps.csv.")
+            " results/adaptation_gaps.csv, results/alarm_weather_check.csv.")
+    areas = [("all", "All modeled zones"), ("cbd", "Congestion zone (CBD)"),
+             ("manhattan_non_cbd", "Manhattan outside\nthe CBD"), ("other", "Outer boroughs"),
+             ("airports", "Airports")]
     f5_adaptation(daily, series, int(ac["rolling_days"]), tuple(cfg["shock"]["forecast_window"]),
-                  summ["eval_window"][0], title, note, figs / "F5_adaptation")
+                  summ["eval_window"][0], gaps, areas,
+                  [(d, "snowstorms") for d in storm_days], title, note, figs / "F5_adaptation")
     (res / "figure_stats_phase5.json").write_text(json.dumps(stats, indent=2) + "\n")
     logging.info("wrote F5 to %s", figs)
 

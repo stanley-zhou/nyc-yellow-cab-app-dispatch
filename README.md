@@ -7,22 +7,24 @@ judgement call is in [`DECISIONS.md`](DECISIONS.md); every number below comes fr
 
 ## Summary
 
-Between January 2023 and January 2026, app dispatch (e-hail apps sending yellow cabs to riders)
-rose from 2.3% to 29.6% of yellow pickups in Manhattan's congestion-pricing zone
-([channel_restatement.json](results/channel_restatement.json)). From 2023 to 2025, mean weekly
-pickups there grew by 99,063: app trips added 104,958 a week and street hails fell by 5,896
-([channel_decomposition.csv](results/channel_decomposition.csv)). The fleet supplied more
-cab-days at constant intensity: 7,036 → 8,722.5 active cabs a day, 14.85 → 15.02 trips per cab-day
+From 2023 to 2025, NYC yellow-taxi pickups grew 27.3% (703,268 → 895,177 a week). App-dispatched
+trips account for all of that growth (+199,068 a week); street hails changed by −7,159 (−1.1%)
+([channel_decomposition.csv](results/channel_decomposition.csv),
+[presentation_numbers.json](results/presentation_numbers.json)). In Manhattan's congestion zone
+(CBD), app dispatch rose from 2.3% to 29.6% of yellow pickups between January 2023 and January
+2026 ([channel_restatement.json](results/channel_restatement.json)). The fleet supplied more
+cab-days at a steady intensity: trips per day rose 25.6% and active cabs per day 24.0% from 2023
+to 2025, while trips per cab-day stayed between 14.0 and 15.0
 ([incrementality_dml.json → supply](results/incrementality_dml.json)). Whether the app trips are additional, and
 what congestion pricing did to taxi demand, are not identified: every pre-registered design
 failed its pre-trend gate or disagreed with the others, and each is reported as found. For
-forecasting, monthly retraining gave the lowest error after January 2025 (WAPE 0.162 vs 0.164
+forecasting, monthly retraining gave the lowest error after January 2025 (WAPE 16.2% vs 16.4%
 frozen); adding trailing app-share features did not remove the under-forecast
 ([adaptation_summary.json](results/adaptation_summary.json)).
 
 ## Figures
 
-| The shift | Where | Incrementality | The −0.43 artefact | Forecasting |
+| The shift | Where | Incrementality | The −35% artefact | Forecasting |
 |---|---|---|---|---|
 | [![F6a](reports/figures/F6a_channel_areas.png)](reports/figures/F6a_channel_areas.png) | [![F6b](reports/figures/F6b_app_share_maps.png)](reports/figures/F6b_app_share_maps.png) | [![F6c](reports/figures/F6c_incrementality.png)](reports/figures/F6c_incrementality.png) | [![F4d](reports/figures/F4d_counterfactual_vs_did.png)](reports/figures/F4d_counterfactual_vs_did.png) | [![F5](reports/figures/F5_adaptation.png)](reports/figures/F5_adaptation.png) |
 | App vs street-hail pickups by area (D1) | App share and growth by zone | Not identified: estimators disagree (D2) | Frozen forecast vs the pre-registered DiD | Four adaptation strategies (Phase 5) |
