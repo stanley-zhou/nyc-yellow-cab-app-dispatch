@@ -1,0 +1,875 @@
+{
+  "generated_utc": "2026-11-14T22:57:29+00:00",
+  "targets": {
+    "duckdb": {
+      "adapter": "dbt-duckdb",
+      "coverage": "every downloaded month (raw files)",
+      "command": "dbt test (warehouse built by `make dbt`)",
+      "tests": {
+        "models": {},
+        "tests": {
+          "accepted_values_dim_zones_borough__Manhattan__Brooklyn__Queens__Bronx__Staten_Island__EWR.8da3e68489": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_dim_zones_zone_group__cbd__manhattan_non_cbd__airports__other.b079d7b3be": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_fct_daily_zone_channel_channel__app__street.3a9182230e": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_fct_daily_zone_channel_trip_type__within__into__out_of__neither.112c61e347": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_fct_weekly_pair_speed_dist_tercile__t1__t2__t3__unknown.65e97f9549": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_int_trips_flagged_drop_reason__pickup_window__duration__distance__fare__pu_zone.557dca1ddc": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_stg_zones_borough__Manhattan__Brooklyn__Queens__Bronx__Staten_Island__EWR.7240a2229f": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_channel_matches_weekly": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_data_quality_balances": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_format_exemptions_applied": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_grid_complete": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_grid_miss_only_spring_forward": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_hourly_pickups_equal_valid_in_grid": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_monthly_removal_share_stable": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_panels_match_hourly": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_speed_sample_matches_trips": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_trip_stats_match_weekly": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_vendor_panel_matches_weekly": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_weather_covers_grid": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_daily_zone_panel_pickups___0.c6ee2e585e": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_hourly_zone_demand_pickups___0.4d26859fa3": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_pair_speed_n_trips_n_excl_duration_n_excl_distance_n_excl_speed_n_used.c7f46cea6a": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_pair_speed_n_used_0_or_sum_speed_mph_n_used_between_0_and_var_max_speed_mph_.1e6f56e0a2": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_panel_n_days__between_1_and_7.ca5876a6bc": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_panel_pickups___0.bd109eb87d": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_trip_stats_n_trips_pickups_fare_t1_pickups_fare_t2_pickups_fare_t3_pickups_fare_unknown.dff2390756": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_vendor_pickups___1.366eaa0e49": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_vendor_pickups_flex__between_0_and_pickups.c2a310cfa2": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_int_trips_flagged_n_copies___1.67eb3f217c": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_daily_zone_channel_zone_id__day__vendor_id__channel__platform__trip_type.80c499e7f3": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_daily_zone_panel_zone_id__date.c8b00f198a": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_hourly_zone_demand_zone_id__hour_ts.c2eb0aff3c": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_pair_speed_pu_zone_id__do_zone_id__week_start__hour_band__dist_tercile.2b7619c0f7": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_zone_channel_zone_id__week_start__vendor_id__channel__platform__trip_type.9f329c309c": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_zone_panel_zone_id__week_start.57f61cc95a": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_zone_trip_stats_zone_id__week_start.2c3fab31d8": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_zone_vendor_zone_id__week_start__vendor_id.cd64c15d72": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_features_demand_zone_id__hour_ts.01e845a4eb": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_int_hour_grid_zone_id__hour_ts.c79e066a57": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dim_zones_is_cbd_not_null_manhattan.e3048611e0": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_dim_zones_is_cbd.faaa978c81": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_dim_zones_zone_id.acff408435": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_daily_zone_channel_pickups.a021e7a2f6": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_daily_zone_panel_pickups.83351d9566": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_hourly_zone_demand_dropoffs.2d176c6451": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_hourly_zone_demand_hour_ts.ac242d9b77": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_hourly_zone_demand_pickups.fa7e5e1ba2": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_hourly_zone_demand_zone_id.728f1469ae": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_weekly_pair_speed_hour_band.4f8a0dc907": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_weekly_zone_panel_pickups.2b21f21d06": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_weekly_zone_vendor_pickups.9c7be84bc0": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_features_demand_is_holiday.6c186033ff": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_int_hours_hour_ts.263a4659aa": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_int_trips_flagged_n_copies.da29fa3016": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_int_weather_selected_unix_time.58682f2d48": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_stg_weather_hour_ts.1edd957195": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_stg_zones_zone_id.fffc4bdeec": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_dim_zones_zone_id.2f0c64ba76": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_int_hours_hour_ts.00a28bdac0": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_int_weather_selected_unix_time.36c46fc7a1": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_stg_weather_hour_ts.53dfa3863c": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_stg_zones_zone_id.aec651ab82": {
+            "status": "pass",
+            "failures": 0
+          }
+        },
+        "seeds": {},
+        "generated_at": "2026-11-14T22:50:30.072475Z",
+        "n_tests": 62,
+        "tests_pass": 62,
+        "tests_not_pass": {}
+      }
+    },
+    "snowflake": {
+      "adapter": "dbt-snowflake",
+      "warehouse_size": "X-Small",
+      "coverage": "cleaned trips, source months 2023-01 to 2026-09 (results/snowflake_load.json)",
+      "command": "dbt build --target snowflake",
+      "build": {
+        "models": {
+          "int_weather_overlap": {
+            "status": "success",
+            "seconds": 0.6
+          },
+          "stg_zones": {
+            "status": "success",
+            "seconds": 0.8
+          },
+          "int_weather_selected": {
+            "status": "success",
+            "seconds": 0.9
+          },
+          "int_trips_valid": {
+            "status": "success",
+            "seconds": 0.3
+          },
+          "int_hours": {
+            "status": "success",
+            "seconds": 1.2
+          },
+          "dim_zones": {
+            "status": "success",
+            "seconds": 1.0
+          },
+          "stg_weather": {
+            "status": "success",
+            "seconds": 0.3
+          },
+          "int_zone_cbd_fee_share": {
+            "status": "success",
+            "seconds": 1.9
+          },
+          "int_hourly_dropoffs": {
+            "status": "success",
+            "seconds": 6.8
+          },
+          "int_distance_terciles": {
+            "status": "success",
+            "seconds": 6.0
+          },
+          "int_fare_terciles": {
+            "status": "success",
+            "seconds": 5.7
+          },
+          "int_hourly_pickups": {
+            "status": "success",
+            "seconds": 12.5
+          },
+          "int_hour_grid": {
+            "status": "success",
+            "seconds": 0.3
+          },
+          "fct_weekly_zone_vendor": {
+            "status": "success",
+            "seconds": 9.8
+          },
+          "int_speed_trips": {
+            "status": "success",
+            "seconds": 0.4
+          },
+          "int_grid_misses": {
+            "status": "success",
+            "seconds": 3.9
+          },
+          "int_speed_terciles": {
+            "status": "success",
+            "seconds": 7.0
+          },
+          "int_zone_day_trips": {
+            "status": "success",
+            "seconds": 15.0
+          },
+          "fct_weekly_zone_trip_stats": {
+            "status": "success",
+            "seconds": 15.6
+          },
+          "fct_hourly_zone_demand": {
+            "status": "success",
+            "seconds": 6.5
+          },
+          "fct_daily_zone_panel": {
+            "status": "success",
+            "seconds": 2.4
+          },
+          "fct_weekly_zone_panel": {
+            "status": "success",
+            "seconds": 0.9
+          },
+          "fct_daily_zone_channel": {
+            "status": "success",
+            "seconds": 22.2
+          },
+          "fct_weekly_zone_channel": {
+            "status": "success",
+            "seconds": 1.4
+          },
+          "features_demand": {
+            "status": "success",
+            "seconds": 18.8
+          },
+          "fct_weekly_pair_speed": {
+            "status": "success",
+            "seconds": 27.0
+          }
+        },
+        "tests": {
+          "source_not_null_raw_hvfhv_pair_week_trips.a00ab1ff3d": {
+            "status": "pass",
+            "failures": 0
+          },
+          "source_not_null_raw_hvfhv_pair_week_week_start.bbe1197785": {
+            "status": "pass",
+            "failures": 0
+          },
+          "source_not_null_raw_hvfhv_zone_hour_trips.ac6a6c7b25": {
+            "status": "pass",
+            "failures": 0
+          },
+          "source_not_null_raw_yellow_trips_valid_pickup_ts.0ac134a1e8": {
+            "status": "pass",
+            "failures": 0
+          },
+          "source_not_null_raw_hvfhv_zone_hour_zone_id.fec8e0077f": {
+            "status": "pass",
+            "failures": 0
+          },
+          "source_not_null_raw_yellow_trips_valid_source_month.21c0cf84de": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_stg_zones_zone_id.fffc4bdeec": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_stg_zones_zone_id.aec651ab82": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_stg_zones_borough__Manhattan__Brooklyn__Queens__Bronx__Staten_Island__EWR.7240a2229f": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_int_weather_selected_unix_time.58682f2d48": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_int_weather_selected_unix_time.36c46fc7a1": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_int_hours_hour_ts.263a4659aa": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_int_hours_hour_ts.00a28bdac0": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_dim_zones_borough__Manhattan__Brooklyn__Queens__Bronx__Staten_Island__EWR.8da3e68489": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_dim_zones_zone_group__cbd__manhattan_non_cbd__airports__other.b079d7b3be": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dim_zones_is_cbd_not_null_manhattan.e3048611e0": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_dim_zones_is_cbd.faaa978c81": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_dim_zones_zone_id.acff408435": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_dim_zones_zone_id.2f0c64ba76": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_stg_weather_hour_ts.1edd957195": {
+            "status": "pass",
+            "failures": 0
+          },
+          "unique_stg_weather_hour_ts.53dfa3863c": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_weather_covers_grid": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_int_hour_grid_zone_id__hour_ts.c79e066a57": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_vendor_pickups___1.366eaa0e49": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_vendor_pickups_flex__between_0_and_pickups.c2a310cfa2": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_zone_vendor_zone_id__week_start__vendor_id.cd64c15d72": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_weekly_zone_vendor_pickups.9c7be84bc0": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_grid_miss_only_spring_forward": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_trip_stats_n_trips_pickups_fare_t1_pickups_fare_t2_pickups_fare_t3_pickups_fare_unknown.dff2390756": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_zone_trip_stats_zone_id__week_start.2c3fab31d8": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_hourly_pickups_equal_valid_in_grid": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_grid_complete": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_hourly_zone_demand_pickups___0.4d26859fa3": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_hourly_zone_demand_dropoffs.2d176c6451": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_hourly_zone_demand_hour_ts.ac242d9b77": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_hourly_zone_demand_pickups.fa7e5e1ba2": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_hourly_zone_demand_zone_id.728f1469ae": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_daily_zone_panel_pickups___0.c6ee2e585e": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_hourly_zone_demand_zone_id__hour_ts.c2eb0aff3c": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_daily_zone_panel_zone_id__date.c8b00f198a": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_daily_zone_panel_pickups.83351d9566": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_panels_match_hourly": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_trip_stats_match_weekly": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_panel_n_days__between_1_and_7.ca5876a6bc": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_vendor_panel_matches_weekly": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_zone_panel_zone_id__week_start.57f61cc95a": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_zone_panel_pickups___0.bd109eb87d": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_weekly_zone_panel_pickups.2b21f21d06": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_fct_daily_zone_channel_channel__app__street.3a9182230e": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_fct_daily_zone_channel_trip_type__within__into__out_of__neither.112c61e347": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_daily_zone_channel_pickups.a021e7a2f6": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_daily_zone_channel_zone_id__day__vendor_id__channel__platform__trip_type.80c499e7f3": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_zone_channel_zone_id__week_start__vendor_id__channel__platform__trip_type.9f329c309c": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_channel_matches_weekly": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_features_demand_is_holiday.6c186033ff": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_features_demand_zone_id__hour_ts.01e845a4eb": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_pair_speed_n_used_0_or_sum_speed_mph_n_used_between_0_and_var_max_speed_mph_.1e6f56e0a2": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_expression_is_true_fct_weekly_pair_speed_n_trips_n_excl_duration_n_excl_distance_n_excl_speed_n_used.c7f46cea6a": {
+            "status": "pass",
+            "failures": 0
+          },
+          "accepted_values_fct_weekly_pair_speed_dist_tercile__t1__t2__t3__unknown.65e97f9549": {
+            "status": "pass",
+            "failures": 0
+          },
+          "not_null_fct_weekly_pair_speed_hour_band.4f8a0dc907": {
+            "status": "pass",
+            "failures": 0
+          },
+          "dbt_utils_unique_combination_of_columns_fct_weekly_pair_speed_pu_zone_id__do_zone_id__week_start__hour_band__dist_tercile.2b7619c0f7": {
+            "status": "pass",
+            "failures": 0
+          },
+          "assert_speed_sample_matches_trips": {
+            "status": "pass",
+            "failures": 0
+          }
+        },
+        "seeds": {
+          "holidays_ny": {
+            "status": "success",
+            "seconds": 1.6
+          }
+        },
+        "generated_at": "2026-11-14T22:55:05.429597Z",
+        "n_tests": 62,
+        "tests_pass": 62,
+        "tests_not_pass": {}
+      }
+    }
+  },
+  "row_counts": {
+    "dim_zones": {
+      "duckdb": 263,
+      "snowflake": 263
+    },
+    "fct_daily_zone_channel": {
+      "duckdb": 1744619,
+      "snowflake": 1744619
+    },
+    "fct_daily_zone_panel": {
+      "duckdb": 744290,
+      "snowflake": 360047
+    },
+    "fct_data_quality_monthly": {
+      "duckdb": 93,
+      "snowflake": null
+    },
+    "fct_hourly_zone_demand": {
+      "duckdb": 17860856,
+      "snowflake": 8640076
+    },
+    "fct_weekly_pair_speed": {
+      "duckdb": 8173372,
+      "snowflake": 8173372
+    },
+    "fct_weekly_zone_channel": {
+      "duckdb": 352748,
+      "snowflake": 352748
+    },
+    "fct_weekly_zone_panel": {
+      "duckdb": 106515,
+      "snowflake": 51548
+    },
+    "fct_weekly_zone_trip_stats": {
+      "duckdb": 100425,
+      "snowflake": 48675
+    },
+    "fct_weekly_zone_vendor": {
+      "duckdb": 214063,
+      "snowflake": 116145
+    },
+    "features_demand": {
+      "duckdb": 17860856,
+      "snowflake": 8640076
+    },
+    "int_distance_terciles": {
+      "duckdb": 1,
+      "snowflake": 1
+    },
+    "int_fare_terciles": {
+      "duckdb": 1,
+      "snowflake": 1
+    },
+    "int_grid_misses": {
+      "duckdb": 34,
+      "snowflake": 18
+    },
+    "int_hour_grid": {
+      "duckdb": 17860856,
+      "snowflake": 8640076
+    },
+    "int_hourly_dropoffs": {
+      "duckdb": 11358258,
+      "snowflake": 5702412
+    },
+    "int_hourly_pickups": {
+      "duckdb": 7965515,
+      "snowflake": 4208875
+    },
+    "int_hours": {
+      "duckdb": 67912,
+      "snowflake": 32852
+    },
+    "int_speed_terciles": {
+      "duckdb": 1,
+      "snowflake": 1
+    },
+    "int_speed_trips": {
+      "duckdb": 132638940,
+      "snowflake": 132638936
+    },
+    "int_trips_flagged": {
+      "duckdb": 341576874,
+      "snowflake": null
+    },
+    "int_trips_valid": {
+      "duckdb": 331436471,
+      "snowflake": 156962851
+    },
+    "int_weather_overlap": {
+      "duckdb": 1128,
+      "snowflake": 1128
+    },
+    "int_weather_selected": {
+      "duckdb": 67968,
+      "snowflake": 67968
+    },
+    "int_zone_cbd_fee_share": {
+      "duckdb": 260,
+      "snowflake": 260
+    },
+    "int_zone_day_trips": {
+      "duckdb": 638846,
+      "snowflake": 313291
+    },
+    "stg_weather": {
+      "duckdb": 67961,
+      "snowflake": 67961
+    },
+    "stg_yellow_trips": {
+      "duckdb": 341589889,
+      "snowflake": null
+    },
+    "stg_zones": {
+      "duckdb": 263,
+      "snowflake": 263
+    }
+  },
+  "parity": {
+    "weeks": [
+      "2023-01-08",
+      "2026-09-20"
+    ],
+    "relative_tolerance": 1e-09,
+    "marts": {
+      "fct_weekly_zone_panel": {
+        "rows_duckdb": 51022,
+        "rows_snowflake": 51022,
+        "keys_only_duckdb": 0,
+        "keys_only_snowflake": 0,
+        "cells_differing": 0,
+        "max_relative_difference": {
+          "event_week": 0.0,
+          "n_days": 0.0,
+          "n_hours": 0.0,
+          "pickups": 0.0,
+          "pickups_h00_06": 0.0,
+          "pickups_h06_10": 0.0,
+          "pickups_h10_16": 0.0,
+          "pickups_h16_20": 0.0,
+          "pickups_h20_24": 0.0,
+          "pickups_dist_t1": 0.0,
+          "pickups_dist_t2": 0.0,
+          "pickups_dist_t3": 0.0,
+          "pickups_dist_unknown": 0.0,
+          "pickups_do_cbd": 0.0,
+          "pickups_do_non_cbd": 0.0,
+          "pickups_format_exempt": 0.0,
+          "pickups_weekday": 0.0,
+          "pickups_weekend": 0.0,
+          "mean_temp_f": 5.801335485028882e-16,
+          "total_precip_in": 4.0261941056216006e-16
+        },
+        "identical": true
+      },
+      "fct_weekly_zone_channel": {
+        "rows_duckdb": 348715,
+        "rows_snowflake": 348715,
+        "keys_only_duckdb": 0,
+        "keys_only_snowflake": 0,
+        "cells_differing": 0,
+        "max_relative_difference": {
+          "pickups": 0.0
+        },
+        "identical": true
+      },
+      "fct_weekly_zone_trip_stats": {
+        "rows_duckdb": 48183,
+        "rows_snowflake": 48183,
+        "keys_only_duckdb": 0,
+        "keys_only_snowflake": 0,
+        "cells_differing": 0,
+        "max_relative_difference": {
+          "event_week": 0.0,
+          "n_trips": 0.0,
+          "n_revenue_known": 0.0,
+          "sum_fare_amount": 2.4228852677027446e-15,
+          "sum_total_amount": 2.166260476457975e-14,
+          "sum_cbd_fee": 0.0,
+          "n_cbd_fee_positive": 0.0,
+          "pickups_fare_t1": 0.0,
+          "pickups_fare_t2": 0.0,
+          "pickups_fare_t3": 0.0,
+          "pickups_fare_unknown": 0.0
+        },
+        "identical": true
+      },
+      "fct_weekly_zone_vendor": {
+        "rows_duckdb": 114988,
+        "rows_snowflake": 114988,
+        "keys_only_duckdb": 0,
+        "keys_only_snowflake": 0,
+        "cells_differing": 0,
+        "max_relative_difference": {
+          "event_week": 0.0,
+          "pickups": 0.0,
+          "pickups_flex": 0.0,
+          "pickups_format_exempt": 0.0,
+          "pickups_same_ts": 0.0
+        },
+        "identical": true
+      },
+      "fct_weekly_pair_speed": {
+        "rows_duckdb": 8107124,
+        "rows_snowflake": 8107124,
+        "keys_only_duckdb": 0,
+        "keys_only_snowflake": 0,
+        "cells_differing": 0,
+        "max_relative_difference": {
+          "event_week": 0.0,
+          "n_trips": 0.0,
+          "n_excl_duration": 0.0,
+          "n_excl_distance": 0.0,
+          "n_excl_speed": 0.0,
+          "n_used": 0.0,
+          "sum_duration_min": 2.2604461681657897e-15,
+          "sum_distance_mi": 1.9864635623400645e-15,
+          "sum_speed_mph": 2.4096960805727473e-15,
+          "n_fare": 0.0,
+          "sum_fare": 3.428939672075055e-15,
+          "sum_duration_fare_min": 2.2604461681657897e-15
+        },
+        "identical": true
+      }
+    },
+    "all_identical": true
+  },
+  "snowflake_credits_last_7_days": {
+    "total": 0.418625555,
+    "compute": 0.415798611,
+    "cloud_services": 0.002826944,
+    "since": "2026-11-14"
+  }
+}

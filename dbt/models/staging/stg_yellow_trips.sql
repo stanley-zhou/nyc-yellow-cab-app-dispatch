@@ -4,6 +4,7 @@
 -- files; earlier files yield NULL through union_by_name, and if no file on disk has it the column
 -- is a typed NULL. `raw_row_hash` hashes every raw column (not just the projected ones) so that
 -- int_trips_flagged removes exact duplicates of the full raw row (DECISIONS.md, Phase 1).
+{{ config(enabled=target.type != 'snowflake') }}  {#- E3: cleaning runs in DuckDB; Snowflake loads its output #}
 {%- set src = source('raw', 'yellow_trips') %}
 select
     try_cast(VendorID as integer)                  as vendor_id,

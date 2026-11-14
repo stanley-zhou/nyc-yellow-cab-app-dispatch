@@ -24,3 +24,49 @@ sources:
         config:
           meta:
             external_location: "read_csv('{{ var(\"zones_cbd_csv\") }}', header = true)"
+      # E3 (Snowflake only): tables loaded by scripts/24_snowflake_load.py into schema RAW
+      - name: yellow_trips_valid
+        description: Cleaned yellow trips (int_trips_flagged rows with drop_reason NULL, DuckDB), source months 2023-01 to 2026-09.
+        config:
+          enabled: "{{ target.type == 'snowflake' }}"
+        columns:
+          - name: pickup_ts
+            data_tests:
+              - not_null:
+                  config:
+                    enabled: "{{ target.type == 'snowflake' }}"
+          - name: source_month
+            data_tests:
+              - not_null:
+                  config:
+                    enabled: "{{ target.type == 'snowflake' }}"
+      - name: hvfhv_zone_hour
+        description: HVFHV aggregate (i), pickup zone x hour x platform x shared flags x trip type x distance bin.
+        config:
+          enabled: "{{ target.type == 'snowflake' }}"
+        columns:
+          - name: zone_id
+            data_tests:
+              - not_null:
+                  config:
+                    enabled: "{{ target.type == 'snowflake' }}"
+          - name: trips
+            data_tests:
+              - not_null:
+                  config:
+                    enabled: "{{ target.type == 'snowflake' }}"
+      - name: hvfhv_pair_week
+        description: HVFHV aggregate (ii), pickup zone x dropoff zone x week x platform.
+        config:
+          enabled: "{{ target.type == 'snowflake' }}"
+        columns:
+          - name: week_start
+            data_tests:
+              - not_null:
+                  config:
+                    enabled: "{{ target.type == 'snowflake' }}"
+          - name: trips
+            data_tests:
+              - not_null:
+                  config:
+                    enabled: "{{ target.type == 'snowflake' }}"

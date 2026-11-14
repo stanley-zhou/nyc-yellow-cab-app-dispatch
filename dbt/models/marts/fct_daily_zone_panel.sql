@@ -18,7 +18,7 @@ select
     z.zone_id,
     d.date,
     {{ week_start('d.date') }}                                    as week_start,
-    isodow(d.date) >= 6                                           as is_weekend,
+    {{ iso_dow('d.date') }} >= 6                                           as is_weekend,
     d.n_hours,
     coalesce(t.pickups, 0)::integer                               as pickups,
     {%- for c in split_cols %}

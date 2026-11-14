@@ -8,11 +8,11 @@
 select
     pu_zone_id                                                           as zone_id,
     count(*)                                                             as n_trips,
-    count(*) filter (where cbd_congestion_fee > 0)                       as n_fee_pos,
-    count(*) filter (where cbd_congestion_fee is null)                   as n_fee_null,
-    count(*) filter (where do_zone_id = pu_zone_id)                      as n_intra,
-    count(*) filter (where do_zone_id = pu_zone_id and cbd_congestion_fee > 0) as n_intra_fee_pos
+    {{ count_if("cbd_congestion_fee > 0") }}                       as n_fee_pos,
+    {{ count_if("cbd_congestion_fee is null") }}                   as n_fee_null,
+    {{ count_if("do_zone_id = pu_zone_id") }}                      as n_intra,
+    {{ count_if("do_zone_id = pu_zone_id and cbd_congestion_fee > 0") }} as n_intra_fee_pos
 from {{ ref('int_trips_valid') }}
 where pickup_ts >= date '{{ w[0] }}'
-  and pickup_ts <  date '{{ w[1] }}' + interval 1 day
+  and pickup_ts <  {{ plus_days("date '" ~ w[1] ~ "'", 1) }}
 group by 1

@@ -27,20 +27,20 @@ select
     pu_zone_id,
     do_zone_id,
     week_start,
-    datediff('day', {{ week_start("date '" ~ var('policy_date') ~ "'") }}, week_start) // 7
+    {{ event_week('week_start') }}
                                                                   as event_week,
     hour_band,
     dist_tercile,
     count(*)::integer                                             as n_trips,
-    count(*) filter (where exclusion = 'duration')::integer       as n_excl_duration,
-    count(*) filter (where exclusion = 'distance')::integer       as n_excl_distance,
-    count(*) filter (where exclusion = 'speed')::integer          as n_excl_speed,
-    count(*) filter (where exclusion is null)::integer            as n_used,
-    sum(duration_min) filter (where exclusion is null)            as sum_duration_min,
-    sum(trip_distance) filter (where exclusion is null)           as sum_distance_mi,
-    sum(speed_mph) filter (where exclusion is null)               as sum_speed_mph,
-    count(*) filter (where exclusion is null and fare_amount > 0)::integer as n_fare,
-    sum(fare_amount) filter (where exclusion is null and fare_amount > 0)  as sum_fare,
-    sum(duration_min) filter (where exclusion is null and fare_amount > 0) as sum_duration_fare_min
+    {{ count_if("exclusion = 'duration'") }}::integer       as n_excl_duration,
+    {{ count_if("exclusion = 'distance'") }}::integer       as n_excl_distance,
+    {{ count_if("exclusion = 'speed'") }}::integer          as n_excl_speed,
+    {{ count_if("exclusion is null") }}::integer            as n_used,
+    {{ agg_if('sum', 'duration_min', "exclusion is null") }}            as sum_duration_min,
+    {{ agg_if('sum', 'trip_distance', "exclusion is null") }}           as sum_distance_mi,
+    {{ agg_if('sum', 'speed_mph', "exclusion is null") }}               as sum_speed_mph,
+    {{ count_if("exclusion is null and fare_amount > 0") }}::integer as n_fare,
+    {{ agg_if('sum', 'fare_amount', "exclusion is null and fare_amount > 0") }}  as sum_fare,
+    {{ agg_if('sum', 'duration_min', "exclusion is null and fare_amount > 0") }} as sum_duration_fare_min
 from t
 group by all

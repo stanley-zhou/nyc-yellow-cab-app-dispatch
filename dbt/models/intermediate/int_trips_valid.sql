@@ -10,5 +10,9 @@ select
     coalesce(fare_amount > 0, false)    as revenue_known,
     date_trunc('hour', pickup_ts)  as pu_hour,
     date_trunc('hour', dropoff_ts) as do_hour
+{%- if target.type == 'snowflake' %}
+from {{ source('raw', 'yellow_trips_valid') }}  {#- E3: loaded output of the DuckDB cleaning #}
+{%- else %}
 from {{ ref('int_trips_flagged') }}
 where drop_reason is null
+{%- endif %}

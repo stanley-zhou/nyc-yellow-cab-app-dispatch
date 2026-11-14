@@ -1,3 +1,4 @@
+{{ config(enabled=target.type != 'snowflake') }}  {#- E3: DuckDB only (raw-file cleaning) #}
 -- Fails if a row covered by a record-format exemption is dropped by the exempted rule
 -- (DECISIONS.md, Phase 1: the 2025 Flex Fare and vendor-7 surprises).
 select source_month, drop_reason, count(*) as n

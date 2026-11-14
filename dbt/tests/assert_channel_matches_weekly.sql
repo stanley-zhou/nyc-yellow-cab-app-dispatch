@@ -10,12 +10,12 @@ w as (
     select zone_id, week_start, pickups
     from {{ ref('fct_weekly_zone_panel') }}
     where week_start >= date '{{ var("channel_window")[0] }}'
-      and week_start + 6 <= date '{{ var("channel_window")[1] }}'
+      and {{ plus_days('week_start', 6) }} <= date '{{ var("channel_window")[1] }}'
 )
 select w.zone_id, w.week_start, w.pickups, c.pickups as channel_sum
 from w
 full outer join (select * from c
                  where week_start >= date '{{ var("channel_window")[0] }}'
-                   and week_start + 6 <= date '{{ var("channel_window")[1] }}') as c
+                   and {{ plus_days('week_start', 6) }} <= date '{{ var("channel_window")[1] }}') as c
     using (zone_id, week_start)
 where w.zone_id is null or coalesce(c.pickups, 0) <> w.pickups

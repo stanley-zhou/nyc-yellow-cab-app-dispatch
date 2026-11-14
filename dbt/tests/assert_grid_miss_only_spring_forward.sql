@@ -3,5 +3,5 @@
 select kind, hour, n
 from {{ ref('int_grid_misses') }}
 where reason = 'spring_forward_gap'
-  and not (hour(hour) = 2 and month(hour) = 3 and dayofweek(hour) = 0
+  and not (hour(hour) = 2 and month(hour) = 3 and {{ is_sunday('hour') }}
            and day(hour) between 8 and 14)

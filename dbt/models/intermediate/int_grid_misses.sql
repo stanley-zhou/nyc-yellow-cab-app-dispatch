@@ -24,4 +24,8 @@ select
          else 'spring_forward_gap' end as reason
 from by_hour as b
 cross join span
+{%- if target.type == 'snowflake' %}
+where not exists (select 1 from {{ ref('int_hours') }} as h where h.hour_ts = b.hour)
+{%- else %}
 anti join {{ ref('int_hours') }} as h on h.hour_ts = b.hour
+{%- endif %}

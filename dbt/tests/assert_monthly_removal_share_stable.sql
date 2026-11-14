@@ -1,3 +1,4 @@
+{{ config(enabled=target.type != 'snowflake') }}  {#- E3: DuckDB only (raw-file cleaning) #}
 -- Fails if any month removes more than var('max_monthly_removal_ratio') x the median monthly share
 -- of rows (duplicates + every validity rule). This is the test that would have caught the 2025
 -- Flex Fare surprise; a new failure is a data finding to investigate, not a threshold to raise.

@@ -19,14 +19,14 @@ with t as (
 select
     zone_id,
     week_start,
-    datediff('day', {{ week_start("date '" ~ var('policy_date') ~ "'") }}, week_start) // 7
+    {{ event_week('week_start') }}
                                                                           as event_week,
     vendor_id,
     count(*)::integer                                                     as pickups,
-    count(*) filter (where payment_type = {{ var('flex_fare_payment_type') }})::integer
+    {{ count_if("payment_type = " ~ var('flex_fare_payment_type')) }}::integer
                                                                           as pickups_flex,
-    count(*) filter (where is_format_exempt)::integer                     as pickups_format_exempt,
+    {{ count_if("is_format_exempt") }}::integer                     as pickups_format_exempt,
     -- identical pickup/dropoff timestamps (the missing-dropoff-time record pattern)
-    count(*) filter (where same_ts)::integer                              as pickups_same_ts
+    {{ count_if("same_ts") }}::integer                              as pickups_same_ts
 from t
 group by zone_id, week_start, vendor_id

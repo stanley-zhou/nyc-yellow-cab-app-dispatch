@@ -5,7 +5,7 @@
 -- the demand grid). No averaging across files happens here.
 with local as (
     select
-        date_trunc('hour', timezone('{{ var("timezone") }}', to_timestamp(unix_time))) as hour_ts,
+        date_trunc('hour', {{ local_from_unix('unix_time') }}) as hour_ts,
         *
     from {{ ref('int_weather_selected') }}
 )

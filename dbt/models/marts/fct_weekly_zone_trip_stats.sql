@@ -24,17 +24,17 @@ with t as (
 select
     zone_id,
     week_start,
-    datediff('day', {{ week_start("date '" ~ var('policy_date') ~ "'") }}, week_start) // 7
+    {{ event_week('week_start') }}
                                                                   as event_week,
     count(*)::integer                                             as n_trips,
-    count(*) filter (where revenue_known)::integer                as n_revenue_known,
-    sum(fare_amount) filter (where revenue_known)                 as sum_fare_amount,
-    sum(total_amount) filter (where revenue_known)                as sum_total_amount,
+    {{ count_if("revenue_known") }}::integer                as n_revenue_known,
+    {{ agg_if('sum', 'fare_amount', "revenue_known") }}                 as sum_fare_amount,
+    {{ agg_if('sum', 'total_amount', "revenue_known") }}                as sum_total_amount,
     sum(cbd_fee)                                                  as sum_cbd_fee,
-    count(*) filter (where cbd_fee > 0)::integer                  as n_cbd_fee_positive,
-    count(*) filter (where fare_tercile = 't1')::integer          as pickups_fare_t1,
-    count(*) filter (where fare_tercile = 't2')::integer          as pickups_fare_t2,
-    count(*) filter (where fare_tercile = 't3')::integer          as pickups_fare_t3,
-    count(*) filter (where fare_tercile = 'unknown')::integer     as pickups_fare_unknown
+    {{ count_if("cbd_fee > 0") }}::integer                  as n_cbd_fee_positive,
+    {{ count_if("fare_tercile = 't1'") }}::integer          as pickups_fare_t1,
+    {{ count_if("fare_tercile = 't2'") }}::integer          as pickups_fare_t2,
+    {{ count_if("fare_tercile = 't3'") }}::integer          as pickups_fare_t3,
+    {{ count_if("fare_tercile = 'unknown'") }}::integer     as pickups_fare_unknown
 from t
 group by zone_id, week_start

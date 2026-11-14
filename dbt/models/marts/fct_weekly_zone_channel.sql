@@ -4,7 +4,7 @@
 select
     zone_id,
     week_start,
-    datediff('day', {{ week_start("date '" ~ var('policy_date') ~ "'") }}, week_start) // 7
+    {{ event_week('week_start') }}
                                                                           as event_week,
     vendor_id, channel, platform, trip_type, zone_group, is_cmt_outer_block,
     sum(pickups)::integer                                                 as pickups

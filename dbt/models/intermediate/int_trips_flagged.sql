@@ -15,7 +15,8 @@
 --   distance      : 0 < trip_distance <= max_trip_distance_miles
 --   fare          : fare_amount > 0
 --   pickup zone   : zone_id_min <= pu_zone_id <= zone_id_max
-{{ config(materialized='table', post_hook="{{ insert_remaining_files(this) }}") }}
+{{ config(materialized='table', post_hook="{{ insert_remaining_files(this) }}",
+          enabled=target.type != 'snowflake') }}
 {%- if execute %}
 {{ trips_flagged_select(yellow_files()[0]) }}
 {%- else %}

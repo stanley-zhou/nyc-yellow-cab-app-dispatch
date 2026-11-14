@@ -9,11 +9,11 @@
 with raw as (
     select
         *,
-        cast(regexp_extract(filename, 'open_meteo_(\d{4}-\d{2}-\d{2})_\d{4}-\d{2}-\d{2}\.csv', 1)
+        cast({{ regex_group('filename', 'open_meteo_(\d{4}-\d{2}-\d{2})_\d{4}-\d{2}-\d{2}\.csv') }}
              as date) as file_lo,
-        cast(regexp_extract(filename, 'open_meteo_\d{4}-\d{2}-\d{2}_(\d{4}-\d{2}-\d{2})\.csv', 1)
+        cast({{ regex_group('filename', 'open_meteo_\d{4}-\d{2}-\d{2}_(\d{4}-\d{2}-\d{2})\.csv') }}
              as date) as file_hi,
-        cast(timezone('UTC', to_timestamp(unix_time)) as date) as utc_date
+        {{ utc_date_from_unix('unix_time') }} as utc_date
     from {{ source('raw', 'weather') }}
 ),
 ranked as (
@@ -23,9 +23,9 @@ ranked as (
         row_number() over (
             partition by unix_time
             order by
-                (utc_date between file_lo + interval ({{ var('weather_pad_days') }}) day
-                              and file_hi - interval ({{ var('weather_pad_days') }}) day) desc,
-                file_hi - file_lo desc,
+                (utc_date between {{ plus_days('file_lo', var('weather_pad_days')) }}
+                              and {{ minus_days('file_hi', var('weather_pad_days')) }}) desc,
+                {{ diff_days('file_lo', 'file_hi') }} desc,
                 filename desc
         ) as rn
     from raw

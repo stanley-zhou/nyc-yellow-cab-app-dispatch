@@ -33,24 +33,24 @@ daily_lag as (
         zone_id,
         date,
         max(mean_day) over (partition by zone_id order by date
-            range between interval 1 day preceding and interval 1 day preceding) as mean_prev_day
+            {{ days_back(1, 1) }}) as mean_prev_day
     from daily
 ),
 lags as (
     select
         b.*,
         max(pickups) over (partition by zone_id, hour order by date
-            range between interval 1 day preceding and interval 1 day preceding)   as lag_24,
+            {{ days_back(1, 1) }})   as lag_24,
         max(pickups) over (partition by zone_id, hour order by date
-            range between interval 2 day preceding and interval 2 day preceding)   as lag_48,
+            {{ days_back(2, 2) }})   as lag_48,
         max(pickups) over (partition by zone_id, hour order by date
-            range between interval 7 day preceding and interval 7 day preceding)   as lag_168,
+            {{ days_back(7, 7) }})   as lag_168,
         max(pickups) over (partition by zone_id, hour order by date
-            range between interval 14 day preceding and interval 14 day preceding) as lag_336,
+            {{ days_back(14, 14) }}) as lag_336,
         avg(pickups) over (partition by zone_id, hour order by date
-            range between interval 7 day preceding and interval 1 day preceding)   as m7,
+            {{ days_back(7, 1) }})   as m7,
         avg(pickups) over (partition by zone_id, hour order by date
-            range between interval 28 day preceding and interval 1 day preceding)  as m28
+            {{ days_back(28, 1) }})  as m28
     from base as b
 )
 select
@@ -59,11 +59,11 @@ select
     l.pickups,
     -- calendar
     l.hour,
-    isodow(l.hour_ts) - 1                                         as dow,       -- 0 = Monday
+    {{ iso_dow('l.hour_ts') }} - 1                                         as dow,       -- 0 = Monday
     day(l.hour_ts)                                                as dom,
     month(l.hour_ts)                                              as month,
     year(l.hour_ts)                                               as year,
-    isodow(l.hour_ts) >= 6                                        as is_weekend,
+    {{ iso_dow('l.hour_ts') }} >= 6                                        as is_weekend,
     hol.date is not null                                          as is_holiday,
     -- weather (observed, city-wide)
     w.temp_f, w.apparent_temp_f, w.precip_in, w.rain_in, w.snowfall_in, w.weather_code,
@@ -73,8 +73,8 @@ select
     l.lag_48,
     l.lag_168,
     l.lag_336,
-    case when l.date >= fd.d0 + interval 7 day  then l.m7  end    as mean_same_hour_prev_7d,
-    case when l.date >= fd.d0 + interval 28 day then l.m28 end    as mean_same_hour_prev_28d,
+    case when l.date >= {{ plus_days('fd.d0', 7) }}  then l.m7  end    as mean_same_hour_prev_7d,
+    case when l.date >= {{ plus_days('fd.d0', 28) }} then l.m28 end    as mean_same_hour_prev_28d,
     dl.mean_prev_day
 from lags as l
 cross join first_day as fd

@@ -4,11 +4,11 @@
 {{ config(materialized='table') }}
 {%- set p = var('speed_tercile_period') %}
 select
-    quantile_cont(trip_distance, 1.0 / 3) as c1,
-    quantile_cont(trip_distance, 2.0 / 3) as c2,
+    {{ quantile_cont('trip_distance', '1.0', 3) }} as c1,
+    {{ quantile_cont('trip_distance', '2.0', 3) }} as c2,
     count(*)                              as n_trips
 from {{ ref('int_speed_trips') }}
 where exclusion is null
   and region = 'manhattan'                 -- within-Manhattan trips only (C4 keeps the cuts)
   and pu_hour >= date '{{ p[0] }}'
-  and pu_hour <  date '{{ p[1] }}' + interval 1 day
+  and pu_hour <  {{ plus_days("date '" ~ p[1] ~ "'", 1) }}

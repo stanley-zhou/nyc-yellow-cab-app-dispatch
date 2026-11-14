@@ -26,13 +26,13 @@ t as (
         v.fare_amount,
         v.cbd_congestion_fee,
         v.distance_known,
-        date_diff('second', v.pickup_ts, v.dropoff_ts) / 60.0 as duration_min
+        {{ diff_seconds('v.pickup_ts', 'v.dropoff_ts') }} / 60.0 as duration_min
     from {{ ref('int_trips_valid') }} as v
     join z as zp on zp.zone_id = v.pu_zone_id
     join z as zd on zd.zone_id = v.do_zone_id and zd.region = zp.region
     where v.pu_hour in (select hour_ts from {{ ref('int_hours') }})
       and v.pickup_ts >= date '{{ var("speed_window")[0] }}'
-      and v.pickup_ts <  date '{{ var("speed_window")[1] }}' + interval 1 day
+      and v.pickup_ts <  {{ plus_days("date '" ~ var("speed_window")[1] ~ "'", 1) }}
 )
 select
     *,

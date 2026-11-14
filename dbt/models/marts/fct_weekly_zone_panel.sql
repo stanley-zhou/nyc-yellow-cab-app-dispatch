@@ -10,7 +10,7 @@
 select
     zone_id,
     week_start,
-    datediff('day', {{ week_start("date '" ~ var('policy_date') ~ "'") }}, week_start) // 7
+    {{ event_week('week_start') }}
                                                                   as event_week,
     count(*)                                                      as n_days,
     sum(n_hours)                                                  as n_hours,
@@ -18,8 +18,8 @@ select
     {%- for c in split_cols %}
     sum({{ c }})                                                  as {{ c }},
     {%- endfor %}
-    coalesce(sum(pickups) filter (where not is_weekend), 0)       as pickups_weekday,
-    coalesce(sum(pickups) filter (where is_weekend), 0)           as pickups_weekend,
+    coalesce({{ agg_if('sum', 'pickups', "not is_weekend") }}, 0)       as pickups_weekday,
+    coalesce({{ agg_if('sum', 'pickups', "is_weekend") }}, 0)           as pickups_weekend,
     avg(mean_temp_f)                                              as mean_temp_f,  -- mean of daily means
     sum(total_precip_in)                                          as total_precip_in
 from {{ ref('fct_daily_zone_panel') }}

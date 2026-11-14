@@ -1,3 +1,4 @@
+{{ config(enabled=target.type != 'snowflake') }}  {#- E3: DuckDB only (raw-file cleaning) #}
 -- Fails if, for any source month, raw rows do not equal duplicates + dropped + valid rows, or if
 -- valid rows do not equal in-grid pickups + pickups that missed the grid.
 select *

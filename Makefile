@@ -4,10 +4,10 @@ SHELL := /bin/bash
 PY    := .venv/bin/python
 PHASE ?= 0
 
-.PHONY: help setup smoke smoke-clean data dbt probes chronos-bundle chronos-import forecast shock causal hvfhv channel fhv lyft-refresh tableau-extract adapt figures report all verify lint test clean-smoke
+.PHONY: help setup smoke smoke-clean data dbt snowflake probes chronos-bundle chronos-import forecast shock causal hvfhv channel fhv lyft-refresh tableau-extract adapt figures report all verify lint test clean-smoke
 
 help:
-	@echo "setup | smoke | smoke-clean | data | dbt | probes | forecast | shock | causal | hvfhv | channel | fhv | lyft-refresh | adapt | figures | report | all | verify PHASE=N | lint | test"
+	@echo "setup | smoke | smoke-clean | data | dbt | snowflake | probes | forecast | shock | causal | hvfhv | channel | fhv | lyft-refresh | adapt | figures | report | all | verify PHASE=N | lint | test"
 
 setup:            ## Python 3.12 venv via uv (system Python 3.14 is not supported)
 	uv python install 3.12
@@ -96,6 +96,12 @@ adapt:            ## Phase 5 (D6): S1 / S6 refits + S1e sensitivity (long, resum
 	$(PY) scripts/08_adapt.py --run s6
 	$(PY) scripts/08_adapt.py --run s1e
 	$(PY) scripts/08_adapt.py --evaluate
+
+snowflake:        ## E3: load the cleaned trips and HVFHV aggregates to Snowflake (24), dbt build there, DuckDB tests, per-target results (25); needs `source ~/.snowflake/taxi.env` and the [snowflake] extra
+	$(PY) scripts/24_snowflake_load.py
+	$(PY) scripts/03_dbt.py build --target snowflake --target-path target/snowflake
+	$(PY) scripts/03_dbt.py test --target-path target/duckdb
+	$(PY) scripts/25_dbt_targets.py
 
 report:           ## Phase 7: runtimes (results/runtimes.json), Tableau extracts, dead-link check of README / analysis.md
 	$(PY) scripts/20_runtimes.py

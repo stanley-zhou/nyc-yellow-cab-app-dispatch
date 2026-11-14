@@ -1,3 +1,4 @@
+{{ config(enabled=target.type != 'snowflake') }}  {#- E3: DuckDB only (raw-file cleaning) #}
 -- Per source file (month): raw rows, exact duplicates, rows dropped by each validity rule (first
 -- failing rule, and each rule tested independently), valid rows, and valid trips that miss the
 -- hour grid. scripts/03b_data_results.py turns this table into results/data_quality.json.
