@@ -43,6 +43,12 @@ chronos = [
     "chronos-forecasting==2.3.2",
 ]
 
+# E3 (Amendment 4): dbt on Snowflake, installed only where the account is used (not in CI).
+snowflake = [
+    "dbt-snowflake==1.12.5",
+    "snowflake-connector-python==5.2.0",
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
