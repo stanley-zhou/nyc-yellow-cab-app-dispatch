@@ -3909,7 +3909,7 @@ z
    </g>
   </g>
   <g id="text_65">
-   <!-- 95% CI includes zero in 10 of 15 trip subsets for weighted demand and in 4 of 8 for within-CBD -->
+   <!-- 95% CI includes zero in 11 of 17 trip subsets for weighted demand and in 4 of 8 for within-CBD -->
    <g transform="translate(11.39976 16.659355) scale(0.11 -0.11)">
     <defs>
      <path id="DejaVuSans-Bold-1c" d="M 641 103 
@@ -4048,25 +4048,14 @@ L 750 0
 L 750 831 
 z
 " transform="scale(0.015625)"/>
-     <path id="DejaVuSans-Bold-13" d="M 2944 2338 
-Q 2944 3213 2780 3570 
-Q 2616 3928 2228 3928 
-Q 1841 3928 1675 3570 
-Q 1509 3213 1509 2338 
-Q 1509 1453 1675 1090 
-Q 1841 728 2228 728 
-Q 2613 728 2778 1090 
-Q 2944 1453 2944 2338 
-z
-M 4147 2328 
-Q 4147 1169 3647 539 
-Q 3147 -91 2228 -91 
-Q 1306 -91 806 539 
-Q 306 1169 306 2328 
-Q 306 3491 806 4120 
-Q 1306 4750 2228 4750 
-Q 3147 4750 3647 4120 
-Q 4147 3491 4147 2328 
+     <path id="DejaVuSans-Bold-1a" d="M 428 4666 
+L 3944 4666 
+L 3944 3988 
+L 2125 0 
+L 953 0 
+L 2675 3781 
+L 428 3781 
+L 428 4666 
 z
 " transform="scale(0.015625)"/>
      <path id="DejaVuSans-Bold-17" d="M 2356 3675 
@@ -4153,13 +4142,13 @@ z
     <use xlink:href="#DejaVuSans-Bold-51" transform="translate(1236.671875 0)"/>
     <use xlink:href="#DejaVuSans-Bold-3" transform="translate(1307.859375 0)"/>
     <use xlink:href="#DejaVuSans-Bold-14" transform="translate(1342.671875 0)"/>
-    <use xlink:href="#DejaVuSans-Bold-13" transform="translate(1412.25 0)"/>
+    <use xlink:href="#DejaVuSans-Bold-14" transform="translate(1412.25 0)"/>
     <use xlink:href="#DejaVuSans-Bold-3" transform="translate(1481.828125 0)"/>
     <use xlink:href="#DejaVuSans-Bold-52" transform="translate(1516.640625 0)"/>
     <use xlink:href="#DejaVuSans-Bold-49" transform="translate(1585.34375 0)"/>
     <use xlink:href="#DejaVuSans-Bold-3" transform="translate(1628.84375 0)"/>
     <use xlink:href="#DejaVuSans-Bold-14" transform="translate(1663.65625 0)"/>
-    <use xlink:href="#DejaVuSans-Bold-18" transform="translate(1733.234375 0)"/>
+    <use xlink:href="#DejaVuSans-Bold-1a" transform="translate(1733.234375 0)"/>
     <use xlink:href="#DejaVuSans-Bold-3" transform="translate(1802.8125 0)"/>
     <use xlink:href="#DejaVuSans-Bold-57" transform="translate(1837.625 0)"/>
     <use xlink:href="#DejaVuSans-Bold-55" transform="translate(1885.421875 0)"/>

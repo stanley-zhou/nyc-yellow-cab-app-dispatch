@@ -204,14 +204,15 @@ def checks(cfg: dict) -> dict:
             for a in ("cbd", "manhattan_non_cbd", "other")}
     rows = []
 
-    def add(question, design, pre, estimate, gate, passed, values, f, note=""):
+    def add(question, design, pre, estimate, gate, passed, values, f, note="",
+            reading="primary"):
         rows.append({"question": question, "design": design, "preregistered": pre,
-                     "estimate": estimate, "gate": gate, "passed": passed,
+                     "reading": reading, "estimate": estimate, "gate": gate, "passed": passed,
                      "gate_values": values, "file": f"results/{f}", "note": note})
 
-    def pretrend(question, design, pre, estimate, p, f, note=""):
+    def pretrend(question, design, pre, estimate, p, f, note="", reading="primary"):
         add(question, design, pre, estimate, f"pre-trend test p >= {alpha:g}", p >= alpha,
-            {"p_value": p}, f, note)
+            {"p_value": p}, f, note, reading)
 
     q = "Congestion pricing and yellow demand"
     pretrend(q, "DiD, equal zone weights", True,
@@ -254,20 +255,24 @@ def checks(cfg: dict) -> dict:
         "pre-specified comparison of the step across trip types (no parallel-trend "
         "assumption)", True, {"p_value": None}, "app_share_policy_step.json",
         "answered: the step is as large for trips that never touch the zone")
-    pretrend("Did the fee move trips into apps?", "DiD, app share (secondary)", False,
+    pretrend("Did the fee move trips into apps?", "Event study / DiD of the app share", True,
              f"{st['yellow']['pooled']['app_share']['coef'] * 100:+.1f} points",
              _p(st["yellow"]["pretrend"]["app_share"]), "app_share_policy_step.json",
-             "secondary reading, not the pre-specified one")
+             "second reading of the same pre-specified design (Amendment 4a names the event "
+             "study); counted once with the design, by its primary reading", reading="secondary")
     pr, lg = ly["primary_clean_windows"], ly["log_specification"]["clean_windows"]
     ptr = {k: _p(v) for k, v in pr["pretrend"].items()}
+    n_ok = sum(v >= alpha for v in ptr.values())
     add("Lyft's entry on Curb cabs (preliminary)", "DiD by vendor, levels", True,
         f"{pr['incrementality']:.2f} [{pr['incrementality_ci'][0]:.2f}, "
         f"{pr['incrementality_ci'][1]:.2f}]",
-        f"pre-trend tests p >= {alpha:g} on total, app and street pickups",
-        all(ptr[k] >= alpha for k in ("total", "app", "street")),
-        {"p_value_by_outcome": ptr}, "lyft_entry.json",
-        "passes, but not credible: levels are misspecified in scale (Curb cabs carry 4.3 "
-        "times CMT's volume); the Uber outcome fails its pre-trend test")
+        f"pre-trend tests p >= {alpha:g} on each pre-registered outcome "
+        f"({', '.join(ptr)})",
+        True if n_ok == len(ptr) else ("partial" if n_ok else False),
+        {"p_value_by_outcome": ptr, "outcomes_passed": f"{n_ok} of {len(ptr)}"},
+        "lyft_entry.json",
+        "the Uber outcome fails its pre-trend test; the estimate is not credible because "
+        "levels are misspecified in scale (see lyft_curb_cmt_ratio)")
     pretrend("Lyft's entry on Curb cabs (preliminary)", "DiD by vendor, logs (alternative)",
              False, f"{lg['incrementality']:.2f} [{lg['incrementality_ci'][0]:.2f}, "
              f"{lg['incrementality_ci'][1]:.2f}]", _p(lg["pretrend"]["total"]),
@@ -278,15 +283,36 @@ def checks(cfg: dict) -> dict:
         f"lead placebo p >= {alpha:g} in every area", min(lead.values()) >= alpha,
         {"lead_placebo_p": lead}, "incrementality_dml.json",
         "the lead placebo fails in Manhattan outside the CBD")
-    pre = [r for r in rows if r["preregistered"]]
+    # counting rule: one count per design, by its primary reading; a second reading of the
+    # same pre-specified design (D5b's event study) is shown but not counted again
+    pre = [r for r in rows if r["preregistered"] and r["reading"] == "primary"]
+    post = [r for r in rows if not r["preregistered"]]
     return {"rows": rows, "gate_alpha": alpha,
+            "counting_rule": "one count per design by its primary reading; secondary readings "
+                             "shown, not counted; passed = True / False / 'partial' (some "
+                             "pre-registered outcomes fail)",
             "n_preregistered": len(pre),
-            "n_preregistered_stopped": sum(not r["passed"] for r in pre),
-            "n_preregistered_passed": sum(r["passed"] for r in pre),
-            "n_not_preregistered": len(rows) - len(pre),
-            "n_not_preregistered_stopped": sum(not r["passed"] for r in rows
-                                               if not r["preregistered"]),
+            "n_preregistered_stopped": sum(r["passed"] is False for r in pre),
+            "n_preregistered_passed": sum(r["passed"] is True for r in pre),
+            "n_preregistered_partial": sum(r["passed"] == "partial" for r in pre),
+            "n_not_preregistered": len(post),
+            "n_not_preregistered_stopped": sum(r["passed"] is False for r in post),
             "incrementality_lead_placebo_p": lead}
+
+
+def lyft_ratio(cfg: dict) -> dict:
+    """Curb / CMT weekly pickup ratio over the Lyft design's pre-period (review round 2)."""
+    ly = _json("lyft_entry.json")
+    r = pd.DataFrame(ly["curb_cmt_weekly_ratio"]).T["total"]
+    r.index = pd.to_datetime(r.index)
+    w = ly["windows"]
+    pre = r[(r.index >= w["long_pre_start"]) & (r.index <= w["pre_end"])]
+    y25 = r[r.index.year == 2025]
+    return {"source": "results/lyft_entry.json -> curb_cmt_weekly_ratio (total pickups)",
+            "pre_period": [w["long_pre_start"], w["pre_end"]], "pre_weeks": len(pre),
+            "pre_mean": float(pre.mean()), "pre_min": float(pre.min()),
+            "pre_max": float(pre.max()), "weeks_2025_mean": float(y25.mean()),
+            "weeks_2025_min": float(y25.min()), "weeks_2025_max": float(y25.max())}
 
 
 def repo_counts() -> dict:
@@ -345,6 +371,7 @@ def main() -> None:
                              _json("adaptation_summary.json")["bias_pct_of_pickups"].items()},
         "cbd_ride_market": ride_market(cfg),
         "preregistered_checks": checks(cfg),
+        "lyft_curb_cmt_ratio": lyft_ratio(cfg),
         "repository": repo_counts(),
         "external_app_share_2024": external_app_share(cfg),
     }

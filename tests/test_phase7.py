@@ -71,13 +71,14 @@ def test_presentation_numbers_are_consistent_with_their_sources() -> None:
         assert r["app_before"] == w.loc[(b, g), "app"] and r["app_after"] == w.loc[(a, g), "app"]
         assert r["street_after"] == w.loc[(a, g), "street"]
     ch = pn["preregistered_checks"]
-    pre = [r for r in ch["rows"] if r["preregistered"]]
+    pre = [r for r in ch["rows"] if r["preregistered"] and r["reading"] == "primary"]
     assert ch["n_preregistered"] == len(pre)
-    assert ch["n_preregistered_passed"] + ch["n_preregistered_stopped"] == len(pre)
-    assert ch["n_preregistered"] + ch["n_not_preregistered"] == len(ch["rows"])
+    assert (ch["n_preregistered_passed"] + ch["n_preregistered_stopped"]
+            + ch["n_preregistered_partial"]) == len(pre)
+    assert ch["n_not_preregistered"] == sum(not r["preregistered"] for r in ch["rows"])
     for row in ch["rows"]:
         assert (ROOT / row["file"]).exists()
-        assert isinstance(row["passed"], bool)
+        assert row["passed"] in (True, False, "partial")
         p = row["gate_values"].get("p_value")
         if p is not None and "pre-trend test p" in row["gate"]:
             assert row["passed"] == (p >= ch["gate_alpha"])

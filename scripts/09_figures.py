@@ -314,7 +314,7 @@ def phase4(cfg: dict) -> None:
                    "weather x treated; 95% CIs clustered by zone; reference: the week before "
                    "2025-01-05. The pre-registered equal-weight path is in F4d. Source: "
                    "results/event_study.csv.", figs / "F4_event_study",
-                   "DiD estimate, CBD pickups vs control (%)")
+                   "DiD estimate (%)")
 
     spd, dur = (sp[k]["main"]["terms"]["treated_post"] for k in ("log_mean_speed_mph",
                                                                   "log_mean_duration_min"))
@@ -402,7 +402,7 @@ def phase4(cfg: dict) -> None:
         d = sh[(sh["outcome"] == "log_mean_speed_mph") & (sh["cut"] == cut)
                & (sh["control"] == "donut")]
         panels.append((name, d.assign(label=d["level"].map(_label))))
-    sub = hw[hw["cut"].isin(list(names)[:5])]
+    sub = hw[hw["cut"].isin(list(names))]   # every demand subset drawn (pass-through included)
     dzero = int(((sub["ci_lo"] < 0) & (sub["ci_hi"] > 0)).sum())
     dn = len(sub)
     shd = sh[(sh["outcome"] == "log_mean_speed_mph") & (sh["control"] == "donut")]

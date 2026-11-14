@@ -47,8 +47,8 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
 - What congestion pricing did to yellow demand, Uber and Lyft demand, or trip speed: every
   difference-in-differences fails its pre-trend test, and the synthetic control fails its
   fake-date check.
-- Eight of ten pre-registered designs stopped at their pass/fail check; the two that passed do not
-  identify an effect ([presentation_numbers.json](results/presentation_numbers.json); report
+- Eight of ten pre-registered designs stopped at their pass/fail check; one passed and one passed
+  on three of four outcomes, and neither identifies an effect ([presentation_numbers.json](results/presentation_numbers.json); report
   [section 4](reports/analysis.md#4-what-the-data-could-not-identify)).
 
 ## Methods and stack
@@ -70,7 +70,7 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   analysis.
 - An independent review of every phase, with its fix rounds, is in [`reviews/`](reviews/), with
   the Checkpoint 7 advisor review.
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (232 entries).
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (233 entries).
 - 135 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 
@@ -110,14 +110,14 @@ uses `memory_limit = 5GB`, 10 threads.
 | `probes` | one-off evidence scripts behind DECISIONS.md entries (duplicates, negative fares, record formats, Open-Meteo offset) |
 | `forecast` | Phase 2: LightGBM grid on 2023 (`04a`), rolling-origin backtests for 2023 and 2024 (`04`), conformal calibration and metrics (`04b`) |
 | `chronos-bundle`, `chronos-import` | Phase 2: export the Chronos-2 input bundle for Colab; validate the forecasts copied back |
-| `shock` | Phase 3: frozen LightGBM, day-ahead 2024-07 → 2026-09 without retraining, CUSUM and rolling-bias monitors (`06`); C5: the same monitor for three shocks (`06b`) |
+| `shock` | Phase 3: frozen LightGBM, day-ahead 2024-07 → 2026-09 without retraining, CUSUM and rolling-bias monitors (`06`); C5: the same monitor for three shocks (`06b`); daily weather for the storm check (`06c` → `results/weather_daily.csv`) |
 | `causal` | Phase 4 / 4b: speed and demand DiD with checks and placebos, MDE, heterogeneity, counterfactual, test-size simulation, app-dispatch share, synthetic control (`07a`–`07f`) |
 | `hvfhv` | Amendment 4: stream the high-volume FHV months (download → DuckDB aggregates → verify → delete; manifest `data/raw/hvfhv_manifest.csv`; stops below `hvfhv.min_free_gb` free on the drive named by `TAXI_SHOCK_DISK_GUARD`) (`11`) |
 | `channel` | Amendment 4 / 4a: label validation D0 (`10a`), CMT contracted block (`10b`), channel decomposition D1 (`10c`), incrementality D2 (`12`), Lyft entry D3 (`13`), by-channel DiD D5 (`14`), app-share step D5b (`15`), cross-platform D4 (`17`), experiment design (`19`) |
 | `fhv` | C6: congestion pricing and FHV demand, pre-trend gate first (`16`) |
 | `lyft-refresh` | D3: re-download, rebuild and re-estimate once later TLC months are added to the config |
 | `adapt` | Phase 5: S1 / S6 monthly refits and the S1e sensitivity (S1 on an expanding window), resumable per month; then evaluation of S0, S1, S4, S6, S1e and the seasonal-naive reference (`08`) |
-| `figures` | descriptive report numbers (`23` → `results/presentation_numbers.json`), then every figure, from `results/` only (`09`) |
+| `figures` | descriptive report numbers from `results/` plus repository counts (`23` → `results/presentation_numbers.json`), then every figure from `results/`; the maps also read the TLC zone shapefile, a lookup (`09`) |
 | `tableau-extract` | E2: CSV / GeoJSON extracts for the dashboard (`18`) |
 | `report` | runtimes (`20` → `results/runtimes.json`), dashboard extracts, dead-link check of README and report (`21`) |
 | `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
@@ -178,7 +178,7 @@ dashboard specification and extracts) · `reviews/` (independent phase reviews).
   exist only from 2026-06; two `request_source` codes (A, CC) are undetermined.
 - **Supply.** No driver- or vehicle-level data; the supply view uses TLC monthly aggregates.
 - **Causal claims.** No design identified an effect (eight of ten pre-registered designs stopped at
-  their pass/fail check, and the two that passed do not measure one); nothing here
+  their pass/fail check, and the other two do not measure one); nothing here
   states a causal effect of app dispatch or of congestion pricing.
 
 ## Data and licences

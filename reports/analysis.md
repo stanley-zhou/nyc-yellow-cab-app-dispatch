@@ -11,7 +11,7 @@
 2. **Supply.** The growth came with more cabs, not busier cabs. From 2023 to 2025, trips per day rose 25.6% and active cabs per day 24.0%; trips per cab-day stayed between 14.0 and 15.0 ([presentation_numbers.json → supply](../results/presentation_numbers.json)).
 3. **Forecasting.** A day-ahead forecaster frozen in December 2024 stayed accurate through the shift. Its error was 16.4%, against 16.2% with monthly retraining and 23.7% for a seasonal naive forecast ([adaptation_summary.json](../results/adaptation_summary.json)).
 
-**What I tested and could not identify.** I could not identify whether app trips are additional, or what congestion pricing did to taxi demand. Eight of ten pre-registered designs stopped at their pass/fail check ([presentation_numbers.json → preregistered_checks](../results/presentation_numbers.json)). Of the two that passed, one gives an estimate that is not credible and the other answers a narrower question (section 4).
+**What I tested and could not identify.** I could not identify whether app trips are additional, or what congestion pricing did to taxi demand. Eight of ten pre-registered designs stopped at their pass/fail check ([presentation_numbers.json → preregistered_checks](../results/presentation_numbers.json)). One passed and answers a narrower question; one passed partly, with an estimate that is not credible (section 4).
 
 **Recommendation.** Evaluations and forecasts of NYC taxi demand in 2023–2026 must model the dispatch channel. A model that treats yellow pickups as one series reads a change in dispatch as a change in demand.
 
@@ -19,12 +19,12 @@
 
 ## 1. Data and definitions
 
-- **Scale.** Over 1.2 billion trip records: 341,589,889 yellow-taxi records (2019-01 → 2026-09) and 904,683,847 high-volume for-hire vehicle (FHV: Uber, Lyft) trips ([presentation_numbers.json → scale](../results/presentation_numbers.json)). I processed them with DuckDB and dbt on one 12-core machine with 12.5 GB of memory ([machine_resources.json](../results/machine_resources.json)). After de-duplication and validity rules, 331,436,471 yellow records remain ([data_quality.json](../results/data_quality.json)).
+- **Scale.** Over 1.2 billion trip records: 341,589,889 yellow-taxi records (2019-01 → 2026-09) and 904,683,847 high-volume for-hire vehicle (FHV: Uber, Lyft) trips ([presentation_numbers.json → scale](../results/presentation_numbers.json)). I processed them with DuckDB and dbt on one 12-core machine with 12.5 GB of memory ([machine_resources.json](../results/machine_resources.json)).
 - **App dispatch.** An e-hail app (Uber, Lyft, Curb, Arro) sends a yellow cab to the rider. I identify it by the Flex Fare flag before June 2026 and by the `request_source` field from June 2026; on June–September 2026 the two agree on 99.97–100% of trips ([channel_label_validation.json](../results/channel_label_validation.json)).
 - **Street hail.** Every other valid yellow pickup, except the contracted trip programme.
 - **Congestion zone (CBD).** Manhattan south of 60th Street, 38 TLC zones. From 2025-01-05, taxis pay $0.75 and FHVs $1.50 per trip touching it.
 - **Outer boroughs.** The Bronx, Brooklyn, Queens and Staten Island, airports excluded.
-- **Contracted trip programme.** A centrally paid programme on cabs with CMT meters in the outer boroughs, recorded as street hails, which ended in May 2026. I report it as its own series ([appendix A2](appendix.md#a2-the-contracted-trip-programme)).
+- **Contracted trip programme.** Centrally paid outer-borough trips recorded as street hails, ended May 2026; kept as its own series ([appendix A2](appendix.md#a2-the-contracted-trip-programme)).
 - **Weeks.** All comparisons use mean weekly pickups, because calendar months hold four or five panel weeks.
 
 ## 2. The shift
@@ -37,8 +37,6 @@
 | CBD | +99,063 (418,560 → 517,623) | +104,958 | −5,896 |
 | Manhattan outside the CBD | +50,537 (215,677 → 266,214) | +51,230 | −692 |
 | Outer boroughs | +43,526 (8,277 → 51,803, about six-fold) | +42,811 | +715 |
-
-In the CBD the app share went from 2.3% (2023-01) to 10.3% (2024-04), 17.8% (2025-01) and 29.6% (2026-01) ([channel_restatement.json](../results/channel_restatement.json)).
 
 **The app share rose in steps** ([channel_label_validation.json → flex_share_steps](../results/channel_label_validation.json); [F6a](figures/F6a_channel_areas.png)). Across all zones it jumped by 5.6 points at the week of 2024-02-25, 5.4 at 2024-09-01, 10.9 at 2025-01-19 and 7.2 at 2025-05-04. The largest step came two weeks after congestion pricing began, so I checked it by area ([presentation_numbers.json → january_2025_step](../results/presentation_numbers.json)):
 
@@ -54,7 +52,7 @@ In the CBD the app share went from 2.3% (2023-01) to 10.3% (2024-04), 17.8% (202
 
 **Where it happened** ([F4g](figures/F4g_app_dispatch_map.png)). Zones where Uber and Lyft dispatch is common are the zones where yellow pickups grew most. Growth from 2023 to 2025 correlates with the June–September 2026 Uber and Lyft share at r = 0.92 across 63 Manhattan zones and r = 0.90 across all 200 zones (Spearman 0.85) ([app_dispatch_summary.json](../results/app_dispatch_summary.json)). This is a correlation, not an effect.
 
-**Supply** ([presentation_numbers.json → supply](../results/presentation_numbers.json), from the TLC's monthly reports). From 2023 to 2025, yellow trips per day rose 25.6% (104,422 → 131,133) and active cabs per day 24.0% (about 7,040 → 8,720). Trips per cab-day stayed between 14.0 and 15.0 in 2023–2026. The records cannot say whether app dispatch brought the cabs back or the returning cabs took app trips.
+**Supply** ([presentation_numbers.json → supply](../results/presentation_numbers.json), from the TLC's monthly reports). From 2023 to 2025, yellow trips per day rose 25.6% (104,422 → 131,133) and active cabs per day 24.0% (about 7,040 → 8,720). Trips per cab-day stayed between 14.0 and 15.0 in 2023–2026.
 
 **The ride market in the CBD** ([presentation_numbers.json → cbd_ride_market](../results/presentation_numbers.json)), mean weekly pickups:
 
@@ -65,7 +63,7 @@ In the CBD the app share went from 2.3% (2023-01) to 10.3% (2024-04), 17.8% (202
 | Total | 1,652,560 | 1,682,229 |
 | Yellow's share | 25.3% | 30.8% |
 
-The total was about flat (+1.8%) and yellow's share rose. Seen from the platforms, yellow cabs served 12.5% of Uber's CBD trips in June 2026 and 9.3% in September 2026, and 17.8% of Lyft's in September 2026.
+The total was about flat (+1.8%) and yellow's share rose ([appendix A2](appendix.md#a2-the-contracted-trip-programme) gives the platforms' view).
 
 ## 3. A methods case: how a textbook DiD produced a −35% effect that was not there
 
@@ -76,7 +74,7 @@ A difference-in-differences (DiD) compares the change in treated zones with the 
 **Why it was wrong.** Equal zone weights let small uptown control zones drive the control trend ([F4b](figures/F4b_effect_map.png)). Their pickups grew several-fold, and they are the zones where app dispatch is highest: the fastest-growing control zones are 71–83% Uber/Lyft-dispatched ([figure_stats_phase4b.json → c1](../results/figure_stats_phase4b.json)), the median CBD zone 27% ([app_dispatch_summary.json](../results/app_dispatch_summary.json)). A log difference against fast-growing small zones reads their growth as a CBD decline. Weighting zones by their pre-policy volume gives −5.2% [−12.8%, +3.0%].
 
 **How I caught it.**
-1. **The pre-trend test failed** (p = 2.7e−10). This test checks whether treated and control zones moved in parallel before the policy. A simulation of 200 data sets without a pre-trend showed the planned test rejects 56% of them at a 5% level, and the corrected test 9.5%, still above 5% but far below 56%; the real p-value is far below both ([pretrend_test_size.json](../results/pretrend_test_size.json)).
+1. **The pre-trend test failed** (p = 2.7e−10). This test checks whether treated and control zones moved in parallel before the policy. In simulations without a pre-trend the test rejects too often (9.5% at a 5% level, [appendix A6](appendix.md#a6-the-methods-case-test-size-and-the-forecast-check)), but nowhere near this p-value ([pretrend_test_size.json](../results/pretrend_test_size.json)).
 2. **A model that knows nothing about control zones disagreed.** After the policy, CBD pickups ran +2.0% against the frozen forecaster ([figure_stats_phase4.json](../results/figure_stats_phase4.json); [F4d](figures/F4d_counterfactual_vs_did.png)).
 3. **A placebo found an effect where there was none.** A placebo reruns the design where no effect can exist. The same specification at a fake policy date, 2024-01-07, a year early, gives −13.8% ([placebo.json → placebo_in_time](../results/placebo.json)).
 4. **The control group's growth traced to the dispatch channel** (section 2).
@@ -85,7 +83,7 @@ A difference-in-differences (DiD) compares the change in treated zones with the 
 
 ## 4. What the data could not identify
 
-Each pre-registered design had an expected direction and a pass/fail check, which I call a gate, fixed before it was run. Of 10 pre-registered designs, 8 stopped at their gate; the 3 designs I added after seeing earlier results all failed their pre-trend tests too ([presentation_numbers.json → preregistered_checks](../results/presentation_numbers.json); details in [appendix A3–A5](appendix.md#a3-incrementality-of-app-trips)). Estimates of failed designs are shown for completeness and are not interpretable as effects.
+Each pre-registered design had an expected direction and a pass/fail check, which I call a gate, fixed before it was run. Of 10 pre-registered designs, 8 stopped at their gate, 1 passed and 1 passed on three of four outcomes; the 2 designs I added after seeing earlier results failed too ([presentation_numbers.json → preregistered_checks](../results/presentation_numbers.json); [appendix A3–A5](appendix.md#a3-incrementality-of-app-trips)). Estimates of failed designs are not interpretable as effects.
 
 | Question | Design | Pre-registered | Estimate | Gate |
 |---|---|---|---|---|
@@ -98,12 +96,12 @@ Each pre-registered design had an expected direction and a pass/fail check, whic
 | Congestion pricing by channel | DiD, street hails | yes | −3.1% | pre-trend p = 9.7e−18: fail |
 | | DiD, app trips | yes | +12.2% | pre-trend p = 2.4e−22: fail |
 | Did the fee move trips into apps? | App-share step by trip type | yes | +8.1 to +11.3 points touching the CBD, +10.6 touching neither end | comparison needs no parallel trends: answered |
-| | DiD, app share (secondary) | no | +3.0 points | pre-trend p = 3.9e−27: fail |
-| Lyft's entry on Curb cabs (preliminary) | DiD by vendor, levels | yes | −1.12 [−1.37, −0.87] | pre-trend p = 0.26 / 0.27 / 0.22 (total / app / street): pass |
+| | Event study of the app share (second reading, same design) | yes | +3.0 points | pre-trend p = 3.9e−27: fail |
+| Lyft's entry on Curb cabs (preliminary) | DiD by vendor, levels | yes | −1.12 [−1.37, −0.87] | pre-trend p = 0.26 / 0.27 / 0.22 (total / app / street): pass; Uber trips p = 1.9e−13: fail. 3 of 4 outcomes pass |
 | | DiD by vendor, logs (alternative) | no | 0.68 [0.09, 1.23] | pre-trend p = 2.3e−07: fail |
 | Are app trips additional? | Double machine learning (DML) | yes | 0.90 [0.74, 1.06] in the CBD | lead placebo fails in Manhattan outside the CBD (p = 9.8e−05): fail |
 
-The two designs that passed do not identify an effect. The step comparison says the January 2025 step was as large for trips that never touch the zone; it does not measure demand. Lyft's levels design passes its pre-trend tests, but its estimate is not credible: Curb cabs carry 4.3 times CMT's volume, so common percentage swings appear as level changes ([lyft_entry.json](../results/lyft_entry.json)).
+Neither of the two that passed identifies an effect. The step comparison shows the January 2025 step as large for trips that never touch the zone; it does not measure demand. Lyft's levels estimate is not credible: Curb cabs carry about 4.4 times CMT's weekly pickups, so common percentage swings appear as level changes ([presentation_numbers.json → lyft_curb_cmt_ratio](../results/presentation_numbers.json)).
 
 DML fits flexible models for both the outcome and the treatment and estimates the effect from what neither explains. Its lead placebo tests whether next week's app trips "predict" this week's street hails; they should not. Estimates of the share of app trips that are additional range from 0.52 to 2.62 across estimators in the CBD; the primary DML gives 0.90 [0.74, 1.06]; the estimators disagree beyond their intervals and the lead placebo fails in Manhattan outside the CBD, so incrementality is not identified from these data ([incrementality_dml.json](../results/incrementality_dml.json); [F6c](figures/F6c_incrementality.png)).
 
@@ -125,24 +123,22 @@ WAPE, the error measure, is the sum of absolute errors divided by the sum of act
 
 The forecaster stayed accurate through the shift, and monthly retraining recovers a small, measurable gain: 0.23 points, with a 95% interval that excludes zero. The gain comes from retraining, not from the training window ([appendix A7](appendix.md#a7-forecasting-details)).
 
-**Where the frozen model fails.** Its under-forecast sits where app growth is largest: −10.8% of pickups in the outer boroughs against −2.0% in the CBD ([adaptation_summary.json → bias_pct_of_pickups](../results/adaptation_summary.json)). Monthly retraining cuts it to −7.0% there. App-share features cut it furthest, to −6.0%, yet that strategy is the least accurate overall. I report that as found.
+**Where the frozen model fails.** Its under-forecast sits where app growth is largest: −10.8% of pickups in the outer boroughs against −2.0% in the CBD ([adaptation_summary.json → bias_pct_of_pickups](../results/adaptation_summary.json)). Monthly retraining cuts it to −7.0% there. App-share features cut it furthest, to −6.0%, yet that strategy is the least accurate overall.
 
-**Monitoring.** A cumulative-sum (CUSUM) monitor of daily forecast errors found no CBD-specific break at the policy date. In the first four weeks, pickups ran 6.3% above the frozen forecast in the CBD and 5.3% above elsewhere ([figure_stats_phase3.json](../results/figure_stats_phase3.json); [F3](figures/F3_error_over_time.png)). The first CBD alarm, on day 14, resembles the one alarm of the 2024 calibration year. The two 2026 alarms follow snowstorms of 7.5 and 5.5 inches, on days when CBD pickups ran 50.6% and 72.7% below forecast ([alarm_weather_check.csv](../results/alarm_weather_check.csv)). Rolling conformal calibration, which sets interval widths from recent errors, keeps 80% intervals at 80–81% coverage for every strategy.
+**Monitoring.** A cumulative-sum (CUSUM) monitor of daily forecast errors found no CBD-specific break at the policy date. In the first four weeks, pickups ran 6.3% above the frozen forecast in the CBD and 5.3% above elsewhere ([figure_stats_phase3.json](../results/figure_stats_phase3.json); [F3](figures/F3_error_over_time.png)). The first CBD alarm, on day 14, resembles the one alarm of the 2024 calibration year. The two 2026 alarms follow snowstorms of 7.5 and 5.5 inches, on days when CBD pickups ran 50.6% and 72.7% below forecast ([alarm_weather_check.csv](../results/alarm_weather_check.csv)).
 
 **Recommendation for the forecasting system.** Retrain monthly on a sliding 24-month window; a refit takes a median of 384 s on 12 CPU cores ([adaptation_summary.json → retrain_cost](../results/adaptation_summary.json)). Do not add app-share features in their trailing form.
 
 ## 6. How to measure it properly: a switchback experiment
 
-Geography cannot be randomized for a cordon toll, but app dispatch can be ([experiment_design.json](../results/experiment_design.json)). In a switchback, a platform or the TLC switches dispatch eligibility on or off at random by pickup zone and 2-hour block, across the 67 zones of the CBD and Manhattan outside it. The additional share is θ = (total pickups when on − when off) / app pickups when on. With the noise of March–May 2026, estimating θ to ±0.1 at 5% size and 80% power needs 3,756–5,922 zone-blocks, about 5–7 days. Clusters of neighbouring zones and wash-out periods handle spillover and carry-over.
+Geography cannot be randomized for a cordon toll, but app dispatch can be ([experiment_design.json](../results/experiment_design.json)). In a switchback, a platform or the TLC switches dispatch eligibility on or off at random by pickup zone and 2-hour block, across the 67 zones of the CBD and Manhattan outside it. The additional share is θ = (total pickups when on − when off) / app pickups when on. With the noise of March–May 2026, estimating θ to ±0.1 at 5% size and 80% power needs 3,756–5,922 zone-blocks, about 5–7 days.
 
 ## 7. Limitations
 
-- **Yellow taxis only for demand.** FHV trips enter only as aggregates.
-- **Weather.** One city-wide point, with observed weather used as if known in advance.
-- **Channel label.** Before June 2026 "app" rests on the Flex Fare flag, whose 2024 share exceeds a TLC statement of 5–10% in most months ([appendix A1](appendix.md#a1-data)); two `request_source` codes are undetermined; fee recording differs by vendor ([cbd_validation_trips.json](../results/cbd_validation_trips.json)).
+- **Coverage.** Yellow-taxi demand only (FHV as aggregates); one city-wide weather point, used as if known in advance; no driver- or vehicle-level supply data.
+- **Channel label.** Before June 2026 "app" rests on the Flex Fare flag, whose 2024 share exceeds a TLC statement of 5–10% in most months ([appendix A1](appendix.md#a1-data)); fee recording differs by vendor ([cbd_validation_trips.json](../results/cbd_validation_trips.json)).
 - **Data gaps.** Two TLC source outages (2022-09-17/18 and 2023-09-21/24) are excluded from the monitors.
-- **Supply.** No driver- or vehicle-level data; the supply view uses TLC monthly aggregates.
-- **Causal claims.** No design identified an effect: eight of ten pre-registered designs stopped at their gate, and the two that passed do not measure one. Nothing here states a causal effect of app dispatch or of congestion pricing.
+- **Causal claims.** No design identified an effect, and nothing here states a causal effect of app dispatch or of congestion pricing.
 
 ## 8. What I would do next
 

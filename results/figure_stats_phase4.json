@@ -94,8 +94,8 @@
     "control_total_change": 0.1972891983186318
   },
   "heterogeneity": {
-    "demand_ci_includes_zero": 10,
-    "demand_n": 15,
+    "demand_ci_includes_zero": 11,
+    "demand_n": 17,
     "speed_ci_includes_zero": 4,
     "speed_n": 8
   },
@@ -146,7 +146,7 @@
   },
   "title_t4": "Weighted DiD, CBD pickups -5.2% [-12.8%, +3.0%]: inconclusive. Pre-trends fail; outside every fake-date placebo (-3.5% to +0.8%)",
   "title_t4b": "After the policy, uptown control zones grew most (Inwood and Washington Heights North at least +377%), while the median CBD zone grew +13.1%; averaged in logs with equal weights the control zones rose +103%, their total +19.7%",
-  "title_t4c": "95% CI includes zero in 10 of 15 trip subsets for weighted demand and in 4 of 8 for within-CBD speed",
+  "title_t4c": "95% CI includes zero in 11 of 17 trip subsets for weighted demand and in 4 of 8 for within-CBD speed",
   "title_t4d": "After the policy, CBD pickups averaged +2.0% against the frozen forecast, while the difference-in-differences estimates were -34.6% with equal zone weights, as pre-registered, and -5.2% with zones weighted by volume",
   "title_t4e": "Permutation placebos: weighted demand -0.053 (0% of placebos as large, MDE 0.033); speed vs rest of Manhattan +0.019 (6%, MDE 0.028); vs Brooklyn/Queens the placebos themselves centre on -0.086",
   "title_t4f": "Within-CBD speed +1.9% vs Manhattan outside the CBD, -4.0% vs Brooklyn/Queens; that gap fell from +15.4% to -2.6% before the policy; both fail the pre-trend test",

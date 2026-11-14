@@ -515,7 +515,7 @@ def f4d_counterfactual_vs_did(cf: pd.DataFrame, paths: list[tuple[str, pd.DataFr
         ax.plot(ex, ey, color=color, linewidth=1.4, marker="s", ms=3)
         ends.append((float(ey.iloc[-1]), label, color))
     ax.axhline(0, color=PALETTE["muted_text"], linewidth=0.8)
-    ax.set_ylabel("CBD pickups vs counterfactual or control (%)")
+    ax.set_ylabel("CBD pickups vs comparison (%)")
     ax.set_xlim(x.min() - pd.Timedelta(days=20), x.max() + pd.Timedelta(days=20))
     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))

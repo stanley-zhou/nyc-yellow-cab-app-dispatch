@@ -13,6 +13,7 @@ Details behind the [main report](analysis.md). Every number links to its file un
   - Platform-level results (Uber, Lyft) exist only from June 2026.
 - **High-volume FHV records** (Uber, Lyft). 45 months, 904,683,847 trips, aggregated month by month, with the raw files deleted after verification ([hvfhv_summary.json](../results/hvfhv_summary.json), [hvfhv_stream_log.csv](../results/hvfhv_stream_log.csv)).
 - **Monthly versus weekly.** Months hold four or five panel weeks. Per week, CBD yellow pickups rose 15.6% between January 2023 and January 2026 (392,751 → 453,882), and CBD street hails fell 16.7% (383,608 → 319,640) ([channel_restatement.json](../results/channel_restatement.json)). Monthly sums compare a five-week with a four-week January and must not be used.
+- **Supply and the channel.** The trip records cannot say whether app dispatch brought the extra cabs back or the returning cabs took app trips.
 - **Supply before 2023.** In 2022, with about 5,930 active cabs a day, trips per cab-day were 18.3. As active cabs rose to about 7,040 a day in 2023, trips per cab-day fell to 14.8, and from then on stayed between 14.0 and 15.0 ([presentation_numbers.json → supply](../results/presentation_numbers.json)).
 - **External check of the app share.** At a City Council hearing on 2025-02-10, the TLC said that e-hail trips were "about five to 10% of all taxi trips", depending on the month, without naming a period ([transcript](https://citymeetings.nyc/city-council/2025-02-10-1000-am-committee-on-transportation-and-infrastructure/chapter/update-on-the-e-hail-program-for-yellow-and-green-taxis)). My 2024 monthly app share of all yellow pickups ranges from 4.8% to 13.1% and lies inside 5–10% in only 3 of 12 months (above it in 8, below in 1) ([presentation_numbers.json → external_app_share_2024](../results/presentation_numbers.json)). The two do not agree. Possible reasons, none tested: the statement may cover green taxis too, may refer to other months, or may count a narrower e-hail programme than the Flex Fare flag.
 - **Other step dates.** Besides the steps in the main text, the all-zone app share fell by 5.9 points at the week of 2026-03-01 ([channel_label_validation.json → flex_share_steps](../results/channel_label_validation.json)). No public source dates the 2024-09, 2025-05 or 2026-03 changes.
@@ -26,6 +27,10 @@ One block of outer-borough "street hails" is a centrally paid trip programme on 
 - the median trip is 43 minutes, in daytime, from central and east Brooklyn.
 
 It ended at the end of May 2026, and no other vendor picked it up. Without it, the outer-borough app share went from 13.3% to 89.4% (2023-01 → 2026-01).
+
+**CBD app share by month** ([channel_restatement.json](../results/channel_restatement.json)): 2.3% (2023-01), 10.3% (2024-04), 17.8% (2025-01), 29.6% (2026-01).
+
+**The platforms' view** ([presentation_numbers.json → cbd_ride_market](../results/presentation_numbers.json)): yellow cabs served 12.5% of Uber's CBD trips in June 2026 and 9.3% in September 2026, and 17.8% of Lyft's in September 2026.
 
 **Other accounting views** ([channel_decomposition.csv](../results/channel_decomposition.csv), [cross_platform_monthly.csv](../results/cross_platform_monthly.csv)):
 - Over January–September 2026 against the same weeks of 2023, CBD street hails are 12.0% lower (−48,303 a week) and CBD app trips 113,506 a week higher.
@@ -46,7 +51,7 @@ It ended at the end of May 2026, and no other vendor picked it up. Without it, t
 
 (D3, preliminary, not identified; [lyft_entry.json](../results/lyft_entry.json); [F6d](figures/F6d_lyft_entry.png))
 
-Lyft trips appear only on Curb-equipped cabs, from 2026-08-10 ([request_source_daily.csv](../results/request_source_daily.csv)). The pre-registered vendor-level DiD in levels passes its pre-trend tests on total, app and street pickups (p = 0.26, 0.27, 0.22; the Uber outcome fails, p = 1.9e−13) but gives an implausible −1.12 [−1.37, −0.87] Lyft-trip incrementality: Curb cabs carry 4.3 times CMT's volume, so common percentage swings appear as level changes. The log specification, a labelled alternative added after the levels result, gives 0.68 [0.09, 1.23] but fails its pre-trend test. `make lyft-refresh` re-estimates once the TLC publishes later months.
+Lyft trips appear only on Curb-equipped cabs, from 2026-08-10 ([request_source_daily.csv](../results/request_source_daily.csv)). The pre-registered vendor-level DiD in levels passes its pre-trend tests on total, app and street pickups (p = 0.26, 0.27, 0.22; the Uber outcome fails, p = 1.9e−13) but gives an implausible −1.12 [−1.37, −0.87] Lyft-trip incrementality: Curb cabs carry about 4.4 times CMT's weekly pickups (mean of the weekly ratio over the pre-period 2025-06-01 → 2026-07-08, range 4.0–5.3; [presentation_numbers.json → lyft_curb_cmt_ratio](../results/presentation_numbers.json)), so common percentage swings appear as level changes. With the Uber outcome failing, the design passes on three of four pre-registered outcomes. The log specification, a labelled alternative added after the levels result, gives 0.68 [0.09, 1.23] but fails its pre-trend test. `make lyft-refresh` re-estimates once the TLC publishes later months.
 
 ## A5. Congestion pricing: the designs in detail
 
@@ -59,12 +64,13 @@ Lyft trips appear only on Curb-equipped cabs, from 2026-08-10 ([request_source_d
 - **High-volume FHV** (C6). Every Uber, Lyft and shared-ride series fails the pre-trend test (Uber + Lyft, volume-weighted, p = 2.3e−18), so no effect is estimated ([fhv_did.json](../results/fhv_did.json); [F6](figures/F6_taxi_vs_fhv.png)).
 - **Trip speed** (B1, C4). Within-CBD speed is +1.9% against Manhattan outside the CBD and −4.0% against Brooklyn and Queens. Both designs fail their pre-trend tests ([speed_did.json](../results/speed_did.json), [speed_did_outer.json](../results/speed_did_outer.json); [F4f](figures/F4f_speed_event_study.png)).
 - **By channel** (D5). Both the street-hail and the app DiD fail the pre-trend gate ([did_by_channel.json](../results/did_by_channel.json)).
-- **Did the fee move trips into apps?** (D5b). The pre-specified test compares the step across trip types. The app share jumped about 11 points in the weeks after 2025-01-19, the same for trips touching the CBD (+8.1 to +11.3 points) as for trips touching neither end (+10.6): the size of the jump did not differ with exposure to the fee. This comparison does not need parallel trends. The DiD of the app share (+3.0 points), a secondary reading, does, and fails its pre-trend test ([app_share_policy_step.json](../results/app_share_policy_step.json); [F6e](figures/F6e_app_share_step.png)).
+- **Did the fee move trips into apps?** (D5b). The pre-specified test compares the step across trip types. The app share jumped about 11 points in the weeks after 2025-01-19, the same for trips touching the CBD (+8.1 to +11.3 points) as for trips touching neither end (+10.6): the size of the jump did not differ with exposure to the fee. This comparison does not need parallel trends. The event study / DiD of the app share (+3.0 points), named in the same pre-specified design as its second reading, does, and fails its pre-trend test ([app_share_policy_step.json](../results/app_share_policy_step.json); [F6e](figures/F6e_app_share_step.png)).
 
 ## A6. The methods case: test size and the forecast check
 
 - **Pre-trend test size.** With 24 monthly pre-policy coefficients and 63 zone clusters, the pre-registered F test rejects 56% of 200 simulated data sets without a pre-trend at a 5% level. The Hotelling-corrected test rejects 9.5%: still above the nominal 5% (about three Monte Carlo standard errors), but far below 56% ([pretrend_test_size.json](../results/pretrend_test_size.json)). The real p-values are far below either.
 - **Event-study means.** The headline numbers are the static DiD estimates (−34.6%, −5.2%). The mean of the monthly event-study coefficients after the policy is −40.5% with equal zone weights and −11.3% with zones weighted by volume; the frozen forecast's mean is +2.0% ([figure_stats_phase4.json](../results/figure_stats_phase4.json); [F4d](figures/F4d_counterfactual_vs_did.png)).
+- **Rolling conformal calibration** sets interval widths from recent errors; it keeps 80% intervals at 80–81% coverage for every forecasting strategy (A7).
 - **Equal-weight leave-one-out.** −36.3% to −32.0% ([did_static.json](../results/did_static.json)).
 
 ## A7. Forecasting details
@@ -115,6 +121,7 @@ Findings.
 (A4; [experiment_design.json](../results/experiment_design.json))
 - **Why not an A/B test here.** Geography cannot be randomized for a cordon toll; cabs, drivers and riders move between zones, so treated and control areas interfere; and the two channels share the same cabs.
 - **Switchback noise.** In March–May 2026 the residual sd is 33.1 trips per zone-block, with 30.3 app trips per block and lag-1 autocorrelation 0.58.
+- **Interference.** Clusters of neighbouring zones and wash-out periods handle spillover between zones and carry-over between blocks.
 - **Staggered vendor rollout.** Switching cab groups on one at a time is the alternative. Its observational analogue, Lyft's entry on Curb cabs, would need about 3,466 post days for the same precision.
 
 ## A9. Questions as first posed
