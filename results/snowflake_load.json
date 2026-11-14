@@ -1,0 +1,129 @@
+{
+  "generated_utc": "2026-11-14T22:46:45+00:00",
+  "months": [
+    "2023-01",
+    "2026-09"
+  ],
+  "schema": "RAW",
+  "method": "internal stage, PUT, COPY INTO",
+  "yellow_source": "int_trips_flagged where drop_reason is null (DuckDB), per month",
+  "yellow_rows_by_month": {
+    "2023-01": 2956220,
+    "2023-02": 2810310,
+    "2023-03": 3291290,
+    "2023-04": 3179391,
+    "2023-05": 3394620,
+    "2023-06": 3194481,
+    "2023-07": 2802052,
+    "2023-08": 2722950,
+    "2023-09": 2748213,
+    "2023-10": 3405026,
+    "2023-11": 3229718,
+    "2023-12": 3271099,
+    "2024-01": 2873321,
+    "2024-02": 2917911,
+    "2024-03": 3476015,
+    "2024-04": 3410329,
+    "2024-05": 3609733,
+    "2024-06": 3426698,
+    "2024-07": 2967621,
+    "2024-08": 2866224,
+    "2024-09": 3513210,
+    "2024-10": 3705964,
+    "2024-11": 3524140,
+    "2024-12": 3531403,
+    "2025-01": 3360143,
+    "2025-02": 3469835,
+    "2025-03": 4016421,
+    "2025-04": 3837941,
+    "2025-05": 4449179,
+    "2025-06": 4188935,
+    "2025-07": 3765777,
+    "2025-08": 3440155,
+    "2025-09": 4110841,
+    "2025-10": 4295016,
+    "2025-11": 4071684,
+    "2025-12": 4192506,
+    "2026-01": 3635168,
+    "2026-02": 3328655,
+    "2026-03": 3877378,
+    "2026-04": 3764417,
+    "2026-05": 4020346,
+    "2026-06": 3767040,
+    "2026-07": 3462216,
+    "2026-08": 3270981,
+    "2026-09": 3810278
+  },
+  "put": {
+    "yellow_valid": {
+      "files": 45,
+      "uploaded": 45,
+      "skipped_unchanged": 0,
+      "bytes": 2418891278
+    },
+    "hvfhv_zone_hour": {
+      "files": 45,
+      "uploaded": 45,
+      "skipped_unchanged": 0,
+      "bytes": 2704922504
+    },
+    "hvfhv_pair_week": {
+      "files": 45,
+      "uploaded": 45,
+      "skipped_unchanged": 0,
+      "bytes": 30732321
+    },
+    "weather": {
+      "files": 9,
+      "uploaded": 9,
+      "skipped_unchanged": 0,
+      "bytes": 3184264
+    },
+    "zone_lookup": {
+      "files": 1,
+      "uploaded": 1,
+      "skipped_unchanged": 0,
+      "bytes": 12331
+    },
+    "zones_cbd": {
+      "files": 1,
+      "uploaded": 1,
+      "skipped_unchanged": 0,
+      "bytes": 33592
+    }
+  },
+  "tables": {
+    "yellow_trips_valid": {
+      "rows_local": 156962851,
+      "rows_snowflake": 156962851,
+      "match": true
+    },
+    "hvfhv_zone_hour": {
+      "rows_local": 199416480,
+      "rows_snowflake": 199416480,
+      "match": true
+    },
+    "hvfhv_pair_week": {
+      "rows_local": 20326968,
+      "rows_snowflake": 20326968,
+      "match": true
+    },
+    "weather": {
+      "rows_local": 69096,
+      "rows_snowflake": 69096,
+      "match": true
+    },
+    "zone_lookup": {
+      "rows_local": 265,
+      "rows_snowflake": 265,
+      "match": true
+    },
+    "zones_cbd": {
+      "rows_local": 263,
+      "rows_snowflake": 263,
+      "match": true
+    }
+  },
+  "all_match": true,
+  "wall_seconds": 960.0
+}

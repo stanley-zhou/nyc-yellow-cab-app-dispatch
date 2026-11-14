@@ -362,6 +362,12 @@ sources:
   http_retries: 5
   http_timeout_seconds: 120
 
+snowflake:                                    # E3 (Amendment 4): dbt on Snowflake
+  months: ["2023-01", "2026-09"]              # source months of cleaned yellow trips loaded
+  raw_schema: RAW                             # loaded tables (dbt sources on Snowflake)
+  stage: LOAD                                 # internal stage in RAW
+  warehouse_size: X-Small                     # checked, never changed (Stanley's rule)
+
 paths:                                        # relative to the repo root
   raw_yellow: data/raw/tlc/yellow
   raw_hvfhv: data/raw/tlc/hvfhv
@@ -374,6 +380,8 @@ paths:                                        # relative to the repo root
   duckdb_tmp: data/duckdb_tmp
   manifest: data/raw/manifest.csv
   warehouse: data/warehouse.duckdb
+  snowflake_load: data/raw/snowflake_load     # E3: Parquet exports for the Snowflake stage
+  hvfhv_processed: data/processed/hvfhv       # HVFHV aggregates (git-ignored)
   smoke_warehouse: data/smoke.duckdb
   results: results
   figures: reports/figures
