@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-14T21:50:16+00:00",
+  "generated_utc": "2026-11-14T22:06:48+00:00",
   "citywide_accounting": {
     "source": "results/channel_decomposition.csv (with_cmt_block = False)",
     "comparison": "2023_to_2025",
@@ -14,7 +14,8 @@
         "app_contribution": 1.03731,
         "street_base": 678422.0,
         "street_change": -7159.37,
-        "street_change_pct": -0.01055297440236313
+        "street_change_pct": -0.01055297440236313,
+        "accounting_net_ratio": 0.964036
       },
       "cbd": {
         "base_mean_weekly": 418560.0,
@@ -26,7 +27,8 @@
         "app_contribution": 1.05951,
         "street_base": 404802.0,
         "street_change": -5895.7,
-        "street_change_pct": -0.014564404326065582
+        "street_change_pct": -0.014564404326065582,
+        "accounting_net_ratio": 0.943828
       },
       "manhattan_non_cbd": {
         "base_mean_weekly": 215677.0,
@@ -38,7 +40,8 @@
         "app_contribution": 1.0137,
         "street_base": 206779.0,
         "street_change": -692.398,
-        "street_change_pct": -0.0033484928353459493
+        "street_change_pct": -0.0033484928353459493,
+        "accounting_net_ratio": 0.986484
       },
       "other": {
         "base_mean_weekly": 8277.49,
@@ -50,7 +53,66 @@
         "app_contribution": 0.983583,
         "street_base": 6283.38,
         "street_change": 714.565,
-        "street_change_pct": 0.11372302805178106
+        "street_change_pct": 0.11372302805178106,
+        "accounting_net_ratio": 1.01669
+      }
+    }
+  },
+  "accounting_2026": {
+    "source": "results/channel_decomposition.csv (with_cmt_block = False)",
+    "comparison": "2023_to_2026_jan_sep",
+    "by_area": {
+      "all": {
+        "base_mean_weekly": 691385.0,
+        "end_mean_weekly": 832828.0,
+        "change": 141443.0,
+        "change_pct": 0.204579,
+        "ratio_end_to_base": 1.2045792141860179,
+        "app_change": 206306.0,
+        "app_contribution": 1.45858,
+        "street_base": 670560.0,
+        "street_change": -64862.5,
+        "street_change_pct": -0.09672885349558578,
+        "accounting_net_ratio": 0.6856
+      },
+      "cbd": {
+        "base_mean_weekly": 412270.0,
+        "end_mean_weekly": 477474.0,
+        "change": 65203.4,
+        "change_pct": 0.158157,
+        "ratio_end_to_base": 1.1581584883692726,
+        "app_change": 113506.0,
+        "app_contribution": 1.74081,
+        "street_base": 400869.0,
+        "street_change": -48303.1,
+        "street_change_pct": -0.12049597249974431,
+        "accounting_net_ratio": 0.574446
+      },
+      "manhattan_non_cbd": {
+        "base_mean_weekly": 210180.0,
+        "end_mean_weekly": 258868.0,
+        "change": 48687.9,
+        "change_pct": 0.231649,
+        "ratio_end_to_base": 1.2316490627081549,
+        "app_change": 57879.1,
+        "app_contribution": 1.18878,
+        "street_base": 202694.0,
+        "street_change": -9191.24,
+        "street_change_pct": -0.045345397495732485,
+        "accounting_net_ratio": 0.841199
+      },
+      "other": {
+        "base_mean_weekly": 7970.71,
+        "end_mean_weekly": 43072.2,
+        "change": 35101.5,
+        "change_pct": 4.40381,
+        "ratio_end_to_base": 5.403809698257746,
+        "app_change": 34896.4,
+        "app_contribution": 0.994157,
+        "street_base": 6216.34,
+        "street_change": 205.105,
+        "street_change_pct": 0.03299449515309651,
+        "accounting_net_ratio": 1.00588
       }
     }
   },
@@ -592,7 +654,7 @@
     "weeks_2025_max": 4.5807
   },
   "repository": {
-    "decisions_entries": 233,
+    "decisions_entries": 234,
     "review_files": 22,
     "phases_reviewed": [
       "0",

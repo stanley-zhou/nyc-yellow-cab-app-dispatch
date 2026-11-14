@@ -33,9 +33,10 @@ def _json(name: str) -> dict:
     return json.loads((path("results") / name).read_text())
 
 
-def accounting(cfg: dict) -> dict:
+def accounting(cfg: dict, comparison: str | None = None) -> dict:
+    comparison = comparison or cfg["presentation"]["accounting_comparison"]
     d = pd.read_csv(path("results", cfg) / "channel_decomposition.csv")
-    d = d[(d["comparison"] == cfg["presentation"]["accounting_comparison"]) & ~d["with_cmt_block"]]
+    d = d[(d["comparison"] == comparison) & ~d["with_cmt_block"]]
     out = {}
     for g in ("all", "cbd", "manhattan_non_cbd", "other"):
         r = d[d["zone_group"] == g].iloc[0]
@@ -47,9 +48,13 @@ def accounting(cfg: dict) -> dict:
                   "app_contribution": float(r["app_contribution"]),
                   "street_base": float(r["street_base"]),
                   "street_change": float(r["street_change"]),
-                  "street_change_pct": float(r["street_change"] / r["street_base"])}
+                  "street_change_pct": float(r["street_change"] / r["street_base"]),
+                  # net change in pickups per app pickup added: arithmetic on observed
+                  # changes, not an incrementality estimate
+                  "accounting_net_ratio": (None if pd.isna(r["accounting_net_ratio"])
+                                           else float(r["accounting_net_ratio"]))}
     return {"source": "results/channel_decomposition.csv (with_cmt_block = False)",
-            "comparison": cfg["presentation"]["accounting_comparison"], "by_area": out}
+            "comparison": comparison, "by_area": out}
 
 
 def january_step(cfg: dict) -> dict:
@@ -359,6 +364,7 @@ def main() -> None:
     out = {
         "generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "citywide_accounting": accounting(cfg),
+        "accounting_2026": accounting(cfg, cfg["presentation"]["accounting_comparison_2026"]),
         "january_2025_step": january_step(cfg),
         "alarm_weather_check": alarm,
         "supply": supply(cfg),

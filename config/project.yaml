@@ -159,6 +159,7 @@ experiment:                                   # A4 / Amendment 5: experiment des
   target_theta_mde: [0.2, 0.1]                # MDEs of theta to plan for
 presentation:                                 # Amendment 6: descriptive numbers for the report
   accounting_comparison: 2023_to_2025         # channel_decomposition.csv row of the headline
+  accounting_comparison_2026: 2023_to_2026_jan_sep   # same weeks of 2026 vs 2023 (Jan-Sep)
   gate_alpha: 0.05                            # pre-trend / lead-placebo gate of the designs
                                               # table (= the pre-registered 5% level)
   step_weeks: ["2025-01-05", "2025-01-19"]    # A2: the January-2025 app step, week before / after

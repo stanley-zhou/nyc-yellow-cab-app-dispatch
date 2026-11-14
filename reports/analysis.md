@@ -38,6 +38,8 @@
 | Manhattan outside the CBD | +50,537 (215,677 → 266,214) | +51,230 | −692 |
 | Outer boroughs | +43,526 (8,277 → 51,803, about six-fold) | +42,811 | +715 |
 
+In January–September 2026, against the same weeks of 2023, street hails were 9.7% lower citywide and 12.0% lower in the CBD; the accounting net ratio (net pickups added per app pickup added: arithmetic on observed changes, not incrementality) fell from 0.96 citywide and 0.94 in the CBD for 2023 → 2025 to 0.69 and 0.57 ([presentation_numbers.json → accounting_2026](../results/presentation_numbers.json)).
+
 **The app share rose in steps** ([channel_label_validation.json → flex_share_steps](../results/channel_label_validation.json); [F6a](figures/F6a_channel_areas.png)). Across all zones it jumped by 5.6 points at the week of 2024-02-25, 5.4 at 2024-09-01, 10.9 at 2025-01-19 and 7.2 at 2025-05-04. The largest step came two weeks after congestion pricing began, so I checked it by area ([presentation_numbers.json → january_2025_step](../results/presentation_numbers.json)):
 
 | Area, week of 2025-01-05 → 2025-01-19 | App pickups | Street hails |
@@ -50,7 +52,7 @@
 - The step was as large for trips that never touch the zone (+10.6 points) as for trips that do (+8.1 to +11.3) ([app_share_policy_step.json](../results/app_share_policy_step.json); [F6e](figures/F6e_app_share_step.png)). The fee difference between taxis and FHVs does not explain it.
 - The cause of the step is not known from public sources.
 
-**Where it happened** ([F4g](figures/F4g_app_dispatch_map.png)). Zones where Uber and Lyft dispatch is common are the zones where yellow pickups grew most. Growth from 2023 to 2025 correlates with the June–September 2026 Uber and Lyft share at r = 0.92 across 63 Manhattan zones and r = 0.90 across all 200 zones (Spearman 0.85) ([app_dispatch_summary.json](../results/app_dispatch_summary.json)). This is a correlation, not an effect.
+**Where it happened** ([F4g](figures/F4g_app_dispatch_map.png)). Zones where Uber and Lyft dispatch is common are the zones where yellow pickups grew most. Growth from 2023 to 2025 correlates with the June–September 2026 Uber and Lyft share at r = 0.92 across 63 Manhattan zones and r = 0.90 across all 200 zones ([app_dispatch_summary.json](../results/app_dispatch_summary.json)). This is a correlation, not an effect.
 
 **Supply** ([presentation_numbers.json → supply](../results/presentation_numbers.json), from the TLC's monthly reports). From 2023 to 2025, yellow trips per day rose 25.6% (104,422 → 131,133) and active cabs per day 24.0% (about 7,040 → 8,720). Trips per cab-day stayed between 14.0 and 15.0 in 2023–2026.
 
@@ -63,7 +65,7 @@
 | Total | 1,652,560 | 1,682,229 |
 | Yellow's share | 25.3% | 30.8% |
 
-The total was about flat (+1.8%) and yellow's share rose ([appendix A2](appendix.md#a2-the-contracted-trip-programme) gives the platforms' view).
+The total was about flat (+1.8%) and yellow's share rose.
 
 ## 3. A methods case: how a textbook DiD produced a −35% effect that was not there
 
@@ -109,7 +111,7 @@ DML fits flexible models for both the outcome and the treatment and estimates th
 
 WAPE, the error measure, is the sum of absolute errors divided by the sum of actual pickups.
 
-**Accuracy.** On 2024 day-ahead forecasts for the 103 zones that carry 99.04% of pickups ([modeled_zones.json](../results/modeled_zones.json)), Chronos-2 zero-shot with past weather had a WAPE of 16.5% and a tuned LightGBM 16.7%; a paired bootstrap cannot tell them apart. Both have about 31% lower error than the seasonal naive (24.1%) ([forecast_summary.json](../results/forecast_summary.json), [presentation_numbers.json](../results/presentation_numbers.json); [F2](figures/F2_model_comparison.png)).
+**Accuracy.** On 2024 day-ahead forecasts for the 103 zones that carry 99.04% of pickups ([modeled_zones.json](../results/modeled_zones.json)), Chronos-2 zero-shot with past weather had a WAPE of 16.5% and a tuned LightGBM 16.7%, not distinguishable by a paired bootstrap. Both have about 31% lower error than the seasonal naive (24.1%) ([forecast_summary.json](../results/forecast_summary.json), [presentation_numbers.json](../results/presentation_numbers.json); [F2](figures/F2_model_comparison.png)).
 
 **Robustness.** I froze the LightGBM in December 2024 and compared it with retrained versions on forecasts from February 2025 to September 2026. Over that time the CBD app share rose from about 18% to about 30% ([channel_restatement.json](../results/channel_restatement.json); [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv); [F5](figures/F5_adaptation.png)):
 
@@ -121,11 +123,11 @@ WAPE, the error measure, is the sum of absolute errors divided by the sum of act
 | Monthly retrain + app-share features | 16.8% | 15.7% | −2.9% |
 | Seasonal naive (reference) | 23.7% | 22.3% | −0.1% |
 
-The forecaster stayed accurate through the shift, and monthly retraining recovers a small, measurable gain: 0.23 points, with a 95% interval that excludes zero. The gain comes from retraining, not from the training window ([appendix A7](appendix.md#a7-forecasting-details)).
+The forecaster stayed accurate through the shift, and monthly retraining recovers a small, measurable gain: 0.23 points, with a 95% interval that excludes zero.
 
 **Where the frozen model fails.** Its under-forecast sits where app growth is largest: −10.8% of pickups in the outer boroughs against −2.0% in the CBD ([adaptation_summary.json → bias_pct_of_pickups](../results/adaptation_summary.json)). Monthly retraining cuts it to −7.0% there. App-share features cut it furthest, to −6.0%, yet that strategy is the least accurate overall.
 
-**Monitoring.** A cumulative-sum (CUSUM) monitor of daily forecast errors found no CBD-specific break at the policy date. In the first four weeks, pickups ran 6.3% above the frozen forecast in the CBD and 5.3% above elsewhere ([figure_stats_phase3.json](../results/figure_stats_phase3.json); [F3](figures/F3_error_over_time.png)). The first CBD alarm, on day 14, resembles the one alarm of the 2024 calibration year. The two 2026 alarms follow snowstorms of 7.5 and 5.5 inches, on days when CBD pickups ran 50.6% and 72.7% below forecast ([alarm_weather_check.csv](../results/alarm_weather_check.csv)).
+**Monitoring.** A cumulative-sum (CUSUM) monitor of daily forecast errors found no CBD-specific break at the policy date. In the first four weeks, pickups ran 6.3% above the frozen forecast in the CBD and 5.3% above elsewhere ([figure_stats_phase3.json](../results/figure_stats_phase3.json); [F3](figures/F3_error_over_time.png)). The two 2026 alarms follow snowstorms of 7.5 and 5.5 inches, on days when CBD pickups ran 50.6% and 72.7% below forecast ([alarm_weather_check.csv](../results/alarm_weather_check.csv)).
 
 **Recommendation for the forecasting system.** Retrain monthly on a sliding 24-month window; a refit takes a median of 384 s on 12 CPU cores ([adaptation_summary.json → retrain_cost](../results/adaptation_summary.json)). Do not add app-share features in their trailing form.
 
@@ -136,15 +138,12 @@ Geography cannot be randomized for a cordon toll, but app dispatch can be ([expe
 ## 7. Limitations
 
 - **Coverage.** Yellow-taxi demand only (FHV as aggregates); one city-wide weather point, used as if known in advance; no driver- or vehicle-level supply data.
-- **Channel label.** Before June 2026 "app" rests on the Flex Fare flag, whose 2024 share exceeds a TLC statement of 5–10% in most months ([appendix A1](appendix.md#a1-data)); fee recording differs by vendor ([cbd_validation_trips.json](../results/cbd_validation_trips.json)).
-- **Data gaps.** Two TLC source outages (2022-09-17/18 and 2023-09-21/24) are excluded from the monitors.
+- **Channel label.** Before June 2026 "app" rests on the Flex Fare flag; my 2024 monthly app share ranges from 4.8% to 13.1%, while the TLC spoke of "about five to 10%" with no period named ([appendix A1](appendix.md#a1-data)); fee recording differs by vendor ([cbd_validation_trips.json](../results/cbd_validation_trips.json)).
 - **Causal claims.** No design identified an effect, and nothing here states a causal effect of app dispatch or of congestion pricing.
 
 ## 8. What I would do next
 
-- Run the switchback above with a platform partner.
-- Re-estimate Lyft's entry with more months (`make lyft-refresh`).
-- Obtain medallion-level supply data to test whether app dispatch brought cabs back.
+Run the switchback with a platform partner, re-estimate Lyft's entry with more months (`make lyft-refresh`), and obtain medallion-level supply data.
 
 ## References
 
