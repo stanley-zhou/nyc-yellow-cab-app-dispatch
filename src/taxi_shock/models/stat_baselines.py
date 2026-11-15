@@ -15,6 +15,8 @@ the standard top-down construction instead:
 If ETS cannot be fitted or re-filtered for a zone (e.g. a multiplicative model meeting a zero
 day), that zone falls back to the daily total of day D-7; fallbacks are counted
 (`fallbacks_`) and logged.
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

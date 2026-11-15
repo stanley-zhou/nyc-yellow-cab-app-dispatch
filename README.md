@@ -57,8 +57,8 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   heterogeneity cut are SQL models, not pandas.
 - **Snowflake:** the dbt models downstream of the cleaning run on Snowflake (dbt-snowflake,
   dialect macros) over the cleaned trips loaded with PUT / `COPY INTO`; 89/89 build steps and
-  tests pass, and nine weekly, daily and hourly marts match DuckDB exactly on the days both cover
-  ([dbt_targets.json](results/dbt_targets.json)).
+  tests pass, and nine weekly, daily and hourly marts are identical to DuckDB's on the days
+  both cover, within a relative tolerance of 1e-9 ([dbt_targets.json](results/dbt_targets.json)).
 - **Python 3.12**, managed with uv.
 - **Forecasting:** LightGBM quantile regression, Chronos-2 (zero-shot, on a Colab GPU), conformal
   prediction intervals.
@@ -74,7 +74,7 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   analysis.
 - An independent review of every phase, with its fix rounds, is in [`reviews/`](reviews/), with
   the Checkpoint 7 advisor review.
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (239 entries).
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (240 entries).
 - 139 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 
@@ -142,7 +142,7 @@ uses `memory_limit = 5GB`, 10 threads.
 | `fhv` | congestion pricing and high-volume FHV demand, pre-trend gate first (16; needs make hvfhv) |
 | `lyft-refresh` | re-download, rebuild and re-estimate the Lyft entry after later TLC months are added to the config (01, 03, 13, 09) |
 | `tableau-extract` | CSV and GeoJSON extracts for the Tableau Public dashboard in reports/tableau/ (18) |
-| `adapt` | adaptation strategies: S1 and S6 monthly refits and the S1e expanding-window sensitivity, resumable per month, then their evaluation (08) |
+| `adapt` | adaptation strategies: monthly retrain (S1), channel-aware forecaster (S6) and S1 on an expanding window (S1e), resumable per month, then their evaluation (08) |
 | `snowflake` | load the cleaned trips to Snowflake (24), dbt build and tests there, DuckDB tests, per-target comparison (25); needs the Snowflake environment |
 | `report` | runtimes (20, results/runtimes.json), dashboard extracts (18), dead-link check of the documents (21) |
 | `all` | every step in order: data, dbt, forecast, shock, causal, hvfhv, channel, fhv, adapt, figures, report (long; hvfhv skips months already verified) |

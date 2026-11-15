@@ -6,6 +6,8 @@ local hours of calendar day `o`; `horizon` = hour-of-day + 1 (1..24).
 
 The engine passes `history` already truncated to `hour_ts < origin`, so a model cannot see the
 future even by accident; `tests/test_leakage.py` checks this end to end.
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

@@ -92,7 +92,7 @@ lyft-refresh:     ## re-download, rebuild and re-estimate the Lyft entry after l
 tableau-extract:  ## CSV and GeoJSON extracts for the Tableau Public dashboard in reports/tableau/ (18)
 	$(PY) scripts/18_tableau_extract.py
 
-adapt:            ## adaptation strategies: S1 and S6 monthly refits and the S1e expanding-window sensitivity, resumable per month, then their evaluation (08)
+adapt:            ## adaptation strategies: monthly retrain (S1), channel-aware forecaster (S6) and S1 on an expanding window (S1e), resumable per month, then their evaluation (08)
 	$(PY) scripts/08_adapt.py --run s1
 	$(PY) scripts/08_adapt.py --run s6
 	$(PY) scripts/08_adapt.py --run s1e

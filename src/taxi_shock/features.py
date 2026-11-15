@@ -17,6 +17,8 @@ Definitions (day-ahead task: every target hour lies on the origin's calendar day
   weather          observed hourly weather at the target hour (PLAN limitation: actual weather
                    is used as if known in advance)
 Every input of a target on day D comes from days <= D-1 or from the exogenous table.
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

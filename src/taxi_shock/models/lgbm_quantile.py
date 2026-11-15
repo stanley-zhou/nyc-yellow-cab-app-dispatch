@@ -13,6 +13,8 @@ the 2023 validation grid (`scripts/04a_lgbm_tune.py` -> results/lgbm_params.json
 
 Predicted quantiles are sorted per row (monotone rearrangement) so q10 <= q50 <= q90, and clipped
 at zero; `point` = q50.
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

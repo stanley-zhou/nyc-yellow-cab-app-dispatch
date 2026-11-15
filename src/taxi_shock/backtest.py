@@ -8,6 +8,8 @@ At each origin (local midnight of day D) the engine:
 Training windows: `expanding` (from `model_start`) or `sliding_<N>m` (the last N months, never
 earlier than `model_start`). Refit schedules: `monthly` (first origin of each calendar month),
 `daily`, or `once` (first origin only, i.e. a frozen model).
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

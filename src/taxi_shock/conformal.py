@@ -5,6 +5,8 @@ score = max(q_lo - y, y - q_hi) (positive when y falls outside the interval); Q 
 ceil((n + 1)(1 - alpha))-th smallest score; the calibrated interval is [q_lo - Q, q_hi + Q],
 with the lower end clipped at zero (counts). Q < 0 narrows an over-wide interval. Applied per
 (model, window, zone group).
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

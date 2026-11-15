@@ -3,6 +3,8 @@
 Aggregate the CBD's hourly pickups and the frozen-LightGBM point forecasts to days; the implied
 effect of a month is the mean over its days of (actual - forecast) / forecast. Months up to the
 model's training end are flagged in-sample.
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

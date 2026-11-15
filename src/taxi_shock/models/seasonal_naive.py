@@ -4,6 +4,8 @@ Intervals come from empirical quantiles of the in-sample seasonal-naive residual
 (y_t - y_{t-168}) of each zone over the training window, added to the point forecast and
 clipped at zero (counts cannot be negative). The `point` column is the raw lag-168 value (used for
 WAPE/MASE); q50 = point + median residual, so it can differ slightly from `point`.
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

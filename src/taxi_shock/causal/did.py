@@ -5,6 +5,8 @@ window (PLAN: 52 weeks before the policy and every post week), with unit and wee
 and cluster-robust SEs. `post_splits` replaces the single post dummy by one dummy per named post
 sub-period (persistence: 2025-H1, 2025-H2, 2026). Weather enters as weather x treated, because
 city-wide weekly weather is collinear with the week fixed effects (DECISIONS.md, Phase 4).
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

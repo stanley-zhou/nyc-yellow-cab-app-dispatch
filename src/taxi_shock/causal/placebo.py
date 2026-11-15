@@ -7,6 +7,8 @@
                     placebo estimates gives the permutation p-value of the real estimate and the
                     minimum detectable effect
                     MDE = (z_{1 - size/2} + z_{power}) * sd(placebo estimates)
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

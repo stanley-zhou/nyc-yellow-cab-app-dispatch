@@ -10,6 +10,8 @@ version), and the Hotelling-type small-sample version F* = W (G - q) / (q (G - 1
 df. With q = 24 monthly pre bins and G ~ 60 clusters the first is badly oversized; its size and
 the corrected test's are simulated in scripts/07d_pretrend_size.py
 (results/pretrend_test_size.json).
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

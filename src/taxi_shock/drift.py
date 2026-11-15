@@ -12,6 +12,8 @@ grid that gives at most `max_alarms` alarms over the calibration period.
 
 Rolling bias: an alarm on the day a run of `consecutive_days` consecutive days with z beyond
 +-n_sigma (same sign) is completed; counting restarts after an alarm.
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

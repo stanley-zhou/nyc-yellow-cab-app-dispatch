@@ -3,6 +3,8 @@
 All functions take 1-D array-likes and ignore rows where `y` is NaN. MAPE is deliberately not
 offered as a primary metric (zeros and small counts); `mape_min_y` applies it only to hours with
 `y >= min_y` and its name says so.
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations

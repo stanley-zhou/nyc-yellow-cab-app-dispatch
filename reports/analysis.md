@@ -111,9 +111,9 @@ DML fits flexible models for both the outcome and the treatment and estimates th
 
 WAPE, the error measure, is the sum of absolute errors divided by the sum of actual pickups.
 
-**Accuracy.** On 2024 day-ahead forecasts for the 103 zones that carry 99.04% of pickups ([modeled_zones.json](../results/modeled_zones.json)), Chronos-2 zero-shot with past weather had a WAPE of 16.5% and a tuned LightGBM 16.7%, not distinguishable by a paired bootstrap. Both have about 31% lower error than the seasonal naive (24.1%) ([forecast_summary.json](../results/forecast_summary.json), [presentation_numbers.json](../results/presentation_numbers.json); [F2](figures/F2_model_comparison.png)).
+**Accuracy.** On 2024 day-ahead forecasts for the 103 zones that carry 99.04% of pickups ([modeled_zones.json](../results/modeled_zones.json)), Chronos-2 zero-shot with past weather had a WAPE of 16.5% and a tuned LightGBM 16.7%, not distinguishable by a paired bootstrap ([wape_gap_bootstrap.csv](../results/wape_gap_bootstrap.csv)). Both have about 31% lower error than the seasonal naive (24.1%) ([forecast_summary.json](../results/forecast_summary.json), [presentation_numbers.json](../results/presentation_numbers.json); [F2](figures/F2_model_comparison.png)).
 
-**Robustness.** I froze the LightGBM in December 2024 and compared it with retrained versions on forecasts from February 2025 to September 2026. Over that time the CBD app share rose from about 18% to about 30% ([channel_restatement.json](../results/channel_restatement.json); [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv); [F5](figures/F5_adaptation.png)):
+**Robustness.** I froze the LightGBM in December 2024 and compared it with retrained versions on forecasts from February 2025 to September 2026. Meanwhile, CBD app share rose from 22.3% (February 2025) to 31.3% (September 2026) ([channel_monthly.csv](../results/channel_monthly.csv); [adaptation_summary.json](../results/adaptation_summary.json), [adaptation_gaps.csv](../results/adaptation_gaps.csv); [F5](figures/F5_adaptation.png)):
 
 | Strategy | WAPE, all zones | WAPE, CBD | Bias, % of pickups |
 |---|---|---|---|

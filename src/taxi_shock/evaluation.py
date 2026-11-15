@@ -4,6 +4,8 @@
                         per row, clip at zero)
   daily_errors          per origin day and zone group: sum |y - point| and sum y
   wape_gap_bootstrap    paired block bootstrap of WAPE differences between every pair of models
+
+Pure computation on DataFrames and arrays; reads and writes no files.
 """
 
 from __future__ import annotations
