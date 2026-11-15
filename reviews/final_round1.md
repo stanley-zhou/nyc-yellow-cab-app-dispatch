@@ -18,7 +18,7 @@ Phase 7 DoD and Amendment 6 (A/B) items were PASSed in `reviews/phase_7.md`; E3 
 | Amendment 6 executive summary, structure, D2 wording | MET | analysis.md Summary (3 findings, untested/unidentified, recommendation); D2 sentence verbatim in §4 and in dashboard_spec View 3. |
 | Amendment 5 rule: no causal sentence | MET | No sentence says app dispatch caused growth or that congestion pricing had or had no effect; README/analysis Limitations say so explicitly. |
 | E3: Snowflake target with env_var only; stage/PUT/COPY INTO load; dbt build + all tests on Snowflake; portable macros; per-target counts in `dbt_targets.json`; CI on DuckDB | MET | `dbt/profiles.yml` (env_var), `results/snowflake_load.json` (`all_match: true`), `dbt_targets.json` (`tests_pass` 62/62, `parity.all_identical: true`, 9 marts `cells_differing: 0`), `int_speed_trips` 4-row gap explained in `reviews/e3_round1.md`. |
-| Release: public tree free of personal notes | PARTIAL | `git grep` finds only technical uses (downloads, Colab chunks). One residue: one word in PLAN.md l.397 (Amendment 4, "Why.") with a personal sense. |
+| Release: public tree free of personal, non-technical notes | PARTIAL | `git grep` finds only technical uses. One residue of personal, non-technical notes: one word in PLAN.md l.397 (Amendment 4, "Why."). |
 | Release: no machine-specific paths, e-mail addresses, Snowflake identifiers | MET (tree) | No `/home/<user>`, `C:\Users`, e-mail, account locator or user name in tracked text files. Remaining: generic `/mnt/c`, `~/.snowflake/taxi.env` (generic), public Tableau profile URL (intended). See the history note under Escalation reasons. |
 | Release: every script and module docstring says what it does, reads and writes; internal labels in words | PARTIAL | All 50 scripts state their reads and writes. In `src/`, 14 modules give no reads/writes statement, not even "no file I/O" (list in Fix 3), although DECISIONS l.291 says "every module docstring says what it does, reads and writes". Labels: the `adapt` row of `make help` / README uses "S1", "S6", "S1e" without words. |
 | Release: `make help` matches README table | MET | Visual diff and `tests/test_make_targets.py::test_readme_table_matches_make_help` pass. |
@@ -71,7 +71,7 @@ After the fixes, rerun `make figures` only if `23_presentation_numbers.py` is re
 
 ## Escalation reasons
 
-None for the verdict. **One item for the owner's decision, outside what the Builder can fix in the tree:** the git *history* still contains (a) the commit author's personal e-mail address in every commit's metadata, and (b) the text removed by the 2026-11-15 redaction, in earlier commits. The owner's requirement names the public *tree*, which is met. If the repository is made public with its full history, both remain visible. Options: publish a fresh single-commit or squashed history, rewrite author metadata (e.g. `git filter-repo --mailmap`, or a GitHub noreply address), or accept. This review does not repeat the address.
+None for the verdict. **One item for the owner's decision, outside what the Builder can fix in the tree:** the git *history* of the public repository (commit metadata and earlier versions of redacted files). The owner's requirement names the public *tree*, which is met. Options: publish a fresh single-commit or squashed history, rewrite author metadata (e.g. `git filter-repo --mailmap`, or a GitHub noreply address), or accept. The owner's decision is recorded in the DECISIONS entry "Public history" (l.294).
 
 ## Amendments made
 

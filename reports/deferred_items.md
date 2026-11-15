@@ -28,7 +28,7 @@ Builder, with the owner and the reason.
 | 25 | Checkpoint 7 advisor review, sections A, B, C | Amendment 6 | Applied in three commits (5771b84, 649d8fc, 270ce55) and the Phase-7 review round-1 fixes; DECISIONS [P7] 2026-11-14. |
 | 29 | `notebooks/colab_chronos.ipynb`, thin Colab wrapper around `scripts/05_chronos_colab.py` (formerly open item 17) | Amendment 5, item 8 | Supplied by Stanley on branch `add-colab-notebook`, merged into `main`. Not part of the pipeline (CLAUDE.md rule 4). |
 | 30 | README section "How this project was built" (formerly open item 26) | Amendment 6 | Closed without the section: at Stanley's instruction (2026-11-15) the placeholder was removed from `README.md` and no replacement was written. |
-| 31 | Booster files out of the published history, then the final review (formerly open item 23) | Checkpoint 7; Stanley 2026-11-15 | Replaced at Stanley's instruction: no history rewrite; the public repository `nyc-yellow-cab-app-dispatch` starts from one commit of the final tree (no booster file in it; `make shock` regenerates them), and the private repository stays unchanged as the archive. Final review: `reviews/final.md` (PASS, round 3). |
+| 31 | Booster files out of the published history, then the final review (formerly open item 23) | Checkpoint 7; Stanley 2026-11-15 | Closed: the public repository `nyc-yellow-cab-app-dispatch` carries the cleaned development history without the booster files (`make shock` regenerates them); see the DECISIONS entry "Public history". Final review: `reviews/final.md` (PASS, round 3). |
 
 ## Open
 
