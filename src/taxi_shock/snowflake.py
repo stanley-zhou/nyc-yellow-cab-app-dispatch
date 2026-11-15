@@ -1,4 +1,6 @@
-"""Snowflake connection for E3 (dbt on Snowflake), from environment variables only.
+"""Snowflake connection for running the dbt models on Snowflake (PLAN Amendment 4, E3), from
+environment variables only. The connector reads the private-key file the environment names; this
+module writes nothing.
 
 The variables are set outside the repository (`source ~/.snowflake/taxi.env`): SNOWFLAKE_ACCOUNT,
 SNOWFLAKE_USER, SNOWFLAKE_PRIVATE_KEY_PATH (key-pair authentication, unencrypted PKCS#8),

@@ -1,6 +1,9 @@
 """Prove `make smoke` works on a clean clone: export the committed tree (HEAD) into an empty
 temporary directory, run `make setup && make smoke` there, and record the result in
 results/smoke/smoke_run_clean_clone.json. Uncommitted changes are deliberately not tested.
+
+Reads the git HEAD tree and config `smoke.results_dir` / `smoke.figures_dir`; writes nothing in
+the repository except that JSON file, which it also prints.
 """
 
 from __future__ import annotations

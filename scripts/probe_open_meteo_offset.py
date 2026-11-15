@@ -8,7 +8,8 @@ Then compare: (1) the UTC offset the API says it applied in A, (2) the true offs
 IANA tz database, and (3) which absolute hour A's "00:00" value actually belongs to, by
 matching A's temperature series against B's at every candidate shift.
 
-Writes results/open_meteo_offset_probe.json.
+Reads the Open-Meteo archive API (config `sources.weather_*`, `timezone`). Writes
+results/open_meteo_offset_probe.json and prints the conclusion.
 """
 
 from __future__ import annotations

@@ -1,4 +1,7 @@
-"""Zone choropleths (Phase 1; Phase 4 adds the diverging effect map)."""
+"""Zone choropleths (Phase 1; Phase 4 adds the diverging effect map).
+
+`load_zones` reads the TLC zone shapefile; the other helpers draw on a matplotlib Axes or return
+map bounds."""
 
 from __future__ import annotations
 

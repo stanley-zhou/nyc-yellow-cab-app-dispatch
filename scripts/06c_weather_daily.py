@@ -1,6 +1,8 @@
 """Daily weather at the one Open-Meteo point, local days, over the Phase-3 calibration and
 monitoring window -> results/weather_daily.csv.
 
+Reads config `shock.calibration_period`, `shock.forecast_window` and `timezone`.
+
 Read from the warehouse view `int_weather_selected` (hourly, de-duplicated across the overlapping
 download files) so that later steps (the 2026 alarm / storm check of
 `scripts/23_presentation_numbers.py`, run by `make figures`) read results/ only.

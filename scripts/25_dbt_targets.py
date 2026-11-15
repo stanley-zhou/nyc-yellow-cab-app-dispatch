@@ -1,4 +1,7 @@
-"""E3: row counts and dbt test results per target (DuckDB, Snowflake) -> results/dbt_targets.json.
+"""Compare row counts and dbt test results of the DuckDB and Snowflake dbt targets.
+
+Part of running the dbt project on Snowflake (PLAN Amendment 4, E3); writes
+results/dbt_targets.json.
 
 Reads the run results of `dbt build --target snowflake --target-path target/snowflake` and of
 `dbt test --target-path target/duckdb` (see `make snowflake`), counts the rows of every model in
@@ -203,9 +206,9 @@ def main() -> None:
             parity[m] = merge_results(parts) | {"window": [lo, hi], "chunks": len(chunks)}
             LOG.info("parity %s: %s", m, {k: v for k, v in parity[m].items()
                                           if k != "max_relative_difference"})
-    # dialect finding (DECISIONS [E3]): integer seconds divided by the literal 60.0 is fixed
-    # point on Snowflake; size of the effect on summed durations per pickup zone x dropoff zone
-    # x week, measured on the loaded trips
+    # dialect finding (DECISIONS.md, Snowflake entry [E3]): integer seconds divided by the
+    # literal 60.0 is fixed point on Snowflake; size of the effect on summed durations per pickup
+    # zone x dropoff zone x week, measured on the loaded trips
     cur.execute(f"""select max(abs(a - b) / greatest(1, abs(a), abs(b))), count(*) from (
         select sum(datediff(second, pickup_ts, dropoff_ts) / 60.0) as a,
                sum(cast(datediff(second, pickup_ts, dropoff_ts) as double) / 60.0) as b

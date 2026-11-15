@@ -1,18 +1,24 @@
-"""Phase 4, step 4: metric framework (A1, B4), trade-off table (A3, B5), forecast counterfactual.
+"""Phase 4, step 4: the metric framework (PLAN A1, B4), the price-elasticity and rider trade-off
+table (A3, B5) and the forecast counterfactual.
 
-Reads the step-1/2/3 results (results/speed_did.json, did_static.json, heterogeneity.csv,
-power_mde.json, speed_power.json) and estimates the guardrail DiDs that are not in them:
-spillover (donut-control zones vs Brooklyn + Queens) and mean fare per trip (CBD vs donut).
+Reads the step-1/2/3 results (results/speed_did.json, speed_did_outer.json, did_static.json,
+heterogeneity.csv, power_mde.json) and estimates the guardrail DiDs that are not in them:
+spillover (donut-control zones vs Brooklyn + Queens) and mean fare per trip (CBD vs donut). Also
+reads results/zone_summary.csv, the weekly marts of data/warehouse.duckdb
+(fct_weekly_zone_panel, fct_weekly_zone_trip_stats, fct_weekly_pair_speed,
+fct_weekly_zone_vendor) and the frozen LightGBM forecasts (data/forecasts/frozen/).
 
 Writes
     results/metric_framework.csv   one row per metric: role, outcome, estimate, 95% CI, %, n,
-                                   source (A1 table, extended by B4 rows)
-    results/elasticity_tradeoff.json  A3 implied price elasticity; B5 rider trade-off (minutes
+                                   source (the metric-framework table, extended by the
+                                   duration, speed and fare-per-minute rows)
+    results/elasticity_tradeoff.json  implied price elasticity (A3); rider trade-off (B5: minutes
                                    saved x value of time vs $0.75, break-even value of time);
                                    quarterly congestion-fee revenue collected
     results/counterfactual.csv     PLAN forecast counterfactual: CBD daily pickups vs the
                                    frozen-LightGBM forecast, implied effect by month
-    results/fee_revenue_weekly.csv weekly congestion-fee revenue recorded on yellow trips (A1)
+    results/fee_revenue_weekly.csv weekly congestion-fee revenue recorded on yellow trips (a
+                                   guardrail metric of the framework)
     results/zone_growth.csv        per Manhattan zone and year: mean weekly pickups (complete
                                    weeks) and the share of CMT + Curb (vendors 1, 2) and Helix (7)
     results/effect_map.csv         F4b input: per Manhattan zone, mean weekly pickups in the 52
@@ -101,8 +107,9 @@ def fee_revenue(cfg: dict) -> pd.DataFrame:
 
 
 def fee_revenue_weekly(cfg: dict) -> pd.DataFrame:
-    """A1 guardrail: congestion-fee revenue recorded on valid yellow trips per panel week (all
-    pickup zones and CBD pickups), from the policy week on; `complete_week` marks 7-day weeks."""
+    """Guardrail metric of the metric framework (A1): congestion-fee revenue recorded on valid
+    yellow trips per panel week (all pickup zones and CBD pickups), from the policy week on;
+    `complete_week` marks 7-day weeks."""
     zs = pd.read_csv(path("results", cfg) / "zone_summary.csv")
     cbd = sorted(zs.loc[zs["is_cbd"], "zone_id"].astype(int))
     with connect(path("warehouse", cfg), cfg=cfg) as con:
@@ -288,7 +295,7 @@ def main() -> None:
     fw.to_csv(res / "metric_framework.csv", index=False, lineterminator="\n",
               float_format="%.6g")
 
-    # A3 / B5
+    # implied price elasticity and rider trade-off (A3 / B5)
     pre = pre_cbd_stats(cfg)
     fee, vot = cfg["causal"]["trade_off"]["fee_per_trip"], cfg["causal"]["trade_off"][
         "values_of_time"]

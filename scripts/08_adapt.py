@@ -1,4 +1,4 @@
-"""Phase 5 (re-scoped by Amendment 4 D6): forecasting through the channel shift.
+"""Phase 5: forecasting through the channel shift (the Phase 5 re-scope of PLAN Amendment 4, D6).
 
 Strategies, evaluated on day-ahead origins adapt.eval_window (2025-02-01 -> 2026-09-30) with the
 Phase-2 metrics (WAPE, MAE, MASE, bias, pinball, 80% coverage and width; raw and the primary
@@ -11,7 +11,7 @@ rolling 12-week conformal calibration):
   S6 channel      S1 + lagged app-channel features (taxi_shock.adapt: the zone's app share of
                   pickups over the previous adapt.channel_windows_days (7, 28) days and the
                   citywide share over the previous adapt.city_window_days (7); app = any e-hail
-                  app, Amendment 4a)
+                  app, the channel definition of Amendment 4a)
 Sensitivity S1e (Phase-5 review fix 4): S1 on the S0 training window (expanding from
 data.model_start), so S1e - S0 is the retraining effect and S1 - S1e the window effect.
 Reference: the frozen Phase-3 seasonal naive (sn).
@@ -27,6 +27,11 @@ seasonal-naive MAE from data.model_start to adapt.scale_end), so the strategies 
 Usage:
     python scripts/08_adapt.py --run s1|s6     # monthly refits (long)
     python scripts/08_adapt.py --evaluate      # metrics, daily errors, bootstrap gaps
+
+Reads fct_hourly_zone_demand, the weather/holiday inputs and fct_daily_zone_channel from
+data/warehouse.duckdb; results/modeled_zones.json, zone_summary.csv, lgbm_params.json,
+machine_resources.json, the Chronos-2 forecasts and run record (results/chronos_*); the frozen
+and Phase-2 backtest forecasts in data/forecasts/; config `adapt`.
 
 Writes results/adaptation.csv (strategy, calibration, period, zone_group, horizon bucket, subset,
 metric, value, n), results/adaptation_daily.csv, results/adaptation_gaps.csv,

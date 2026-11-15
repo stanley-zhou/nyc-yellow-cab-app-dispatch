@@ -1,4 +1,4 @@
-"""Amendment 4: stream the high-volume FHV (HVFHV) trip files month by month into aggregates.
+"""Stream the high-volume FHV (HVFHV) trip files month by month into aggregates (PLAN Amendment 4).
 
 Per month (hvfhv.months, oldest first; months already in the manifest are skipped, so a crash
 resumes): disk guard -> download -> aggregate with DuckDB -> verify -> delete the raw file.
@@ -10,7 +10,7 @@ never in the repo), else on data/; stop if below hvfhv.min_free_gb before a down
 Records: every row with a valid pickup zone (zones.valid_ids) and a non-NULL platform; rows outside
 are counted per reason in the stream log. Pickup hour = floor of pickup_datetime (TLC local time).
 
-Aggregates (Amendment 4, designed once so no re-download is needed), Parquet per month under
+Aggregates (PLAN Amendment 4, designed once so no re-download is needed), Parquet per month under
 hvfhv.out_dir:
   (i)  zone_hour: pickup zone x pickup hour x platform (hvfhs_license_num) x shared_request_flag x
        shared_match_flag x trip type (within / into / out_of / neither the CBD, 60th St rule via
@@ -23,7 +23,9 @@ Verification before deletion: the trips of (i) and of (ii) each equal the number
 kept + dropped rows = the file's row count from its Parquet metadata.
 
 Manifest: data/raw/hvfhv_manifest.csv (URL, bytes, sha256, rows, download date); the stream log
-with the row accounting is results/hvfhv_stream_log.csv.
+with the row accounting is results/hvfhv_stream_log.csv; totals over every aggregated month
+(trips by platform and year, shared-ride flags) go to results/hvfhv_summary.json.
+Config keys: `hvfhv`, `sources`, `zones.valid_ids`, `paths.zones_cbd`, `duckdb`.
 
 Usage:
     python scripts/11_hvfhv_stream.py [--months 2023-01 2023-03]

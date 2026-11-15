@@ -1,5 +1,9 @@
 """Download Open-Meteo archive hourly weather for one city-wide point, in yearly chunks.
 
+Reads config `sources.weather_url` / `sources.weather_point` and, with --all,
+`data.yellow_months`. Writes one CSV per chunk to data/raw/weather/ and updates
+data/raw/manifest.csv.
+
 Usage:
     python scripts/02_weather.py --start 2024-10-01 --end 2024-10-31
     python scripts/02_weather.py --all     # first..last day of data.yellow_months

@@ -1,5 +1,8 @@
 """Downloads: TLC yellow-taxi Parquet, zone lookup + shapefile, Open-Meteo hourly weather.
 
+Files are written under data/raw/ (paths from config); the 60th Street geometry used by
+`taxi_shock.cbd` comes from OpenStreetMap through the Overpass API.
+
 TLC downloads are resumable (HTTP Range), verified against the server's Content-Length, retried
 with exponential backoff, and recorded in `data/raw/manifest.csv` (file, bytes, download date) so
 `make data` can re-fetch anything that is deleted.

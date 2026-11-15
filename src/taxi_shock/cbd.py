@@ -13,6 +13,9 @@ Final rule: the geometric label, unless it disagrees with a decisive fee label; 
 must be resolved by an explicit entry in `cbd.manual_overrides` (config), otherwise this module
 raises. Non-Manhattan zones are never CBD (the zone lies outside Manhattan); a decisive "cbd" fee
 label outside Manhattan is reported as a data surprise.
+
+Reads the downloaded OpenStreetMap JSON and the TLC zone shapefile; returns DataFrames and
+writes no files.
 """
 
 from __future__ import annotations

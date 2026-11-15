@@ -1,6 +1,10 @@
 """Phase-1 result files from the full warehouse (every number later quoted comes from these).
 
-Writes:
+Reads the dbt models in data/warehouse.duckdb (data/smoke.duckdb with --smoke):
+fct_data_quality_monthly, fct_hourly_zone_demand, fct_daily_zone_panel, fct_weekly_zone_panel,
+dim_zones, int_hours, the weather models and int_distance_terciles; config `quality`, `zones`.
+
+Writes (to results/smoke/ with --smoke):
     results/data_quality.json          filter counts (first failing rule + independent flags),
                                        duplicates, grid-join drops, weather overlap, span, zeros
     results/data_quality_monthly.csv   the same counts per source month, with shares filtered

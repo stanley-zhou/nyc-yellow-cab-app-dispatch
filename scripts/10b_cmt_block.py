@@ -1,7 +1,7 @@
-"""Amendment 4a: diagnose the CMT outer-borough block before applying the rule.
+"""Diagnose the CMT outer-borough block before applying the rule (PLAN Amendment 4a).
 
-The block (D0): VendorID 1 street hails (non-Flex) picked up in the `other` zone group; it falls
-from ~24k to ~5k pickups per week at 2026-05-31.
+The block (found by the channel-label validation, D0): VendorID 1 street hails (non-Flex) picked
+up in the `other` zone group; it falls from ~24k to ~5k pickups per week at 2026-05-31.
 
 1. Who gained it? Weekly `other`-group pickups by every VendorID and channel around the break
    (results/flex_vendor_weekly.csv, written by 10a) and the change of the total.
@@ -12,6 +12,9 @@ from ~24k to ~5k pickups per week at 2026-05-31.
    code, store-and-forward flag, duration, and the share with identical pickup/dropoff times.
    Records: valid pickup zone, pickup inside the file's month.
 
+Reads: results/flex_vendor_weekly.csv, results/zone_summary.csv, the raw yellow files of the
+diagnosis months (data/raw/tlc/yellow); config keys `channel.cmt_block_diagnosis`,
+`zones.valid_ids`, `quality.flex_fare_payment_type`.
 Writes results/cmt_block_diagnosis.json.
 """
 

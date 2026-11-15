@@ -1,7 +1,8 @@
 """Record-format evidence per (year, VendorID): rows with identical pickup/dropoff timestamps
 (and with a positive distance / different PU and DO zones), Flex Fare rows with zero distance, and
 non-Flex zero-distance rows between different zones. Evidence for the record-format exemptions in
-int_trips_flagged (DECISIONS.md, Phase 1). Writes results/record_format_probe.csv.
+int_trips_flagged (DECISIONS.md, Phase 1). Reads every raw file in data/raw/tlc/yellow/ and
+config `quality.flex_fare_payment_type`. Writes results/record_format_probe.csv and prints it.
 
 Usage:
     python scripts/probe_record_formats.py

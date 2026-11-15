@@ -1,4 +1,6 @@
-"""Phase 7 deferred item (PLAN Phase-1 follow-up 6): rebuild the warehouse into a fresh file.
+"""Rebuild the DuckDB warehouse into a fresh file to reclaim space (Phase 7 deferred item).
+
+Listed in reports/deferred_items.md (PLAN Phase-1 follow-up 6).
 
 Staging models are already views over the raw Parquet (dbt_project.yml); the intermediate models
 that are tables stay tables (each is read by several marts, so a view would recompute it, e.g.
@@ -16,7 +18,10 @@ blocks. This script
 
 A full rebuild from the raw files (`make dbt` into an empty file) was rejected: it needs a second
 warehouse-sized file plus up to 15 GB of DuckDB spill on the WSL virtual disk, whose ceiling (free
-space on C:) was 36 GB, and recomputes data that the copy reproduces exactly. Writes
+space on C:) was 36 GB, and recomputes data that the copy reproduces exactly.
+
+Reads: the warehouse (config `paths.warehouse`) and dbt/target/manifest.json.
+Writes: the copy <warehouse>.compact.duckdb (renamed to the warehouse with --swap) and
 results/warehouse_compaction.json.
 """
 

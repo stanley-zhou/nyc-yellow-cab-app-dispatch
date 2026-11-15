@@ -1,15 +1,19 @@
-"""Amendment 6 (Checkpoint 7 review): descriptive numbers the report and README quote.
+"""Collect the descriptive numbers the report and README quote into one results file.
 
-Every number here is read or derived from existing files under results/ (daily weather from
+The numbers were requested by the advisor's Checkpoint 7 review (PLAN Amendment 6;
+reviews/checkpoint_7_advisor.md, review items named in parentheses below). Every number here
+is read or derived from existing files under results/ (daily weather from
 results/weather_daily.csv, written by scripts/06c_weather_daily.py in `make shock`); the
 repository counts read DECISIONS.md, reviews/ and the pytest collection. Nothing is
-re-estimated. Writes
+re-estimated. Config keys: `presentation`. Writes
   results/presentation_numbers.json   citywide growth accounting (A1), the January-2025 app step
                                       by area (A2), the 2026 alarm / weather check (A3), supply
-                                      (A11), outer-borough levels (A12), scale (B3b), forecast skill
-                                      vs the seasonal naive (B3c), bias by area (B3e), the CBD ride
-                                      market (B3g), the pre-registered checks (B2), repository
-                                      counts (B5), the external 2024 app-share check (C)
+                                      (A11), outer-borough levels (A12), scale of the data (B3b),
+                                      forecast skill vs the seasonal naive (B3c), forecast bias by
+                                      area (B3e), the CBD ride market (B3g), the pre-registered
+                                      checks (B2), the Curb / CMT ratio before Lyft's entry,
+                                      repository counts (B5), the external 2024 app-share check
+                                      (optional section C)
   results/alarm_weather_check.csv     daily weather and actual vs frozen forecast, 2026-Q1
 """
 
@@ -193,7 +197,8 @@ def _pct(x: float) -> str:
 
 
 def checks(cfg: dict) -> dict:
-    """The causal designs and their pass/fail checks (B2; review round 1, fix 1).
+    """The causal designs and their pass/fail checks (one table, review item B2; review round 1,
+    fix 1).
 
     `preregistered`: True = expected direction and gate fixed before the run (PLAN and its
     amendments, written before the design was estimated); False = added after seeing an earlier
@@ -289,7 +294,8 @@ def checks(cfg: dict) -> dict:
         {"lead_placebo_p": lead}, "incrementality_dml.json",
         "the lead placebo fails in Manhattan outside the CBD")
     # counting rule: one count per design, by its primary reading; a second reading of the
-    # same pre-specified design (D5b's event study) is shown but not counted again
+    # same pre-specified design (the event study of the app-share step test, D5b) is shown but
+    # not counted again
     pre = [r for r in rows if r["preregistered"] and r["reading"] == "primary"]
     post = [r for r in rows if not r["preregistered"]]
     return {"rows": rows, "gate_alpha": alpha,

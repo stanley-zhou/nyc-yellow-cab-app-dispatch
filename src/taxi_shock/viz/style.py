@@ -1,4 +1,6 @@
-"""Figure system: one mplstyle, one semantic palette, one policy-line helper (PLAN §7)."""
+"""Figure system: one mplstyle, one semantic palette, one policy-line helper (PLAN §7).
+
+`use_style` loads the project's mplstyle file; `save` writes each figure as PNG and SVG."""
 
 from __future__ import annotations
 
@@ -26,7 +28,7 @@ PALETTE: dict[str, str] = {
     "muted_text": "#6B7078",   # notes, secondary labels, baseline lines drawn over a baseline band
     "text": "#2B2B2B",
     "comparison": "#4B3F72",   # second estimate of the same quantity (robustness / other spec)
-    "app": "#1E8C7E",          # app-dispatch channel (any e-hail app; Amendment 4)
+    "app": "#1E8C7E",          # app-dispatch channel (any e-hail app; PLAN Amendment 4a)
     "street": "#C2A878",       # street-hail channel
 }
 # Fixed categorical order for VendorID (first slots of the dataviz reference palette, documented
@@ -36,7 +38,8 @@ VENDOR_PALETTE: dict[str, str] = {
 }
 DIVERGING_CMAP = "RdBu_r"   # blue-white-red, centred at 0 with a TwoSlopeNorm
 SEQUENTIAL_CMAP = "Blues"   # single-hue, used on a log scale
-# Amendment 6 (C): app shares in one teal family, so teal means "app" in every figure;
+# Optional advice of the Checkpoint 7 review (PLAN Amendment 6): app shares in one teal family,
+# so teal means "app" in every figure;
 # single hue from near-white to a darker shade of the app colour
 APP_CMAP = mpl.colors.LinearSegmentedColormap.from_list(
     "app_share", ["#F2F8F7", PALETTE["app"], "#0B3D37"])

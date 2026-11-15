@@ -2,8 +2,9 @@
 whether each negative row has a positive "reversal twin" (a row of the same file with the same
 pickup/dropoff timestamps and zones and fare_amount > 0).
 
-Evidence for the Flex Fare rule in int_trips_flagged (DECISIONS.md, Phase 1). Writes
-results/negative_fare_probe.json.
+Evidence for the Flex Fare rule in int_trips_flagged (DECISIONS.md, Phase 1). Reads every raw
+file in data/raw/tlc/yellow/ and config `quality.flex_fare_payment_type`. Writes
+results/negative_fare_probe.json and prints per-month counts and the totals.
 
 Usage:
     python scripts/probe_negative_fares.py

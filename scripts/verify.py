@@ -1,7 +1,9 @@
 """`make verify PHASE=N`: ruff, pytest, dbt test (phase >= 1; smoke warehouse for phase 0), and
 presence of every result file listed for phase N in config/phase_outputs.yaml.
 
-Prints one PASS/FAIL line per check and exits non-zero if any check fails.
+Reads config/phase_outputs.yaml and the warehouse (through the tests). Writes only the pytest
+JUnit report .pytest_cache/verify_junit.xml. Prints one PASS/FAIL line per check and exits
+non-zero if any check fails.
 """
 
 from __future__ import annotations
@@ -26,7 +28,8 @@ def run(name: str, cmd: list[str], cwd: Path, env: dict[str, str] | None = None)
 
 
 def pytest_no_skips(junit: Path) -> bool:
-    """From phase 1 a skipped test counts as a failure (PLAN amendment, Phase 1 item 3)."""
+    """From phase 1 a skipped test counts as a failure (PLAN amendment: the grid test runs on the
+full warehouse and cannot be skipped, Phase 1 follow-up 3)."""
     suites = ET.parse(junit).getroot()
     skipped = sum(int(s.get("skipped", 0)) for s in suites.iter("testsuite"))
     print(f"=== pytest skipped tests: {skipped} ({'PASS' if skipped == 0 else 'FAIL'})")

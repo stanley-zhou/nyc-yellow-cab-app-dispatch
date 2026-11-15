@@ -8,7 +8,8 @@ Evidence for the duplicate rule in `int_trips_flagged` (DECISIONS.md, Phase 1):
 
 Counts are computed with a 64-bit row hash and then verified exactly: every hash group with more
 than one row is re-grouped on the real column values, so a hash collision cannot create or hide a
-duplicate. Writes results/duplicates_probe.json.
+duplicate. Reads every raw file in data/raw/tlc/yellow/. Writes results/duplicates_probe.json
+and prints per-file counts and the totals.
 
 Usage:
     python scripts/probe_duplicates.py

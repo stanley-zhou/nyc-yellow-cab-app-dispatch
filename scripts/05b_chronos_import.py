@@ -14,6 +14,11 @@ run in `chronos.test_output` / `chronos.post_output`, tagged in a `run` column (
 main run's rows are never touched), and its chronos_run.json is kept as the run's own record
 (`chronos.calibration_run.run_record`); the main run keeps `chronos.run_record`.
 
+Reads the run's bundle manifest (data/processed/chronos*/manifest.json) and its three returned
+files. Writes results/chronos_import_check.json; when it merges a calibration run, also
+results/chronos_forecasts.parquet, results/chronos_forecasts_post.parquet and that run's record
+(results/chronos_run_calib_2023.json).
+
 Checks per run, all in results/chronos_import_check.json (exit non-zero on any failure):
   - full run (not --dry-run) of exactly that run's bundle: input sha256s equal its manifest,
     script sha256 equals the manifest's `colab_script_sha256`; for the calibration run also

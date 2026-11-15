@@ -54,8 +54,9 @@ class GlobalLGBMQuantile(BaseForecaster):
         """`predict_history_days` (models.lgbm.predict_history_days): days of history before
         the target day handed to the feature builder at predict time; must cover the longest
         look-back (28-day rolling mean + 1 day) or the features would differ from training.
-        `extra` (Phase 5, S6): a function of the feature rows (zone_id, target_ts) returning
-        additional columns `extra_cols`, which must use only days before each target day."""
+        `extra` (Phase 5, S6 channel-aware strategy): a function of the feature rows (zone_id,
+        target_ts) returning additional columns `extra_cols`, which must use only days before
+        each target day."""
         self.exog = exog
         self.predict_history_days = int(predict_history_days)
         self.quantiles = sorted(quantiles)

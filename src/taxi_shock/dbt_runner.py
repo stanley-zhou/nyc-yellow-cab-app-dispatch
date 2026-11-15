@@ -1,7 +1,8 @@
 """Run dbt with every var and DuckDB setting taken from config/project.yaml.
 
 dbt_project.yml carries identical defaults so that `dbt test` also works by hand from dbt/;
-tests/test_config_sync.py fails if the two drift apart.
+tests/test_config_sync.py fails if the two drift apart. dbt reads the raw files under data/raw/
+and writes the DuckDB warehouse (`paths.warehouse`, or `paths.smoke_warehouse` for a smoke run).
 """
 
 from __future__ import annotations

@@ -2,8 +2,8 @@
 
 CLAUDE.md rule 1 asks that every number names its results/ file; this check makes sure the named
 files exist (a renamed or deleted result would otherwise leave a dead link in the report).
-Checked: README.md, reports/analysis.md, reports/dashboard_spec.md, reports/deferred_items.md.
-Exit 1 on any dead link.
+Reads (checked): README.md, reports/analysis.md, reports/appendix.md, reports/dashboard_spec.md,
+reports/deferred_items.md. Writes nothing; exit 1 on any dead link.
 """
 
 from __future__ import annotations

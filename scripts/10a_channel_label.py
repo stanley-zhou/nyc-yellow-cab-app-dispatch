@@ -1,15 +1,18 @@
-"""Amendment 4, D0: is Flex Fare (payment_type 0) a usable label for app-dispatched trips?
+"""Test whether Flex Fare (payment_type 0) is a usable label for app-dispatched trips.
+
+The validation gate for the channel label (PLAN Amendment 4, D0).
 
 Validation window: the yellow files that carry `request_source` (channel.label_months). Records as
-in C1 (07e_app_dispatch.py): every record with a valid pickup zone and a pickup inside its file's
-month. For each month x zone group (and overall, and by VendorID):
+in the app-dispatch mechanism check (C1, 07e_app_dispatch.py): every record with a valid pickup
+zone and a pickup inside its file's month. For each month x zone group (and overall, and by
+VendorID):
 
     P(Flex | HV)   HV = request_source in channel.hv_codes (Uber, Lyft)
     P(HV | Flex)
     P(Flex | any)  any = request_source not NULL (every e-hail origin code)
     P(any | Flex)
 
-Gate (Amendment 4): both HV rates >= channel.gate.min_rate overall and in every zone group with
+Gate (PLAN Amendment 4): both HV rates >= channel.gate.min_rate overall and in every zone group with
 >= channel.gate.min_group_share of the trips -> Flex is the app label for 2023-01 -> 2026-05;
 otherwise channel analyses are restricted to 2026-06+.
 
@@ -19,6 +22,9 @@ share of the `step_window_weeks` weeks from t minus the mean of the weeks before
 `step_top_n` local maxima of |step| per group (>= 2 windows apart) are listed. Causes are not
 inferred here; candidate causes are recorded in DECISIONS.md as hypotheses.
 
+Reads: the raw yellow files of channel.label_months (data/raw/tlc/yellow), results/zone_summary.csv,
+the warehouse tables fct_weekly_zone_vendor and dim_zones; config keys `channel`, `zones.valid_ids`,
+`quality.flex_fare_payment_type`.
 Writes results/channel_label_validation.json, results/flex_share_weekly.csv,
 results/flex_vendor_weekly.csv (zone group x VendorID x week), results/request_source_daily.csv
 (day x VendorID x code, all records of the validation files).
@@ -143,7 +149,8 @@ def main() -> None:
     wv["week_start"] = pd.to_datetime(wv["week_start"])
     full_weeks(wv, cfg).sort_values(["zone_group", "vendor_id", "week_start"]).to_csv(
         res / "flex_vendor_weekly.csv", index=False, lineterminator="\n")
-    # daily records by VendorID x request_source code (D3: first Lyft date, undocumented codes)
+    # daily records by VendorID x request_source code (for Lyft's entry, D3: first Lyft date,
+    # undocumented codes)
     days = []
     for m in pd.period_range(*ch["label_months"], freq="M"):
         f = path("raw_yellow", cfg) / f"yellow_tripdata_{m}.parquet"

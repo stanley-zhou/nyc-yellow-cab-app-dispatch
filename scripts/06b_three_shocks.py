@@ -1,4 +1,9 @@
-"""Phase 4b, C5 (Amendment 3): three shocks, one monitor.
+"""Phase 4b, three shocks, one monitor (PLAN Amendment 3, C5): the Phase-3 frozen-model
+procedure and both drift monitors run for three events.
+
+Reads fct_hourly_zone_demand and the weather/holiday inputs from data/warehouse.duckdb,
+results/lgbm_params.json, results/modeled_zones.json, results/zone_summary.csv and config
+`shocks`, `shock`.
 
 For each event in `shocks.events` (COVID 2020-03-01, the metered-fare increase 2022-12-19,
 congestion pricing 2025-01-05), identically:

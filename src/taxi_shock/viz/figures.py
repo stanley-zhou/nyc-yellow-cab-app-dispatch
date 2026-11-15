@@ -1,5 +1,8 @@
 """Figure builders, one function per figure (F1-F7 are added in their phases).
 
+Each builder takes the DataFrames it draws and an output path, and writes the figure with
+`viz.style.save` (PNG and SVG); `f4b_effect_map_html` writes an interactive HTML map instead.
+
 Titles state a finding only once the results support it; placeholder titles say what is shown.
 """
 
@@ -375,9 +378,10 @@ def f4_event_study(es: pd.DataFrame, policy_date: str, title: str, note: str,
 def f4f_speed_event_study(panels: list[tuple[str, list[tuple[str, pd.DataFrame, str]]]],
                           policy_date: str, title: str, note: str,
                           out_base: Path) -> list[Path]:
-    """F4f (Amendment 2; C4): speed and duration event studies, one panel per outcome (own
-    y-axis), one series per control group (offset by a few days, legend in the first panel).
-    `panels`: (y label, [(series label, monthly event-study rows, colour), ...])."""
+    """F4f (speed and duration outcome, PLAN Amendment 2; outer-borough control, Amendment 3, C4):
+    speed and duration event studies, one panel per outcome (own y-axis), one series per control
+    group (offset by a few days, legend in the first panel). `panels`: (y label, [(series label,
+    monthly event-study rows, colour), ...])."""
     use_style()
     fig, axes = plt.subplots(len(panels), 1, figsize=SIZES["small_multiples"], sharex=True,
                              layout="constrained")
@@ -529,8 +533,9 @@ def f4d_counterfactual_vs_did(cf: pd.DataFrame, paths: list[tuple[str, pd.DataFr
 
 def f4e_placebo_distribution(panels: list[tuple[str, pd.Series, float, float]], title: str,
                              note: str, out_base: Path) -> list[Path]:
-    """F4e (A2): permutation-placebo estimates (histogram) with the real estimate (line) and
-    +-MDE (shaded); one panel per outcome, own x-scale. `panels`: (name, draws, beta, mde)."""
+    """F4e (permutation-placebo power analysis, PLAN Amendment 1, A2): permutation-placebo estimates
+    (histogram) with the real estimate (line) and +-MDE (shaded); one panel per outcome, own
+    x-scale. `panels`: (name, draws, beta, mde)."""
     use_style()
     fig, axes = plt.subplots(1, len(panels), figsize=(SIZES["small_multiples"][0], 4.2),
                              layout="constrained")
@@ -557,9 +562,10 @@ def f4e_placebo_distribution(panels: list[tuple[str, pd.Series, float, float]], 
 
 def f4g_app_dispatch(zones, share: pd.DataFrame, title: str, note: str,
                      out_base: Path) -> list[Path]:
-    """F4g (Amendment 3, C1): left, map of the app-dispatch share (Uber + Lyft) by pickup zone,
-    zones without enough records hatched, CBD outlined; right, 2023->2025 growth of mean weekly
-    pickups vs the app share (CBD accent, donut control grey, other zones light)."""
+    """F4g (mechanism check with `request_source`, PLAN Amendment 3, C1): left, map of the
+    app-dispatch share (Uber + Lyft) by pickup zone, zones without enough records hatched, CBD
+    outlined; right, 2023->2025 growth of mean weekly pickups vs the app share (CBD accent, donut
+    control grey, other zones light)."""
     from taxi_shock.viz.maps import NO_DATA_COLOR, draw_boundary
 
     use_style()
@@ -603,10 +609,10 @@ def f4g_app_dispatch(zones, share: pd.DataFrame, title: str, note: str,
 
 def f3b_three_shocks(daily: pd.DataFrame, events: list[tuple[str, str, dict | None]],
                      title: str, note: str, out_base: Path) -> list[Path]:
-    """F3b (Amendment 3, C5): one panel per event, x = days since the event, y = 7-day mean of
-    the daily log(actual / forecast) in % for the CBD (accent) and non-CBD (grey); the
-    calibration year left of 0 is lighter; the CBD's first CUSUM alarm is a dotted line.
-    `events`: (event key, panel title, first CUSUM alarm of the CBD or None)."""
+    """F3b (three shocks, one monitor; PLAN Amendment 3, C5): one panel per event, x = days since
+    the event, y = 7-day mean of the daily log(actual / forecast) in % for the CBD (accent) and
+    non-CBD (grey); the calibration year left of 0 is lighter; the CBD's first CUSUM alarm is a
+    dotted line. `events`: (event key, panel title, first CUSUM alarm of the CBD or None)."""
     use_style()
     fig, axes = plt.subplots(len(events), 1, figsize=SIZES["small_multiples"], sharex=True,
                              layout="constrained")
@@ -671,9 +677,9 @@ def f4i_leave_one_out(loo: pd.DataFrame, full: dict[str, float], title: str, not
 
 def f4h_synth_control(paths: pd.DataFrame, policy_date: str, title: str, note: str,
                       out_base: Path) -> list[Path]:
-    """F4h (Amendment 3, C3): top, the CBD's demeaned log weekly pickups (actual) and its
-    synthetic control; bottom, the gap (actual - synthetic) of the CBD (accent) against the
-    in-space placebo gaps (thin grey). Gaps in % (exp(gap) - 1)."""
+    """F4h (synthetic control for CBD demand, PLAN Amendment 3, C3): top, the CBD's demeaned log
+    weekly pickups (actual) and its synthetic control; bottom, the gap (actual - synthetic) of the
+    CBD (accent) against the in-space placebo gaps (thin grey). Gaps in % (exp(gap) - 1)."""
     use_style()
     fig, (a1, a2) = plt.subplots(2, 1, figsize=SIZES["small_multiples"], sharex=True,
                                  layout="constrained")
@@ -707,9 +713,10 @@ def f4h_synth_control(paths: pd.DataFrame, policy_date: str, title: str, note: s
 def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title: str,
                        note: str, out_base: Path,
                        step: tuple[str, str] | None = None) -> list[Path]:
-    """F6a (Amendment 4, D1): weekly pickups stacked by channel (app, street hail and, where
-    present, the CMT outer-borough block as its own grey layer), one panel per zone group with
-    its own y-axis in thousands per week. `panels`: (zone_group, panel title)."""
+    """F6a (channel decomposition, PLAN Amendment 4, D1): weekly pickups stacked by channel (app,
+    street hail and, where present, the CMT outer-borough block as its own grey layer), one panel
+    per zone group with its own y-axis in thousands per week. `panels`: (zone_group, panel
+    title)."""
     use_style()
     fig, axes = plt.subplots(1, len(panels), figsize=SIZES["small_multiples"],
                              layout="constrained")
@@ -731,7 +738,8 @@ def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title
         ax.set_ylim(0, top * 1.18)                      # headroom for the policy label
         policy_line(ax, label=i == 0, label_y=0.99, side="right")
         ax.legend(frameon=False, fontsize=8, loc="upper left")
-        if step:   # Amendment 6 (B4): the step is annotated where the reader first sees it
+        # Checkpoint 7 review (PLAN Amendment 6): annotate the step where the reader first sees it
+        if step:
             xs = mdates.date2num(pd.Timestamp(step[0]))
             ax.axvline(xs, color=PALETTE["text"], linestyle=":", linewidth=1.0, zorder=3)
             if i == len(panels) - 1:
@@ -750,9 +758,10 @@ def f6a_channel_areas(weekly: pd.DataFrame, panels: list[tuple[str, str]], title
 
 def f6b_app_share_maps(zones, share: pd.DataFrame, periods: list[tuple[str, str]],
                        min_weekly: float, title: str, note: str, out_base: Path) -> list[Path]:
-    """F6b (Amendment 4, D1): app share of yellow pickups by pickup zone, one map per period
-    (small multiples, one shared 0-100% sequential scale); zones below `min_weekly` mean weekly
-    pickups in that period hatched; CBD outlined. `periods`: (period key, panel title)."""
+    """F6b (channel decomposition, PLAN Amendment 4, D1): app share of yellow pickups by pickup
+    zone, one map per period (small multiples, one shared 0-100% sequential scale); zones below
+    `min_weekly` mean weekly pickups in that period hatched; CBD outlined. `periods`: (period key,
+    panel title)."""
     from taxi_shock.viz.maps import NO_DATA_COLOR, draw_boundary
 
     use_style()
@@ -785,9 +794,10 @@ def f6b_app_share_maps(zones, share: pd.DataFrame, periods: list[tuple[str, str]
 def f6c_incrementality(summary: pd.DataFrame, areas: list[tuple[str, str]],
                        estimates: list[tuple[str, str, str]], title: str, note: str,
                        out_base: Path) -> list[Path]:
-    """F6c (Amendment 4, D2): theta (1 = fully incremental, 0 = fully displacing) with 95% CIs by
-    area (rows) for the primary DML estimate and the robustness estimates (offset markers).
-    `areas`: (area key, label); `estimates`: (estimate key, label, colour)."""
+    """F6c (incrementality by geography, PLAN Amendment 4, D2): theta (1 = fully incremental, 0 =
+    fully displacing) with 95% CIs by area (rows) for the primary DML estimate and the robustness
+    estimates (offset markers). `areas`: (area key, label); `estimates`: (estimate key, label,
+    colour)."""
     use_style()
     fig, ax = plt.subplots(figsize=SIZES["single"], layout="constrained")
     n = len(estimates)
@@ -818,9 +828,9 @@ def f6c_incrementality(summary: pd.DataFrame, areas: list[tuple[str, str]],
 
 def f6d_lyft_entry(daily: pd.DataFrame, windows: dict, title: str, note: str,
                    out_base: Path) -> list[Path]:
-    """F6d (Amendment 4, D3): weekly pickups of Curb (treated) and CMT (control) cabs in the CBD
-    and Manhattan non-CBD, indexed to their pre-period mean (= 100), total and app panels; the
-    excluded window shaded, Lyft trips on Curb as a line in the app panel."""
+    """F6d (Lyft's entry, PLAN Amendment 4, D3): weekly pickups of Curb (treated) and CMT (control)
+    cabs in the CBD and Manhattan non-CBD, indexed to their pre-period mean (= 100), total and app
+    panels; the excluded window shaded, Lyft trips on Curb as a line in the app panel."""
     use_style()
     fig, axes = plt.subplots(1, 2, figsize=SIZES["small_multiples"], layout="constrained",
                              sharey=False)
@@ -853,9 +863,10 @@ def f6d_lyft_entry(daily: pd.DataFrame, windows: dict, title: str, note: str,
 
 def f6e_app_share_step(weekly: pd.DataFrame, es: pd.DataFrame, title: str, note: str,
                        out_base: Path) -> list[Path]:
-    """F6e (Amendment 4a, D5b): left, weekly app share of yellow pickups by trip type; right,
-    event study of the app share, CBD-touching vs neither (reference: the week before the
-    policy), yellow and, if present, HVFHV log trips."""
+    """F6e (did congestion pricing move trips into the app channel? PLAN Amendment 4a, D5b): left,
+    weekly app share of yellow pickups by trip type; right, event study of the app share,
+    CBD-touching vs neither (reference: the week before the policy), yellow and, if present, HVFHV
+    log trips."""
     use_style()
     fig, (a1, a2) = plt.subplots(1, 2, figsize=SIZES["small_multiples"], layout="constrained")
     styles = {"within": (PALETTE["cbd"], "-"), "into": (PALETTE["cbd"], "--"),
@@ -986,10 +997,11 @@ def f5_adaptation(daily: pd.DataFrame, series: list[tuple[str, str, str]], days:
 
 def f0_citywide_channels(weekly: pd.DataFrame, events: list[tuple[str, str, float]],
                          title: str, note: str, out_base: Path) -> list[Path]:
-    """Hero figure (Amendment 6, B4): citywide weekly yellow pickups, street hail (bottom) and
-    app dispatch (top) stacked, the contracted trip programme excluded; `events` = (date,
-    label, label height as axes fraction) drawn as dotted lines; the policy line labelled
-    small. `weekly` = rows of results/channel_weekly.csv for zone_group 'all'."""
+    """Hero figure (requested by the Checkpoint 7 review, PLAN Amendment 6): citywide weekly yellow
+    pickups, street hail (bottom) and app dispatch (top) stacked, the contracted trip programme
+    excluded; `events` = (date, label, label height as axes fraction) drawn as dotted lines; the
+    policy line labelled small. `weekly` = rows of results/channel_weekly.csv for zone_group
+    'all'."""
     use_style()
     d = weekly.sort_values("week_start")
     fig, ax = plt.subplots(figsize=(12.0, 5.2), layout="constrained")

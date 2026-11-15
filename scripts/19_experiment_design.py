@@ -1,10 +1,13 @@
-"""Amendment 1 A4 / Amendment 5: how the incrementality of app dispatch could be measured with a
-designed experiment, and the sample size the observed variance implies. Design only; no new data.
+"""Size a designed experiment that could measure the incrementality of app dispatch.
 
-Estimand (as in D2): theta = 1 + d street / d app = the share of app-dispatched trips that would
-not have happened otherwise. If app dispatch is switched off for a unit, total pickups fall by
-theta x (the app trips it would have had); so the experiment estimates theta = (total_on -
-total_off) / app_on.
+The experiment-design section (PLAN Amendment 1, A4, given its subject by Amendment 5): how the
+incrementality of app dispatch could be measured with a designed experiment, and the sample size
+the observed variance implies. Design only; no new data.
+
+Estimand (as in the incrementality estimate, D2): theta = 1 + d street / d app = the share of
+app-dispatched trips that would not have happened otherwise. If app dispatch is switched off for
+a unit, total pickups fall by theta x (the app trips it would have had); so the experiment
+estimates theta = (total_on - total_off) / app_on.
 
 Design 1, switchback (zone x time block). Units: pickup zone x `block_hours` block of the CBD and
 Manhattan non-CBD zones; dispatch eligibility switched on/off at random per block. Noise: residual
@@ -17,10 +20,12 @@ without a design effect for serial correlation of adjacent blocks of a zone (lag
 rho of the residuals; DEFF = 1 + rho, conservative for alternating assignments).
 
 Design 2, staggered vendor rollout (dispatch enabled cab group by cab group). The observed analogue
-is D3 (Lyft on Curb vs CMT cabs): its SE per zone-day over its post-period scales with
-1 / sqrt(post days); reported: theta's MDE with D3's two post months and the post-period length
-needed for each target MDE (log specification, results/lyft_entry.json).
+is Lyft's entry (D3: Lyft on Curb vs CMT cabs): its SE per zone-day over its post-period scales
+with 1 / sqrt(post days); reported: theta's MDE with that design's two post months and the
+post-period length needed for each target MDE (log specification, results/lyft_entry.json).
 
+Reads: warehouse tables int_trips_valid and dim_zones, results/lyft_entry.json; config keys
+`experiment`, `quality.flex_fare_payment_type`, `data.event_study_window`.
 Writes results/experiment_design.json.
 """
 

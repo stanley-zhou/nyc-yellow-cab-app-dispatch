@@ -1,4 +1,7 @@
-"""Phase 4b, C3 (Amendment 3): synthetic control for CBD demand.
+"""Phase 4b synthetic control for CBD demand (PLAN Amendment 3, C3).
+
+Reads the weekly demand panel from data/warehouse.duckdb (taxi_shock.causal.panel.demand_panel),
+results/zone_summary.csv and config `synth`, `causal`.
 
 Treated unit: the CBD (weekly total pickups of the CBD zones). Donors: non-CBD zones with a 2024
 mean of >= `synth.min_donor_weekly` pickups per week, the donut-excluded zones left out. Outcome:

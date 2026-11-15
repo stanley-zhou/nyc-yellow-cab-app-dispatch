@@ -1,5 +1,10 @@
 """Rolling-origin backtest (PLAN Phase 2).
 
+Reads fct_hourly_zone_demand and the weather/holiday inputs from data/warehouse.duckdb
+(data/smoke.duckdb with --smoke), results/modeled_zones.json and results/lgbm_params.json, and
+config `forecast`, `forecast_eval`, `models`. Smoke run writes results/smoke/forecasts_smoke.parquet
+and results/smoke/backtest_smoke.csv; the full run writes the files below.
+
     --smoke   Phase 0: seasonal naive on the sample month (results/smoke/)
     --full    every trained model x training window x period:
                 models  seasonal_naive, stat_ets_profile, lgbm_quantile (--models to subset)

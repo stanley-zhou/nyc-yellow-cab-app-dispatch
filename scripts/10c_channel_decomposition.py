@@ -1,10 +1,14 @@
-"""Amendment 4, D1 (with the Amendment 4a rulings): the market shift, descriptively.
+"""Describe the market shift by dispatch channel: app vs street-hail pickups and growth accounting.
 
+This is the descriptive decomposition of PLAN Amendment 4 (D1), with the Amendment 4a rulings.
 Channel (Amendment 4a): app = any e-hail app (Flex Fare before the request_source files,
 request_source not NULL from them); street = street hail. The CMT outer-borough block
-(`is_cmt_outer_block`; DECISIONS, D1) is its own series: every outer-borough figure is given with
-and without it. Source: the dbt mart fct_weekly_zone_channel (valid in-grid pickups; complete panel
-weeks of channel.window).
+(`is_cmt_outer_block`; rule in DECISIONS.md, D1) is its own series: every outer-borough figure
+is given with and without it. Source: the dbt mart fct_weekly_zone_channel (valid in-grid
+pickups; complete panel weeks of channel.window).
+
+Reads: warehouse mart fct_weekly_zone_channel, results/record_format_shares.csv; config keys
+`channel` (window, motivation_months, net_ratio_min_app_change).
 
 Outputs
     results/channel_weekly.csv        week x zone group: app, street, block, total
@@ -20,7 +24,8 @@ Outputs
                                       contributions (block separate), and the "accounting net
                                       ratio" = net change / app change (Amendment 5: arithmetic
                                       on observed changes, not an incrementality estimate)
-    results/channel_zone_share.csv    zone x period app share and mean weekly pickups (F6b; D2)
+    results/channel_zone_share.csv    zone x period app share and mean weekly pickups
+                                      (figure F6b; the incrementality estimate, D2)
 """
 
 from __future__ import annotations
@@ -84,7 +89,7 @@ def growth(w: pd.DataFrame, base: list[pd.Timestamp], end: list[pd.Timestamp],
                 row[f"{k}_base"], row[f"{k}_end"] = s[k]
                 row[f"{k}_change"] = s[k][1] - s[k][0]
                 row[f"{k}_contribution"] = (s[k][1] - s[k][0]) / d if d else None
-            # Amendment 5: accounting net ratio = net change in total pickups per app pickup
+            # PLAN Amendment 5: accounting net ratio = net change in total pickups per app pickup
             # added; arithmetic on observed changes, NOT an incrementality estimate
             row["accounting_net_ratio"] = (d / row["app_change"]
                                            if abs(row["app_change"]) >= min_app else None)
@@ -114,8 +119,8 @@ def main() -> None:
     monthly.to_csv(res / "channel_monthly.csv", index=False, lineterminator="\n",
                    float_format="%.6g")
 
-    # Amendment 4's motivating numbers: reproduced (record_format_shares.csv, Flex share) and
-    # restated (channel definition; with / without the block)
+    # the numbers that motivated PLAN Amendment 4: reproduced (record_format_shares.csv, Flex
+    # share) and restated (channel definition; with / without the block)
     rf = pd.read_csv(res / "record_format_shares.csv", parse_dates=["week_start"])
     rf["month"] = rf["week_start"].dt.to_period("M").astype(str)
     rfm = rf.groupby(["month", "zone_group"])[["pickups", "pickups_flex"]].sum()

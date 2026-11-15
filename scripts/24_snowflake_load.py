@@ -1,11 +1,13 @@
-"""E3 (PLAN Amendment 4): load the cleaned yellow trips and the HVFHV aggregates into Snowflake.
+"""Load the cleaned yellow trips and the HVFHV aggregates into Snowflake.
 
-Needs the Snowflake environment (`source ~/.snowflake/taxi.env`; see taxi_shock/snowflake.py).
+Part of running the dbt project on Snowflake (PLAN Amendment 4, E3). Needs the Snowflake
+environment (`source ~/.snowflake/taxi.env`; see taxi_shock/snowflake.py).
 
 1. Export the cleaned yellow trips, source months `snowflake.months` (one Parquet file per month),
    from the DuckDB warehouse: the valid, de-duplicated rows of int_trips_flagged (drop_reason
    NULL) with the columns int_trips_valid reads. The cleaning itself (de-duplication and the
-   validity rules over the raw files) stays in DuckDB; Snowflake receives its output.
+   validity rules over the raw files) stays in DuckDB; Snowflake receives its output. Written
+   to data/raw/snowflake_load/yellow_valid/ (config `paths.snowflake_load`).
 2. Upload them, the HVFHV aggregate files, the raw weather CSVs, the zone lookup and
    config/zones_cbd.csv to an internal stage (PUT), then `COPY INTO` tables in schema RAW
    (`CREATE OR REPLACE`, so a rerun reloads from the stage; PUT skips unchanged files).

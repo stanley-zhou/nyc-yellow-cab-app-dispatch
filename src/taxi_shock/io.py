@@ -1,4 +1,8 @@
-"""DuckDB connections with the project's memory discipline, and panel readers."""
+"""DuckDB connections with the project's memory discipline, and panel readers.
+
+The readers open the warehouse read-only (`fct_hourly_zone_demand`, `int_hours`, `stg_weather`,
+`holidays_ny`) and return DataFrames; `connect` creates the configured DuckDB spill directory.
+"""
 
 from __future__ import annotations
 

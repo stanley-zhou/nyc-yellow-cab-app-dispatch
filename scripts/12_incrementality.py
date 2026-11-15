@@ -1,4 +1,4 @@
-"""Amendment 4, D2: incrementality of the app channel by geography (observational).
+"""Estimate the incrementality of the app channel by area (observational; PLAN Amendment 4, D2).
 
 Estimand: theta = change in total pickups per additional app pickup = 1 + beta, where beta is the
 partial effect of app pickups on street-hail pickups in the same zone-week (theta = 1: fully
@@ -6,7 +6,8 @@ incremental; theta = 0: every app trip displaces a street hail).
 
 Panel: zone x complete week, 2023-01 -> 2026-09, from fct_weekly_zone_channel (app = any e-hail
 app, Amendment 4a), zeros filled (balanced); zones of each area with a mean of >= incr.min_weekly
-pickups per week in 2023; the CMT outer-borough block is excluded (Amendment 4a: D2 primary).
+pickups per week in 2023; the CMT outer-borough block is excluded (Amendment 4a: rule for the
+primary estimate).
 
 Primary estimator: partially linear DML (DoubleML `DoubleMLPLR`, partialling-out score) with
 LightGBM nuisance models, on two-way within-transformed outcome and treatment (zone fixed effects
@@ -20,15 +21,18 @@ splitting); standard errors clustered by zone from DoubleML's score elements
 
 Robustness (each per area): TWFE (street ~ app | zone + week, pyfixest, CRV1 by zone); first
 differences (d street ~ d app | week); a one-week lead of app pickups in the first-difference
-regression (placebo, expected ~ 0); zone linear trends removed before DML; the D0 label (Flex Fare
-throughout, also from 2026-06); the CMT block included as street hails, window ending 2026-05-24;
-DoubleML's panel estimator (`DoubleMLPLPR`, within-group approximation, Clarke and Polselli 2025)
-with its own unit-based folds.
+regression (placebo, expected ~ 0); zone linear trends removed before DML; the label tested by the
+channel-label gate (D0: Flex Fare throughout, also from 2026-06); the CMT block included as
+street hails, window ending 2026-05-24; DoubleML's panel estimator (`DoubleMLPLPR`, within-group
+approximation, Clarke and Polselli 2025) with its own unit-based folds.
 
 Supply view: TLC monthly aggregate report (sources.tlc_monthly_report_url; downloaded to
 data/raw/lookup with the manifest): yellow trips per active vehicle-day and hours per vehicle-day,
 2022 -> latest month.
 
+Reads: warehouse tables fct_weekly_zone_channel, fct_weekly_zone_vendor, fct_weekly_zone_panel,
+dim_zones; the holidays seed and config/zones_cbd.csv; config keys `incr`, `seed`,
+`sources.tlc_monthly_report_url`.
 Writes results/incrementality_dml.json, results/incrementality_panel_summary.csv,
 results/supply_monthly.csv.
 """
@@ -58,7 +62,7 @@ AREAS = ["cbd", "manhattan_non_cbd", "other", "airports"]
 def load_panel(cfg: dict, flex_label: bool = False, with_block: bool = False) -> pd.DataFrame:
     """Balanced zone x week panel: app, street (block excluded unless with_block), total."""
     with connect(path("warehouse", cfg), cfg=cfg) as con:
-        if flex_label:   # D0 sensitivity: Flex Fare as the app label for the whole window
+        if flex_label:   # label sensitivity (D0): Flex Fare as the app label for the whole window
             w = con.execute("""
                 select v.zone_id, v.week_start, z.zone_group,
                        sum(v.pickups_flex) as app,

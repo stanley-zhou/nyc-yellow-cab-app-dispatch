@@ -1,11 +1,16 @@
-"""Phase 4 step 1 (Amendment 2, B1-B3) and Phase 4b C4 (Amendment 3): trip speed and duration.
+"""Trip speed and duration DiD: the pre-registered second outcome of Phase 4 (PLAN Amendment 2,
+B1-B3) and its Phase 4b re-estimation against an uncontaminated control (Amendment 3, C4).
+
+Reads fct_weekly_pair_speed and fct_weekly_zone_panel (weekly weather) from
+data/warehouse.duckdb, results/zone_summary.csv and config `causal`, `speed`.
 
 Unit: pickup zone x dropoff zone ("pair") x panel week, from dbt `fct_weekly_pair_speed`.
 Treated = pairs with pickup and dropoff in the CBD. Two controls, same design:
   donut  pairs with both zones in the primary control (`causal.control`): the pre-registered
-         Amendment-2 comparison (results/speed_did.json)
+         comparison of PLAN Amendment 2 (results/speed_did.json)
   outer  pairs with both ends in Brooklyn or Queens outside the airports (`speed.outer_boroughs`;
-         region 'outer' of the dbt sample): the C4 control, free of the Manhattan spillover
+         region 'outer' of the dbt sample): the control of the Phase 4b re-estimation (C4),
+         free of the Manhattan spillover
          (results/speed_did_outer.json)
 Outcomes: log of the pair-week mean trip speed (mph) and mean trip duration (minutes), weighted
 by trips used; pair FE + week FE; weather x treated; SEs two-way clustered by pickup and dropoff
@@ -18,8 +23,10 @@ Writes
                                     trips (donut), the full Manhattan non-CBD control (donut
                                     file), fare per minute, placebo in time, pre-trend tests
     results/speed_event_study.csv   monthly and weekly event-study coefficients, column control
-    results/speed_heterogeneity.csv distance terciles (B3) and pickup-hour bands (B2), by control
-    results/speed_exclusions.csv    excluded share by month, category and reason (B3)
+    results/speed_heterogeneity.csv distance terciles (composition control, B3) and pickup-hour
+                                    bands (speed-outcome groups, B2), by control
+    results/speed_exclusions.csv    excluded share by month, category and reason (trips dropped
+                                    from the speed analysis, B3)
     results/speed_power.json        permutation-placebo summaries and MDEs for speed and
                                     duration, both controls (top-level keys: donut, speed)
     results/speed_placebo.csv       the placebo draws (columns control, outcome)
@@ -230,9 +237,10 @@ def analyse(p: pd.DataFrame, a: pd.DataFrame, wx: pd.DataFrame, sets: dict, cont
 
 def power(a: pd.DataFrame, sets: dict, control: str, results: dict, cfg: dict
           ) -> tuple[dict, pd.DataFrame]:
-    """A2-style permutation placebo on pre-policy data: random fake week x 38 random Manhattan
-    zones as fake CBD (pairs within the fake set) vs pairs within the other Manhattan zones
-    (donut design) or the fixed outer-borough pairs (outer design); speed and duration."""
+    """Permutation placebo on pre-policy data, as in the demand power analysis (PLAN A2): random
+    fake week x 38 random Manhattan zones as fake CBD (pairs within the fake set) vs pairs within
+    the other Manhattan zones (donut design) or the fixed outer-borough pairs (outer design);
+    speed and duration."""
     pc = cfg["causal"]["permutation"]
     lo, hi = (pd.Timestamp(x) for x in pc["window"])
     keep = (a["region"] == "manhattan") | (a["ctl_outer"] if control == "outer" else False)

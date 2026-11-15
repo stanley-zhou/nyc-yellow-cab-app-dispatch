@@ -1,4 +1,6 @@
-"""Amendment 3 C6 (Phase 6): congestion pricing and high-volume FHV demand.
+"""Estimate the effect of congestion pricing on high-volume FHV (Uber, Lyft) demand (Phase 6).
+
+PLAN Amendment 3 (C6).
 
 Demand only. HVFHV pickups per zone x week from the streamed aggregates
 (data/processed/hvfhv/zone_hour_*.parquet), on the Phase 4 design (scripts/07b_demand.py: 38 CBD
@@ -7,13 +9,16 @@ pickups; complete weeks of the event-study window 2023-01 -> 2026-09). Series: U
 Lyft, shared-requested trips (shared_request_flag = 'Y'). Each series in two weightings: equal
 zone weights and pre-volume weights (the series' own mean weekly pickups over the 52 pre weeks).
 
-Order (C6): the monthly event-study pre-trend test FIRST (pre-registered F and Hotelling F*; the
-decision uses F* at 5%, the pre-registered F being oversized for this design,
+Order (as pre-specified): the monthly event-study pre-trend test FIRST (pre-registered F and
+Hotelling F*; the decision uses F* at 5%, the pre-registered F being oversized for this design,
 results/pretrend_test_size.json). A series whose test rejects gets no static estimate ("stop"):
 only its pre-trend result and event-study path are reported. For series that pass, the static
 DiD with persistence splits; Lyft additionally with January 2025 as its own post period (Lyft's
 January 2025 rider credit is a known confounder).
 
+Reads: the HVFHV aggregates under hvfhv.out_dir, the Phase 4 yellow panel and design via
+scripts/07b_demand.py; config keys `causal`, `channel_did`, `channel.hv_platform_names`,
+`data.policy_date`.
 Writes results/fhv_did.json, results/fhv_event_study.csv.
 """
 
@@ -62,8 +67,9 @@ def fhv_weekly(cfg: dict) -> pd.DataFrame:
 
 def analyse(x: pd.DataFrame, s: str, wt: str | None, cfg: dict, p4,
             lyft_splits: dict | None = None) -> tuple[dict, pd.DataFrame]:
-    """C6 for one series: the monthly event-study pre-trend test FIRST; the static DiD (and
-    persistence, and the Lyft January split if `lyft_splits`) only if Hotelling F* p >= alpha."""
+    """The FHV analysis for one series: the monthly event-study pre-trend test FIRST; the static
+    DiD (and persistence, and the Lyft January split if `lyft_splits`) only if Hotelling F*
+    p >= alpha."""
     cc = cfg["causal"]
     alpha = float(cfg["channel_did"]["alpha"])
     ctrl = [f"tr_{c}" for c in cc["weather_controls"]]

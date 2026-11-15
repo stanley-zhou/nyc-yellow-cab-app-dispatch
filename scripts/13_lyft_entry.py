@@ -1,7 +1,8 @@
-"""Amendment 4 D3 (with Amendment 4a timing): Lyft's entry into yellow-cab dispatch. PRELIMINARY.
+"""Estimate the effect of Lyft's entry into yellow-cab dispatch (vendor DiD). PRELIMINARY.
 
-Lyft trips (request_source HV0005) occur only on Curb-equipped cabs (VendorID 2), first on
-2026-08-10 (D0). Design: vendor-level difference-in-differences on pickup zone x vendor x day —
+PLAN Amendment 4 (D3), with the Amendment 4a timing. Lyft trips (request_source HV0005) occur
+only on Curb-equipped cabs (VendorID 2), first on 2026-08-10 (found by the channel-label
+validation, D0). Design: vendor-level difference-in-differences on pickup zone x vendor x day —
 treated = Curb cabs (gain Lyft access), control = CMT cabs (VendorID 1) — with zone x vendor and
 zone x day fixed effects and SEs clustered by pickup zone; CBD and Manhattan non-CBD zones only
 (Amendment 4a). Outcomes per zone x vendor x day: total, app and street-hail pickups (levels),
@@ -19,6 +20,7 @@ pickups per Curb zone-day in the post-period); displacement of Uber-dispatched t
 effect on Uber pickups / the same mean. Pre-trends: weekly event study over the pre-period
 (reference = the last pre week), joint Wald test (pre-registered F and Hotelling F*).
 
+Reads: warehouse mart fct_daily_zone_channel; config keys `lyft`.
 Writes results/lyft_entry.json, results/lyft_entry_daily.csv (Curb vs CMT daily series).
 """
 

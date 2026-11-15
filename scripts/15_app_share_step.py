@@ -1,8 +1,9 @@
-"""Amendment 4a D5b (pre-specified): did congestion pricing move trips into the app channel?
+"""Test whether congestion pricing moved trips into the app channel (pre-specified).
 
-D0 dated a +10.9 pp step in the Flex (app) share to the week of 2025-01-19, two weeks after the
-policy began; the fee is $0.75 per taxi trip and $1.50 per high-volume FHV trip. Test: is the step
-larger for trips touching the CBD (within / into / out of) than for trips touching neither end?
+PLAN Amendment 4a (D5b). The channel-label validation (D0) dated a +10.9 pp step in the Flex
+(app) share to the week of 2025-01-19, two weeks after the policy began; the fee is $0.75 per taxi
+trip and $1.50 per high-volume FHV trip. Test: is the step larger for trips touching the CBD
+(within / into / out of) than for trips touching neither end?
 
 Yellow (fct_weekly_zone_channel): cells = pickup zone x trip type x week in
 channel_did.step_window. Static DiD: y = a_{zone,type} + l_week + d * touch * post, post = weeks
@@ -19,6 +20,8 @@ week, log1p trips, same DiD (touch x post), and by platform.
 Reading (Amendment 4a): if the fee differential is the cause, d > 0 for CBD-touching trips; if the
 step is the same across trip types, it is not attributable to the fee differential.
 
+Reads: warehouse mart fct_weekly_zone_channel, the HVFHV zone_hour aggregates under
+hvfhv.out_dir; config keys `channel_did`, `channel.hv_platform_names`, `data.policy_date`.
 Writes results/app_share_policy_step.json, results/app_share_by_trip_type_weekly.csv,
 results/app_share_step_event_study.csv.
 """
@@ -126,7 +129,8 @@ def main() -> None:
                 es_, test = event_study(d, y, wgt, policy)
                 es_rows.append(es_.assign(source="yellow", outcome=y))
                 out["yellow"]["pretrend"][y] = test
-    # pre/post mean share by type (descriptive): 4 weeks either side of the D0 step week
+    # pre/post mean share by type (descriptive): 4 weeks either side of the step week dated by
+    # the channel-label validation (D0)
     step = pd.Timestamp(cfg["channel_did"]["d0_step_week"])
     nk = int(cfg["channel_did"]["step_weeks_each_side"])
     desc = {}

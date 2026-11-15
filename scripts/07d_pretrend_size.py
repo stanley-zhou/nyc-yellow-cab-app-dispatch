@@ -7,7 +7,7 @@ pre-trend, then applies
 taxi_shock.causal.event_study (monthly bins, zone + week FE, clustered by zone) and records how
 often the pre-registered F(q, G - 1) and the Hotelling-type F*(q, G - q) reject at 5% and 1%.
 
-Writes results/pretrend_test_size.json.
+Reads only config `causal.pretrend_size` (no data). Writes results/pretrend_test_size.json.
 
 Usage:
     python scripts/07d_pretrend_size.py [--reps N]   (default: causal.pretrend_size.reps)

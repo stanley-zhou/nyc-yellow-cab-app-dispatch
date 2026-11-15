@@ -1,5 +1,11 @@
 """Phase 3: where the forecaster breaks (PLAN Phase 3).
 
+Reads fct_hourly_zone_demand and the weather/holiday inputs from data/warehouse.duckdb,
+results/lgbm_params.json, results/modeled_zones.json, results/zone_summary.csv, the Phase-2
+backtest forecasts (data/forecasts/lgbm_quantile__expanding__test.parquet), the imported Chronos-2
+forecasts (results/chronos_forecasts*.parquet) and config `shock`. Writes the files named below,
+plus results/drift_calibration_series.csv (the calibration-period monitor series).
+
 1. Frozen models (`shock.frozen_train_end` = 2024-12-31):
    - LightGBM (primary window `expanding` from model_start), fitted ONCE with the same procedure
      as every Phase-2 refit (tuned parameters, early stopping on the last 4 weeks of the

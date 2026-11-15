@@ -1,5 +1,8 @@
 """Run dbt (deps/run/test/build) with vars from config/project.yaml.
 
+Reads the raw files under data/raw/ through the dbt sources; writes the dbt models into
+data/warehouse.duckdb (or data/smoke.duckdb with --smoke).
+
 Usage:
     python scripts/03_dbt.py build            # full warehouse  (data/warehouse.duckdb)
     python scripts/03_dbt.py build --smoke    # sample month    (data/smoke.duckdb)

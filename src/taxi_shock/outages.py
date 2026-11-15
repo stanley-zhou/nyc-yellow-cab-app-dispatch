@@ -6,7 +6,8 @@ the median of the same hour of the week over `weeks_each_side` weeks before and 
 median is at least `min_reference`). Consecutive low hours form a run. A run is explained when
 its day had >= `snow_day_in` inches of snow or it lies in a `real_events` window (COVID onset);
 every other run must be inside a configured outage window (`source_outages.windows`). Days that
-touch an outage window are left out of the drift monitors.
+touch an outage window are left out of the drift monitors. Pure computation: takes an hourly
+citywide pickup series and the config, returns the low-volume runs and the outage days.
 """
 
 from __future__ import annotations

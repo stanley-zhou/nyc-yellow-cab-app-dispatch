@@ -1,5 +1,9 @@
 """Checkpoint-1 checks requested by Stanley (2026-11-07), from the full warehouse.
 
+Reads data/warehouse.duckdb (fct_weekly_zone_vendor, fct_weekly_zone_panel, dim_zones,
+int_trips_valid), the zone shapefile and OSM 60th Street geometry in data/raw/lookup/, and
+results/zone_summary.csv.
+
 Writes:
     results/vendor_series.csv          weekly valid pickups by VendorID x zone group, over
                                        data.event_study_window (CBD vs non-CBD: `area`)
@@ -9,8 +13,9 @@ Writes:
                                        cbd.trip_check_window: share of trips with
                                        cbd_congestion_fee > 0 when (i) pickup and dropoff are both
                                        outside the CBD, (ii) pickup or dropoff is inside it
-    results/record_format_shares.csv   item 2b: weekly share of Flex Fare / Helix / format-exempt
-                                       trips by zone group (treatment = cbd, control groups)
+    results/record_format_shares.csv   Checkpoint 1 decision 2b: weekly share of Flex Fare /
+                                       Helix / format-exempt trips by zone group (treatment =
+                                       cbd, control groups)
     results/cbd_fee_daily_by_vendor.csv  daily fee share of trips touching the CBD by vendor
     results/modeled_zones.json         the forecast-modeled zone set (zone_summary.csv threshold)
                                        and its share of 2024 pickups (PLAN Phase 2)
@@ -262,8 +267,8 @@ def _post_policy_zone_vendor(con, cfg: dict) -> pd.DataFrame:
 
 
 def write_record_format_shares(series: pd.DataFrame, cfg: dict, out: Path) -> None:
-    """Item 2b: weekly share of Flex Fare and Helix trips (and of format-exempt and
-    identical-timestamp trips) by treatment group (`zone_group`), complete weeks."""
+    """Checkpoint 1 decision 2b: weekly share of Flex Fare and Helix trips (and of format-exempt
+    and identical-timestamp trips) by treatment group (`zone_group`), complete weeks."""
     s = series[series["complete_week"]].copy()
     s["pickups_new_vendor"] = np.where(s["vendor_id"] == int(cfg["vendors"]["new_vendor_id"]),
                                        s["pickups"], 0)

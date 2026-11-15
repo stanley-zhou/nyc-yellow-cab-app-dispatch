@@ -63,9 +63,9 @@ def add_seasonal(d: pd.DataFrame) -> pd.DataFrame:
 
 def add_unit_trends(d: pd.DataFrame, unit: str) -> tuple[pd.DataFrame, list[str]]:
     """Unit-specific linear trends (in years of event time), one column per unit: the
-    robustness specification with zone-specific linear trends (Amendment 3, C2; not
-    pre-registered). With week FE one of them is collinear and is dropped by pyfixest. The
-    trends are estimated on the whole static window, so they can absorb part of a gradual
+    robustness specification with zone-specific linear trends (demand wording, PLAN Amendment 3,
+    C2; not pre-registered). With week FE one of them is collinear and is dropped by pyfixest.
+    The trends are estimated on the whole static window, so they can absorb part of a gradual
     effect (stated with the result)."""
     t = d["event_week"].to_numpy() / 52.0
     u = d[unit].to_numpy()

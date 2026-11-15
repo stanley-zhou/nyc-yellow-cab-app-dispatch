@@ -74,8 +74,8 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   analysis.
 - An independent review of every phase, with its fix rounds, is in [`reviews/`](reviews/), with
   the Checkpoint 7 advisor review.
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (237 entries).
-- 136 tests (pytest), dbt data tests and ruff run before every review (counts:
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (239 entries).
+- 139 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 
 ## Dashboard
@@ -92,39 +92,64 @@ what version 1 includes: [`reports/dashboard_spec.md`](reports/dashboard_spec.md
 ```bash
 git clone https://github.com/stanley-zhou/nyc-yellow-cab-app-dispatch.git
 cd nyc-yellow-cab-app-dispatch
-make setup        # uv: Python 3.12 venv in .venv, installs the package with [dev] extras
+make setup        # Python 3.12 in .venv via uv, packages from the lock file (below)
 make smoke        # one sample month end to end: download -> dbt build+test -> backtest -> figure
-make all          # everything below, in order (long: see Runtimes)
+make all          # every step, in order (long: see Runtimes)
 make verify PHASE=N
 ```
 
-The system Python 3.14 is not supported (missing wheels); `make setup` uses `uv` to install 3.12.
+`make setup` runs the install from the lock file, which pins every package to the version that
+produced `results/`:
+
+```bash
+uv python install 3.12
+uv venv --python 3.12 .venv
+uv pip sync --python .venv/bin/python requirements-dev.lock
+uv pip install --python .venv/bin/python --no-deps -e .
+```
+
+For the Snowflake target, sync `requirements-snowflake.lock` instead (it adds `dbt-snowflake`);
+the connection comes from `SNOWFLAKE_*` environment variables set outside the repository
+(`src/taxi_shock/snowflake.py`, `dbt/profiles.yml`).
+`pyproject.toml` holds the direct dependencies with exact pins; the lock files add every
+transitive package. Python 3.11–3.12 is required (several dependencies ship no wheels for
+3.14); [uv](https://docs.astral.sh/uv/) installs 3.12.
 Keep the repository and `data/` on the Linux filesystem, not under `/mnt/c/`. Long steps were run
 under a memory cap (`systemd-run --user --scope -p MemoryMax=10G -p MemorySwapMax=0 ...`); DuckDB
 uses `memory_limit = 5GB`, 10 threads.
 
 ### Make targets
 
+`make help` prints the same list.
+
 | target | what it does |
 |---|---|
-| `smoke` | sample month (`smoke.month` in `config/project.yaml`) through the whole pipeline; writes `results/smoke/` and `reports/figures/smoke/`; fails if over `smoke.max_runtime_minutes` |
-| `data` | full raw download (yellow months in config, zone lookups, weather) |
-| `dbt` | build and test the DuckDB warehouse in two stages around the CBD mapping (`03a`), then the Phase-1 result files (`03b`) and Checkpoint-1 checks (`03c`) |
-| `probes` | one-off evidence scripts behind DECISIONS.md entries (duplicates, negative fares, record formats, Open-Meteo offset) |
-| `forecast` | Phase 2: LightGBM grid on 2023 (`04a`), rolling-origin backtests for 2023 and 2024 (`04`), conformal calibration and metrics (`04b`) |
-| `chronos-bundle`, `chronos-import` | Phase 2: export the Chronos-2 input bundle for Colab; validate the forecasts copied back |
-| `shock` | Phase 3: frozen LightGBM, day-ahead 2024-07 → 2026-09 without retraining, CUSUM and rolling-bias monitors (`06`); C5: the same monitor for three shocks (`06b`); daily weather for the storm check (`06c` → `results/weather_daily.csv`) |
-| `causal` | Phase 4 / 4b: speed and demand DiD with checks and placebos, MDE, heterogeneity, counterfactual, test-size simulation, app-dispatch share, synthetic control (`07a`–`07f`) |
-| `hvfhv` | Amendment 4: stream the high-volume FHV months (download → DuckDB aggregates → verify → delete; manifest `data/raw/hvfhv_manifest.csv`; stops below `hvfhv.min_free_gb` free on the drive named by `TAXI_SHOCK_DISK_GUARD`) (`11`) |
-| `channel` | Amendment 4 / 4a: label validation D0 (`10a`), CMT contracted block (`10b`), channel decomposition D1 (`10c`), incrementality D2 (`12`), Lyft entry D3 (`13`), by-channel DiD D5 (`14`), app-share step D5b (`15`), cross-platform D4 (`17`), experiment design (`19`) |
-| `fhv` | C6: congestion pricing and FHV demand, pre-trend gate first (`16`) |
-| `lyft-refresh` | D3: re-download, rebuild and re-estimate once later TLC months are added to the config |
-| `adapt` | Phase 5: S1 / S6 monthly refits and the S1e sensitivity (S1 on an expanding window), resumable per month; then evaluation of S0, S1, S4, S6, S1e and the seasonal-naive reference (`08`) |
-| `figures` | descriptive report numbers from `results/` plus repository counts (`23` → `results/presentation_numbers.json`), then every figure from `results/`; the maps also read the TLC zone shapefile, a lookup (`09`) |
-| `tableau-extract` | E2: CSV / GeoJSON extracts for the dashboard (`18`) |
-| `snowflake` | E3: load the cleaned trips and HVFHV aggregates to Snowflake (`24`), `dbt build --target snowflake`, DuckDB tests, per-target row counts / tests / parity (`25`); needs `source ~/.snowflake/taxi.env` (outside the repository) and `uv pip install -e ".[snowflake]"` |
-| `report` | runtimes (`20` → `results/runtimes.json`), dashboard extracts, dead-link check of README and report (`21`) |
-| `verify PHASE=N` | ruff, pytest, dbt test, and presence of the phase's result files (`config/phase_outputs.yaml`) |
+| `help` | list every target with a one-line description |
+| `setup` | Python 3.12 environment in .venv via uv, packages from requirements-dev.lock, the package itself editable |
+| `smoke` | one sample month through the whole pipeline (download, dbt, backtest, figure); fails if over the time limit in config |
+| `smoke-clean` | smoke run on a clean export of HEAD in a temporary directory; writes results/smoke/smoke_run_clean_clone.json |
+| `data` | full raw download: every yellow-taxi month in config, the zone lookup and shapefile, hourly weather (01, 02) |
+| `dbt` | build and test the DuckDB warehouse around the CBD zone mapping (03, 03a), then the data-quality results and Checkpoint-1 checks (03b, 03c) |
+| `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, weather time offset |
+| `chronos-bundle` | export the Chronos-2 input bundle for Colab (05a); RUN=calib_2023 for the 2023 calibration run |
+| `chronos-import` | validate the Chronos-2 forecasts copied back from Colab (05b); RUN=calib_2023 merges that run first |
+| `figures` | report numbers and repository counts (23, results/presentation_numbers.json), then every figure from results/ (09) |
+| `forecast` | LightGBM grid on 2023 (04a), rolling-origin backtests for 2023 and 2024 (04), conformal calibration and metrics (04b) |
+| `shock` | frozen LightGBM day-ahead 2024-07 to 2026-09 with drift monitors (06), the same monitor for three shocks (06b), daily weather (06c) |
+| `causal` | speed and demand difference-in-differences with placebos, detectable effect sizes, heterogeneity, counterfactual, app-dispatch share, synthetic control (07a-07f) |
+| `hvfhv` | stream the high-volume FHV months: download, aggregate in DuckDB, verify, delete the raw file; manifest kept (11) |
+| `channel` | app vs street-hail label check, contracted-trip block, growth decomposition, incrementality, Lyft entry, by-channel DiD, app-share steps, cross-platform view, experiment design (10a-19) |
+| `fhv` | congestion pricing and high-volume FHV demand, pre-trend gate first (16; needs make hvfhv) |
+| `lyft-refresh` | re-download, rebuild and re-estimate the Lyft entry after later TLC months are added to the config (01, 03, 13, 09) |
+| `tableau-extract` | CSV and GeoJSON extracts for the Tableau Public dashboard in reports/tableau/ (18) |
+| `adapt` | adaptation strategies: S1 and S6 monthly refits and the S1e expanding-window sensitivity, resumable per month, then their evaluation (08) |
+| `snowflake` | load the cleaned trips to Snowflake (24), dbt build and tests there, DuckDB tests, per-target comparison (25); needs the Snowflake environment |
+| `report` | runtimes (20, results/runtimes.json), dashboard extracts (18), dead-link check of the documents (21) |
+| `all` | every step in order: data, dbt, forecast, shock, causal, hvfhv, channel, fhv, adapt, figures, report (long; hvfhv skips months already verified) |
+| `verify` | make verify PHASE=N: ruff, pytest, dbt tests and presence of the phase's result files (config/phase_outputs.yaml) |
+| `lint` | ruff over the repository |
+| `test` | pytest |
+| `clean-smoke` | delete the smoke warehouse and smoke outputs (regenerated by make smoke) |
 
 ### Hardware and runtimes
 
@@ -168,12 +193,36 @@ involved. Two runs use the same script (`scripts/05_chronos_colab.py`):
    to the run's folder above, then `make chronos-import` (main) or
    `make chronos-import RUN=calib_2023`, which validates the run against its own manifest.
 
-### Layout
+## Repository layout
 
-`config/` (all dates, thresholds, paths) · `dbt/` (dbt-duckdb project over the raw Parquet) ·
-`src/taxi_shock/` (library) · `scripts/` (thin CLI entry points) · `tests/` · `results/`
-(git-tracked outputs; every reported number comes from here) · `reports/` (analysis, figures,
-dashboard specification and extracts) · `reviews/` (independent phase reviews).
+| Path | What it holds |
+|---|---|
+| `README.md` | this page |
+| `LICENSE` | MIT licence for the code |
+| `Makefile` | every pipeline step as a target (`make help`) |
+| `pyproject.toml` | package metadata and the direct dependencies, pinned |
+| `requirements-dev.lock`, `requirements-snowflake.lock` | lock files: every package with its exact version |
+| `PLAN.md` | the specification the work followed, with its dated amendments |
+| `DECISIONS.md` | every judgement call: date, phase, decision, reason, alternative rejected |
+| `CLAUDE.md` | the operating protocol for the build (phase loop, review rounds, rules on numbers) |
+| `.claude/agents/phase-reviewer.md` | the brief of the independent phase reviewer |
+| `.github/workflows/ci.yml` | CI: ruff, `make smoke`, pytest |
+| `config/project.yaml` | every date, threshold and path; code reads all of them from here |
+| `config/phase_outputs.yaml` | the result files each phase must produce (checked by `make verify`) |
+| `config/zones_cbd.csv` | taxi zones inside the congestion zone (CBD), derived by `scripts/03a_cbd_map.py` |
+| `dbt/` | dbt project: staging, intermediate and mart models, data tests, dialect macros for DuckDB and Snowflake (`macros/portable.sql`), the NY holiday seed |
+| `src/taxi_shock/` | the library: I/O, downloads, features, models, conformal intervals, drift monitors, causal designs, figures |
+| `scripts/` | command-line entry points, numbered in pipeline order; each starts with what it reads and writes |
+| `tests/` | pytest suite (leakage, grid completeness, metrics, result files) |
+| `data/raw/manifest.csv`, `data/raw/hvfhv_manifest.csv` | what was downloaded (raw files themselves are git-ignored) |
+| `data/processed/chronos*/` | Chronos-2 input bundles for the Colab run |
+| `notebooks/colab_chronos.ipynb` | thin Colab wrapper around `scripts/05_chronos_colab.py`; not part of the pipeline |
+| `results/` | every output the reports quote; [`results/INDEX.md`](results/INDEX.md) lists each file, its writer and where it is quoted |
+| `reports/analysis.md`, `reports/appendix.md` | the report and its appendix |
+| `reports/figures/` | every figure (PNG and SVG), made by `make figures` |
+| `reports/dashboard_spec.md`, `reports/tableau/` | the Tableau dashboard specification and its data extracts |
+| `reports/deferred_items.md` | items deferred during the build, closed or open |
+| `reviews/` | the independent review of every phase, with its fix rounds |
 
 ## Limitations
 

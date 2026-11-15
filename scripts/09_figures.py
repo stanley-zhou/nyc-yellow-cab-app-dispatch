@@ -4,10 +4,18 @@ Zone polygons come from the raw TLC shapefile (a lookup, not a result). Numbers 
 titles are computed here from results/ files and saved to results/figure_stats_phase1.json, so
 every title number has a source file.
 
+Reads: results/ files only (zone, citywide and vendor summaries; backtests; shock, event-study,
+placebo and power results; channel, incrementality, Lyft-entry, FHV and adaptation results;
+results/presentation_numbers.json) and the zone shapefile; config keys `paths`, `annotations`,
+`chronos`, `shock`, `causal`, `channel`, `adapt`, `presentation`, `data.policy_date`.
+Writes: reports/figures/F0 ... F6e (PNG and SVG, plus F4b_effect_map.html) and the title
+numbers of each group to results/figure_stats_phase{1,2,3,4,4b,4c,5,7}.json; --smoke writes
+reports/figures/smoke/. Figures whose result file is missing are skipped with a warning.
+
 Usage:
     python scripts/09_figures.py --smoke     # Phase-0 placeholder figure
     python scripts/09_figures.py --all       # every implemented figure
-                                              # (Phase 1: F1, F1b, F1c; Phase 2: F2, F2b)
+                                              # (Phases 1-7: F0 to F6e)
 """
 
 from __future__ import annotations
@@ -118,9 +126,10 @@ def phase2(cfg: dict) -> None:
              "lgbm_wape_change_vs_seasonal_naive": round(lg / base - 1, 4),
              "lowest_wape_model": best,
              "not_distinguishable_from_lowest_all_zones": tied}
-    # Amendment 6 (A7): the title leads with the Chronos-2 variant that uses only information
-    # available at forecast time (weather as a past covariate, the primary variant); the
-    # variant that also sees the target day's observed weather is named as a sensitivity
+    # Checkpoint 7 review (PLAN Amendment 6, review item A7): the title leads with the Chronos-2
+    # variant that uses only information available at forecast time (weather as a past
+    # covariate, the primary variant); the variant that also sees the target day's observed
+    # weather is named as a sensitivity
     lead = f"chronos2_{cfg['chronos']['primary_variant']}"
     sens = next(m for m in allz.index if m.startswith("chronos2_") and m != lead)
     g_all = gaps[gaps["zone_group"] == "all"]
@@ -357,7 +366,8 @@ def phase4(cfg: dict) -> None:
                      "relative_to_control_aggregate"]
     stats["effect_map"] = {"cbd_median_relative": float(cbd_rel.median()),
                            "min_pre_weekly": min_pre}
-    # Amendment 6 (B4): the title states what the map shows, the reason the control group fails
+    # Checkpoint 7 figure review (PLAN Amendment 6, item B4): the title states what the map
+    # shows, the reason the control group fails
     ctl = em[em["is_control"] & (em["pre_mean_weekly"] >= min_pre)].nlargest(2, "log_change")
     cbd_ch = float(em.loc[em["is_cbd"] & (em["pre_mean_weekly"] >= min_pre),
                           "log_change"].median())
@@ -429,8 +439,9 @@ def phase4(cfg: dict) -> None:
                                "did_main_post_mean": yr["post"],
                                "did_weighted_post_mean": float(
                                    w_es.loc[w_es["k"] >= 0, "coef"].mean())}
-    # Amendment 6 (A4): the static estimates in percent are the headline everywhere; the
-    # means of the monthly event-study coefficients are labelled as such
+    # one headline number for the DiD artefact (PLAN Amendment 6, review item A4): the static
+    # estimates in percent are the headline everywhere; the means of the monthly event-study
+    # coefficients are labelled as such
     st_eq = ds["main"]["terms"]["treated_post"]
     stats["counterfactual"].update({"did_static_equal_weight_pct": float(st_eq["pct"]),
                                     "did_static_weighted_pct": float(bw["pct"])})
@@ -507,7 +518,8 @@ def phase4(cfg: dict) -> None:
 
 
 def phase4b(cfg: dict) -> None:
-    """Amendment 3 figures whose results exist: F4g (C1)."""
+    """Figures of the Phase 4 re-plan (PLAN Amendment 3) whose results exist: F4g (app-dispatch
+    mechanism check, C1), F3b (three shocks, one monitor, C5), F4h (synthetic control, C3)."""
     res, figs = path("results", cfg), path("figures", cfg)
     stats: dict = {}
     f = res / "app_dispatch_summary.json"
@@ -523,7 +535,7 @@ def phase4b(cfg: dict) -> None:
                                                            float(fast["share_app"].max())],
                        "r_manhattan": c["manhattan"]["pearson_r"], "r_all": c["all_zones"][
                            "pearson_r"]}
-        # Amendment 6 (B4): the plain statement first
+        # Checkpoint 7 figure review (PLAN Amendment 6, item B4): the plain statement first
         t = (f"Zones where Uber and Lyft dispatch is common are the zones where yellow pickups "
              f"grew most (r = {c['manhattan']['pearson_r']:.2f} across "
              f"{c['manhattan']['n']} Manhattan zones, {c['all_zones']['pearson_r']:.2f} across "
@@ -559,7 +571,8 @@ def phase4b(cfg: dict) -> None:
             evs.append((key, f"{names.get(key, key)}: CBD {lvl * 100:+.0f}% vs forecast in the "
                         "first 4 weeks", alarm))
             short = names.get(key, key).split(",")[0].split(" (")[0]
-            # Amendment 6 (A3): a first alarm months after the event is not a detection of it
+            # consistent alarm statements (PLAN Amendment 6, review item A3): a first alarm
+            # months after the event is not a detection of it
             if alarm and alarm["delay_days"] <= cfg["shock"]["rolling_days"]:
                 flagged.append(f"{short} was flagged on day {alarm['delay_days']}")
             else:
@@ -621,7 +634,9 @@ def _k(v: float) -> str:
 
 
 def phase4c(cfg: dict) -> None:
-    """Amendment 4 figures whose results exist: F6a, F6b (D1)."""
+    """Figures of the channel re-centring (PLAN Amendment 4) whose results exist: F6a, F6b (market
+    shift by channel, D1), F6c (incrementality, D2), F6d (Lyft's entry, D3), F6 (FHV congestion
+    pricing, C6), F6e (app-share step at the policy date, D5b)."""
     res, figs = path("results", cfg), path("figures", cfg)
     stats: dict = {}
     f = res / "channel_decomposition.csv"
@@ -669,8 +684,9 @@ def phase4c(cfg: dict) -> None:
         cbd25 = float(cm["app"].sum() / cm["total_excl_block"].sum())
         rs = json.loads((res / "channel_restatement.json").read_text())
         stats["d1"]["cbd_app_share_2025"] = cbd25
-        # Amendment 6 (B4): both numbers in the title - the median zone (mostly outside
-        # Manhattan's core) and the CBD, the report's headline share
+        # Checkpoint 7 figure review (PLAN Amendment 6, item B4): both numbers in the title -
+        # the median zone (mostly outside Manhattan's core) and the CBD, the report's headline
+        # share
         t2 = (f"By 2025 the median zone's yellow pickups were {med['2025'] * 100:.0f}% "
               f"app-dispatched (2023: {med['2023'] * 100:.0f}%); most such zones lie outside "
               f"Manhattan's core. In the congestion zone (CBD) the share was "
@@ -705,7 +721,7 @@ def phase4c(cfg: dict) -> None:
         c, o = th("cbd"), th("other")
         cb = sm[sm["area"] == "cbd"]
         stats["d2"]["cbd_range"] = [float(cb["theta"].min()), float(cb["theta"].max())]
-        # wording: Amendment 5 (D2)
+        # wording of the incrementality result: PLAN Amendments 5 and 6 (D2)
         lp = inc["areas"]["manhattan_non_cbd"]["first_difference_lead_placebo"]["lead"]
         stats["d2"]["lead_placebo_p"] = {a: inc["areas"][a]["first_difference_lead_placebo"][
             "lead"]["pvalue"] for a in ("cbd", "manhattan_non_cbd", "other")}
@@ -822,8 +838,9 @@ STRATEGY_LABELS = {"s0": "Frozen model", "s1": "Monthly retrain", "s4": "Chronos
 
 
 def phase5(cfg: dict) -> None:
-    """F5 (Phase 5, D6) from results/adaptation_daily.csv, adaptation_summary.json and
-    adaptation_gaps.csv; title numbers saved to results/figure_stats_phase5.json."""
+    """F5 (Phase 5: forecasting through the channel shift, D6) from results/adaptation_daily.csv,
+    adaptation_summary.json and adaptation_gaps.csv; title numbers saved to
+    results/figure_stats_phase5.json."""
     res, figs = path("results", cfg), path("figures", cfg)
     if not (res / "adaptation_summary.json").exists():
         logging.warning("results/adaptation_summary.json missing: F5 skipped")
@@ -862,8 +879,8 @@ def phase5(cfg: dict) -> None:
     stats["q1_2026_wape_range"] = [min(q1[k]["wape_quarter"] for k in names),
                                    max(q1[k]["wape_quarter"] for k in names)]
     stats["storm_days"] = storm_days
-    # Amendment 6 (B4): the line panels show that the strategies err together; the gap panel
-    # carries the comparison
+    # Checkpoint 7 figure review (PLAN Amendment 6, item B4): the line panels show that the
+    # strategies err together; the gap panel carries the comparison
     g10 = stats["gap_vs_s0_all"].get("s1", {})
     if best == "s1" and g10.get("distinguishable"):
         title = (f"{span}: every strategy's error rises and falls at the same times, most in "
@@ -917,8 +934,9 @@ def phase5(cfg: dict) -> None:
 
 
 def phase7(cfg: dict) -> None:
-    """Hero figure (Amendment 6, B4) from results/channel_weekly.csv; its title is the
-    citywide growth accounting of results/presentation_numbers.json."""
+    """Hero figure (Checkpoint 7 figure review, PLAN Amendment 6, item B4) from
+    results/channel_weekly.csv; its title is the citywide growth accounting of
+    results/presentation_numbers.json."""
     res, figs = path("results", cfg), path("figures", cfg)
     f = res / "presentation_numbers.json"
     if not f.exists():

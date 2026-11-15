@@ -1,8 +1,9 @@
-"""Amendment 4 E2: tidy extracts for Stanley's Tableau Public dashboard (`make tableau-extract`).
+"""Write tidy extracts for Stanley's Tableau Public dashboard (`make tableau-extract`).
 
-The Builder provides data and a specification (reports/dashboard_spec.md); Stanley builds and
-publishes the dashboard. Every file is derived from the dbt marts or from results/ files, so the
-dashboard shows the same numbers as the report. Written to reports/tableau/:
+PLAN Amendment 4 (E2). The Builder provides data and a specification
+(reports/dashboard_spec.md); Stanley builds and publishes the dashboard. Every file is derived
+from the dbt marts or from results/ files, so the dashboard shows the same numbers as the report.
+Written to reports/tableau/:
 
   channel_zone_week.csv   pickup zone x complete panel week: app, street hail, CMT contracted block
                           and total pickups (fct_weekly_zone_channel; app = any e-hail app,
@@ -11,11 +12,16 @@ dashboard shows the same numbers as the report. Written to reports/tableau/:
                           excluded), mean weekly pickups, and growth 2023 -> 2025 (log ratio of
                           mean weekly pickups) — results/channel_zone_share.csv
   zones.geojson           TLC zone polygons (WGS84, simplified to ~10 m) with the same zone fields
-  incrementality.csv      D2 estimates by area and estimator with 95% intervals
-                          (results/incrementality_panel_summary.csv), with the Amendment-5 reading
-  lyft_entry_daily.csv    D3 daily Curb vs CMT series in the CBD and Manhattan non-CBD with the
-                          window labels (results/lyft_entry_daily.csv, results/lyft_entry.json)
+  incrementality.csv      incrementality estimates (D2) by area and estimator with 95% intervals
+                          (results/incrementality_panel_summary.csv), with the reading set in
+                          PLAN Amendment 5 (not identified)
+  lyft_entry_daily.csv    Lyft-entry (D3) daily Curb vs CMT series in the CBD and Manhattan
+                          non-CBD with the window labels (results/lyft_entry_daily.csv,
+                          results/lyft_entry.json)
   README.txt              field definitions and sources
+
+Reads: warehouse mart fct_weekly_zone_channel, results/zone_summary.csv, the TLC zone shapefile
+(data/raw/lookup), the results/ files named above; config keys `tableau`, `channel.map_min_weekly`.
 """
 
 from __future__ import annotations

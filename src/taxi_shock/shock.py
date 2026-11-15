@@ -3,6 +3,7 @@
 Conventions: `bias` = mean (forecast - actual) per zone-hour (the project's mean signed error;
 positive = over-forecast); `log_actual_over_forecast` = log(sum actual / sum forecast) over the
 group and window (negative = actual below forecast; exp(.) - 1 is the % gap).
+Takes long forecast DataFrames and returns DataFrames; no file or warehouse access.
 """
 
 from __future__ import annotations

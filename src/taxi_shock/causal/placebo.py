@@ -2,9 +2,10 @@
 
   placebo_in_time   the static DiD with a fake policy date on pre-policy data only
   leave_one_out     the static DiD dropping each zone in turn (stability of beta)
-  permutation       Amendment 1 (A2): random fake policy week x random fake treated zone set,
-                    on pre-policy data only; the distribution of the placebo estimates gives the
-                    permutation p-value of the real estimate and the minimum detectable effect
+  permutation       power analysis (PLAN Amendment 1, A2): random fake policy week x random
+                    fake treated zone set, on pre-policy data only; the distribution of the
+                    placebo estimates gives the permutation p-value of the real estimate and the
+                    minimum detectable effect
                     MDE = (z_{1 - size/2} + z_{power}) * sd(placebo estimates)
 """
 

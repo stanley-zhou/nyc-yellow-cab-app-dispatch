@@ -1,4 +1,6 @@
-"""Amendment 4 D4 (exploratory; mainly descriptive): cross-platform displacement.
+"""Measure cross-platform displacement between Uber/Lyft FHV trips and yellow app trips.
+
+PLAN Amendment 4 (D4); exploratory and mainly descriptive.
 
 Zone x week 2023-01 -> 2026-09. FHV = Uber + Lyft high-volume FHV trips (streamed HVFHV
 aggregates); yellow app = yellow pickups in the app channel (any e-hail app, Amendment 4a; Uber /
@@ -8,11 +10,14 @@ Descriptive: yellow app trips as a share of each platform's total by zone group 
 before 2026-06, yellow app / (yellow app + Uber + Lyft FHV); from 2026-06 also Uber's own
 yellow-dispatched trips / (those + Uber FHV) and Lyft's (from 2026-08-10).
 
-Estimate (same DML form as D2, scripts/12_incrementality.py functions): FHV trips on yellow app
-trips per zone-week, two-way within transform, LightGBM nuisances, time-blocked cross-fitting,
-zone-clustered SEs; coefficient = change in FHV trips per additional yellow app trip (negative =
-displacement from FHV), by area. Observational.
+Estimate (same DML form as the incrementality estimate, D2; scripts/12_incrementality.py
+functions): FHV trips on yellow app trips per zone-week, two-way within transform, LightGBM
+nuisances, time-blocked cross-fitting, zone-clustered SEs; coefficient = change in FHV trips per
+additional yellow app trip (negative = displacement from FHV), by area. Observational.
 
+Reads: the HVFHV aggregates (via scripts/16_fhv_did.py), the yellow channel panel (via
+scripts/12_incrementality.py) and warehouse mart fct_weekly_zone_channel; config keys `incr`,
+`channel.request_source_from`, `lyft.post_start`.
 Writes results/cross_platform.json, results/cross_platform_monthly.csv.
 """
 
@@ -74,7 +79,7 @@ def main() -> None:
              float_format="%.6g")
 
     pf_, x = d2.features(p, cfg)
-    pf_ = pf_.assign(street=pf_["fhv_all"])          # outcome slot of the D2 functions = FHV
+    pf_ = pf_.assign(street=pf_["fhv_all"])  # FHV as the outcome of the incrementality (D2) code
     out = {"generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
            "specification": "PLAN.md Amendment 4 D4 (exploratory); DML form of D2",
            "coefficient": "d FHV trips / d yellow app trips per zone-week (negative = "

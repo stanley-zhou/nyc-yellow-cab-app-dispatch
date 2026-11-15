@@ -3,7 +3,8 @@
 Panel: dbt `fct_weekly_zone_panel` (+ `fct_weekly_zone_trip_stats`, `fct_weekly_zone_vendor`),
 complete weeks inside data.event_study_window. Treated = CBD zones, primary control = the donut
 (`causal.control`). Outcome log1p(pickups) (and pickups in levels); zone FE + week FE; weather
-enters as weather x treated; SEs clustered by zone.
+enters as weather x treated; SEs clustered by zone. Reads those tables from
+data/warehouse.duckdb, results/zone_summary.csv and config `causal`, `panel`.
 
 Writes
     results/did_static.json     main estimate, persistence split, levels, without weather,
@@ -13,8 +14,9 @@ Writes
     results/event_study.csv     monthly and weekly event-study coefficients (+ the
                                 pre-volume-weighted monthly path, not pre-registered)
     results/placebo.json        pre-trend joint tests, placebo in time, leave-one-zone-out
-    results/power_mde.json      Amendment 1 (A2) permutation placebo: distribution, share
-                                |placebo| >= |beta|, MDE at 80% power / 5% size
+    results/power_mde.json      permutation-placebo power analysis (PLAN Amendment 1, A2):
+                                distribution, share |placebo| >= |beta|, MDE at 80% power /
+                                5% size
     results/demand_placebo_draws.csv, results/leave_one_out.csv
     results/placebo_time_distribution.csv  time-only placebos with the real assignment
     results/heterogeneity.csv   static DiD on sub-panels (hour band, weekday/weekend, dropoff in
@@ -81,7 +83,8 @@ def did(d: pd.DataFrame, y: str, cfg: dict, weather: bool = True, extra=(), spli
 def add_pre_volume_weight(d: pd.DataFrame, pre_weeks: int, col: str = "pickups",
                           unit: str = "zone_id") -> pd.DataFrame:
     """w_pre = the unit's mean weekly `col` over the static pre window (fixed per unit): the
-    weighted DiD estimates the effect on the aggregate (C2 primary; not pre-registered)."""
+    weighted DiD estimates the effect on the aggregate (the primary demand specification set at
+    Checkpoint 4, PLAN C2; not pre-registered)."""
     pre = d[d["event_week"].between(-pre_weeks, -1)].groupby(unit)[col].mean()
     out = d.assign(w_pre=d[unit].map(pre).fillna(0.0))
     return out[out["w_pre"] > 0]
@@ -124,7 +127,7 @@ def main() -> None:
     e["plan_literal_filters"] = did(d, "log1p_pickups_literal", cfg)
     for c in [*cc["control_robustness"], "outer_boroughs_with_airports"]:
         e[f"control_{c}"] = did(design(w, zs, cfg, control=c), "log1p_pickups", cfg)
-    # PLAN's checks on the weighted (C2 primary) specification too (review round 2)
+    # PLAN's checks on the weighted (primary, C2) specification too (review round 2)
     e["pre_volume_weighted_without_weather"] = did(dw, "log1p_pickups", cfg, weather=False,
                                                    weights="w_pre")
     for col, key in (("pickups_cmt_curb", "vendors_present_throughout_cmt_curb"),
@@ -198,7 +201,8 @@ def main() -> None:
         "leave_one_zone_out": loo_sum}, indent=2, default=str) + "\n")
     (res / "did_static.json").write_text(json.dumps(out, indent=2, default=str) + "\n")
 
-    # A2 permutation placebo (pre-policy data; 38 random Manhattan zones as fake treatment)
+    # permutation-placebo power analysis (PLAN A2; pre-policy data; 38 random Manhattan zones as
+    # fake treatment)
     pc = cc["permutation"]
     lo, hi = (pd.Timestamp(x) for x in pc["window"])
     man = w[w["zone_id"].isin(zs.loc[zs["borough"] == "Manhattan", "zone_id"])]
@@ -222,7 +226,7 @@ def main() -> None:
                           "zone_id", controls=wctl if weather else ())
 
     def estimate_w(df, weather=True):
-        """Weighted spec (C2 primary): weights = each zone's mean weekly pickups in the
+        """Weighted spec (primary, C2): weights = each zone's mean weekly pickups in the
         placebo's own pre window (<= pre_weeks before the fake week)."""
         x = df[df["event_week"] >= -int(pc["pre_weeks"])]
         wpre = x[x["event_week"] < 0].groupby("zone_id")["pickups"].mean()
@@ -308,7 +312,7 @@ def main() -> None:
 
 def heterogeneity(w: pd.DataFrame, zs: pd.DataFrame, cfg: dict, res) -> None:
     """Static DiD on sub-panels: log1p of the sub-count per zone-week, same design, in both
-    specifications: equal zone weights (pre-registered) and pre-volume weighted (C2 primary;
+    specifications: equal zone weights (pre-registered) and pre-volume weighted (primary, C2;
     weights = the zone's pre-period mean of that subset's count)."""
     pw = cfg["causal"]["pre_weeks"]
     bands = [f"pickups_h{lo:02d}_{hi:02d}" for lo, hi in cfg["panel"]["hour_bands"]]
@@ -330,7 +334,8 @@ def heterogeneity(w: pd.DataFrame, zs: pd.DataFrame, cfg: dict, res) -> None:
             dw = add_pre_volume_weight(d, pw, col=c)
             add("pre_volume_weighted", cut, lab, comp,
                 did(dw, f"log1p_{c}", cfg, weights="w_pre"))
-    # pass-through (A1, Checkpoint 1 item 3): within the control zones, trips ending in the CBD
+    # pass-through split of the metric framework (PLAN A1; Checkpoint 1 decision 3, the
+    # trip-level fee check): within the control zones, trips ending in the CBD
     # (they pay the fee) vs trips ending outside it; units = zone x trip type
     ctl = control_zone_ids(zs, cfg)
     base = w[w["zone_id"].isin(ctl)]

@@ -2,7 +2,9 @@
 
 One bundle per Colab run (taxi_shock.chronos_runs): `main` (default) or the calibration run
 `calib_2023` (`--run calib_2023`; origins 2023-10-01 -> 2023-12-31, hours only up to the last
-origin day). Writes the run's bundle_dir (committed: small) and the zip Stanley uploads:
+origin day). Reads fct_hourly_zone_demand, int_hours, stg_weather and holidays_ny from
+data/warehouse.duckdb and results/modeled_zones.json. Writes the run's bundle_dir under
+data/processed/ (committed: small) and the zip Stanley uploads:
     pickups.parquet      zone_id, hour_ts, pickups for the modeled zones
                          (results/modeled_zones.json) over every grid hour from
                          context_hours before the first origin to the end of the panel

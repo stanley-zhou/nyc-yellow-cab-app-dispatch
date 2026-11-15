@@ -7,7 +7,9 @@ model equals daily-origin forecasting without refits. Selection: lowest mean pin
 quantiles at each quantile's best iteration. The chosen point's best iterations become the fixed
 round counts of every backtest refit.
 
-Writes results/lgbm_tuning.csv (every grid point x quantile) and results/lgbm_params.json.
+Reads fct_hourly_zone_demand and the weather/holiday inputs from data/warehouse.duckdb and
+results/modeled_zones.json. Writes results/lgbm_tuning.csv (every grid point x quantile) and
+results/lgbm_params.json.
 
 Usage:
     python scripts/04a_lgbm_tune.py

@@ -1,4 +1,5 @@
-"""Phase 4b, C1 (Amendment 3): app-dispatch share by pickup zone, from `request_source`.
+"""Phase 4b mechanism check (PLAN Amendment 3, C1): app-dispatch share by pickup zone, from
+`request_source`.
 
 TLC added a `request_source` column to the yellow trip files from 2026-06 on; it is not in the
 yellow data dictionary (version of 2025-03-25). The codes HV0003 / HV0005 are the TLC licence
@@ -9,7 +10,9 @@ Records: the raw monthly files of `app_dispatch.months`, every record with a val
 (zones.valid_ids) and a pickup inside its file's month — the column is not carried into the dbt
 warehouse, and rebuilding the 157M-row trip table for one descriptive column was rejected
 (DECISIONS.md). Growth per zone: log(mean weekly pickups in growth_years[1] / growth_years[0])
-from the complete demand panel (Phase 4).
+from the complete demand panel (Phase 4). Reads those raw files in data/raw/tlc/yellow/, the
+weekly demand panel from data/warehouse.duckdb (taxi_shock.causal.panel.demand_panel) and
+results/zone_summary.csv.
 
 Writes
     results/app_dispatch_codes.csv   records per month and request_source code

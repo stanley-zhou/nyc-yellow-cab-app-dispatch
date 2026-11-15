@@ -1,5 +1,9 @@
 """Download TLC yellow-taxi Parquet files and the zone lookups.
 
+Reads config `data.yellow_months` (with --all) and the `sources` URLs. Writes the monthly
+Parquet files to data/raw/tlc/yellow/, the zone lookup CSV, zone shapefile and OSM 60th Street
+geometry to data/raw/lookup/, and one row per file to data/raw/manifest.csv.
+
 Usage:
     python scripts/01_download.py --months 2024-10            # one month
     python scripts/01_download.py --months 2019-01:2026-09    # inclusive range

@@ -1,15 +1,18 @@
-"""Amendment 4 D5 (exploratory, gated): congestion pricing by channel.
+"""Re-run the congestion-pricing DiD separately for app and street-hail pickups (exploratory).
 
-The Phase 4 primary specification (C2: pre-volume-weighted static DiD of log1p weekly pickups per
-zone, 38 CBD zones vs the donut control, zone and week FE, weather x treated, CRV1 by zone; the
-design and weights of scripts/07b_demand.py, loaded from it so the specification is identical) is
-re-run separately for street-hail and app pickups (app = any e-hail app, Amendment 4a). Weights =
+PLAN Amendment 4 (D5). The Phase 4 primary demand specification (set in PLAN Amendment 3, C2:
+pre-volume-weighted static DiD of log1p weekly pickups per zone, 38 CBD zones vs the donut
+control, zone and week FE, weather x treated, CRV1 by zone; the design and weights of
+scripts/07b_demand.py, loaded from it so the specification is identical) is re-run separately
+for street-hail and app pickups (app = any e-hail app, Amendment 4a). Weights =
 each zone's mean weekly TOTAL pickups over the 52 pre weeks (the primary's weights, so the three
 estimates weight zones alike). Gate: a channel is interpreted only if its monthly event-study
 pre-trend test does not reject at 5% with the Hotelling-corrected F* (the pre-registered F is
 oversized for this design: results/pretrend_test_size.json); otherwise its estimate is reported
 and marked "not interpretable".
 
+Reads: the Phase 4 demand panel via scripts/07b_demand.py, warehouse mart
+fct_weekly_zone_channel; config keys `causal`, `channel_did.alpha`, `data.policy_date`.
 Writes results/did_by_channel.json, results/did_by_channel_event_study.csv.
 """
 

@@ -3,6 +3,7 @@
 `control_zone_ids` resolves a named control group from `causal.control_groups` in config. The
 primary control (`causal.control`) is the "donut": Manhattan non-CBD zones without the six zones
 that straddle the 60th St line (Stanley, 2026-11-07; evidence: results/cbd_validation_trips.json).
+`demand_panel` reads the weekly zone tables of the warehouse through an open DuckDB connection.
 """
 
 from __future__ import annotations
@@ -44,9 +45,9 @@ def full_weeks(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
 
 def pair_category(pu_cbd: pd.Series, do_cbd: pd.Series, pu_ctl: pd.Series,
                   do_ctl: pd.Series) -> pd.Series:
-    """Amendment 2 (B2) trip categories from the two zones of a pair: within_cbd (treated),
-    within_control, entering (control -> CBD), leaving (CBD -> control); other pairs
-    (donut zones, CBD/control to elsewhere) get 'other'."""
+    """Trip categories of the speed outcome (PLAN Amendment 2, B2) from the two zones of a pair:
+    within_cbd (treated), within_control, entering (control -> CBD), leaving (CBD -> control); other
+    pairs (donut zones, CBD/control to elsewhere) get 'other'."""
     cat = pd.Series("other", index=pu_cbd.index, dtype="object")
     cat[pu_cbd & do_cbd] = "within_cbd"
     cat[pu_ctl & do_ctl] = "within_control"

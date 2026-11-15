@@ -1,11 +1,14 @@
-"""E3: evidence that the dialect macros left the DuckDB SQL unchanged.
+"""Check that the dialect macros of the Snowflake port left the DuckDB SQL unchanged.
+
+Evidence for running the dbt project on Snowflake (PLAN Amendment 4, E3).
 
 Writes results/e3_duckdb_sql_check.json.
 
-Compiles the dbt project for the DuckDB target twice, at `--base` (the commit before the E3 port)
-and at the working tree, compares every compiled node with comments and whitespace removed, and,
-for each differing model, checks in the DuckDB warehouse that the two queries return the same
-rows (EXCEPT ALL in both directions). Differing tests are listed; `dbt test` runs them.
+Compiles the dbt project for the DuckDB target twice, at `--base` (the commit before the
+Snowflake port) and at the working tree, compares every compiled node with comments and
+whitespace removed, and, for each differing model, checks in the DuckDB warehouse that the two
+queries return the same rows (EXCEPT ALL in both directions). Differing tests are listed;
+`dbt test` runs them.
 """
 
 from __future__ import annotations

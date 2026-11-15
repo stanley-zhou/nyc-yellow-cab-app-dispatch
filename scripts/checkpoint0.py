@@ -1,10 +1,13 @@
 """Checkpoint 0 facts: machine resources and the measured size of the full download.
 
-Writes results/machine_resources.json and results/download_plan.csv (+ summary JSON). Sizes are
-Content-Length values from HEAD requests to the TLC CDN; nothing is downloaded.
+Reads config `data.yellow_months` and `sources.hvfhv_months`, /proc/meminfo and the disk usage
+of the repo filesystem and /mnt/c. Writes results/machine_resources.json,
+results/download_plan.csv and results/download_plan_summary.json. Sizes are Content-Length
+values from HEAD requests to the TLC CDN; nothing is downloaded.
 
-Units are explicit in every key (PLAN amendment, Phase 1 item 4): `_gb_decimal` = 10^9 bytes (what
-the download plan uses), `_gib` = 2^30 bytes (what `df -h` and `free -g` print).
+Units are explicit in every key (PLAN amendment: sizes state their unit, Phase 1 follow-up 4):
+`_gb_decimal` = 10^9 bytes (what the download plan uses), `_gib` = 2^30 bytes (what `df -h` and
+`free -g` print).
 
 Usage:
     python scripts/checkpoint0.py                  # machine facts + download plan

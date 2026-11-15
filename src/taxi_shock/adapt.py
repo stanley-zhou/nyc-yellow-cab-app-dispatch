@@ -1,9 +1,14 @@
-"""Adaptation strategies (Phase 5, re-scoped by Amendment 4 D6): helpers.
+"""Adaptation strategies for forecasting through the channel shift (Phase 5, re-scoped in PLAN
+Amendment 4, D6): helpers. Pure computation on DataFrames; no file or warehouse access.
+
+The strategy IDs are S0 (frozen model), S1 (monthly retrain), S4 (Chronos-2) and S6
+(channel-aware forecaster); S1e is a sensitivity run of S1 on the expanding window of S0.
 
 S6 channel-aware: lagged app-channel features for the LightGBM forecaster. From a daily table of
-app and total pickups per zone (fct_daily_zone_channel; app = any e-hail app, Amendment 4a) the
-feature of a target on day D uses days D-k .. D-1 only (as every demand feature, >= 24 h); the
-windows k come from config `adapt.channel_windows_days` and `adapt.city_window_days`:
+app and total pickups per zone (fct_daily_zone_channel; app = any e-hail app, as defined in PLAN
+Amendment 4a) the feature of a target on day D uses days D-k .. D-1 only (as every demand
+feature, >= 24 h); the windows k come from config `adapt.channel_windows_days` and
+`adapt.city_window_days`:
 
   app_share_<k>d        the zone's app pickups / all pickups over the previous k days
   city_app_share_<k>d   the same over all zones of the table
