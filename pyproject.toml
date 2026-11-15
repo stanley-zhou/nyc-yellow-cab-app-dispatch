@@ -32,6 +32,9 @@ dependencies = [
     "doubleml==0.11.4",          # Amendment 4 E1 (D2, D4); DECISIONS
 ]
 
+[project.urls]
+Repository = "https://github.com/stanley-zhou/nyc-yellow-cab-app-dispatch"
+
 [project.optional-dependencies]
 dev = [
     "pytest==9.2.0",

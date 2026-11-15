@@ -90,6 +90,8 @@ what version 1 includes: [`reports/dashboard_spec.md`](reports/dashboard_spec.md
 ### Setup (WSL / Linux)
 
 ```bash
+git clone https://github.com/stanley-zhou/nyc-yellow-cab-app-dispatch.git
+cd nyc-yellow-cab-app-dispatch
 make setup        # uv: Python 3.12 venv in .venv, installs the package with [dev] extras
 make smoke        # one sample month end to end: download -> dbt build+test -> backtest -> figure
 make all          # everything below, in order (long: see Runtimes)
