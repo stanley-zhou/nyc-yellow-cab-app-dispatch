@@ -1,3 +1,7 @@
+"""Forecast metrics: WAPE, MAE, pinball loss, MASE, coverage, bias, interval width and the
+thresholded MAPE, on known values and edge cases (zeros, NaN actuals).
+"""
+
 import numpy as np
 import pytest
 

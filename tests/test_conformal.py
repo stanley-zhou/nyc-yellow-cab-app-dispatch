@@ -1,3 +1,7 @@
+"""Conformal calibration: the finite-sample quantile, restored nominal coverage, rows without a
+forecast dropped, and the rolling calibration window.
+"""
+
 import numpy as np
 import pandas as pd
 import pytest

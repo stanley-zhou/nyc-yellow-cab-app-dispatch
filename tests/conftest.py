@@ -1,3 +1,7 @@
+"""Shared pytest fixtures: a synthetic hourly panel, and connections to the smoke and full DuckDB
+warehouses (tests that need a warehouse skip when it is absent).
+"""
+
 from __future__ import annotations
 
 import numpy as np

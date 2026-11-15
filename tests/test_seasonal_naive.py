@@ -1,3 +1,5 @@
+"""Seasonal-naive baseline: exact on a weekly-periodic series; quantiles ordered and >= 0."""
+
 import numpy as np
 import pandas as pd
 

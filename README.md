@@ -74,7 +74,7 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   analysis.
 - An independent review of every phase, with its fix rounds, is in [`reviews/`](reviews/), with
   the Checkpoint 7 advisor review.
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (240 entries).
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (241 entries).
 - 139 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 
@@ -129,7 +129,7 @@ uses `memory_limit = 5GB`, 10 threads.
 | `smoke` | one sample month through the whole pipeline (download, dbt, backtest, figure); fails if over the time limit in config |
 | `smoke-clean` | smoke run on a clean export of HEAD in a temporary directory; writes results/smoke/smoke_run_clean_clone.json |
 | `data` | full raw download: every yellow-taxi month in config, the zone lookup and shapefile, hourly weather (01, 02) |
-| `dbt` | build and test the DuckDB warehouse around the CBD zone mapping (03, 03a), then the data-quality results and Checkpoint-1 checks (03b, 03c) |
+| `dbt` | build and test the DuckDB warehouse around the CBD zone mapping (03, 03a), then the data-quality results (03b) and the vendor, record-format, trip-level CBD-fee and modeled-zone checks (03c) |
 | `probes` | one-off evidence scripts behind DECISIONS.md entries: duplicates, negative fares, record formats, weather time offset |
 | `chronos-bundle` | export the Chronos-2 input bundle for Colab (05a); RUN=calib_2023 for the 2023 calibration run |
 | `chronos-import` | validate the Chronos-2 forecasts copied back from Colab (05b); RUN=calib_2023 merges that run first |

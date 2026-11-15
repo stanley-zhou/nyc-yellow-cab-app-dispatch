@@ -1,3 +1,7 @@
+"""Rolling-origin backtest engine: refit schedules, training windows, day-ahead targets across DST,
+training end before every origin, and explicit zero hours in the evaluation.
+"""
+
 import numpy as np
 import pandas as pd
 import pytest

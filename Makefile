@@ -24,7 +24,7 @@ data:             ## full raw download: every yellow-taxi month in config, the z
 	$(PY) scripts/01_download.py --all
 	$(PY) scripts/02_weather.py --all
 
-dbt:              ## build and test the DuckDB warehouse around the CBD zone mapping (03, 03a), then the data-quality results and Checkpoint-1 checks (03b, 03c)
+dbt:              ## build and test the DuckDB warehouse around the CBD zone mapping (03, 03a), then the data-quality results (03b) and the vendor, record-format, trip-level CBD-fee and modeled-zone checks (03c)
 	$(PY) -m taxi_shock.calendar
 	$(PY) scripts/03_dbt.py build --exclude "dim_zones+"
 	$(PY) scripts/03a_cbd_map.py
