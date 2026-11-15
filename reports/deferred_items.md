@@ -26,6 +26,7 @@ Builder, with the owner and the reason.
 | 27 | E3: dbt on Snowflake (formerly open item 20) | PLAN Amendment 4 | Done: load (`results/snowflake_load.json`), `dbt build` 89/89 and parity with DuckDB (`results/dbt_targets.json`); DECISIONS [E3] 2026-11-14. |
 | 28 | Dashboard published and linked (dashboard URL, formerly part of open item 19) | PLAN Phase 7 (E2); Amendment 5 | Stanley published version 1 on Tableau Public; the link is in `README.md` (Dashboard) and `reports/dashboard_spec.md` (Refresh and publication), and the spec describes version 1 as built (Map B, the scatter, View 3 and View 4 not built in version 1). DECISIONS [P7] 2026-11-15. |
 | 25 | Checkpoint 7 advisor review, sections A, B, C | Amendment 6 | Applied in three commits (5771b84, 649d8fc, 270ce55) and the Phase-7 review round-1 fixes; DECISIONS [P7] 2026-11-14. |
+| 29 | `notebooks/colab_chronos.ipynb`, thin Colab wrapper around `scripts/05_chronos_colab.py` (formerly open item 17) | Amendment 5, item 8 | Supplied by Stanley on branch `add-colab-notebook`, merged into `main`. Not part of the pipeline (CLAUDE.md rule 4). |
 
 ## Open
 
@@ -33,7 +34,6 @@ Builder, with the owner and the reason.
 |---|---|---|---|
 | 15 | CI runs end in `startup_failure` in 0 s on every push (GitHub reports a workflow-file issue; the workflow is plain `checkout` / `setup-uv` / `make`, and Actions is enabled with all actions allowed) | Stanley | Most likely an account-level limit for private repositories (Actions minutes or billing), which the Builder cannot inspect. To recheck once the repository is public or the account limit is cleared. |
 | 16 | Colab profiling run (`--profile N`) to choose the batch size | Stanley | Needs a Colab GPU session. |
-| 17 | `notebooks/colab_chronos.ipynb` (thin Colab wrapper around `scripts/05_chronos_colab.py`) | Stanley | Stanley supplies it (Amendment 5, item 8); `notebooks/` holds only `.gitkeep`. Not part of the pipeline (CLAUDE.md rule 4). |
 | 19 | Repository rename, public visibility, code licence | Stanley | Stanley's decisions (Amendment 5; CLAUDE.md: the repository becomes public only when Stanley says so). |
 | 21 | `04_backtest.py --full` skips an existing forecast file by its existence, without a code fingerprint | Builder, not changed | DECISIONS [P2→P3]. Every forecast file post-dates the last model-code change; a later change needs `--force`. `04b_evaluate.py` does fingerprint its units. Kept as a documented limitation. |
 | 22 | Return the freed space to the Windows drive: compact the WSL disk image (`wsl --shutdown`, then Optimize-VHD or diskpart `compact vdisk`) | Stanley | Runs on Windows with WSL stopped; the warehouse compaction freed the space only inside the virtual disk. |
