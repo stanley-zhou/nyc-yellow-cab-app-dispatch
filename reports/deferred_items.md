@@ -36,6 +36,6 @@ Builder, with the owner and the reason.
 |---|---|---|---|
 | 15 | CI runs end in `startup_failure` in 0 s on every push (GitHub reports a workflow-file issue; the workflow is plain `checkout` / `setup-uv` / `make`, and Actions is enabled with all actions allowed) | Stanley | Most likely an account-level limit for private repositories (Actions minutes or billing), which the Builder cannot inspect. To recheck once the repository is public or the account limit is cleared. |
 | 16 | Colab profiling run (`--profile N`) to choose the batch size | Stanley | Needs a Colab GPU session. |
-| 19 | Public visibility of the repository | Stanley | Stanley makes `nyc-yellow-cab-app-dispatch` public himself after reviewing it (name and MIT licence are done, items 31 and the README). |
+| 19 | Public visibility of the repository | Stanley | Stanley makes `nyc-yellow-cab-app-dispatch` public himself after reviewing it; the name and the MIT licence are in place. |
 | 21 | `04_backtest.py --full` skips an existing forecast file by its existence, without a code fingerprint | Builder, not changed | DECISIONS [P2→P3]. Every forecast file post-dates the last model-code change; a later change needs `--force`. `04b_evaluate.py` does fingerprint its units. Kept as a documented limitation. |
 | 22 | Return the freed space to the Windows drive: compact the WSL disk image (`wsl --shutdown`, then Optimize-VHD or diskpart `compact vdisk`) | Stanley | Runs on Windows with WSL stopped; the warehouse compaction freed the space only inside the virtual disk. |
