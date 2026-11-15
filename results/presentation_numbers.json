@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-15T07:50:53+00:00",
+  "generated_utc": "2026-11-15T08:03:36+00:00",
   "citywide_accounting": {
     "source": "results/channel_decomposition.csv (with_cmt_block = False)",
     "comparison": "2023_to_2025",
@@ -655,7 +655,7 @@
   },
   "repository": {
     "decisions_entries": 241,
-    "review_files": 27,
+    "review_files": 28,
     "phases_reviewed": [
       "0",
       "1",
