@@ -187,6 +187,8 @@ dashboard specification and extracts) · `reviews/` (independent phase reviews).
 
 ## Data and licences
 
+Code: MIT ([`LICENSE`](LICENSE)). TLC and Open-Meteo data are under their own terms (below).
+
 - **NYC TLC trip records** (yellow taxi; high-volume FHV as aggregates), the zone lookup and
   shapefile, and the TLC monthly industry reports: public data published by the NYC Taxi &
   Limousine Commission. Raw files go to `data/raw/` (git-ignored); `data/raw/manifest.csv` and
