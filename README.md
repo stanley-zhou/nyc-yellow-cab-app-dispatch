@@ -74,14 +74,16 @@ trips account for all of that growth (+199,068 a week); street hails changed by 
   analysis.
 - An independent review of every phase, with its fix rounds, is in [`reviews/`](reviews/), with
   the Checkpoint 7 advisor review.
-- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (236 entries).
+- Every judgement call is logged in [`DECISIONS.md`](DECISIONS.md) (237 entries).
 - 136 tests (pytest), dbt data tests and ruff run before every review (counts:
   [presentation_numbers.json → repository](results/presentation_numbers.json)).
 
 ## Dashboard
 
-A Tableau Public dashboard is specified in [`reports/dashboard_spec.md`](reports/dashboard_spec.md)
-(extracts: `make tableau-extract`). Link: *to be added when published.*
+**[Open the Tableau Public dashboard](https://public.tableau.com/app/profile/stanley.zhou7746/viz/WheretheGrowthCameFrom-NYCYellowCabsandAppDispatch/Overview)** (version 1, one page: the headline tiles, citywide
+weekly pickups by channel, the app share by area and a zone map of the app share). Specification and
+what version 1 includes: [`reports/dashboard_spec.md`](reports/dashboard_spec.md); extracts:
+`make tableau-extract`.
 
 ## How this project was built
 

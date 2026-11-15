@@ -1,6 +1,21 @@
 # Dashboard specification: *Where the Growth Came From: App Dispatch and NYC Yellow Cabs, 2023–2026*
 
-A Tableau Public dashboard in five views: the headline in three number tiles, the app share over time by area, a zone map of app share and growth, incrementality estimates with their intervals, and Lyft's entry on Curb cabs. Its data are the extracts made by `make tableau-extract` (`reports/tableau/`; field definitions in `reports/tableau/README.txt`), and every number shown comes from the results file named in the view's caption.
+Published on Tableau Public: [Where the Growth Came From – NYC Yellow Cabs and App Dispatch](https://public.tableau.com/app/profile/stanley.zhou7746/viz/WheretheGrowthCameFrom-NYCYellowCabsandAppDispatch/Overview).
+
+The specification has five views: the headline in three number tiles, the app share over time by area, a zone map of app share and growth, incrementality estimates with their intervals, and Lyft's entry on Curb cabs. Its data are the extracts made by `make tableau-extract` (`reports/tableau/`; field definitions in `reports/tableau/README.txt`), and every number shown comes from the results file named in the view's caption.
+
+## Version 1 as built
+
+One dashboard page, **"Overview"**, 1400 × 1700, holding:
+
+| Part | As built |
+|---|---|
+| **View 0** | The three headline tiles, as specified below. |
+| **Citywide weekly chart** | Stacked weekly pickups citywide by channel, app and street hail, from `channel_zone_week.csv` (columns `app`, `street_hail`; the contracted trip programme is not added to street hails). |
+| **View 1** | App share over time by area, airports filtered out. Colours: CBD `#B23A48`, Manhattan outside the CBD `#9AA5B1`, outer boroughs `#4F7CAC`. Reference lines at 2023-08-29 "Uber dispatch begins" and 2025-01-05 "Congestion pricing begins". |
+| **View 2, Map A** | App share by zone with the period parameter. Zones under 20 pickups a week (`config/project.yaml → channel.map_min_weekly`) are left blank. |
+
+Not built in version 1: View 2 Map B, the View 2 scatter, View 3 and View 4. Their specifications below are kept for a later version.
 
 ## Rules for every view
 
@@ -20,10 +35,11 @@ A Tableau Public dashboard in five views: the headline in three number tiles, th
 
 **Colours**
 - App = teal `#1E8C7E`; street hail = sand `#C2A878`; contracted trip programme = grey `#B0B4BA`.
-- The red accent `#B23A48` is used only to mark the CBD.
+- The red accent `#B23A48` is used only to mark the CBD (in version 1, the CBD line of View 1).
+- Areas in version 1 (View 1): CBD `#B23A48`, Manhattan outside the CBD `#9AA5B1`, outer boroughs `#4F7CAC`.
 - Maps use a single-hue sequential scale for shares and a diverging scale, centred at 0, for growth.
 
-**Reference lines** (dashed, labelled):
+**Reference lines** (dashed, labelled; version 1 draws the first two on View 1, labelled "Uber dispatch begins" (2023-08-29) and "Congestion pricing begins" (2025-01-05)):
 - Uber auto-dispatch of yellow cabs begins, 2023-08 (amNY, 2023-08-29);
 - congestion pricing begins, 2025-01-05;
 - `request_source` reported, 2026-06;
@@ -41,6 +57,8 @@ A Tableau Public dashboard in five views: the headline in three number tiles, th
 
 ## View 1: App share over time by area
 
+Built in version 1 with airports filtered out (see *Version 1 as built*).
+
 | | |
 |---|---|
 | **Source** | `channel_zone_week.csv` |
@@ -54,18 +72,22 @@ A Tableau Public dashboard in five views: the headline in three number tiles, th
 
 ## View 2: Zone map of app share and growth
 
+Version 1 builds Map A only, with zones under 20 pickups a week left blank. Map B and the linked scatter are **not built in version 1**.
+
 | | |
 |---|---|
 | **Source** | `zones.geojson` joined on `zone_id` to `zone_summary.csv` |
 | **Map A** | `app_share_excl_block_<period>`, with a period parameter: 2023, 2024, 2025, Jan–Sep 2026 |
-| **Map B** | `growth_log_2023_2025` as log ratio, labelled in % via exp(x) − 1, diverging and centred at 0 |
-| **Low-volume zones** | Zones with fewer than 20 pickups a week, or a blank growth value, are shown in grey and labelled "too few trips" |
+| **Map B** (not built in version 1) | `growth_log_2023_2025` as log ratio, labelled in % via exp(x) − 1, diverging and centred at 0 |
+| **Low-volume zones** | Map A (version 1): zones with fewer than 20 pickups a week in the period are left blank. Map B (later version): zones with a blank growth value are shown in grey and labelled "too few trips" |
 | **CBD** | Outlined (`is_cbd`) |
-| **Linked chart** | Scatter of growth vs 2025 app share, one dot per zone, CBD in the accent colour |
+| **Linked chart** (not built in version 1) | Scatter of growth vs 2025 app share, one dot per zone, CBD in the accent colour |
 | **Tooltip** | Zone, borough, mean weekly pickups per period, app share per period |
 | **Caption** | `results/channel_zone_share.csv`, F6b. The correlation of growth with app share is in `results/app_dispatch_summary.json`; it is a correlation, not an effect. |
 
 ## View 3: Incrementality by area, with intervals
+
+**Not built in version 1.**
 
 | | |
 |---|---|
@@ -77,6 +99,8 @@ A Tableau Public dashboard in five views: the headline in three number tiles, th
 | **Caption** | `results/incrementality_dml.json`, F6c |
 
 ## View 4: Lyft entry, before and after (preliminary)
+
+**Not built in version 1.**
 
 | | |
 |---|---|
@@ -94,4 +118,4 @@ A Tableau Public dashboard in five views: the headline in three number tiles, th
 2. Replace the extracts in the Tableau workbook.
 3. Republish.
 
-The README links the published dashboard once it is published.
+Published (version 1): [Tableau Public, "Overview"](https://public.tableau.com/app/profile/stanley.zhou7746/viz/WheretheGrowthCameFrom-NYCYellowCabsandAppDispatch/Overview). The README links it.
