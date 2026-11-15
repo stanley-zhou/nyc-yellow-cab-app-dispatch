@@ -85,11 +85,6 @@ weekly pickups by channel, the app share by area and a zone map of the app share
 what version 1 includes: [`reports/dashboard_spec.md`](reports/dashboard_spec.md); extracts:
 `make tableau-extract`.
 
-## How this project was built
-
-> **Placeholder: Stanley writes this section** (how AI tools were used and what was decided by
-> the author).
-
 ## Reproduce
 
 ### Setup (WSL / Linux)

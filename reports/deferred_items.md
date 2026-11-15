@@ -27,6 +27,7 @@ Builder, with the owner and the reason.
 | 28 | Dashboard published and linked (dashboard URL, formerly part of open item 19) | PLAN Phase 7 (E2); Amendment 5 | Stanley published version 1 on Tableau Public; the link is in `README.md` (Dashboard) and `reports/dashboard_spec.md` (Refresh and publication), and the spec describes version 1 as built (Map B, the scatter, View 3 and View 4 not built in version 1). DECISIONS [P7] 2026-11-15. |
 | 25 | Checkpoint 7 advisor review, sections A, B, C | Amendment 6 | Applied in three commits (5771b84, 649d8fc, 270ce55) and the Phase-7 review round-1 fixes; DECISIONS [P7] 2026-11-14. |
 | 29 | `notebooks/colab_chronos.ipynb`, thin Colab wrapper around `scripts/05_chronos_colab.py` (formerly open item 17) | Amendment 5, item 8 | Supplied by Stanley on branch `add-colab-notebook`, merged into `main`. Not part of the pipeline (CLAUDE.md rule 4). |
+| 30 | README section "How this project was built" (formerly open item 26) | Amendment 6 | Closed without the section: at Stanley's instruction (2026-11-15) the placeholder was removed from `README.md` and no replacement was written. |
 
 ## Open
 
@@ -37,5 +38,4 @@ Builder, with the owner and the reason.
 | 19 | Repository rename, public visibility, code licence | Stanley | Stanley's decisions (Amendment 5; CLAUDE.md: the repository becomes public only when Stanley says so). |
 | 21 | `04_backtest.py --full` skips an existing forecast file by its existence, without a code fingerprint | Builder, not changed | DECISIONS [P2→P3]. Every forecast file post-dates the last model-code change; a later change needs `--force`. `04b_evaluate.py` does fingerprint its units. Kept as a documented limitation. |
 | 22 | Return the freed space to the Windows drive: compact the WSL disk image (`wsl --shutdown`, then Optimize-VHD or diskpart `compact vdisk`) | Stanley | Runs on Windows with WSL stopped; the warehouse compaction freed the space only inside the virtual disk. |
-| 23 | Booster files purged from git history (`git filter-repo`, force push, fresh-clone check), then the final phase-reviewer run | Builder, last step | E3 (item 27) and the dashboard link (item 28) are in; waits for Stanley's README section (item 26) and his go-ahead. |
-| 26 | README section "How this project was built" | Stanley | Placeholder in `README.md`; Stanley writes it (Amendment 6). |
+| 23 | Booster files purged from git history (`git filter-repo`, force push, fresh-clone check), then the final phase-reviewer run | Builder, last step | E3 (item 27) and the dashboard link (item 28) are in; the README section is withdrawn (item 30); waits for Stanley's go-ahead. |
