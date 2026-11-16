@@ -15,8 +15,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          cache-dependency-glob: |
+            requirements-dev.lock
+            requirements-snowflake.lock
       - name: Set up the environment (Python 3.12 via uv)
         run: make setup
       - name: Lint
