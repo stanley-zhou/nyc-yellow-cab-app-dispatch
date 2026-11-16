@@ -1,5 +1,7 @@
 # Where the Growth Came From: App Dispatch and NYC Yellow Cabs, 2023–2026
 
+[![ci](https://github.com/stanley-zhou/nyc-yellow-cab-app-dispatch/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/stanley-zhou/nyc-yellow-cab-app-dispatch/actions/workflows/ci.yml)
+
 From 2023 to 2025, NYC yellow-taxi pickups grew 27.3% (703,268 → 895,177 a week). App-dispatched
 trips account for all of that growth (+199,068 a week); street hails changed by −7,159 (−1.1%)
 ([channel_decomposition.csv](results/channel_decomposition.csv),

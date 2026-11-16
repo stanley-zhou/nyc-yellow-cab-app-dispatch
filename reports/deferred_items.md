@@ -20,7 +20,7 @@ Builder, with the owner and the reason.
 | 10 | Experiment-design section (A4), methods note (C8), executive summary (Amendment 5; restructured by Amendment 6) | Amendments 1, 3, 5, 6 | `reports/analysis.md` §6 (experiment), §3 (methods case) and the summary; details in `reports/appendix.md` A6 and A8. The methods-case heading names the effect in the reported file (−35%, `results/did_static.json`), not the "42%" of the Amendment 5 text (DECISIONS [P7]). |
 | 11 | Every figure regenerated under one style, titles stating findings the results support | Amendment 5, item 7 | `make figures` (`scripts/09_figures.py`); title numbers in `results/figure_stats_*.json`. |
 | 12 | README: figure row, make targets, hardware, runtimes, limitations | PLAN Phase 7; Amendment 5 | `README.md`; runtimes from `results/runtimes.json`. |
-| 13 | CI workflow (ruff, pytest, `make smoke`) | PLAN Phase 7 DoD | `.github/workflows/ci.yml`. Whether it runs is item 15. |
+| 13 | CI workflow (ruff, pytest, `make smoke`) | PLAN Phase 7 DoD | `.github/workflows/ci.yml`. It runs on GitHub Actions (item 15). |
 | 14 | D5b event-study range to be quoted exactly if it enters the report | reviews/phase_6.md | Not quoted: `reports/analysis.md` §2 and §4 and `reports/appendix.md` A5 report the step sizes by trip type only, from `results/app_share_policy_step.json`. |
 | 24 | Third prior study (formerly open item 18) in the references | PLAN Phase 7; Checkpoint 7 question 3 | Closed by Amendment 6 A8: four references (Pandey, Guler & Gayah 2026; Li et al. 2026 added), titles and authors checked on the publishers' pages (DECISIONS [P7] 2026-11-14). |
 | 27 | E3: dbt on Snowflake (formerly open item 20) | PLAN Amendment 4 | Done: load (`results/snowflake_load.json`), `dbt build` 89/89 and parity with DuckDB (`results/dbt_targets.json`); DECISIONS [E3] 2026-11-14. |
@@ -29,13 +29,13 @@ Builder, with the owner and the reason.
 | 29 | `notebooks/colab_chronos.ipynb`, thin Colab wrapper around `scripts/05_chronos_colab.py` (formerly open item 17) | Amendment 5, item 8 | Supplied by Stanley on branch `add-colab-notebook`, merged into `main`. Not part of the pipeline (CLAUDE.md rule 4). |
 | 30 | README section "How this project was built" (formerly open item 26) | Amendment 6 | Closed without the section: at Stanley's instruction (2026-11-15) the placeholder was removed from `README.md` and no replacement was written. |
 | 31 | Booster files out of the published history, then the final review (formerly open item 23) | Checkpoint 7; Stanley 2026-11-15 | Closed: the public repository `nyc-yellow-cab-app-dispatch` carries the cleaned development history without the booster files (`make shock` regenerates them); see the DECISIONS entry "Public history". Final review: `reviews/final.md` (PASS, round 3). |
+| 15 | CI runs on GitHub (formerly open: every run ended before its first step) | Stanley | The cause was an account billing lock, not the workflow. After Stanley cleared it, run 43754542814 (`workflow_dispatch`, attempt 2) on 5371ce9 passed: setup, lint, smoke pipeline and tests. The README shows the status badge. |
+| 19 | Public visibility of the repository (formerly open) | Stanley | Stanley made `nyc-yellow-cab-app-dispatch` public on 2026-11-15. |
 
 ## Open
 
 | # | Item | Owner | Why it is open |
 |---|---|---|---|
-| 15 | CI runs end in `startup_failure` in 0 s on every push (GitHub reports a workflow-file issue; the workflow is plain `checkout` / `setup-uv` / `make`, and Actions is enabled with all actions allowed) | Stanley | Most likely an account-level limit for private repositories (Actions minutes or billing), which the Builder cannot inspect. To recheck once the repository is public or the account limit is cleared. |
 | 16 | Colab profiling run (`--profile N`) to choose the batch size | Stanley | Needs a Colab GPU session. |
-| 19 | Public visibility of the repository | Stanley | Stanley makes `nyc-yellow-cab-app-dispatch` public himself after reviewing it; the name and the MIT licence are in place. |
 | 21 | `04_backtest.py --full` skips an existing forecast file by its existence, without a code fingerprint | Builder, not changed | DECISIONS [P2→P3]. Every forecast file post-dates the last model-code change; a later change needs `--force`. `04b_evaluate.py` does fingerprint its units. Kept as a documented limitation. |
 | 22 | Return the freed space to the Windows drive: compact the WSL disk image (`wsl --shutdown`, then Optimize-VHD or diskpart `compact vdisk`) | Stanley | Runs on Windows with WSL stopped; the warehouse compaction freed the space only inside the virtual disk. |
